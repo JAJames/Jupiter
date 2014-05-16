@@ -1,0 +1,523 @@
+/**
+ * Copyright (C) Justin James - All Rights Reserved.
+ * Unauthorized use or copying of this file via any medium is strictly prohibited.
+ * This document is proprietary and confidential.
+ * This document should be immediately destroyed unless given explicit permission by Justin James.
+ * Written by Justin James <justin.aj@hotmail.com>
+ */
+
+#include <stdlib.h> // malloc
+#include <stdint.h> // uintxx_t typedefs.
+#include <stdio.h> // fprintf and stderr
+#include <time.h> // Used by getTime()
+#include <ctype.h> // toupper
+#include <wctype.h> // towupper
+#include "Functions.h"
+
+// Little Endian
+unsigned int getZeroByte(uint32_t *v)
+{
+	if ((*v & 0x000000FF) == 0) return 0;
+	if ((*v & 0x0000FF00) == 0) return 1;
+	if ((*v & 0x00FF0000) == 0) return 2;
+	if ((*v & 0xFF000000) == 0) return 3;
+	return 4;
+}
+
+unsigned int getZeroByte2(uint64_t v)
+{
+	if ((v & 0x00000000000000FF) == 0) return 0;
+	if ((v & 0x000000000000FF00) == 0) return 1;
+	if ((v & 0x0000000000FF0000) == 0) return 2;
+	if ((v & 0x00000000FF000000) == 0) return 3;
+	if ((v & 0x000000FF00000000) == 0) return 4;
+	if ((v & 0x0000FF0000000000) == 0) return 5;
+	if ((v & 0x00FF000000000000) == 0) return 6;
+	if ((v & 0xFF00000000000000) == 0) return 7;
+	return 8;
+}
+
+/*
+// Big Endian
+unsigned int getZeroByte(uint32_t v)
+{
+	if ((v & 0xFF000000) == 0) return 0;
+	if ((v & 0x00FF0000) == 0) return 1;
+	if ((v & 0x0000FF00) == 0) return 2;
+	if ((v & 0x000000FF) == 0) return 3;
+	return 4;
+}
+
+unsigned int getZeroByte64(uint64_t v)
+{
+	if ((v & 0xFF00000000000000) == 0) return 0;
+	if ((v & 0x00FF000000000000) == 0) return 1;
+	if ((v & 0x0000FF0000000000) == 0) return 2;
+	if ((v & 0x000000FF00000000) == 0) return 3;
+	if ((v & 0x00000000FF000000) == 0) return 4;
+	if ((v & 0x0000000000FF0000) == 0) return 5;
+	if ((v & 0x000000000000FF00) == 0) return 6;
+	if ((v & 0x00000000000000FF) == 0) return 7;
+	return 8;
+}
+*/
+
+uint32_t getPowerTwo32(uint32_t v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v++;
+	return v;
+
+}
+
+uint64_t getPowerTwo64(uint64_t v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v |= v >> 32;
+	v++;
+	return v;
+}
+
+#define STRLEN_WRAPPER(TYPE) \
+	register const TYPE *s = str; \
+	while (*s != 0) s++; \
+	return s - str;
+
+size_t Jupiter_strlen(const char *str)
+{
+	STRLEN_WRAPPER(char)
+}
+
+size_t Jupiter_wstrlen(const wchar_t *str)
+{
+	STRLEN_WRAPPER(wchar_t)
+}
+
+size_t Jupiter_strlen8(const uint8_t *str)
+{
+	STRLEN_WRAPPER(uint8_t)
+}
+
+size_t Jupiter_strlen16(const uint16_t *str)
+{
+	STRLEN_WRAPPER(uint16_t)
+}
+
+size_t Jupiter_strlen32(const uint32_t *str)
+{
+	STRLEN_WRAPPER(uint32_t)
+}
+
+size_t Jupiter_strlen64(const uint64_t *str)
+{
+	STRLEN_WRAPPER(uint64_t)
+}
+
+size_t Jupiter_vstrlen(const void *str, size_t size)
+{
+	const char *s;
+	const char *s2;
+	switch (size)
+	{
+	case 0:
+		return 0;
+	case 1:
+		return Jupiter_strlen((const char *)str);
+	case 2:
+		return Jupiter_strlen16((const uint16_t *)str);
+	case 4:
+		return Jupiter_strlen32((const uint32_t *)str);
+	case 8:
+		return Jupiter_strlen64((const uint64_t *)str);
+	default:
+		s = (const char *)str;
+		s2 = s;
+		while ((unsigned)(s2 - s) != size)
+		{
+			s2 = s;
+			while ((unsigned)(s2 - s) > size)
+			{
+				if (*s2 != 0) break;
+				s2++;
+			}
+			s += size;
+		}
+		return (s - (const char *)str) / size;
+	}
+}
+
+const char *stristr(const char *str1, const char *str2)
+{
+	const char *strr;
+	int i;
+	int a;
+	for (i = 0; str1[i] != 0; i++)
+	{
+		if (toupper(str1[i]) == toupper(str2[0]))
+		{
+			a = 1;
+			while (str2[a] != 0)
+			{
+				if (toupper(str1[i + a]) != toupper(str2[a])) break;
+				a++;
+			}
+			if (str2[a] == 0)
+			{
+				strr = &str1[i];
+				return strr;
+			}
+		}
+	}
+	return NULL;
+}
+
+bool streql(const char *s1, const char *s2)
+{
+	if (s1 == s2) return true;
+	while (*s1 != 0 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return (*s1 == *s2);
+}
+
+bool streqli(const char *s1, const char *s2)
+{
+	if (s1 == s2) return true;
+	while (*s1 != 0 && toupper(*s1) == toupper(*s2))
+	{
+		s1++;
+		s2++;
+	}
+	if (*s1 == *s2) return true;
+	return false;
+}
+
+bool wstreql(const wchar_t *s1, const wchar_t *s2)
+{
+	if (s1 == s2) return true;
+	while (*s1 != 0 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return (*s1 == *s2);
+}
+
+bool wstreqli(const wchar_t *s1, const wchar_t *s2)
+{
+	if (s1 == s2) return true;
+	while (*s1 != 0 && towupper(*s1) == towupper(*s2))
+	{
+		s1++;
+		s2++;
+	}
+	if (*s1 == *s2) return true;
+	return false;
+}
+
+bool strmatch(const char *f, const char *s)
+{
+	while (*f != 0)
+	{
+		if (*f == '*')
+		{
+			f++;
+			if (*f == 0) return true;
+			while (*s != 0)
+			{
+				if (*f == *s) break;
+				s++;
+			}
+			if (*s == 0) return false;
+		}
+		else if (*f != '?' && *f != *s) return false;
+		f++;
+		s++;
+	}
+	return *f == *s;
+}
+
+bool strmatchi(const char *f, const char *s)
+{
+	while (*f != 0)
+	{
+		if (*f == '*')
+		{
+			f++;
+			if (*f == 0) return true;
+			while (*s != 0)
+			{
+				if (*f == *s) break;
+				s++;
+			}
+			if (*s == 0) return false;
+		}
+		else if (*f != '?' && toupper(*f) != toupper(*s)) return false;
+		f++;
+		s++;
+	}
+	return *f == *s;
+}
+
+bool wstrmatch(const wchar_t *f, const wchar_t *s)
+{
+	while (*f != 0)
+	{
+		if (*f == L'*')
+		{
+			f++;
+			if (*f == 0) return true;
+			while (*s != 0)
+			{
+				if (*f == *s) break;
+				s++;
+			}
+			if (*s == 0) return false;
+		}
+		else if (*f != L'?' && *f != *s) return false;
+		f++;
+		s++;
+	}
+	return *f == *s;
+}
+
+bool wstrmatchi(const wchar_t *f, const wchar_t *s)
+{
+	while (*f != 0)
+	{
+		if (*f == L'*')
+		{
+			f++;
+			if (*f == 0) return true;
+			while (*s != 0)
+			{
+				if (*f == *s) break;
+				s++;
+			}
+			if (*s == 0) return false;
+		}
+		else if (*f != L'?' && towupper(*f) != towupper(*s)) return false;
+		f++;
+		s++;
+	}
+	return *f == *s;
+}
+
+char *charToChar(const char *a, int b, int c)
+{
+	char *r = (char *) malloc(sizeof(char) * (c-b+1));
+	if (r != NULL)
+	{
+		int i = 0;
+		while (b < c)
+		{
+			r[i] = a[b];
+			i++;
+			b++;
+		}
+		r[i] = 0;
+	}
+	else fprintf(stderr, "ERROR: UNABLE TO ALLOCATE IN %s" ENDL, __FUNCTION__);
+	return r;
+}
+
+wchar_t *wcharToChar(const wchar_t *a, int b, int c)
+{
+	wchar_t *r = (wchar_t *)malloc(sizeof(wchar_t)* (c - b + 1));
+	if (r != NULL)
+	{
+		int i = 0;
+		while (b < c)
+		{
+			r[i] = a[b];
+			i++;
+			b++;
+		}
+		r[i] = 0;
+	}
+	else fprintf(stderr, "ERROR: UNABLE TO ALLOCATE IN %s" ENDL, __FUNCTION__);
+	return r;
+}
+
+void trim(char *str)
+{
+	int p = 0;
+	int x = 0;
+	int i;
+	while (str[p] != 0)
+	{
+		if (str[p] == 10)
+		{
+			str[p] = 0;
+		}
+		else if (str[p] == 13)
+		{
+			str[p] = 0;
+		}
+		p++;
+	}
+	for (i = 0; i < p; i++)
+	{
+		if (str[i] != 0)
+		{
+			str[x] = str[i];
+			x++;
+		}
+	}
+	str[x] = 0;
+}
+
+char *getWord(const char *str, int w)
+{
+	char *result;
+	int x = 0;
+	int y;
+	int i;
+	for (i = 0; i < w; x++)
+	{
+		if (str[x] == 0) return NULL;
+		if (str[x] == ' ') i++;
+	}
+	for (y = x; str[y] != ' ' && str[y] != 0; y++);
+	result = (char *) malloc(sizeof(char) * (y-x+1));
+	if (result != NULL)
+	{
+		for (i = 0; x < y; i++)
+		{
+			result[i] = str[x];
+			x++;
+		}
+		result[i] = 0;
+	}
+	else fprintf(stderr, "ERROR: UNABLE TO ALLOCATE IN %s" ENDL, __FUNCTION__);
+	return result;
+}
+
+unsigned int countSymbol(const char *str, char c)
+{
+	unsigned int result = 0;
+	while(*str != 0)
+	{
+		if (*str == c) result++;
+		str++;
+	}
+	return result;
+}
+
+unsigned int wordCount(const char *str)
+{
+	unsigned int result = 0;
+	int i;
+	for (i = 0; str[i] != 0; i++)
+	{
+		if (str[i] == ' ')
+		{
+			if (i > 0)
+			{
+				if (str[i-1] > ' ') result++;
+			}
+		}
+		else if (str[i+1] < ' ') result++;
+	}
+	return result;
+}
+
+unsigned int countLines(const char *str)
+{
+	unsigned int r = 0;
+	while (*str != 0)
+	{
+		if ((*str == '\r' && *(str + 1) != '\n') || *str == '\n') r++;
+		str++;
+	}
+	return r;
+}
+
+char *getLine(const char *str, unsigned int l)
+{
+	char *result;
+	unsigned int x = 0;
+	unsigned int y;
+	unsigned int i;
+	for (i = 0; i < l; x++)
+	{
+		if (str[x] == 0) break;
+		if (str[x] == '\n' || (str[x] == '\r' && str[x+1] != '\n')) i++;
+	}
+	for (y = x; str[y] != '\r' && str[y] != '\n' && str[y] != 0; y++);// if (str[y] == 0) break;
+	result = (char *) malloc(sizeof(char) * (y-x+1));
+	if (result != NULL)
+	{
+		for (i = 0; x < y; i++)
+		{
+			result[i] = str[x];
+			x++;
+		}
+		result[i] = 0;
+	}
+	else fprintf(stderr, "ERROR: UNABLE TO ALLOCATE IN %s" ENDL, __FUNCTION__);
+	return result;
+}
+
+int findSymbol(const char *str, char c, int pos)
+{
+	int r = 0;
+	int a = 0;
+	while (str[r] != 0)
+	{
+		if (str[r] == c)
+		{
+			if (a == pos) return r;
+			a++;
+		}
+		r++;
+	}
+	return -1;
+}
+
+bool containsSymbol(const char *str, char c)
+{
+	int i;
+	for (i = 0; str[i] != 0; i++) if (str[i] == c) return true;
+	return false;
+}
+
+char *makestr(const char *str)
+{
+	char *r;
+	size_t len;
+	if (str == NULL) return NULL;
+	len = Jupiter_strlen(str);
+	r = (char *) malloc(sizeof(char) * (len + 1));
+	if (r != NULL)
+	{
+		r[len] = 0;
+		while (len != 0)
+		{
+			len--;
+			r[len] = str[len];
+		}
+		return r;
+	}
+	return NULL;
+}
+
+char *getTime()
+{
+	time_t rawtime = time(0);
+	static char rtime[256];
+	strftime(rtime, sizeof(rtime), "%a %b %d %H:%M:%S %Y %Z", localtime(&rawtime));
+	return rtime;
+}
