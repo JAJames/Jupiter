@@ -550,7 +550,7 @@ int Jupiter::IRC::Client::primaryHandler()
 		for (unsigned int currentLine = 0; currentLine < totalLines; currentLine++)
 		{
 			Jupiter::CStringS buff = Jupiter::IRC::Client::data_->buffer.getWord(currentLine, ENDL);
-			if (buff.size() > 0)
+			if (buff.size() != 0)
 			{
 				Jupiter::IRC::Client::writeToLogs(buff.c_str());
 				if (Jupiter::IRC::Client::data_->printOutput != nullptr)
@@ -559,13 +559,13 @@ int Jupiter::IRC::Client::primaryHandler()
 					fputs(ENDL, Jupiter::IRC::Client::data_->printOutput);
 				}
 				Jupiter::CStringS w1 = buff.getWord(0, WHITESPACE);
-				if (w1.size() > 0)
+				if (w1.size() != 0)
 				{
 					Jupiter::CStringS w2 = buff.getWord(1, WHITESPACE);
 					long int numeric = strtol(w2.c_str(), nullptr, 10);
 					if (w1[0] == ':') //Messages
 					{
-						if (w2.size() > 0)
+						if (w2.size() != 0)
 						{
 							switch (numeric) // Numerics that don't rely on a specific connectionStatus.
 							{
@@ -910,10 +910,10 @@ int Jupiter::IRC::Client::primaryHandler()
 								if (streqli(w2.c_str(), "PRIVMSG"))
 								{
 									Jupiter::CStringS chan = buff.getWord(2, WHITESPACE);
-									if (chan.size() > 0)
+									if (chan.size() != 0)
 									{
 										Jupiter::CStringS nick = getSender(buff);
-										if (nick.size() > 0)
+										if (nick.size() != 0)
 										{
 											const char *premessage = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
 											if (premessage[0] == '\001') //CTCP (ACTIONs are included)
@@ -970,7 +970,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								else if (streqli(w2.c_str(), "NOTICE"))
 								{
 									CStringS chan = buff.getWord(2, WHITESPACE);
-									if (chan.size() > 0)
+									if (chan.size() != 0)
 									{
 										int pos = findSymbol(buff.c_str(), '!', 0);
 										auto message = buff.substring(findSymbol(buff.c_str(), ':', 1) + 1, buff.size());
@@ -1063,7 +1063,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									if (chan.size() != 0)
 									{
 										Jupiter::CStringS kicker = getSender(buff);
-										if (kicker.size() > 0)
+										if (kicker.size() != 0)
 										{
 											auto kicked = buff.getWord(3, WHITESPACE);
 											if (kicked.size() != 0)
@@ -1119,7 +1119,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								else if (streqli(w2.c_str(), "MODE"))
 								{
 									auto chan = buff.getWord(2, WHITESPACE);
-									if (chan.size() > 0)
+									if (chan.size() != 0)
 									{
 										if (containsSymbol(Jupiter::IRC::Client::data_->chanTypes.c_str(), chan[0]))
 										{
@@ -1214,7 +1214,7 @@ int Jupiter::IRC::Client::primaryHandler()
 						}
 						else if (w1.equals("NICK"))
 						{
-							if (w2.size() > 0) Jupiter::IRC::Client::data_->nickname = w2;
+							if (w2.size() != 0) Jupiter::IRC::Client::data_->nickname = w2;
 						}
 						else if (w1.equals("ERROR"))
 						{

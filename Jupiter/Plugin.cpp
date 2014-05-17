@@ -66,7 +66,7 @@ void Jupiter::setPluginDirectory(const char *dir)
 	else
 	{
 		pluginDir = dir;
-		if (pluginDir.size() > 0 && dir[pluginDir.size() - 1] != DIR_CHR) pluginDir += DIR_CHR;
+		if (pluginDir.size() != 0 && dir[pluginDir.size() - 1] != DIR_CHR) pluginDir += DIR_CHR;
 	}
 }
 
