@@ -482,10 +482,11 @@ template<> size_t inline Jupiter::CString_Strict<char>::avformat(const char *for
 	Jupiter::CString_Type<char>::base = t;
 	Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
 
-	vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, minLen, format, args);
+	minLen = vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, minLen, format, args);
+	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<char>::strLen += minLen;
 	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
-	return Jupiter::CString_Type<char>::strLen;
+	return minLen;
 }
 
 template<> size_t inline Jupiter::CString_Strict<wchar_t>::avformat(const wchar_t *format, va_list args)
@@ -503,10 +504,11 @@ template<> size_t inline Jupiter::CString_Strict<wchar_t>::avformat(const wchar_
 	Jupiter::CString_Type<wchar_t>::base = t;
 	Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
 
-	vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, minLen, format, args);
+	minLen = vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, minLen, format, args);
+	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<wchar_t>::strLen += minLen;
 	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
-	return Jupiter::CString_Type<wchar_t>::strLen;
+	return minLen;
 }
 
 template<typename T> size_t Jupiter::CString_Strict<T>::avformat(const T *format, va_list args)
@@ -896,10 +898,11 @@ template<> size_t inline Jupiter::CString_Loose<char>::avformat(const char *form
 		Jupiter::strcpy<char>(Jupiter::CString_Type<char>::base, Jupiter::CString_Type<char>::curr);
 		Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
 	}
-	vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, Jupiter::CString_Loose<char>::strSize - Jupiter::CString_Type<char>::strLen, format, args);
-	Jupiter::CString_Type<char>::strLen = minLen;
+	minLen = vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, Jupiter::CString_Loose<char>::strSize - Jupiter::CString_Type<char>::strLen, format, args);
+	if (minLen <= 0) return 0;
+	Jupiter::CString_Type<char>::strLen += minLen;
 	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
-	return Jupiter::CString_Type<char>::strLen;
+	return minLen;
 }
 
 template<> size_t inline Jupiter::CString_Loose<wchar_t>::avformat(const wchar_t *format, va_list args)
@@ -925,10 +928,11 @@ template<> size_t inline Jupiter::CString_Loose<wchar_t>::avformat(const wchar_t
 		Jupiter::strcpy(Jupiter::CString_Type<wchar_t>::base, Jupiter::CString_Type<wchar_t>::curr);
 		Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
 	}
-	vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, Jupiter::CString_Loose<wchar_t>::strSize - Jupiter::CString_Type<wchar_t>::strLen, format, args);
-	Jupiter::CString_Type<wchar_t>::strLen = minLen;
+	minLen = vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, Jupiter::CString_Loose<wchar_t>::strSize - Jupiter::CString_Type<wchar_t>::strLen, format, args);
+	if (minLen <= 0) return 0;
+	Jupiter::CString_Type<wchar_t>::strLen += minLen;
 	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
-	return Jupiter::CString_Type<wchar_t>::strLen;
+	return minLen;
 }
 
 template<typename T> size_t Jupiter::CString_Loose<T>::avformat(const T *format, va_list args)
