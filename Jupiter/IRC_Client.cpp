@@ -613,7 +613,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									if (buff.matchi("*:Try server *, port *"))
 									{
 										Jupiter::CStringS portToken = buff.getWord(6, " ");
-										unsigned short bouncePort = (unsigned short) atoi(buff.getWord(6, " ").c_str());
+										unsigned short bouncePort = (unsigned short)atoi(buff.getWord(6, " ").c_str());
 
 										if (portToken[0] == '+') // This is almost certainly not used anywhere.
 										{
@@ -926,7 +926,7 @@ int Jupiter::IRC::Client::primaryHandler()
 												if (command[command.size() - 1] == IRC::CTCP) command.truncate(1);
 												Jupiter::CStringS message = rawmessage.substring(findSymbol(rawmessage.c_str(), ' ', 0) + 1, findSymbol(rawmessage.c_str(), IRC::CTCP, 0));
 												if (message[message.size() - 1] == IRC::CTCP) message.truncate(1);
-												
+
 												if (command.equals("ACTION"))
 												{
 													this->OnAction(chan, nick, message);
@@ -1202,8 +1202,8 @@ int Jupiter::IRC::Client::primaryHandler()
 									int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
 									if (i >= 0) Jupiter::IRC::Client::data_->channels.get(i)->data_->isAddingNames = false;
 								}
+								break;
 							}
-							break;
 						}
 					}
 					else
