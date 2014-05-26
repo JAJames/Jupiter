@@ -604,8 +604,9 @@ int Jupiter::IRC::Client::primaryHandler()
 							}
 								break;
 							} // numeric switch
-							if (Jupiter::IRC::Client::data_->connectionStatus == 1) // Socket established -- attempting STARTTLS
+							switch (Jupiter::IRC::Client::data_->connectionStatus)
 							{
+							case 1: // Socket established -- attempting STARTTLS
 								switch (numeric)
 								{
 								case IRC_RPL_BOUNCEOLD: // 005
@@ -689,9 +690,9 @@ int Jupiter::IRC::Client::primaryHandler()
 								default:
 									break;
 								} // numeric switch
-							}
-							else if (Jupiter::IRC::Client::data_->connectionStatus == 2) // Capability negotiation
-							{
+								break;
+
+							case 2: // Capability negotiation
 								switch (numeric)
 								{
 								case 0:
@@ -748,8 +749,9 @@ int Jupiter::IRC::Client::primaryHandler()
 								default:
 									break;
 								} // numeric switch
-							}
-							else if (Jupiter::IRC::Client::data_->connectionStatus == 3) // Registration sent, but not verified.
+								break;
+
+							case 3: // Registration sent, but not verified.
 							{
 								bool completelyBadNick = false;
 								switch (numeric)
@@ -764,7 +766,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									break;
 
 									// You have a bad nickname! Try the alt.
-								//case IRC_ERR_NONICKNAMEGIVEN: // 431 -- Not consistently usable due to lack of command field.
+									//case IRC_ERR_NONICKNAMEGIVEN: // 431 -- Not consistently usable due to lack of command field.
 								case IRC_ERR_ERRONEOUSNICKNAME: // 432
 									completelyBadNick = true;
 								case IRC_ERR_NICKNAMEINUSE: // 433
@@ -820,8 +822,9 @@ int Jupiter::IRC::Client::primaryHandler()
 									break;
 								}
 							}
-							else if (Jupiter::IRC::Client::data_->connectionStatus == 4) // Registration verified, but connection process in progress.
-							{
+								break;
+
+							case 4: // Registration verified, but connection process in progress.
 								switch (numeric)
 								{
 								case IRC_RPL_ISUPPORT: // 005
@@ -904,9 +907,9 @@ int Jupiter::IRC::Client::primaryHandler()
 								}
 									break;
 								}
-							}
-							else // Post-registration.
-							{
+								break;
+
+							default: // Post-registration.
 								if (streqli(w2.c_str(), "PRIVMSG"))
 								{
 									Jupiter::CStringS chan = buff.getWord(2, WHITESPACE);
@@ -1200,6 +1203,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									if (i >= 0) Jupiter::IRC::Client::data_->channels.get(i)->data_->isAddingNames = false;
 								}
 							}
+							break;
 						}
 					}
 					else
