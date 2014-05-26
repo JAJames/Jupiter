@@ -235,12 +235,11 @@ bool strmatch(const char *f, const char *s)
 		{
 			f++;
 			if (*f == 0) return true;
-			while (*s != 0)
+			while (*f != *s)
 			{
-				if (*f == *s) break;
+				if (*s == 0) return false;
 				s++;
 			}
-			if (*s == 0) return false;
 		}
 		else if (*f != '?' && *f != *s) return false;
 		f++;
@@ -251,18 +250,19 @@ bool strmatch(const char *f, const char *s)
 
 bool strmatchi(const char *f, const char *s)
 {
+	int fUpper;
 	while (*f != 0)
 	{
 		if (*f == '*')
 		{
 			f++;
 			if (*f == 0) return true;
-			while (*s != 0)
+			fUpper = toupper(*f);
+			while (fUpper != toupper(*s))
 			{
-				if (*f == *s) break;
+				if (*s == 0) return false;
 				s++;
 			}
-			if (*s == 0) return false;
 		}
 		else if (*f != '?' && toupper(*f) != toupper(*s)) return false;
 		f++;
@@ -279,12 +279,11 @@ bool wstrmatch(const wchar_t *f, const wchar_t *s)
 		{
 			f++;
 			if (*f == 0) return true;
-			while (*s != 0)
+			while (*f != *s)
 			{
-				if (*f == *s) break;
+				if (*s == 0) return false;
 				s++;
 			}
-			if (*s == 0) return false;
 		}
 		else if (*f != L'?' && *f != *s) return false;
 		f++;
@@ -295,18 +294,19 @@ bool wstrmatch(const wchar_t *f, const wchar_t *s)
 
 bool wstrmatchi(const wchar_t *f, const wchar_t *s)
 {
+	wint_t fUpper;
 	while (*f != 0)
 	{
 		if (*f == L'*')
 		{
 			f++;
 			if (*f == 0) return true;
-			while (*s != 0)
+			fUpper = towupper(*f);
+			while (fUpper != towupper(*s))
 			{
-				if (*f == *s) break;
+				if (*s == 0) return false;
 				s++;
 			}
-			if (*s == 0) return false;
 		}
 		else if (*f != L'?' && towupper(*f) != towupper(*s)) return false;
 		f++;
