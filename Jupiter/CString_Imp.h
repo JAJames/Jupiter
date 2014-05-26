@@ -34,7 +34,7 @@
 
 template<typename T> const T *Jupiter::CString_Type<T>::c_str() const
 {
-	return Jupiter::CString_Type<T>::curr;
+	return Jupiter::String_Type<T>::str;
 }
 
 template<typename T> size_t Jupiter::CString_Type<T>::size() const
@@ -54,7 +54,7 @@ template<typename T> int Jupiter::CString_Type<T>::compare(const std::basic_stri
 
 template<typename T> int Jupiter::CString_Type<T>::compare(const T *s2) const
 {
-	const T *s1 = Jupiter::CString_Type<T>::curr;
+	const T *s1 = Jupiter::String_Type<T>::str;
 	while (*s1 != 0 && *s1 == *s2)
 	{
 		s1++;
@@ -65,7 +65,7 @@ template<typename T> int Jupiter::CString_Type<T>::compare(const T *s2) const
 
 template<typename T> int Jupiter::CString_Type<T>::compare(const T s2) const
 {
-	return *Jupiter::CString_Type<T>::curr - s2;
+	return *Jupiter::String_Type<T>::str - s2;
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::equals(const Jupiter::String_Type<T> &in) const
@@ -83,12 +83,12 @@ template<typename T> bool Jupiter::CString_Type<T>::equals(const std::basic_stri
 template<typename T> bool Jupiter::CString_Type<T>::equals(const T *in) const
 {
 	if (in == nullptr) return Jupiter::CString_Type<T>::strLen == 0;
-	return Jupiter::streql<T>(Jupiter::CString_Type<T>::curr, in);
+	return Jupiter::streql<T>(Jupiter::String_Type<T>::str, in);
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::equals(const T in) const
 {
-	return *Jupiter::CString_Type<T>::curr == in && ((in == 0) || Jupiter::CString_Type<T>::curr[1] == 0);
+	return *Jupiter::String_Type<T>::str == in && ((in == 0) || Jupiter::String_Type<T>::str[1] == 0);
 }
 
 // equalsi()
@@ -107,12 +107,12 @@ template<typename T> bool Jupiter::CString_Type<T>::equalsi(const std::basic_str
 
 template<> bool inline Jupiter::CString_Type<char>::equalsi(const char *in) const
 {
-	return streqli(Jupiter::CString_Type<char>::curr, in);
+	return streqli(Jupiter::String_Type<char>::str, in);
 }
 
 template<> bool inline Jupiter::CString_Type<wchar_t>::equalsi(const wchar_t *in) const
 {
-	return wstreqli(Jupiter::CString_Type<wchar_t>::curr, in);
+	return wstreqli(Jupiter::String_Type<wchar_t>::str, in);
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::equalsi(const T *in) const
@@ -122,12 +122,12 @@ template<typename T> bool Jupiter::CString_Type<T>::equalsi(const T *in) const
 
 template<> bool inline Jupiter::CString_Type<char>::equalsi(const char in) const
 {
-	return toupper(*Jupiter::CString_Type<char>::curr) == toupper(in) && ((in == 0) || Jupiter::CString_Type<char>::curr[1] == 0);
+	return toupper(*Jupiter::String_Type<char>::str) == toupper(in) && ((in == 0) || Jupiter::String_Type<char>::str[1] == 0);
 }
 
 template<> bool inline Jupiter::CString_Type<wchar_t>::equalsi(const wchar_t in) const
 {
-	return towupper(*Jupiter::CString_Type<wchar_t>::curr) == towupper(in) && ((in == 0) || Jupiter::CString_Type<wchar_t>::curr[1] == 0);
+	return towupper(*Jupiter::String_Type<wchar_t>::str) == towupper(in) && ((in == 0) || Jupiter::String_Type<wchar_t>::str[1] == 0);
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::equalsi(const T in) const
@@ -149,12 +149,12 @@ template<typename T> bool Jupiter::CString_Type<T>::match(const std::basic_strin
 
 template<> inline bool Jupiter::CString_Type<char>::match(const char *format) const
 {
-	return strmatch(format, Jupiter::CString_Type<char>::curr);
+	return strmatch(format, Jupiter::String_Type<char>::str);
 }
 
 template<> inline bool Jupiter::CString_Type<wchar_t>::match(const wchar_t *format) const
 {
-	return wstrmatch(format, Jupiter::CString_Type<wchar_t>::curr);
+	return wstrmatch(format, Jupiter::String_Type<wchar_t>::str);
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::match(const T *format) const
@@ -176,12 +176,12 @@ template<typename T> bool Jupiter::CString_Type<T>::matchi(const std::basic_stri
 
 template<> bool inline Jupiter::CString_Type<char>::matchi(const char *format) const
 {
-	return strmatchi(format, Jupiter::CString_Type<char>::curr);
+	return strmatchi(format, Jupiter::String_Type<char>::str);
 }
 
 template<> bool inline Jupiter::CString_Type<wchar_t>::matchi(const wchar_t *format) const
 {
-	return wstrmatchi(format, Jupiter::CString_Type<wchar_t>::curr);
+	return wstrmatchi(format, Jupiter::String_Type<wchar_t>::str);
 }
 
 template<typename T> bool Jupiter::CString_Type<T>::matchi(const T *format) const
@@ -256,7 +256,7 @@ template<typename T> size_t Jupiter::CString_Type<T>::aformat(const T *format, .
 template<typename T> unsigned int Jupiter::CString_Type<T>::wordCount(const T *whitespace) const
 {
 	unsigned int result = 0;
-	T *p = Jupiter::CString_Type<T>::curr;
+	T *p = Jupiter::String_Type<T>::str;
 	bool prev = true;
 	while (*p != 0)
 	{
@@ -278,26 +278,26 @@ template<typename T> size_t Jupiter::CString_Type<T>::truncate(size_t n)
 {
 	if (n >= Jupiter::CString_Type<T>::strLen)
 	{
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 		Jupiter::CString_Type<T>::strLen = 0;
 		return 0;
 	}
 	Jupiter::CString_Type<T>::strLen -= n;
-	Jupiter::CString_Type<T>::curr[Jupiter::CString_Type<T>::strLen] = 0;
+	Jupiter::String_Type<T>::str[Jupiter::CString_Type<T>::strLen] = 0;
 	return Jupiter::CString_Type<T>::strLen;
 }
 
 template<typename T> T &Jupiter::CString_Type<T>::get(size_t index) const
 {
-	return Jupiter::CString_Type<T>::curr[index];
+	return Jupiter::String_Type<T>::str[index];
 }
 
 template<typename T> size_t Jupiter::CString_Type<T>::shiftLeft(size_t length)
 {
-	size_t offset = Jupiter::CString_Type<T>::curr - Jupiter::CString_Type<T>::base;
+	size_t offset = Jupiter::String_Type<T>::str - Jupiter::CString_Type<T>::base;
 	if (length > offset) length = offset;
-	Jupiter::CString_Type<T>::curr -= length;
+	Jupiter::String_Type<T>::str -= length;
 	Jupiter::CString_Type<T>::strLen += length;
 	return length;
 }
@@ -305,7 +305,7 @@ template<typename T> size_t Jupiter::CString_Type<T>::shiftLeft(size_t length)
 template<typename T> size_t Jupiter::CString_Type<T>::shiftRight(size_t length)
 {
 	if (length > Jupiter::CString_Type<T>::strLen) length = Jupiter::CString_Type<T>::strLen;
-	Jupiter::CString_Type<T>::curr += length;
+	Jupiter::String_Type<T>::str += length;
 	Jupiter::CString_Type<T>::strLen -= length;
 	return length;
 }
@@ -314,7 +314,7 @@ template<typename T> bool Jupiter::CString_Type<T>::remove(T &value)
 {
 	for (unsigned int i = 0; i < Jupiter::CString_Type<T>::strLen; i++)
 	{
-		if (Jupiter::CString_Type<T>::curr[i] == value)
+		if (Jupiter::String_Type<T>::str[i] == value)
 		{
 			if (i == strLen - 1) Jupiter::CString_Type<T>::truncate(1);
 			else if (i == 0)
@@ -324,7 +324,7 @@ template<typename T> bool Jupiter::CString_Type<T>::remove(T &value)
 			}
 			else
 			{
-				Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr + i, Jupiter::CString_Type<T>::curr + i + 1);
+				Jupiter::strcpy<T>(Jupiter::String_Type<T>::str + i, Jupiter::String_Type<T>::str + i + 1);
 				Jupiter::CString_Type<T>::strLen--;
 			}
 			return true;
@@ -335,7 +335,7 @@ template<typename T> bool Jupiter::CString_Type<T>::remove(T &value)
 
 template<typename T> bool Jupiter::CString_Type<T>::contains(const T &value)
 {
-	for (unsigned int i = 0; i < Jupiter::CString_Type<T>::strLen; i++) if (Jupiter::CString_Type<T>::curr[i] == value) return true;
+	for (unsigned int i = 0; i < Jupiter::CString_Type<T>::strLen; i++) if (Jupiter::String_Type<T>::str[i] == value) return true;
 	return false;
 }
 
@@ -347,8 +347,8 @@ template<typename T> bool Jupiter::CString_Type<T>::contains(const T &value)
 template<typename T> Jupiter::CString_Strict<T>::CString_Strict()
 {
 	Jupiter::CString_Type<T>::base = new T[1];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	*Jupiter::CString_Type<T>::curr = 0;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	*Jupiter::String_Type<T>::str = 0;
 	Jupiter::CString_Type<T>::strLen = 0;
 }
 
@@ -356,24 +356,24 @@ template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const Jupiter::C
 {
 	Jupiter::CString_Type<T>::strLen = in.strLen;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Type<T>::strLen + 1];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.curr);
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.str);
 }
 
 template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const Jupiter::String_Type<T> &in)
 {
 	Jupiter::CString_Type<T>::strLen = in.size();
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Type<T>::strLen + 1];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 }
 
 template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const std::basic_string<T> &in)
 {
 	Jupiter::CString_Type<T>::strLen = in.size();
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Type<T>::strLen + 1];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 }
 
 template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const T *in)
@@ -382,15 +382,15 @@ template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const T *in)
 	{
 		Jupiter::CString_Type<T>::strLen = 0;
 		Jupiter::CString_Type<T>::base = new T[1];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 	}
 	else
 	{
 		Jupiter::CString_Type<T>::strLen = Jupiter::strlen<T>(in);
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Type<T>::strLen + 1];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
 	}
 }
 
@@ -400,16 +400,16 @@ template<typename T> Jupiter::CString_Strict<T>::CString_Strict(const T c)
 	{
 		Jupiter::CString_Type<T>::strLen = 0;
 		Jupiter::CString_Type<T>::base = new T[1];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 	}
 	else
 	{
 		Jupiter::CString_Type<T>::strLen = 1;
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Type<T>::strLen + 1];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = c;
-		Jupiter::CString_Type<T>::curr[1] = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = c;
+		Jupiter::String_Type<T>::str[1] = 0;
 	}
 }
 
@@ -433,10 +433,10 @@ template<> size_t inline Jupiter::CString_Strict<char>::vformat(const char *form
 		delete[] Jupiter::CString_Type<char>::base;
 		Jupiter::CString_Type<char>::base = new char[minLen + 1];
 	}
-	Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
+	Jupiter::String_Type<char>::str = Jupiter::CString_Type<char>::base;
 	Jupiter::CString_Type<char>::strLen = minLen;
-	vsnprintf(Jupiter::CString_Type<char>::curr, Jupiter::CString_Type<char>::strLen, format, args);
-	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
+	vsnprintf(Jupiter::String_Type<char>::str, Jupiter::CString_Type<char>::strLen, format, args);
+	Jupiter::String_Type<char>::str[Jupiter::CString_Type<char>::strLen] = 0;
 	return Jupiter::CString_Type<char>::strLen;
 }
 
@@ -453,10 +453,10 @@ template<> size_t inline Jupiter::CString_Strict<wchar_t>::vformat(const wchar_t
 		delete[] Jupiter::CString_Type<wchar_t>::base;
 		Jupiter::CString_Type<wchar_t>::base = new wchar_t[minLen + 1];
 	}
-	Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
+	Jupiter::String_Type<wchar_t>::str = Jupiter::CString_Type<wchar_t>::base;
 	Jupiter::CString_Type<wchar_t>::strLen = minLen;
-	vswprintf(Jupiter::CString_Type<wchar_t>::curr, Jupiter::CString_Type<wchar_t>::strLen, format, args);
-	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
+	vswprintf(Jupiter::String_Type<wchar_t>::str, Jupiter::CString_Type<wchar_t>::strLen, format, args);
+	Jupiter::String_Type<wchar_t>::str[Jupiter::CString_Type<wchar_t>::strLen] = 0;
 	return Jupiter::CString_Type<wchar_t>::strLen;
 }
 
@@ -477,15 +477,15 @@ template<> size_t inline Jupiter::CString_Strict<char>::avformat(const char *for
 	if (minLen < 0) return 0; // We simply can not work with this.
 
 	char *t = new char[minLen + Jupiter::CString_Type<char>::strLen + 1];
-	Jupiter::strcpy<char>(t, Jupiter::CString_Type<char>::curr);
+	Jupiter::strcpy<char>(t, Jupiter::String_Type<char>::str);
 	delete[] Jupiter::CString_Type<char>::base;
 	Jupiter::CString_Type<char>::base = t;
-	Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
+	Jupiter::String_Type<char>::str = Jupiter::CString_Type<char>::base;
 
-	minLen = vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, minLen, format, args);
+	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::CString_Type<char>::strLen, minLen, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<char>::strLen += minLen;
-	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
+	Jupiter::String_Type<char>::str[Jupiter::CString_Type<char>::strLen] = 0;
 	return minLen;
 }
 
@@ -499,15 +499,15 @@ template<> size_t inline Jupiter::CString_Strict<wchar_t>::avformat(const wchar_
 	if (minLen < 0) return 0; // We simply can not work with this.
 
 	wchar_t *t = new wchar_t[minLen + Jupiter::CString_Type<wchar_t>::strLen + 1];
-	Jupiter::strcpy<wchar_t>(t, Jupiter::CString_Type<wchar_t>::curr);
+	Jupiter::strcpy<wchar_t>(t, Jupiter::String_Type<wchar_t>::str);
 	delete[] Jupiter::CString_Type<wchar_t>::base;
 	Jupiter::CString_Type<wchar_t>::base = t;
-	Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
+	Jupiter::String_Type<wchar_t>::str = Jupiter::CString_Type<wchar_t>::base;
 
-	minLen = vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, minLen, format, args);
+	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::CString_Type<wchar_t>::strLen, minLen, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<wchar_t>::strLen += minLen;
-	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
+	Jupiter::String_Type<wchar_t>::str[Jupiter::CString_Type<wchar_t>::strLen] = 0;
 	return minLen;
 }
 
@@ -530,7 +530,7 @@ template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::subs
 {
 	Jupiter::CString_Strict<T> r;
 	r.setString(new char[length + 1], length);
-	r.strLen = Jupiter::strlen<T>(Jupiter::strcpy<T>(r.curr, Jupiter::CString_Type<T>::curr + pos, length));
+	r.strLen = Jupiter::strlen<T>(Jupiter::strcpy<T>(r.str, Jupiter::String_Type<T>::str + pos, length));
 	return r;
 }
 
@@ -572,13 +572,13 @@ template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::getW
 	r.strLen = y - x;
 	delete[] r.base;
 	r.base = new char[r.strLen + 1];
-	r.curr = r.base;
+	r.str = r.base;
 	for (i = 0; x < y; i++)
 	{
-		r.curr[i] = in[x];
+		r.str[i] = in[x];
 		x++;
 	}
-	r.curr[r.strLen] = 0;
+	r.str[r.strLen] = 0;
 	return r;
 }
 
@@ -622,9 +622,9 @@ template<typename T> size_t Jupiter::CString_Strict<T>::set(const String_Type<T>
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = new T[sSize + 1];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 	return sSize;
 }
 
@@ -636,9 +636,9 @@ template<typename T> size_t Jupiter::CString_Strict<T>::set(const std::basic_str
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = new T[sSize + 1];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 	return sSize;
 }
 
@@ -650,9 +650,9 @@ template<typename T> size_t Jupiter::CString_Strict<T>::set(const T *in)
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = new T[sSize + 1];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in);
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
 	return sSize;
 }
 
@@ -660,8 +660,8 @@ template<typename T> size_t Jupiter::CString_Strict<T>::set(const T in)
 {
 	if (in == 0)
 	{
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 		return Jupiter::CString_Type<T>::strLen = 0;
 	}
 	if (Jupiter::CString_Type<T>::strLen < 1)
@@ -669,9 +669,9 @@ template<typename T> size_t Jupiter::CString_Strict<T>::set(const T in)
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = new T[2];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	*Jupiter::CString_Type<T>::curr = in;
-	Jupiter::CString_Type<T>::curr[1] = 0;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	*Jupiter::String_Type<T>::str = in;
+	Jupiter::String_Type<T>::str[1] = 0;
 	return Jupiter::CString_Type<T>::strLen = 1;
 }
 
@@ -684,7 +684,7 @@ template<typename T> size_t Jupiter::CString_Strict<T>::setString(T *in, size_t 
 {
 	delete[] Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::base = in;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	return Jupiter::CString_Type<T>::strLen = size;
 }
 
@@ -692,11 +692,11 @@ template<typename T> size_t Jupiter::CString_Strict<T>::concat(const String_Type
 {
 	size_t nSize = Jupiter::CString_Type<T>::strLen + in.size();
 	T *tmp = new T[nSize + 1];
-	Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+	Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 	Jupiter::strcpy<T>(tmp + Jupiter::CString_Type<T>::strLen, in.c_str());
 	delete[] Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::base = tmp;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = nSize;
 	return nSize;
 }
@@ -705,11 +705,11 @@ template<typename T> size_t Jupiter::CString_Strict<T>::concat(const std::basic_
 {
 	size_t nSize = Jupiter::CString_Type<T>::strLen + in.size();
 	T *tmp = new T[nSize + 1];
-	Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+	Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 	Jupiter::strcpy<T>(tmp + Jupiter::CString_Type<T>::strLen, in.c_str());
 	delete[] Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::base = tmp;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = nSize;
 	return nSize;
 }
@@ -718,11 +718,11 @@ template<typename T> size_t Jupiter::CString_Strict<T>::concat(const T *in)
 {
 	size_t nSize = Jupiter::CString_Type<T>::strLen + Jupiter::strlen<T>(in);
 	T *tmp = new T[nSize + 1];
-	Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+	Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 	Jupiter::strcpy<T>(tmp + Jupiter::CString_Type<T>::strLen, in);
 	delete[] Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::base = tmp;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = nSize;
 	return nSize;
 }
@@ -731,12 +731,12 @@ template<typename T> size_t Jupiter::CString_Strict<T>::concat(const T c)
 {
 	size_t nSize = Jupiter::CString_Type<T>::strLen + 1;
 	T *tmp = new T[nSize + 1];
-	Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+	Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 	tmp[nSize - 1] = c;
 	tmp[nSize] = 0;
 	delete[] Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::base = tmp;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = nSize;
 	return nSize;
 }
@@ -750,8 +750,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose()
 {
 	Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	*Jupiter::CString_Type<T>::curr = 0;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	*Jupiter::String_Type<T>::str = 0;
 	Jupiter::CString_Type<T>::strLen = 0;
 }
 
@@ -759,8 +759,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const Jupiter::CSt
 {
 	Jupiter::CString_Loose<T>::strSize = in.strSize;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.curr);
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.str);
 	Jupiter::CString_Type<T>::strLen = in.strLen;
 }
 
@@ -770,8 +770,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const Jupiter::Str
 	Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::CString_Type<T>::strLen + 1);
 	if (Jupiter::CString_Loose<T>::strSize < 8) Jupiter::CString_Loose<T>::strSize = 8;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 }
 
 template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const std::basic_string<T> &in)
@@ -780,8 +780,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const std::basic_s
 	Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::CString_Type<T>::strLen + 1);
 	if (Jupiter::CString_Loose<T>::strSize < 8) Jupiter::CString_Loose<T>::strSize = 8;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 }
 
 template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in)
@@ -790,8 +790,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in)
 	{
 		Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 		Jupiter::CString_Type<T>::strLen = 0;
 	}
 	else
@@ -800,8 +800,8 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in)
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::CString_Type<T>::strLen + 1);
 		if (Jupiter::CString_Loose<T>::strSize < 8) Jupiter::CString_Loose<T>::strSize = 8;
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
 	}
 }
 
@@ -809,17 +809,17 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T in)
 {
 	Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
 	Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	if (in == 0)
 	{
 		Jupiter::CString_Type<T>::strLen = 0;
-		*Jupiter::CString_Type<T>::curr = 0;
+		*Jupiter::String_Type<T>::str = 0;
 	}
 	else
 	{
 		Jupiter::CString_Type<T>::strLen = 1;
-		*Jupiter::CString_Type<T>::curr = in;
-		Jupiter::CString_Type<T>::curr[1] = 0;
+		*Jupiter::String_Type<T>::str = in;
+		Jupiter::String_Type<T>::str[1] = 0;
 	}
 }
 
@@ -842,10 +842,10 @@ template<> size_t inline Jupiter::CString_Loose<char>::vformat(const char *forma
 		Jupiter::CString_Loose<char>::strSize = getPowerTwo32(minLen + 1);
 		Jupiter::CString_Type<char>::base = new char[Jupiter::CString_Loose<char>::strSize];
 	}
-	Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
+	Jupiter::String_Type<char>::str = Jupiter::CString_Type<char>::base;
 	Jupiter::CString_Type<char>::strLen = minLen;
-	vsnprintf(Jupiter::CString_Type<char>::curr, Jupiter::CString_Loose<char>::strSize, format, args);
-	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
+	vsnprintf(Jupiter::String_Type<char>::str, Jupiter::CString_Loose<char>::strSize, format, args);
+	Jupiter::String_Type<char>::str[Jupiter::CString_Type<char>::strLen] = 0;
 	return Jupiter::CString_Type<char>::strLen;
 }
 
@@ -863,10 +863,10 @@ template<> size_t inline Jupiter::CString_Loose<wchar_t>::vformat(const wchar_t 
 		Jupiter::CString_Loose<wchar_t>::strSize = getPowerTwo32(minLen + 1);
 		Jupiter::CString_Type<wchar_t>::base = new wchar_t[Jupiter::CString_Loose<wchar_t>::strSize];
 	}
-	Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
+	Jupiter::String_Type<wchar_t>::str = Jupiter::CString_Type<wchar_t>::base;
 	Jupiter::CString_Type<wchar_t>::strLen = minLen;
-	vswprintf(Jupiter::CString_Type<wchar_t>::curr, Jupiter::CString_Loose<wchar_t>::strSize, format, args);
-	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
+	vswprintf(Jupiter::String_Type<wchar_t>::str, Jupiter::CString_Loose<wchar_t>::strSize, format, args);
+	Jupiter::String_Type<wchar_t>::str[Jupiter::CString_Type<wchar_t>::strLen] = 0;
 	return Jupiter::CString_Type<wchar_t>::strLen;
 }
 
@@ -888,20 +888,20 @@ template<> size_t inline Jupiter::CString_Loose<char>::avformat(const char *form
 	{
 		Jupiter::CString_Loose<char>::strSize = getPowerTwo32(minLen + 1);
 		char *tmpStr = new char[Jupiter::CString_Loose<char>::strSize];
-		Jupiter::strcpy<char>(tmpStr, Jupiter::CString_Type<char>::curr);
+		Jupiter::strcpy<char>(tmpStr, Jupiter::String_Type<char>::str);
 		delete[] Jupiter::CString_Type<char>::base;
 		Jupiter::CString_Type<char>::base = tmpStr;
-		Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
+		Jupiter::String_Type<char>::str = Jupiter::CString_Type<char>::base;
 	}
-	else if ((unsigned)minLen + 1 + (Jupiter::CString_Type<char>::curr - Jupiter::CString_Type<char>::base) > Jupiter::CString_Loose<char>::strSize)
+	else if ((unsigned)minLen + 1 + (Jupiter::String_Type<char>::str - Jupiter::CString_Type<char>::base) > Jupiter::CString_Loose<char>::strSize)
 	{
-		Jupiter::strcpy<char>(Jupiter::CString_Type<char>::base, Jupiter::CString_Type<char>::curr);
-		Jupiter::CString_Type<char>::curr = Jupiter::CString_Type<char>::base;
+		Jupiter::strcpy<char>(Jupiter::CString_Type<char>::base, Jupiter::String_Type<char>::str);
+		Jupiter::String_Type<char>::str = Jupiter::CString_Type<char>::base;
 	}
-	minLen = vsnprintf(Jupiter::CString_Type<char>::curr + Jupiter::CString_Type<char>::strLen, Jupiter::CString_Loose<char>::strSize - Jupiter::CString_Type<char>::strLen, format, args);
+	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::CString_Type<char>::strLen, Jupiter::CString_Loose<char>::strSize - Jupiter::CString_Type<char>::strLen, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<char>::strLen += minLen;
-	Jupiter::CString_Type<char>::curr[Jupiter::CString_Type<char>::strLen] = 0;
+	Jupiter::String_Type<char>::str[Jupiter::CString_Type<char>::strLen] = 0;
 	return minLen;
 }
 
@@ -918,20 +918,20 @@ template<> size_t inline Jupiter::CString_Loose<wchar_t>::avformat(const wchar_t
 	{
 		Jupiter::CString_Loose<wchar_t>::strSize = getPowerTwo32(minLen + 1);
 		wchar_t *tmpStr = new wchar_t[Jupiter::CString_Loose<wchar_t>::strSize];
-		Jupiter::strcpy<wchar_t>(tmpStr, Jupiter::CString_Type<wchar_t>::curr);
+		Jupiter::strcpy<wchar_t>(tmpStr, Jupiter::String_Type<wchar_t>::str);
 		delete[] Jupiter::CString_Type<wchar_t>::base;
 		Jupiter::CString_Type<wchar_t>::base = tmpStr;
-		Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
+		Jupiter::String_Type<wchar_t>::str = Jupiter::CString_Type<wchar_t>::base;
 	}
-	else if ((unsigned)minLen + 1 + (Jupiter::CString_Type<wchar_t>::curr - Jupiter::CString_Type<wchar_t>::base) > Jupiter::CString_Loose<wchar_t>::strSize)
+	else if ((unsigned)minLen + 1 + (Jupiter::String_Type<wchar_t>::str - Jupiter::CString_Type<wchar_t>::base) > Jupiter::CString_Loose<wchar_t>::strSize)
 	{
-		Jupiter::strcpy(Jupiter::CString_Type<wchar_t>::base, Jupiter::CString_Type<wchar_t>::curr);
-		Jupiter::CString_Type<wchar_t>::curr = Jupiter::CString_Type<wchar_t>::base;
+		Jupiter::strcpy(Jupiter::CString_Type<wchar_t>::base, Jupiter::String_Type<wchar_t>::str);
+		Jupiter::String_Type<wchar_t>::str = Jupiter::CString_Type<wchar_t>::base;
 	}
-	minLen = vswprintf(Jupiter::CString_Type<wchar_t>::curr + Jupiter::CString_Type<wchar_t>::strLen, Jupiter::CString_Loose<wchar_t>::strSize - Jupiter::CString_Type<wchar_t>::strLen, format, args);
+	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::CString_Type<wchar_t>::strLen, Jupiter::CString_Loose<wchar_t>::strSize - Jupiter::CString_Type<wchar_t>::strLen, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::CString_Type<wchar_t>::strLen += minLen;
-	Jupiter::CString_Type<wchar_t>::curr[Jupiter::CString_Type<wchar_t>::strLen] = 0;
+	Jupiter::String_Type<wchar_t>::str[Jupiter::CString_Type<wchar_t>::strLen] = 0;
 	return minLen;
 }
 
@@ -956,9 +956,9 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substr
 	r.strSize = getPowerTwo32(length + 1);
 	delete[] r.base;
 	r.base = new char[r.strSize];
-	r.curr = r.base;
+	r.str = r.base;
 	r.strLen = length;
-	Jupiter::strcpy<T>(r.curr, Jupiter::CString_Type<T>::curr + pos, length);
+	Jupiter::strcpy<T>(r.str, Jupiter::String_Type<T>::str + pos, length);
 	return r;
 }
 
@@ -1000,13 +1000,13 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::getWor
 	r.strSize = getPowerTwo32(r.strLen + 1);
 	delete[] r.base;
 	r.base = new char[r.strSize];
-	r.curr = r.base;
+	r.str = r.base;
 	for (i = 0; x < y; i++)
 	{
-		r.curr[i] = in[x];
+		r.str[i] = in[x];
 		x++;
 	}
-	r.curr[i] = 0;
+	r.str[i] = 0;
 	return r;
 }
 
@@ -1050,9 +1050,9 @@ template<typename T> size_t Jupiter::CString_Loose<T>::set(const CString_Loose<T
 		Jupiter::CString_Loose<T>::strSize = in.strSize;
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = in.strLen;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.curr);
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.str);
 	return Jupiter::CString_Type<T>::strLen;
 }
 
@@ -1065,9 +1065,9 @@ template<typename T> size_t Jupiter::CString_Loose<T>::set(const String_Type<T> 
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(sSize);
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize - 1;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 	return Jupiter::CString_Type<T>::strLen;
 }
 
@@ -1080,9 +1080,9 @@ template<typename T> size_t Jupiter::CString_Loose<T>::set(const std::basic_stri
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(sSize);
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize - 1;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in.c_str());
 	return Jupiter::CString_Type<T>::strLen;
 }
 
@@ -1095,9 +1095,9 @@ template<typename T> size_t Jupiter::CString_Loose<T>::set(const T *in)
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(sSize);
 		Jupiter::CString_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 	}
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	Jupiter::CString_Type<T>::strLen = sSize - 1;
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr, in);
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
 	return Jupiter::CString_Type<T>::strLen;
 }
 
@@ -1105,14 +1105,14 @@ template<typename T> size_t Jupiter::CString_Loose<T>::set(const T in)
 {
 	if (in == 0)
 	{
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-		*Jupiter::CString_Type<T>::curr = 0;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+		*Jupiter::String_Type<T>::str = 0;
 		return Jupiter::CString_Type<T>::strLen = 0;
 	}
 	Jupiter::CString_Type<T>::strLen = 1;
-	Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
-	*Jupiter::CString_Type<T>::curr = in;
-	Jupiter::CString_Type<T>::curr[1] = 0;
+	Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
+	*Jupiter::String_Type<T>::str = in;
+	Jupiter::String_Type<T>::str[1] = 0;
 	return 1;
 }
 
@@ -1123,17 +1123,17 @@ template<typename T> size_t Jupiter::CString_Loose<T>::concat(const String_Type<
 	{
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(nLen + 1);
 		T *tmp = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+		Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = tmp;
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	else if (nLen + 1 + (Jupiter::CString_Type<T>::curr - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
+	else if (nLen + 1 + (Jupiter::String_Type<T>::str - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
 	{
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::CString_Type<T>::curr);
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::String_Type<T>::str);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr + Jupiter::CString_Type<T>::strLen, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str + Jupiter::CString_Type<T>::strLen, in.c_str());
 	Jupiter::CString_Type<T>::strLen = nLen;
 	return Jupiter::CString_Type<T>::strLen;
 }
@@ -1145,17 +1145,17 @@ template<typename T> size_t Jupiter::CString_Loose<T>::concat(const std::basic_s
 	{
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(nLen + 1);
 		T *tmp = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+		Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = tmp;
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	else if (nLen + 1 + (Jupiter::CString_Type<T>::curr - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
+	else if (nLen + 1 + (Jupiter::String_Type<T>::str - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
 	{
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::CString_Type<T>::curr);
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::String_Type<T>::str);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr + Jupiter::CString_Type<T>::strLen, in.c_str());
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str + Jupiter::CString_Type<T>::strLen, in.c_str());
 	Jupiter::CString_Type<T>::strLen = nLen;
 	return Jupiter::CString_Type<T>::strLen;
 }
@@ -1167,17 +1167,17 @@ template<typename T> size_t Jupiter::CString_Loose<T>::concat(const T *in)
 	{
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(nLen + 1);
 		T *tmp = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+		Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = tmp;
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	else if (nLen + 1 + (Jupiter::CString_Type<T>::curr - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
+	else if (nLen + 1 + (Jupiter::String_Type<T>::str - Jupiter::CString_Type<T>::base) > Jupiter::CString_Loose<T>::strSize)
 	{
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::CString_Type<T>::curr);
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::String_Type<T>::str);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	Jupiter::strcpy<T>(Jupiter::CString_Type<T>::curr + Jupiter::CString_Type<T>::strLen, in);
+	Jupiter::strcpy<T>(Jupiter::String_Type<T>::str + Jupiter::CString_Type<T>::strLen, in);
 	Jupiter::CString_Type<T>::strLen = nLen;
 	return Jupiter::CString_Type<T>::strLen;
 }
@@ -1188,19 +1188,19 @@ template<typename T> size_t Jupiter::CString_Loose<T>::concat(const T in)
 	{
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::CString_Loose<T>::strSize + 1);
 		T *tmp = new T[Jupiter::CString_Loose<T>::strSize];
-		Jupiter::strcpy<T>(tmp, Jupiter::CString_Type<T>::curr);
+		Jupiter::strcpy<T>(tmp, Jupiter::String_Type<T>::str);
 		delete[] Jupiter::CString_Type<T>::base;
 		Jupiter::CString_Type<T>::base = tmp;
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	else if (Jupiter::CString_Type<T>::strLen + 1 + (Jupiter::CString_Type<T>::curr - Jupiter::CString_Type<T>::base) >= Jupiter::CString_Loose<T>::strSize)
+	else if (Jupiter::CString_Type<T>::strLen + 1 + (Jupiter::String_Type<T>::str - Jupiter::CString_Type<T>::base) >= Jupiter::CString_Loose<T>::strSize)
 	{
-		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::CString_Type<T>::curr);
-		Jupiter::CString_Type<T>::curr = Jupiter::CString_Type<T>::base;
+		Jupiter::strcpy<T>(Jupiter::CString_Type<T>::base, Jupiter::String_Type<T>::str);
+		Jupiter::String_Type<T>::str = Jupiter::CString_Type<T>::base;
 	}
-	Jupiter::CString_Type<T>::curr[Jupiter::CString_Type<T>::strLen] = in;
+	Jupiter::String_Type<T>::str[Jupiter::CString_Type<T>::strLen] = in;
 	Jupiter::CString_Type<T>::strLen++;
-	Jupiter::CString_Type<T>::curr[Jupiter::CString_Type<T>::strLen] = 0;
+	Jupiter::String_Type<T>::str[Jupiter::CString_Type<T>::strLen] = 0;
 	return Jupiter::CString_Type<T>::strLen;
 }
 

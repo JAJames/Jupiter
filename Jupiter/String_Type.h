@@ -245,6 +245,9 @@ namespace Jupiter
 		* A copy constructor for std::basic_string<T>.
 		* A copy constructor for C-style strings.
 		*/
+
+	protected:
+		T *str; /** Pointer for the underlying string of elements */
 	};
 
 	/** Generic String Type */

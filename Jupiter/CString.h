@@ -194,7 +194,7 @@ namespace Jupiter
 		bool contains(const T &value);
 
 		/** Access Operator */
-		inline T &operator[](size_t pos) { return Jupiter::CString_Type<T>::curr[pos]; };
+		inline T &operator[](size_t pos) { return Jupiter::String_Type<T>::str[pos]; };
 
 		/** Assignment Operators */
 		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
@@ -205,7 +205,6 @@ namespace Jupiter
 
 	protected:
 		T *base; /** Base pointer for the underlying C-style string */
-		T *curr; /** Active pointer for the underlying C-style string */
 		size_t strLen; /** Length of underlying C-style string */
 	};
 
