@@ -18,12 +18,12 @@
 #if !defined _BASE64_H_HEADER
 #define _BASE64_H_HEADER
 
-#include "Jupiter.h"
-
 /**
  * @file Base64.h
  * @brief Provides C and C++ functions to encode/decode using base64.
  */
+
+#include "Jupiter.h"
 
 #if defined __cplusplus
 

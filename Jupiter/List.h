@@ -18,12 +18,12 @@
 #if !defined _LIST_H_HEADER
 #define _LIST_H_HEADER
 
-#include "Jupiter.h"
-
 /**
-* @file List.h
-* @brief Provides a generic List interface.
-*/
+ * @file List.h
+ * @brief Provides a generic List interface.
+ */
+
+#include "Jupiter.h"
 
 namespace Jupiter
 {

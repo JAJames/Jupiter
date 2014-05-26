@@ -18,13 +18,13 @@
 #if !defined _ARRAYLIST_H_HEADER
 #define _ARRAYLIST_H_HEADER
 
+/**
+ * @file ArrayList.h
+ * @brief Provides an array-based list implementation using the List interface.
+ */
+
 #include "Jupiter.h"
 #include "List.h"
-
-/**
-* @file ArrayList.h
-* @brief Provides an array-based list implementation using the List interface.
-*/
 
 namespace Jupiter
 {

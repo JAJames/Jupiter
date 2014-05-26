@@ -18,12 +18,12 @@
 #if !defined _QUEUE_H_HEADER
 #define _QUEUE_H_HEADER
 
-#include "Jupiter.h"
-
 /**
-* @file Queue.h
-* @brief Provides a simple and efficient queue.
-*/
+ * @file Queue.h
+ * @brief Provides a simple and efficient queue.
+ */
+
+#include "Jupiter.h"
 
 namespace Jupiter
 {

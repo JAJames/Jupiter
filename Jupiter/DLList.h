@@ -18,13 +18,13 @@
 #if !defined _DLLIST_H_HEADER
 #define _DLLIST_H_HEADER
 
+/**
+ * @file DLList.h
+ * @brief Provides a generic Doubly Linked List implementation using the List interface.
+ */
+
 #include "Jupiter.h"
 #include "List.h"
-
-/**
-* @file DLList.h
-* @brief Provides a generic Doubly Linked List implementation using the List interface.
-*/
 
 namespace Jupiter
 {

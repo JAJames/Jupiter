@@ -18,12 +18,12 @@
 #if !defined _SECURESOCKET_H_HEADER
 #define _SECURESOCKET_H_HEADER
 
-#include "Socket.h"
-
 /**
  * @file SecureSocket.h
  * @brief Provides an OpenSSL implementation on the Socket interface.
  */
+
+#include "Socket.h"
 
 namespace Jupiter
 {

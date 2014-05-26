@@ -18,13 +18,13 @@
 #if !defined _SLLIST_H_HEADER
 #define _SLLIST_H_HEADER
 
+/**
+ * @file SLList.h
+ * @brief Provides a generic Singly Linked List implementation using the List interface.
+ */
+
 #include "Jupiter.h"
 #include "List.h"
-
-/**
-* @file SLList.h
-* @brief Provides a generic Singly Linked List implementation using the List interface.
-*/
 
 namespace Jupiter
 {
