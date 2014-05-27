@@ -549,3 +549,186 @@ char *getTime()
 	strftime(rtime, sizeof(rtime), "%a %b %d %H:%M:%S %Y %Z", localtime(&rawtime));
 	return rtime;
 }
+
+
+
+/** Character to integer conversion table */
+
+const unsigned char baseTable[] =
+{
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 127, 127, 127, 127, 127, 127,
+	127, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 127, 127, 127, 127, 127,
+	127, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 127, 127, 127, 127, 127,
+
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+	127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
+};
+
+/** Single character functions */
+
+bool isBase(unsigned char c, int base)
+{
+	return baseTable[c] < base;
+}
+
+bool isHex(unsigned char c)
+{
+	return isBase(c, 16);
+}
+
+bool isDecimal(unsigned char c)
+{
+	return isBase(c, 10);
+}
+
+int getBase(unsigned char c, int base)
+{
+	c = baseTable[c];
+	if (c < base) return c;
+	return -1;
+}
+
+/** Unsafe string converters */
+
+int strtoi(const char *str, int base)
+{
+	while (isspace(*str)) str++;
+	return strtoi_nospace(str, base);
+}
+
+unsigned int strtoui(const char *str, int base)
+{
+	while (isspace(*str)) str++;
+	return strtoi_nospace(str, base);
+}
+
+int strtoi_nospace(const char *str, int base)
+{
+	if (*str != '-') return strtoui_nospace(str, base);
+	return -1 * strtoui_nospace(++str, base);
+}
+
+unsigned int strtoui_nospace(const char *str, int base)
+{
+	unsigned int total = 0;
+	int tval;
+	if (*str == '-') return strtoi_nospace(str, base);
+
+	if (*str == '+') str++;
+
+	if (base == 0) // Guess a base.
+	{
+		if (*str == '0')
+		{
+			str++;
+			if (*str == 'x' || *str == 'X')
+			{
+				str++;
+				base = 16;
+			}
+			else base = 8;
+		}
+		else base = 10;
+	}
+	else if (base == 16) // check for optional preceeding hexadecimal prefix.
+	{
+		if (*str == '0')
+		{
+			str++;
+			if (*str == 'x' || *str == 'X') str++;
+		}
+	}
+
+	while ((tval = getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		str++;
+	}
+
+	return total;
+}
+
+/** Safe string converters */
+
+int strtoi_s(const char *str, size_t length, int base)
+{
+	while (isspace(*str))
+	{
+		str++;
+		length--;
+	}
+	return strtoi_nospace_s(str, length, base);
+}
+
+unsigned int strtoui_s(const char *str, size_t length, int base)
+{
+	while (isspace(*str))
+	{
+		str++;
+		length--;
+	}
+	return strtoui_nospace_s(str, length, base);
+}
+
+signed int strtoi_nospace_s(const char *str, size_t length, int base)
+{
+	if (length == 0) return 0;
+	if (*str != '-') return strtoui_nospace_s(str, length, base);
+	return -1 * strtoui_nospace_s(++str, --length, base);
+}
+
+unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
+{
+	unsigned int total = 0;
+	int tval;
+	if (length == 0) return total;
+	if (*str == '-') return strtoi_nospace(str, base);
+
+	if (*str == '+')
+	{
+		if (--length == 0) return total;
+		str++;
+	}
+
+	if (base == 0) // Guess a base.
+	{
+		if (*str == '0')
+		{
+			if (--length == 0) return total;
+			str++;
+			if (*str == 'x' || *str == 'X')
+			{
+				if (--length == 0) return total;
+				str++;
+				base = 16;
+			}
+			else base = 8;
+		}
+		else base = 10;
+	}
+	else if (base == 16) // check for optional preceeding hexadecimal prefix.
+	{
+		if (*str == '0')
+		{
+			if (--length == 0) return total;
+			str++;
+			if (*str == 'x' || *str == 'X')
+			{
+				if (--length == 0) return total;
+				str++;
+			}
+		}
+	}
+
+	while ((tval = getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		if (--length == 0) return total;
+		str++;
+	}
+
+	return total;
+}
