@@ -18,15 +18,14 @@
 #if !defined _CSTRING_H_HEADER
 #define _CSTRING_H_HEADER
 
-#include <stdarg.h>
-#include "String_Type.h"
-
 /**
  * @file CString.h
  * @brief Defines the base CString_Type, as well as a series of CString types.
  * Note: Functions which take "case" or "wildcards" into consideration will only function
  * for types char and wchar_t; inputs with other types will simply return false.
  */
+
+#include "Shift_String.h"
 
 namespace Jupiter
 {
@@ -36,7 +35,7 @@ namespace Jupiter
 	*
 	* @param T Element type which the CString will store. Defaults to char.
 	*/
-	template<typename T = char> class CString_Type : public String_Type<T>
+	template<typename T = char> class CString_Type : public Shift_String_Type<T>
 	{
 	public:
 
@@ -48,80 +47,13 @@ namespace Jupiter
 		const T *c_str() const;
 
 		/**
-		* @brief Returns the number of elements in the CString.
-		*
-		* @return Number of elements in the string.
-		*/
-		size_t size() const;
-
-		/**
-		* @brief Compares another string against the CString.
-		*
-		* @param in String to compare against.
-		* @return 0 if the strings are equal, negative if the first mismatched character is greater in the CString, or positive if it's less.
-		*/
-		int compare(const String_Type<T> &in) const;
-		int compare(const std::basic_string<T> &in) const;
-		int compare(const T *in) const;
-		int compare(const T in) const;
-
-		/**
-		* @brief Checks if the strings are equal.
-		* Note: Case sensitive.
-		*
-		* @param in String to compare against.
-		* @return True if the contents of the strings are equal, false otherwise.
-		*/
-		bool equals(const String_Type<T> &in) const;
-		bool equals(const std::basic_string<T> &in) const;
-		bool equals(const T *in) const;
-		bool equals(const T in) const;
-
-		/**
-		* @brief Checks if the strings are equal.
-		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param in String to compare against.
-		* @return True if the contents of the strings are equal, false otherwise.
-		*/
-		bool equalsi(const String_Type<T> &in) const;
-		bool equalsi(const std::basic_string<T> &in) const;
-		bool equalsi(const T *in) const;
-		bool equalsi(const T in) const;
-
-		/**
-		* @brief Checks if the CString matches a wildcard format.
-		* Note: Case sensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @return True if the CString matches the wildcard format, false otherwise.
-		*/
-		bool match(const String_Type<T> &format) const;
-		bool match(const std::basic_string<T> &format) const;
-		bool match(const T *format) const;
-
-		/**
-		* @brief Checks if the CString matches a wildcard format.
-		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @return True if the CString matches the wildcard format, false otherwise.
-		*/
-		bool matchi(const String_Type<T> &format) const;
-		bool matchi(const std::basic_string<T> &format) const;
-		bool matchi(const T *format) const;
-
-		/**
 		* @brief Sets the CString's contents based on the format string and input variables.
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
 		* @param format Format that the string is compared against.
-		* @param ... Inputs to match the format specifiers.
+		* @param args Variable arguments list to match the format specifiers.
 		* @return Number of characters written.
 		*/
-		virtual size_t format(const String_Type<T> &format, ...);
-		virtual size_t format(const std::basic_string<T> &format, ...);
-		virtual size_t format(const T *format, ...);
 		virtual size_t vformat(const T *format, va_list args) = 0;
 
 		/**
@@ -129,21 +61,10 @@ namespace Jupiter
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
 		* @param format Format that the string is compared against.
-		* @param ... Inputs to match the format specifiers.
+		* @param args Variable arguments list to match the format specifiers.
 		* @return Number of characters written.
 		*/
-		virtual size_t aformat(const String_Type<T> &format, ...);
-		virtual size_t aformat(const std::basic_string<T> &format, ...);
-		virtual size_t aformat(const T *format, ...);
 		virtual size_t avformat(const T *format, va_list args) = 0;
-
-		/**
-		* @brief Counts the number of token deliminated words.
-		*
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return Number of words found.
-		*/
-		unsigned int wordCount(const T *whitespace) const;
 
 		/**
 		* @brief Truncates the string by a specified number of elements.
@@ -154,30 +75,6 @@ namespace Jupiter
 		size_t truncate(size_t n);
 
 		/**
-		* @brief Fetches an element from the string.
-		*
-		* @param index Index of the element to return.
-		* @return The element located at the specified index.
-		*/
-		T &get(size_t index) const;
-
-		/**
-		* @brief Shifts the string pointer to the left.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted to the left.
-		*/
-		size_t shiftLeft(size_t length);
-
-		/**
-		* @brief Shifts the string pointer to the right.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted.
-		*/
-		size_t shiftRight(size_t length);
-
-		/**
 		* @brief Removes the first instance of an element from the string.
 		*
 		* @param value Value of the element to remove.
@@ -185,27 +82,12 @@ namespace Jupiter
 		*/
 		bool remove(T &value);
 
-		/**
-		* @brief Checks if the string contains an element with the specified value.
-		*
-		* @param value Value of the element to search for.
-		* @return True if a match is found, false otherwise.
-		*/
-		bool contains(const T &value);
-
-		/** Access Operator */
-		inline T &operator[](size_t pos) { return Jupiter::String_Type<T>::str[pos]; };
-
 		/** Assignment Operators */
 		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const T right) { this->set(right); return *this; };
-
-	protected:
-		T *base; /** Base pointer for the underlying C-style string */
-		size_t strLen; /** Length of underlying C-style string */
 	};
 
 	/**
@@ -252,10 +134,37 @@ namespace Jupiter
 		* @brief Creates a partial copy of the string.
 		*
 		* @param pos Position in the string to start copying from.
+		* @return String containing a partial copy of the original string.
+		*/
+		CString_Strict<T> substring(size_t pos) const;
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param pos Position in the string to start copying from.
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
 		CString_Strict<T> substring(size_t pos, size_t length) const;
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @return String containing a partial copy of the original string.
+		*/
+		static CString_Strict<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @param length Number of characters to copy.
+		* @return String containing a partial copy of the original string.
+		*/
+		static CString_Strict<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
 
 		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
@@ -351,11 +260,10 @@ namespace Jupiter
 		CString_Strict();
 
 		/** Copy Constructors */
-		CString_Strict(const CString_Strict &in);
 		CString_Strict(const String_Type<T> &in);
 		CString_Strict(const std::basic_string<T> &in);
 		CString_Strict(const T *in);
-		CString_Strict(const T in);
+		CString_Strict(size_t size);
 
 		/** Destructor */
 		virtual ~CString_Strict();
@@ -413,10 +321,37 @@ namespace Jupiter
 		* @brief Creates a partial copy of the string.
 		*
 		* @param pos Position in the string to start copying from.
+		* @return String containing a partial copy of the original string.
+		*/
+		CString_Loose<T> substring(size_t pos) const;
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param pos Position in the string to start copying from.
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
 		CString_Loose<T> substring(size_t pos, size_t length) const;
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @return String containing a partial copy of the original string.
+		*/
+		static CString_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+
+		/**
+		* @brief Creates a partial copy of the string.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @param length Number of characters to copy.
+		* @return String containing a partial copy of the original string.
+		*/
+		static CString_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
 
 		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
@@ -494,12 +429,18 @@ namespace Jupiter
 		/** Default constructor */
 		CString_Loose();
 
+		/**
+		* @brief Size hint constructor.
+		*
+		* @param size Minimum size of new string's buffer.
+		*/
+		CString_Loose(size_t size);
+
 		/** Copy Constructors */
 		CString_Loose(const CString_Loose &in);
 		CString_Loose(const String_Type<T> &in);
 		CString_Loose(const std::basic_string<T> &in);
 		CString_Loose(const T *in);
-		CString_Loose(const T in);
 		
 		/** Destructor */
 		virtual ~CString_Loose();
@@ -545,8 +486,8 @@ namespace Jupiter
 	/** Empty String constants */
 	static const Jupiter::CStringS emptyCStringS;
 	static const Jupiter::CStringS emptyCStringL;
-	static const Jupiter::CStringS &emptyCString = emptyCStringS;
-	static const Jupiter::CStringS &emptyString = emptyCString;
+	static const Jupiter::CStringType &emptyCString = emptyCStringS;
+	static const Jupiter::StringType &emptyString = emptyCString;
 }
 
 /** Implementation for CString_Type, CString_Strict, and CString_Loose. Very scary. */
