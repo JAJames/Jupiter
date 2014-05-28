@@ -465,7 +465,7 @@ namespace Jupiter
 
 	/** Empty String constants */
 	static const Jupiter::CStringS emptyCStringS;
-	static const Jupiter::CStringS emptyCStringL;
+	static const Jupiter::CStringL emptyCStringL;
 	static const Jupiter::CStringType &emptyCString = emptyCStringS;
 	static const Jupiter::StringType &emptyString = emptyCString;
 }
