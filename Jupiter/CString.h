@@ -47,26 +47,6 @@ namespace Jupiter
 		const T *c_str() const;
 
 		/**
-		* @brief Sets the CString's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param args Variable arguments list to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		virtual size_t vformat(const T *format, va_list args) = 0;
-
-		/**
-		* @brief Appends to a CString's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param args Variable arguments list to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		virtual size_t avformat(const T *format, va_list args) = 0;
-
-		/**
 		* @brief Truncates the string by a specified number of elements.
 		*
 		* @param n Number of elements to remove from the tail.
