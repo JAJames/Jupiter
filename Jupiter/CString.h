@@ -471,6 +471,6 @@ namespace Jupiter
 }
 
 /** Implementation for CString_Type, CString_Strict, and CString_Loose. Very scary. */
-#include "CString_IMP.h"
+#include "CString_Imp.h"
 
 #endif // _CSTRING_H_HEADER
