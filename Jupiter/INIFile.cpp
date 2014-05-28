@@ -328,11 +328,7 @@ void Jupiter::INIFile::flushData()
 // TODO: Rewrite this.
 unsigned int Jupiter::INIFile::readFile(const char *fileName)
 {
-	int count = 0;
-	if (Jupiter::INIFile::data_->fName.size() != 0)
-	{
-		Jupiter::INIFile::data_->fName = "";
-	}
+	unsigned int count = 0;
 	Jupiter::INIFile::data_->fName = fileName;
 	FILE *file = fopen(Jupiter::INIFile::data_->fName.c_str(), "rb");
 	if (file == nullptr) return Jupiter::ERROR_INDICATOR;
@@ -394,16 +390,16 @@ bool Jupiter::INIFile::sync(const char *fileName)
 	{
 		section = Jupiter::INIFile::data_->data.get(a);
 		fputc('[', file);
-		fputs(section->getName().c_str(), file);
+		section->getName().print(file);
 		fputs("]" ENDL, file);
 
 		sectionSize = section->size();
 		for (unsigned int b = 0; b < sectionSize; b++)
 		{
 			pair = section->getPair(b);
-			fputs(pair->getKey().c_str(), file);
+			pair->getKey().print(file);
 			fputc('=', file);
-			fputs(pair->getValue().c_str(), file);
+			pair->getValue().print(file);
 			fputs(ENDL, file);
 		}
 		fputs(ENDL, file);

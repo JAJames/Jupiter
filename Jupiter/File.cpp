@@ -199,8 +199,7 @@ bool Jupiter::File::sync(FILE *file)
 {
 	for (unsigned int i = 0; i < Jupiter::File::data_->lineCount; i++)
 	{
-		fputs(Jupiter::File::data_->lines[i].c_str(), file);
-		fputs(ENDL, file);
+		Jupiter::File::data_->lines[i].println(file);
 	}
 	return true;
 }
