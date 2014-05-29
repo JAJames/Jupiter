@@ -429,7 +429,7 @@ Jupiter::IRC::Client::Channel *Jupiter::IRC::Client::getChannel(unsigned int ind
 
 Jupiter::IRC::Client::Channel *Jupiter::IRC::Client::getChannel(const char *chanName) const
 {
-	unsigned int index = Jupiter::IRC::Client::getChannelIndex(chanName);
+	int index = Jupiter::IRC::Client::getChannelIndex(chanName);
 	if (index < 0) return nullptr;
 	return Jupiter::IRC::Client::getChannel(index);
 }
