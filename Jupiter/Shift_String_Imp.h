@@ -24,21 +24,21 @@
  * Note: Modification of this file is not supported in any way.
  */
 
-template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftLeft(size_t length)
+template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftLeft(size_t len)
 {
 	size_t offset = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
 	if (length > offset) length = offset;
-	Jupiter::String_Type<T>::str -= length;
-	Jupiter::String_Type<T>::length += length;
+	Jupiter::String_Type<T>::str -= len;
+	Jupiter::String_Type<T>::length += len;
 	return length;
 }
 
-template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftRight(size_t length)
+template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftRight(size_t len)
 {
 	if (length > Jupiter::String_Type<T>::length) length = Jupiter::String_Type<T>::length;
-	Jupiter::String_Type<T>::str += length;
-	Jupiter::String_Type<T>::length -= length;
-	return length;
+	Jupiter::String_Type<T>::str += len;
+	Jupiter::String_Type<T>::length -= len;
+	return len;
 }
 
 #endif // _SHIFT_STRING_IMP_H_HEADER

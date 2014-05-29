@@ -27,6 +27,17 @@
 #include "Functions.h"
 #include "CString.h"
 
+#if !defined va_copy
+
+#if defined __INTEL_COMPILER
+#pragma message("Warning: va_copy not properly defined. Assuming common implementation.")
+#define va_copy(dst, src) ((void)((dst) = (src)))
+#else
+#error "va_copy not defined."
+#endif // __INTEL_COMPILER
+
+#endif // va_copy
+
 /**
 * IMPLEMENTATION:
 *	CString_Type
@@ -247,9 +258,9 @@ template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::subs
 	return Jupiter::CString_Strict<T>::substring(*this, pos, Jupiter::String_Type<T>::length - pos);
 }
 
-template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::substring(size_t pos, size_t length) const
+template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::substring(size_t pos, size_t len) const
 {
-	return Jupiter::CString_Strict<T>::substring(*this, pos, length);
+	return Jupiter::CString_Strict<T>::substring(*this, pos, len);
 }
 
 template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::substring(const Jupiter::String_Type<T> &in, size_t pos)
@@ -263,13 +274,13 @@ template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::subs
 	return r;
 }
 
-template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length)
+template<typename T> Jupiter::CString_Strict<T> Jupiter::CString_Strict<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len)
 {
 	if (pos > in.size()) return Jupiter::CString_Strict<T>();
-	if (length > in.size() - pos) length = in.size() - pos;
-	Jupiter::CString_Strict<T> r = Jupiter::CString_Strict<T>(length);
+	if (len > in.size() - pos) len = in.size() - pos;
+	Jupiter::CString_Strict<T> r = Jupiter::CString_Strict<T>(len);
 	size_t index;
-	for (index = 0; index != length && in.get(index + pos) != 0; index++) r.str[index] = in.get(index + pos);
+	for (index = 0; index != len && in.get(index + pos) != 0; index++) r.str[index] = in.get(index + pos);
 	r.str[index] = 0;
 	r.length = index;
 	return r;
@@ -724,13 +735,13 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substr
 	return r;
 }
 
-template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length)
+template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len)
 {
 	if (pos > in.size()) return Jupiter::CString_Loose<T>();
-	if (length > in.size() - pos) length = in.size() - pos;
-	Jupiter::CString_Loose<T> r = Jupiter::CString_Loose<T>(length);
+	if (len > in.size() - pos) len = in.size() - pos;
+	Jupiter::CString_Loose<T> r = Jupiter::CString_Loose<T>(len);
 	size_t index;
-	for (index = 0; index != length && in.get(index + pos) != 0; index++) r.str[index] = in.get(index + pos);
+	for (index = 0; index != len && in.get(index + pos) != 0; index++) r.str[index] = in.get(index + pos);
 	r.str[index] = 0;
 	r.length = index;
 	return r;
