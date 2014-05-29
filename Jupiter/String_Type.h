@@ -211,6 +211,22 @@ namespace Jupiter
 		virtual size_t avformat(const T *format, va_list args) = 0;
 
 		/**
+		* @brief Truncates the string by a specified number of elements.
+		*
+		* @param n Number of elements to remove from the tail.
+		* @return New size of the String.
+		*/
+		virtual size_t truncate(size_t n);
+
+		/**
+		* @brief Removes the first instance of an element from the string.
+		*
+		* @param value Value of the element to remove.
+		* @return True if an element was removed, false otherwise.
+		*/
+		virtual bool remove(const T &value);
+
+		/**
 		* @brief Copies the data from the input string to the String.
 		*
 		* @param in String containing the data to be copied.
@@ -231,14 +247,6 @@ namespace Jupiter
 		virtual size_t concat(const std::basic_string<T> &in) = 0;
 		virtual size_t concat(const T *in) = 0;
 		virtual size_t concat(const T in) = 0;
-
-		/**
-		* @brief Truncates the string by a specified number of elements.
-		*
-		* @param n Number of elements to remove from the tail.
-		* @return New size of the String.
-		*/
-		virtual size_t truncate(size_t n) = 0;
 
 		/** Access operator */
 		inline T &operator[](size_t index) { return Jupiter::String_Type<T>::get(index); };

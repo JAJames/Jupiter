@@ -50,37 +50,16 @@ template<typename T> const T *Jupiter::CString_Type<T>::c_str() const
 
 template<typename T> size_t Jupiter::CString_Type<T>::truncate(size_t n)
 {
-	if (n >= Jupiter::String_Type<T>::length)
-	{
-		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
-		*Jupiter::String_Type<T>::str = 0;
-		Jupiter::String_Type<T>::length = 0;
-		return 0;
-	}
-	Jupiter::String_Type<T>::length -= n;
-	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = 0;
+	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::truncate(n)] = 0;
 	return Jupiter::String_Type<T>::length;
 }
 
-template<typename T> bool Jupiter::CString_Type<T>::remove(T &value)
+template<typename T> bool Jupiter::CString_Type<T>::remove(const T &value)
 {
-	for (unsigned int i = 0; i < Jupiter::String_Type<T>::length; i++)
+	if (Jupiter::Shift_String_Type<T>::remove(value))
 	{
-		if (Jupiter::String_Type<T>::str[i] == value)
-		{
-			if (i == Jupiter::String_Type<T>::length - 1) Jupiter::CString_Type<T>::truncate(1);
-			else if (i == 0)
-			{
-				if (Jupiter::String_Type<T>::length == 1) Jupiter::CString_Type<T>::truncate(1);
-				else Jupiter::CString_Type<T>::shiftRight(1);
-			}
-			else
-			{
-				Jupiter::strcpy<T>(Jupiter::String_Type<T>::str + i, Jupiter::String_Type<T>::str + i + 1);
-				Jupiter::String_Type<T>::length--;
-			}
-			return true;
-		}
+		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = 0;
+		return true;
 	}
 	return false;
 }

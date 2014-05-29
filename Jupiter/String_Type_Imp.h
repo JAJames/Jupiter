@@ -659,4 +659,37 @@ template<typename T> size_t Jupiter::String_Type<T>::aformat(const T *format, ..
 	return r;
 }
 
+// truncate base
+
+template<typename T> size_t Jupiter::String_Type<T>::truncate(size_t n)
+{
+	if (n >= Jupiter::String_Type<T>::length) return (Jupiter::String_Type<T>::length = 0);
+	return (Jupiter::String_Type<T>::length -= n);
+}
+
+// remove base
+
+template<typename T> bool Jupiter::String_Type<T>::remove(const T &value)
+{
+	for (unsigned int i = 0; i < Jupiter::String_Type<T>::length - 1; i++)
+	{
+		if (Jupiter::String_Type<T>::str[i] == value)
+		{
+			while (i < Jupiter::String_Type<T>::length)
+			{
+				i++;
+				Jupiter::String_Type<T>::str[i - 1] = Jupiter::String_Type<T>::str[i];
+			}
+			Jupiter::String_Type<T>::length--;
+			return true;
+		}
+	}
+	if (Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length - 1] == value)
+	{
+		this->truncate(1);
+		return true;
+	}
+	return false;
+}
+
 #endif // _STRING_TYPE_IMP_H_HEADER

@@ -41,4 +41,16 @@ template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftRight(size_t len
 	return len;
 }
 
+template<typename T> bool Jupiter::Shift_String_Type<T>::remove(const T &value)
+{
+	if (Jupiter::String_Type<T>::length == 0) return false;
+	if (*Jupiter::String_Type<T>::str == value)
+	{
+		if (Jupiter::String_Type<T>::length == 1) this->truncate(1);
+		else this->shiftRight(1);
+		return true;
+	}
+	return Jupiter::String_Type<T>::remove(value);
+}
+
 #endif // _SHIFT_STRING_IMP_H_HEADER

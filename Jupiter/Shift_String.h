@@ -54,6 +54,14 @@ namespace Jupiter
 		*/
 		size_t shiftRight(size_t length);
 
+		/**
+		* @brief Removes the first instance of an element from the string.
+		*
+		* @param value Value of the element to remove.
+		* @return True if an element was removed, false otherwise.
+		*/
+		virtual bool remove(const T &value);
+
 	protected:
 		T *base; /** Base pointer for the underlying String's memory allocation */
 	};

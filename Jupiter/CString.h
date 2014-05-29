@@ -60,7 +60,7 @@ namespace Jupiter
 		* @param value Value of the element to remove.
 		* @return True if an element was removed, false otherwise.
 		*/
-		bool remove(T &value);
+		bool remove(const T &value);
 
 		/** Assignment Operators */
 		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
