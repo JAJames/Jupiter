@@ -223,6 +223,7 @@ namespace Jupiter
 		CString_Type(CString_Type<T> &&source);
 
 		/** Copy Constructors */
+		CString_Type(const CString_Type<T> &in) : CString_Type((String_Type<T> &)in) {}
 		CString_Type(const String_Type<T> &in);
 		CString_Type(const std::basic_string<T> &in);
 		CString_Type(const T *in);
