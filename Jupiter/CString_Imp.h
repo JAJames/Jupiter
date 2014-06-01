@@ -442,7 +442,7 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in) : Jup
 	{
 		Jupiter::String_Type<T>::length = Jupiter::strlen<T>(in);
 		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::String_Type<T>::length + 1);
-		if (Jupiter::CString_Loose<T>::strSize < 8) Jupiter::CString_Loose<T>::strSize = 8;
+		if (Jupiter::CString_Loose<T>::strSize < Jupiter::CString_Loose<T>::start_size) Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
 		Jupiter::Shift_String_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 		Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
@@ -495,7 +495,7 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::Format
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(size_t pos) const
 {
-	return Jupiter::CString_Loose<T>::substring(*this, pos, Jupiter::String_Type<T>::length - pos);
+	return Jupiter::CString_Loose<T>::substring(*this, pos);
 }
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(size_t pos, size_t length) const
@@ -507,10 +507,8 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substr
 {
 	if (pos > in.size()) return Jupiter::CString_Loose<T>();
 	Jupiter::CString_Loose<T> r = Jupiter::CString_Loose<T>(in.size() - pos);
-	size_t index;
-	for (index = pos; pos + index != in.size() && in.get(index) != 0; index++) r.str[index - pos] = in.get(index);
-	r.str[index - pos] = 0;
-	r.length = index;
+	for (r.length = 0; pos + r.length != in.size() && in.get(r.length) != 0; r.length++) r.str[r.length] = in.get(pos + r.length);
+	r.str[r.length] = 0;
 	return r;
 }
 
