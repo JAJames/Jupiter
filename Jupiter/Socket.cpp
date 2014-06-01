@@ -178,7 +178,7 @@ bool Jupiter::Socket::connectToHost(const char *hostname, unsigned short iPort, 
 	Jupiter::Socket::data_->port = iPort;
 	int i = 0;
 	static char portString[256];
-	sprintf(portString, "%u", Jupiter::Socket::data_->port);
+	sprintf(portString, "%hu", Jupiter::Socket::data_->port);
 	addrinfo *info = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host, portString);
 	while (info != nullptr)
 	{
@@ -213,7 +213,7 @@ bool Jupiter::Socket::bindToPort(const char *hostname, unsigned short iPort, boo
 	Jupiter::Socket::data_->port = iPort;
 	int i = 0;
 	static char portString[256];
-	sprintf(portString, "%u", Jupiter::Socket::data_->port);
+	sprintf(portString, "%hu", Jupiter::Socket::data_->port);
 	addrinfo *info = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host, portString);
 	while (info != nullptr)
 	{
