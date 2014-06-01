@@ -74,6 +74,8 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>Async</ExceptionHandling>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <DisableSpecificWarnings>4505</DisableSpecificWarnings>
+      <C99Support>true</C99Support>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,8 +135,13 @@
     <ClInclude Include="Rehash.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SecureSocket.h" />
+    <ClInclude Include="Shift_String.h" />
+    <ClInclude Include="Shift_String_Imp.h" />
     <ClInclude Include="SLList.h" />
     <ClInclude Include="Socket.h" />
+    <ClInclude Include="String.h" />
+    <ClInclude Include="String_Imp.h" />
+    <ClInclude Include="String_Type_Imp.h" />
     <ClInclude Include="String_Type.h" />
     <ClInclude Include="TCPSocket.h" />
     <ClInclude Include="Thinker.h" />

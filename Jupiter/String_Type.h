@@ -232,10 +232,10 @@ namespace Jupiter
 		* @param in String containing the data to be copied.
 		* @return New size of the String.
 		*/
-		virtual size_t set(const String_Type<T> &in) = 0;
-		virtual size_t set(const std::basic_string<T> &in) = 0;
-		virtual size_t set(const T *in) = 0;
-		virtual size_t set(const T in) = 0;
+		virtual size_t set(const String_Type<T> &in);
+		virtual size_t set(const std::basic_string<T> &in);
+		virtual size_t set(const T *in);
+		virtual size_t set(const T in);
 
 		/**
 		* @brief Copies the data from the input string and concatenates it to the end of String.
@@ -243,16 +243,66 @@ namespace Jupiter
 		* @param in String containing the data to be concatenated.
 		* @return New size of the CString.
 		*/
-		virtual size_t concat(const String_Type<T> &in) = 0;
-		virtual size_t concat(const std::basic_string<T> &in) = 0;
-		virtual size_t concat(const T *in) = 0;
-		virtual size_t concat(const T in) = 0;
+		virtual size_t concat(const String_Type<T> &in);
+		virtual size_t concat(const std::basic_string<T> &in);
+		virtual size_t concat(const T *in);
+		virtual size_t concat(const T in);
+
+		/**
+		* @brief Copies a part of an input string and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position to start copying from.
+		* @return Partial copy of the input string.
+		*/
+		template<template<typename> class R> static R<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		template<template<typename> class R> static R<T> substring(const T *in, size_t pos);
+
+		/**
+		* @brief Copies a part of an input string and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position to start copying from.
+		* @param len Number of elements to copy.
+		* @return Partial copy of the input string.
+		*/
+		template<template<typename> class R> static R<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len);
+		template<template<typename> class R> static R<T> substring(const T *in, size_t pos, size_t len);
+
+		/**
+		* @brief Copies a "word" from an input string and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the word to copy.
+		* @param whitespace String of characters that are to be considered whitespace.
+		* @return Copy of the word at the specified index on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		template<template<typename> class R> static R<T> getWord(const T *in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Copies a part of an input string starting at a specified "word" and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the word to start copying from.
+		* @param whitespace String of characters that are to be considered whitespace.
+		* @return Copy of the string starting at the specified word on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
 
 		/** Access operator */
 		inline T &operator[](size_t index) { return Jupiter::String_Type<T>::get(index); };
 
-		// Mutative operators.
-		// Note: All extending classes must overload operator= for its own type.
+		/** Mutative operators */
 		inline String_Type<T> &operator+=(const String_Type<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const std::basic_string<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const T *right) { this->concat(right); return *this; };
@@ -263,7 +313,7 @@ namespace Jupiter
 		inline String_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const T right) { this->set(right); return *this; };
 
-		// Comparative operators.
+		/** Comparative operators */
 		inline bool operator==(const String_Type<T> &right)const{ return this->equals(right); }
 		inline bool operator==(const std::basic_string<T> &right)const{ return this->equals(right); }
 		inline bool operator==(const T *right)const{ return this->equals(right); }
@@ -290,6 +340,16 @@ namespace Jupiter
 		inline bool operator>=(const T right)const{ return !operator<(right); }
 
 		/**
+		* @brief Default constructor for the String_Type class.
+		*/
+		String_Type() {}
+
+		/**
+		* @brief Move constructor for the String_Type class.
+		*/
+		String_Type(Jupiter::String_Type<T> &&source);
+
+		/**
 		* The following constructors should exist:
 		* A default constructor
 		* A copy constructor for the same class.
@@ -299,6 +359,25 @@ namespace Jupiter
 		*/
 
 	protected:
+
+		/**
+		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSize(size_t len) = 0;
+
+		/**
+		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSizeNoCopy(size_t len) = 0;
+
 		T *str; /** Pointer for the underlying string of elements */
 		size_t length; /** Number of representable elements in the string */
 	};

@@ -24,6 +24,17 @@
  * Note: Modification of this file is not supported in any way.
  */
 
+template<typename T> Jupiter::Shift_String_Type<T>::Shift_String_Type(Jupiter::Shift_String_Type<T> &&source) : Jupiter::String_Type<T>(std::move(source))
+{
+	Jupiter::Shift_String_Type<T>::base = source.base;
+	source.base = nullptr;
+}
+
+template<typename T> Jupiter::Shift_String_Type<T>::~Shift_String_Type()
+{
+	if (Jupiter::Shift_String_Type<T>::base != nullptr) delete[] Jupiter::Shift_String_Type<T>::base;
+}
+
 template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftLeft(size_t len)
 {
 	size_t offset = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
@@ -51,6 +62,35 @@ template<typename T> bool Jupiter::Shift_String_Type<T>::remove(const T &value)
 		return true;
 	}
 	return Jupiter::String_Type<T>::remove(value);
+}
+
+template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSize(size_t len)
+{
+	if (len > Jupiter::String_Type<T>::length)
+	{
+		T *ptr = new T[len];
+		for (unsigned int i = 0; i < Jupiter::String_Type<T>::length; i++) ptr[i] = Jupiter::String_Type<T>::str[i];
+		delete[] Jupiter::Shift_String_Type<T>::base;
+		Jupiter::Shift_String_Type<T>::base = ptr;
+		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+		return true;
+	}
+	return false;
+}
+
+template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSizeNoCopy(size_t len)
+{
+	if (len > Jupiter::String_Type<T>::length)
+	{
+		Jupiter::String_Type<T>::length = 0;
+		delete[] Jupiter::Shift_String_Type<T>::base;
+		Jupiter::Shift_String_Type<T>::base = new T[len];
+		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+		return true;
+	}
+	Jupiter::String_Type<T>::length = 0;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+	return false;
 }
 
 #endif // _SHIFT_STRING_IMP_H_HEADER

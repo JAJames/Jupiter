@@ -28,7 +28,7 @@ int64_t getFileSize(const char *file)
 
 const size_t defaultBufferSize = 8192;
 
-template class JUPITER_API Jupiter::CString_Strict<char>;
+template class JUPITER_API Jupiter::CString_Type<char>;
 
 struct JUPITER_API Jupiter::File::Data
 {

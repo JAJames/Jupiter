@@ -30,7 +30,7 @@
 Jupiter::INIFile _Config;
 Jupiter::INIFile *Jupiter::IRC::Client::Config = &_Config;
 
-template class JUPITER_API Jupiter::CString_Strict<char>;
+template class JUPITER_API Jupiter::CString_Type<char>;
 template class JUPITER_API Jupiter::ArrayList<Jupiter::IRC::Client::User>;
 template class JUPITER_API Jupiter::ArrayList<Jupiter::IRC::Client::Channel>;
 

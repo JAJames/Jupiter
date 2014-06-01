@@ -57,9 +57,6 @@
     <ClCompile Include="IRC.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
-    <ClCompile Include="IRC_Client.cpp">
-      <Filter>Source Files\IRC</Filter>
-    </ClCompile>
     <ClCompile Include="IRC_Server.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
@@ -101,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="Base64C.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IRC_Client.cpp">
+      <Filter>Source Files\IRC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +187,21 @@
     </ClInclude>
     <ClInclude Include="InvalidIndex.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="String_Type_Imp.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="Shift_String.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="Shift_String_Imp.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="String_Imp.h">
+      <Filter>Header Files\Strings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
