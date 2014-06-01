@@ -35,6 +35,8 @@
 template<typename T> Jupiter::String_Type<T>::String_Type(Jupiter::String_Type<T> &&source)
 {
 	Jupiter::String_Type<T>::str = source.str;
+	Jupiter::String_Type<T>::length = source.length;
+	source.length = 0;
 	source.str = nullptr;
 }
 
