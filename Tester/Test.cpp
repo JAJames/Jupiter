@@ -2,6 +2,7 @@
 #include <string>
 #include "../Jupiter/Functions.h"
 #include "../Jupiter/CString.h"
+#include "../Jupiter/String.h"
 #include "../Jupiter/File.h"
 #include "../Jupiter/Base64.h"
 #include "../Jupiter/InvalidIndex.h"
@@ -15,6 +16,7 @@ void test(bool expr)
 {
 	totalTests++;
 	if (expr) goodTests++;
+	else printf("Test number %u failed!" ENDL, totalTests);
 }
 
 int main()
