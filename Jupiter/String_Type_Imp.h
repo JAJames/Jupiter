@@ -152,7 +152,7 @@ template<typename T> bool Jupiter::String_Type<T>::remove(const T &value)
 	return false;
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::set(const String_Type<T> &in)
+template<typename T> size_t Jupiter::String_Type<T>::set(const Jupiter::Readable_String<T> &in)
 {
 	this->setBufferSizeNoCopy(in.size());
 	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length < in.size() != 0; Jupiter::String_Type<T>::length++)
@@ -183,7 +183,7 @@ template<typename T> size_t Jupiter::String_Type<T>::set(const T in)
 	return Jupiter::String_Type<T>::length = 1;
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::concat(const String_Type<T> &in)
+template<typename T> size_t Jupiter::String_Type<T>::concat(const Jupiter::Readable_String<T> &in)
 {
 	size_t nSize = Jupiter::String_Type<T>::length + in.size();
 	const T *inData = in.ptr();
@@ -238,7 +238,7 @@ template<typename T> size_t Jupiter::String_Type<T>::concat(const T c)
 
 // substring
 
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::substring(const Jupiter::String_Type<T> &in, size_t pos)
+template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos)
 {
 	if (pos >= in.size()) return R<T>();
 	R<T> r = R<T>(in.size() - pos);
@@ -246,7 +246,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 	return r;
 }
 
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len)
+template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len)
 {
 	if (pos + len >= in.size()) return R<T>::substring(in, pos);
 	R<T> r = R<T>(len);
@@ -270,108 +270,6 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 	in += pos;
 	for (r.length = 0; r.length != len; r.length++, in++) r.str[r.length] = *in;
 	return r;
-}
-
-// getWord
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
-{
-	unsigned int x = 0;
-	unsigned int y = 1;
-	for (unsigned int i = 0; i < pos || y == 1; x++)
-	{
-		if (x == in.size()) return R<T>();
-		if (Jupiter::strpbrk<T>(whitespace, in.get(x)) != nullptr)
-		{
-			if (y != 1)
-			{
-				y = 1;
-				i++;
-			}
-		}
-		else
-		{
-			if (i >= pos) break;
-			y = 0;
-		}
-	}
-	for (y = x; y != in.size() && Jupiter::strpbrk<T>(whitespace, in.get(y)) == nullptr; y++);
-	return R<T>::substring(in, x, y - x);
-}
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::getWord(const T *in, size_t pos, const T *whitespace)
-{
-	unsigned int x = 0;
-	unsigned int y = 1;
-	for (unsigned int i = 0; i < pos || y == 1; x++)
-	{
-		if (in[x] == 0) return R<T>();
-		if (Jupiter::strpbrk<T>(whitespace, in[x]) != nullptr)
-		{
-			if (y != 1)
-			{
-				y = 1;
-				i++;
-			}
-		}
-		else
-		{
-			if (i >= pos) break;
-			y = 0;
-		}
-	}
-	for (y = x; in[y] != 0 && Jupiter::strpbrk<T>(whitespace, in[y]) == nullptr; y++);
-	return R<T>::substring(in, x, y - x);
-}
-
-// gotoWord
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
-{
-	unsigned int x = 0;
-	bool y = true;
-	for (unsigned int i = 0; i < pos || y == true; x++)
-	{
-		if (x == in.size()) return R<T>();
-		if (Jupiter::strpbrk<T>(whitespace, in.get(x)) != nullptr)
-		{
-			if (y != true)
-			{
-				y = true;
-				i++;
-			}
-		}
-		else
-		{
-			if (i >= pos) break;
-			y = false;
-		}
-	}
-	return R<T>::substring(in, x);
-}
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::String_Type<T>::gotoWord(const T *in, size_t pos, const T *whitespace)
-{
-	unsigned int x = 0;
-	bool y = true;
-	for (unsigned int i = 0; i < pos || y == true; x++)
-	{
-		if (in[x] == 0) return R<T>();
-		if (Jupiter::strpbrk<T>(whitespace, in[x]) != nullptr)
-		{
-			if (y != true)
-			{
-				y = true;
-				i++;
-			}
-		}
-		else
-		{
-			if (i >= pos) break;
-			y = false;
-		}
-	}
-	return R<T>::substring(in, x);
 }
 
 namespace Jupiter

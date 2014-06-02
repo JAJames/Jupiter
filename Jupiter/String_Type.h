@@ -117,7 +117,7 @@ namespace Jupiter
 		* @param in String containing the data to be copied.
 		* @return New size of the String.
 		*/
-		virtual size_t set(const String_Type<T> &in);
+		virtual size_t set(const Jupiter::Readable_String<T> &in);
 		virtual size_t set(const std::basic_string<T> &in);
 		virtual size_t set(const T *in);
 		virtual size_t set(const T in);
@@ -128,7 +128,7 @@ namespace Jupiter
 		* @param in String containing the data to be concatenated.
 		* @return New size of the CString.
 		*/
-		virtual size_t concat(const String_Type<T> &in);
+		virtual size_t concat(const Jupiter::Readable_String<T> &in);
 		virtual size_t concat(const std::basic_string<T> &in);
 		virtual size_t concat(const T *in);
 		virtual size_t concat(const T in);
@@ -142,7 +142,7 @@ namespace Jupiter
 		* @param pos Position to start copying from.
 		* @return Partial copy of the input string.
 		*/
-		template<template<typename> class R> static R<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
 		template<template<typename> class R> static R<T> substring(const T *in, size_t pos);
 
 		/**
@@ -155,71 +155,21 @@ namespace Jupiter
 		* @param len Number of elements to copy.
 		* @return Partial copy of the input string.
 		*/
-		template<template<typename> class R> static R<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len);
+		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len);
 		template<template<typename> class R> static R<T> substring(const T *in, size_t pos, size_t len);
 
-		/**
-		* @brief Copies a "word" from an input string and returns it in an output type.
-		*
-		* @param R Type to return. Must be a subclass of String_Type.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Index of the word to copy.
-		* @param whitespace String of characters that are to be considered whitespace.
-		* @return Copy of the word at the specified index on success, an empty string otherwise.
-		*/
-		template<template<typename> class R> static R<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
-		template<template<typename> class R> static R<T> getWord(const T *in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Copies a part of an input string starting at a specified "word" and returns it in an output type.
-		*
-		* @param R Type to return. Must be a subclass of String_Type.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Index of the word to start copying from.
-		* @param whitespace String of characters that are to be considered whitespace.
-		* @return Copy of the string starting at the specified word on success, an empty string otherwise.
-		*/
-		template<template<typename> class R> static R<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
-		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
-
 		/** Mutative operators */
+		inline String_Type<T> &operator+=(const Readable_String<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const String_Type<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const std::basic_string<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const T *right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const T right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator-=(size_t right) { this->truncate(right); return *this; };
+		inline String_Type<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const T right) { this->set(right); return *this; };
-
-		/** Comparative operators */
-		inline bool operator==(const String_Type<T> &right)const{ return this->equals(right); }
-		inline bool operator==(const std::basic_string<T> &right)const{ return this->equals(right); }
-		inline bool operator==(const T *right)const{ return this->equals(right); }
-		inline bool operator==(const T right)const{ return this->equals(right); }
-		inline bool operator!=(const String_Type<T> &right)const{ return !operator==(right); }
-		inline bool operator!=(const std::basic_string<T> &right)const{ return !operator==(right); }
-		inline bool operator!=(const T *right)const{ return !operator==(right); }
-		inline bool operator!=(const T right)const{ return !operator==(right); }
-		inline bool operator<(const String_Type<T> &right)const{ return this->compare(right) < 0; }
-		inline bool operator<(const std::basic_string<T> &right)const{ return this->compare(right) < 0; }
-		inline bool operator<(const T *right)const{ return this->compare(right) < 0; }
-		inline bool operator<(const T right)const{ return this->compare(right) < 0; }
-		inline bool operator>(const String_Type<T> &right)const{ return  this->compare(right) > 0; }
-		inline bool operator>(const std::basic_string<T> &right)const{ return  this->compare(right) > 0; }
-		inline bool operator>(const T *right)const{ return  this->compare(right) > 0; }
-		inline bool operator>(const T right)const{ return  this->compare(right) > 0; }
-		inline bool operator<=(const String_Type<T> &right)const{ return !operator>(right); }
-		inline bool operator<=(const std::basic_string<T> &right)const{ return !operator>(right); }
-		inline bool operator<=(const T *right)const{ return !operator>(right); }
-		inline bool operator<=(const T right)const{ return !operator>(right); }
-		inline bool operator>=(const String_Type<T> &right)const{ return !operator<(right); }
-		inline bool operator>=(const std::basic_string<T> &right)const{ return !operator<(right); }
-		inline bool operator>=(const T *right)const{ return !operator<(right); }
-		inline bool operator>=(const T right)const{ return !operator<(right); }
 
 		/**
 		* @brief Default constructor for the String_Type class.
@@ -235,9 +185,10 @@ namespace Jupiter
 		* The following constructors should exist:
 		* A default constructor
 		* A copy constructor for the same class.
-		* A copy constructor for String_Type.
+		* A copy constructor for Readable_String.
 		* A copy constructor for std::basic_string<T>.
 		* A copy constructor for C-style strings.
+		* A copy constructor for memory array strings.
 		*/
 
 	protected:

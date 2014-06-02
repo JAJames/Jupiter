@@ -174,9 +174,67 @@ namespace Jupiter
 		size_t println(FILE *out) const;
 		size_t println(std::basic_ostream<T> &out) const;
 
+		/**
+		* @brief Copies a "word" from an input string and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the word to copy.
+		* @param whitespace String of characters that are to be considered whitespace.
+		* @return Copy of the word at the specified index on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
+		template<template<typename> class R> static R<T> getWord(const T *in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Copies a part of an input string starting at a specified "word" and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the word to start copying from.
+		* @param whitespace String of characters that are to be considered whitespace.
+		* @return Copy of the string starting at the specified word on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
+		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
+
 		/** Access operator */
 		inline T &operator[](size_t index) const { return this->get(index); };
+
+		/** Comparative operators */
+		inline bool operator==(const Readable_String<T> &right)const{ return this->equals(right); }
+		inline bool operator==(const std::basic_string<T> &right)const{ return this->equals(right); }
+		inline bool operator==(const T *right)const{ return this->equals(right); }
+		inline bool operator==(const T right)const{ return this->equals(right); }
+		inline bool operator!=(const Readable_String<T> &right)const{ return !operator==(right); }
+		inline bool operator!=(const std::basic_string<T> &right)const{ return !operator==(right); }
+		inline bool operator!=(const T *right)const{ return !operator==(right); }
+		inline bool operator!=(const T right)const{ return !operator==(right); }
+		inline bool operator<(const Readable_String<T> &right)const{ return this->compare(right) < 0; }
+		inline bool operator<(const std::basic_string<T> &right)const{ return this->compare(right) < 0; }
+		inline bool operator<(const T *right)const{ return this->compare(right) < 0; }
+		inline bool operator<(const T right)const{ return this->compare(right) < 0; }
+		inline bool operator>(const Readable_String<T> &right)const{ return  this->compare(right) > 0; }
+		inline bool operator>(const std::basic_string<T> &right)const{ return  this->compare(right) > 0; }
+		inline bool operator>(const T *right)const{ return  this->compare(right) > 0; }
+		inline bool operator>(const T right)const{ return  this->compare(right) > 0; }
+		inline bool operator<=(const Readable_String<T> &right)const{ return !operator>(right); }
+		inline bool operator<=(const std::basic_string<T> &right)const{ return !operator>(right); }
+		inline bool operator<=(const T *right)const{ return !operator>(right); }
+		inline bool operator<=(const T right)const{ return !operator>(right); }
+		inline bool operator>=(const Readable_String<T> &right)const{ return !operator<(right); }
+		inline bool operator>=(const std::basic_string<T> &right)const{ return !operator<(right); }
+		inline bool operator>=(const T *right)const{ return !operator<(right); }
+		inline bool operator>=(const T right)const{ return !operator<(right); }
 	};
+
+	/** Generic Readable String Type */
+	typedef Readable_String<char> ReadableString;
+
+	/** Generic Wide Readable String Type */
+	typedef Readable_String<wchar_t> ReadableWString;
 }
 
 #include "Readable_String_Imp.h"

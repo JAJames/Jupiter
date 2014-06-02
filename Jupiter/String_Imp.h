@@ -57,7 +57,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(Jupiter::String_St
 {
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::String_Type<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.size())
 {
 	while (Jupiter::String_Type<T>::length < in.size())
 	{
@@ -194,7 +194,7 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substr
 	return Jupiter::String_Strict<T>::substring(*this, pos, len);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substring(const Jupiter::String_Type<T> &in, size_t pos)
+template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos)
 {
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Strict>(in, pos);
 }
@@ -204,7 +204,7 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substr
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Strict>(in, pos);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len)
+template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len)
 {
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Strict>(in, pos, len);
 }
@@ -219,14 +219,14 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWor
 	return Jupiter::String_Strict<T>::getWord(*this, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
+template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::getWord<Jupiter::String_Strict>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::getWord<Jupiter::String_Strict>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(const T *in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::getWord<Jupiter::String_Strict>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::getWord<Jupiter::String_Strict>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(size_t pos, const T *whitespace) const
@@ -234,9 +234,9 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWo
 	return Jupiter::String_Strict<T>::gotoWord(*this, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
+template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::gotoWord<Jupiter::String_Strict>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::gotoWord<Jupiter::String_Strict>(in, pos, whitespace);
 }
 
 template<typename T> const Jupiter::String_Strict<T> Jupiter::String_Strict<T>::empty = Jupiter::String_Strict<T>();
@@ -275,7 +275,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Strin
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
 }
 
-template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::String_Type<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.size())
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.size())
 {
 	while (Jupiter::String_Type<T>::length < in.size())
 	{
@@ -434,7 +434,7 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substrin
 	return Jupiter::String_Loose<T>::substring(*this, pos, length);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substring(const Jupiter::String_Type<T> &in, size_t pos)
+template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos)
 {
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Loose>(in, pos);
 }
@@ -444,7 +444,7 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substrin
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Loose>(in, pos);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substring(const Jupiter::String_Type<T> &in, size_t pos, size_t len)
+template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len)
 {
 	return Jupiter::String_Type<T>::substring<Jupiter::String_Loose>(in, pos, len);
 }
@@ -459,14 +459,14 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(
 	return Jupiter::String_Loose<T>::getWord(*this, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
+template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::getWord<Jupiter::String_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::getWord<Jupiter::String_Loose>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(const T *in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::getWord<Jupiter::String_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::getWord<Jupiter::String_Loose>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(size_t pos, const T *whitespace) const
@@ -474,9 +474,9 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord
 	return Jupiter::String_Loose<T>::gotoWord(*this, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace)
+template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::String_Type<T>::gotoWord<Jupiter::String_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::gotoWord<Jupiter::String_Loose>(in, pos, whitespace);
 }
 
 template<typename T> const Jupiter::String_Loose<T> Jupiter::String_Loose<T>::empty = Jupiter::String_Loose<T>();

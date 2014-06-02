@@ -100,7 +100,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		static String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
 		static String_Strict<T> substring(const T *in, size_t pos);
 
 		/**
@@ -111,7 +111,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
+		static String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static String_Strict<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
@@ -131,7 +131,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static String_Strict<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a set of tokens.
@@ -160,11 +160,11 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static String_Strict<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/** Assignment Operators */
 		inline String_Strict<T> &operator=(const String_Strict<T> &right) { this->set(right); return *this; };
-		inline String_Strict<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
+		inline String_Strict<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline String_Strict<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline String_Strict<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Strict<T> &operator=(const T right) { this->set(right); return *this; };
@@ -186,8 +186,8 @@ namespace Jupiter
 		String_Strict(String_Strict<T> &&source);
 
 		/** Copy Constructors */
-		String_Strict(const String_Strict<T> &in) : String_Strict((String_Type<T> &)in) {}
-		String_Strict(const String_Type<T> &in);
+		String_Strict(const String_Strict<T> &in) : String_Strict((Readable_String<T> &)in) {}
+		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
 		String_Strict(const T *in);
 
@@ -268,7 +268,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		static String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
 		static String_Loose<T> substring(const T *in, size_t pos);
 
 		/**
@@ -279,7 +279,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
+		static String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static String_Loose<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
@@ -300,7 +300,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static String_Loose<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a set of tokens.
@@ -330,7 +330,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static String_Loose<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/** Default constructor */
 		String_Loose();
@@ -347,7 +347,7 @@ namespace Jupiter
 
 		/** Copy Constructors */
 		String_Loose(const String_Loose &in);
-		String_Loose(const String_Type<T> &in);
+		String_Loose(const Readable_String<T> &in);
 		String_Loose(const std::basic_string<T> &in);
 		String_Loose(const T *in);
 
@@ -356,7 +356,7 @@ namespace Jupiter
 
 		/** Assignment Operators */
 		inline String_Loose<T> &operator=(const String_Loose<T> &right) { this->set(right); return *this; };
-		inline String_Loose<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
+		inline String_Loose<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const T right) { this->set(right); return *this; };

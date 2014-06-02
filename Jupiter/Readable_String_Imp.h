@@ -743,4 +743,106 @@ template<typename T> size_t Jupiter::Readable_String<T>::println(std::basic_ostr
 	return r;
 }
 
+// getWord
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
+{
+	unsigned int x = 0;
+	unsigned int y = 1;
+	for (unsigned int i = 0; i < pos || y == 1; x++)
+	{
+		if (x == in.size()) return R<T>();
+		if (Jupiter::strpbrk<T>(whitespace, in.get(x)) != nullptr)
+		{
+			if (y != 1)
+			{
+				y = 1;
+				i++;
+			}
+		}
+		else
+		{
+			if (i >= pos) break;
+			y = 0;
+		}
+	}
+	for (y = x; y != in.size() && Jupiter::strpbrk<T>(whitespace, in.get(y)) == nullptr; y++);
+	return R<T>::substring(in, x, y - x);
+}
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getWord(const T *in, size_t pos, const T *whitespace)
+{
+	unsigned int x = 0;
+	unsigned int y = 1;
+	for (unsigned int i = 0; i < pos || y == 1; x++)
+	{
+		if (in[x] == 0) return R<T>();
+		if (Jupiter::strpbrk<T>(whitespace, in[x]) != nullptr)
+		{
+			if (y != 1)
+			{
+				y = 1;
+				i++;
+			}
+		}
+		else
+		{
+			if (i >= pos) break;
+			y = 0;
+		}
+	}
+	for (y = x; in[y] != 0 && Jupiter::strpbrk<T>(whitespace, in[y]) == nullptr; y++);
+	return R<T>::substring(in, x, y - x);
+}
+
+// gotoWord
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
+{
+	unsigned int x = 0;
+	bool y = true;
+	for (unsigned int i = 0; i < pos || y == true; x++)
+	{
+		if (x == in.size()) return R<T>();
+		if (Jupiter::strpbrk<T>(whitespace, in.get(x)) != nullptr)
+		{
+			if (y != true)
+			{
+				y = true;
+				i++;
+			}
+		}
+		else
+		{
+			if (i >= pos) break;
+			y = false;
+		}
+	}
+	return R<T>::substring(in, x);
+}
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoWord(const T *in, size_t pos, const T *whitespace)
+{
+	unsigned int x = 0;
+	bool y = true;
+	for (unsigned int i = 0; i < pos || y == true; x++)
+	{
+		if (in[x] == 0) return R<T>();
+		if (Jupiter::strpbrk<T>(whitespace, in[x]) != nullptr)
+		{
+			if (y != true)
+			{
+				y = true;
+				i++;
+			}
+		}
+		else
+		{
+			if (i >= pos) break;
+			y = false;
+		}
+	}
+	return R<T>::substring(in, x);
+}
+
 #endif // _READABLE_STRING_IMP_H_HEADER

@@ -115,7 +115,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Type<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		static CString_Type<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
 		static CString_Type<T> substring(const T *in, size_t pos);
 
 		/**
@@ -126,7 +126,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Type<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
+		static CString_Type<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static CString_Type<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
@@ -146,7 +146,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Type<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static CString_Type<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a set of tokens.
@@ -175,7 +175,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Type<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static CString_Type<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
 		* @brief Copies the data from the input string to the CString.
@@ -183,7 +183,7 @@ namespace Jupiter
 		* @param in String containing the data to be copied.
 		* @return New size of the CString.
 		*/
-		size_t set(const String_Type<T> &in);
+		size_t set(const Readable_String<T> &in);
 		size_t set(const std::basic_string<T> &in);
 		size_t set(const T *in);
 		size_t set(const T in);
@@ -194,14 +194,14 @@ namespace Jupiter
 		* @param in String containing the data to be concatenated.
 		* @return New size of the CString.
 		*/
-		size_t concat(const String_Type<T> &in);
+		size_t concat(const Readable_String<T> &in);
 		size_t concat(const std::basic_string<T> &in);
 		size_t concat(const T *in);
 		size_t concat(const T in);
 
 		/** Assignment Operators */
 		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
-		inline CString_Type<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
+		inline CString_Type<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline CString_Type<T> &operator=(const T right) { this->set(right); return *this; };
@@ -223,8 +223,8 @@ namespace Jupiter
 		CString_Type(CString_Type<T> &&source);
 
 		/** Copy Constructors */
-		CString_Type(const CString_Type<T> &in) : CString_Type((String_Type<T> &)in) {}
-		CString_Type(const String_Type<T> &in);
+		CString_Type(const CString_Type<T> &in) : CString_Type((Readable_String<T> &)in) {}
+		CString_Type(const Readable_String<T> &in);
 		CString_Type(const std::basic_string<T> &in);
 		CString_Type(const T *in);
 
@@ -297,7 +297,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos);
+		static CString_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
 		static CString_Loose<T> substring(const T *in, size_t pos);
 
 		/**
@@ -308,7 +308,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Loose<T> substring(const Jupiter::String_Type<T> &in, size_t pos, size_t length);
+		static CString_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static CString_Loose<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
@@ -329,7 +329,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Loose<T> getWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static CString_Loose<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a set of tokens.
@@ -359,7 +359,7 @@ namespace Jupiter
 		* @param whitespace A string of tokens used to deliminate words.
 		* @return String containing a partial copy of the original string.
 		*/
-		static CString_Loose<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
+		static CString_Loose<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/** Default constructor */
 		CString_Loose();
@@ -376,7 +376,7 @@ namespace Jupiter
 
 		/** Copy Constructors */
 		CString_Loose(const CString_Loose &in);
-		CString_Loose(const String_Type<T> &in);
+		CString_Loose(const Readable_String<T> &in);
 		CString_Loose(const std::basic_string<T> &in);
 		CString_Loose(const T *in);
 
@@ -386,7 +386,7 @@ namespace Jupiter
 		/** Assignment Operators */
 		inline CString_Loose<T> &operator=(const CString_Loose<T> &right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
-		inline CString_Loose<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
+		inline CString_Loose<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const T right) { this->set(right); return *this; };
