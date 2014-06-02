@@ -184,9 +184,6 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> gotoWord(const Jupiter::String_Type<T> &in, size_t pos, const T *whitespace);
 		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
 
-		/** Access operator */
-		inline T &operator[](size_t index) { return Jupiter::String_Type<T>::get(index); };
-
 		/** Mutative operators */
 		inline String_Type<T> &operator+=(const String_Type<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const std::basic_string<T> &right) { this->concat(right); return *this; };

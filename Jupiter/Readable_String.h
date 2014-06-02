@@ -173,6 +173,9 @@ namespace Jupiter
 		*/
 		size_t println(FILE *out) const;
 		size_t println(std::basic_ostream<T> &out) const;
+
+		/** Access operator */
+		inline T &operator[](size_t index) const { return this->get(index); };
 	};
 }
 
