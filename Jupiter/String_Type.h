@@ -24,11 +24,8 @@
  * Note: Some methods are commented out. This means that they should be implemented, but could not be put declared in this template (return of abstract type).
  */
 
-#include "Jupiter.h"
-#include <string> // std::basic_string<T> type
 #include <cstdarg> // va_list
-#include <cwchar>
-#include <cstdio>
+#include "Readable_String.h"
 
 namespace Jupiter
 {
@@ -39,7 +36,7 @@ namespace Jupiter
 	*
 	* @param T Element type which the String will store. Defaults to char.
 	*/
-	template<typename T = char> class String_Type
+	template<typename T = char> class String_Type : public Jupiter::Readable_String<T>
 	{
 	public:
 
@@ -66,123 +63,11 @@ namespace Jupiter
 		const T *ptr() const;
 
 		/**
-		* @brief Checks if the string contains an element with the specified value.
-		*
-		* @param value Value of the element to search for.
-		* @return True if a match is found, false otherwise.
-		*/
-		bool contains(const T &value) const;
-
-		/**
-		* @brief Compares another string against the String.
-		*
-		* @param in String to compare against.
-		* @return 0 if the strings are equal, negative if the first mismatched character is greater in the String, or positive if it's less.
-		*/
-		int compare(const String_Type<T> &in) const;
-		int compare(const std::basic_string<T> &in) const;
-		int compare(const T *in) const;
-		int compare(const T &in) const;
-		int compare(const std::nullptr_t) const;
-
-		/**
-		* @brief Checks if the strings are equal.
-		* Note: Case sensitive.
-		*
-		* @param in String to compare against.
-		* @return True if the contents of the strings are equal, false otherwise.
-		*/
-		bool equals(const String_Type<T> &in) const;
-		bool equals(const std::basic_string<T> &in) const;
-		bool equals(const T *in) const;
-		bool equals(const T &in) const;
-		bool equals(const std::nullptr_t) const;
-
-		/**
-		* @brief Checks if the strings are equal.
-		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param in String to compare against.
-		* @return True if the contents of the strings are equal, false otherwise.
-		*/
-		bool equalsi(const String_Type<T> &in) const;
-		bool equalsi(const std::basic_string<T> &in) const;
-		bool equalsi(const T *in) const;
-		bool equalsi(const T &in) const;
-		bool equalsi(const std::nullptr_t) const;
-
-		/**
-		* @brief Checks if the String matches a wildcard format.
-		* Note: Case sensitive.
-		*
-		* @param format Format that the string is compared against.
-		* @return True if the String matches the wildcard format, false otherwise.
-		*/
-		bool match(const String_Type<T> &format) const;
-		bool match(const std::basic_string<T> &format) const;
-		bool match(const T *format) const;
-
-		/**
-		* @brief Checks if the CString matches a wildcard format.
-		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @return True if the CString matches the wildcard format, false otherwise.
-		*/
-		bool matchi(const String_Type<T> &format) const;
-		bool matchi(const std::basic_string<T> &format) const;
-		bool matchi(const T *format) const;
-
-		/**
-		* @brief Counts the number of token deliminated words.
-		*
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return Number of words found.
-		*/
-		unsigned int wordCount(const T *whitespace) const;
-
-		/**
-		* @brief Interprets the string as an integer.
-		* Note: This returns 0 on any value string type other than char.
-		*
-		* @param base Base of the string representation.
-		* @return Integer representation of the string.
-		*/
-		int asInt(int base = 0) const;
-
-		/**
-		* @brief Interprets the string as an integer.
-		* Note: This returns 0 on any value string type other than char.
-		*
-		* @param base Base of the string representation.
-		* @return Integer representation of the string.
-		*/
-		unsigned int asUnsignedInt(int base = 0) const;
-
-		/**
 		* @brief Returns a C-Style string version of the String.
 		*
 		* @return C-Style string representation of the String.
 		*/
 		virtual const T *c_str() const = 0;
-
-		/**
-		* @brief Outputs the string to a FILE stream.
-		*
-		* @param out Stream to output to.
-		* @return Number of elements written successfully.
-		*/
-		size_t print(FILE *out) const;
-		size_t print(std::basic_ostream<T> &out) const;
-
-		/**
-		* @brief Outputs the string and a newline to a FILE stream
-		*
-		* @param out Stream to output to.
-		* @param Number of elements written successfully.
-		*/
-		size_t println(FILE *out) const;
-		size_t println(std::basic_ostream<T> &out) const;
 
 		/**
 		* @brief Sets the CString's contents based on the format string and input variables.

@@ -132,6 +132,8 @@
     <ClInclude Include="List.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="Queue.h" />
+    <ClInclude Include="Readable_String.h" />
+    <ClInclude Include="Readable_String_Imp.h" />
     <ClInclude Include="Rehash.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SecureSocket.h" />
