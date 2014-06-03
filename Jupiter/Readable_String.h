@@ -148,6 +148,13 @@ namespace Jupiter
 		unsigned int wordCount(const T *whitespace) const;
 
 		/**
+		* @brief Interprets the string as a bool.
+		*
+		* @return Bool interpretation of the string.
+		*/
+		bool asBool() const;
+
+		/**
 		* @brief Interprets the string as an integer.
 		* Note: This returns 0 on any value string type other than char.
 		*

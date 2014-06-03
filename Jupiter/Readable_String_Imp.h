@@ -690,6 +690,29 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 
 // as<type>
 
+template<> bool inline Jupiter::Readable_String<char>::asBool() const
+{
+	if (this->equalsi("FALSE")) return false;
+	if (this->equalsi('0')) return false;
+	if (this->equalsi("OFF")) return false;
+	if (this->equalsi('-')) return false;
+	return true;
+}
+
+template<> bool inline Jupiter::Readable_String<wchar_t>::asBool() const
+{
+	if (this->equalsi(L"FALSE")) return false;
+	if (this->equalsi(L'0')) return false;
+	if (this->equalsi(L"OFF")) return false;
+	if (this->equalsi(L'-')) return false;
+	return true;
+}
+
+template<typename T> bool Jupiter::Readable_String<T>::asBool() const
+{
+	return false;
+}
+
 template<> int inline Jupiter::Readable_String<char>::asInt(int base) const
 {
 	return strtoi_s(this->ptr(), this->size(), base);
