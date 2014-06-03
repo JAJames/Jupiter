@@ -209,6 +209,12 @@
     <ClInclude Include="Readable_String_Imp.h">
       <Filter>Header Files\Strings</Filter>
     </ClInclude>
+    <ClInclude Include="Reference_String.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="Reference_String_Imp.h">
+      <Filter>Header Files\Strings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Jupiter.rc">
