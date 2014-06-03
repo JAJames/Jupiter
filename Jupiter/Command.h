@@ -25,7 +25,7 @@
 
 #include "Jupiter.h"
 #include "ArrayList.h"
-#include "CString.h"
+#include "Reference_String.h"
 
 namespace Jupiter
 {
@@ -41,7 +41,7 @@ namespace Jupiter
 		*
 		* @param trigger Trigger to add to the command.
 		*/
-		void addTrigger(const char *trigger);
+		void addTrigger(const Jupiter::ReadableString &trigger);
 
 		/**
 		* @brief Fetches a command's specified trigger.
@@ -56,7 +56,7 @@ namespace Jupiter
 		*
 		* @return Number of triggers the command accepts.
 		*/
-		unsigned int getTriggerCount() const;
+		size_t getTriggerCount() const;
 
 		/**
 		* @brief Checks if a specified trigger matches one of the stored triggers.
@@ -65,14 +65,15 @@ namespace Jupiter
 		* @param trigger Trigger to check against the trigger list.
 		* @return True if a match was found, false otherwise.
 		*/
-		bool matches(const char *trigger) const;
+		bool matches(const Jupiter::ReadableString &trigger) const;
 
 		/**
 		* @brief Returns a brief explanation and syntax description about a command.
 		*
+		* @param parameters Optional string containing any data to be passed to the help command.
 		* @return Brief description of command and syntax.
 		*/
-		virtual const char *getHelp() = 0;
+		virtual const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters = Jupiter::ReferenceString::empty) = 0;
 
 		/**
 		* @brief Default constructor for command class.

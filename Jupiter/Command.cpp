@@ -19,11 +19,12 @@
 #include "ArrayList.h"
 #include "Functions.h"
 #include "Command.h"
+#include "String.h"
 
 struct Jupiter::Command::Data
 {
 public:
-	Jupiter::ArrayList<Jupiter::CString_Strict<char>> triggers;
+	Jupiter::ArrayList<Jupiter::StringS> triggers;
 };
 
 Jupiter::Command::Command()
@@ -34,26 +35,21 @@ Jupiter::Command::Command()
 Jupiter::Command::Command(const Command &command)
 {
 	Jupiter::Command::data_ = new Jupiter::Command::Data();
-	Jupiter::CStringS *trigger;
-	for (int i = command.data_->triggers.size() - 1; i >= 0; i--)
-	{
-		trigger = new Jupiter::CStringS(*command.data_->triggers.get(i));
-		Jupiter::Command::data_->triggers.add(trigger);
-	}
+	for (size_t i = 0; i != Jupiter::Command::data_->triggers.size(); i++)
+		Jupiter::Command::data_->triggers.add(new Jupiter::StringS(*command.data_->triggers.get(i)));
 }
 
 Jupiter::Command::~Command()
 {
-	for (int i = Jupiter::Command::data_->triggers.size() - 1; i >= 0; i--) delete Jupiter::Command::data_->triggers.remove(i);
+	Jupiter::Command::data_->triggers.emptyAndDelete();
 	delete Jupiter::Command::data_;
 }
 
 // Command Functions
 
-void Jupiter::Command::addTrigger(const char *trigger)
+void Jupiter::Command::addTrigger(const Jupiter::ReadableString &trigger)
 {
-	Jupiter::CStringS *aTrigger = new Jupiter::CStringS(trigger);
-	Jupiter::Command::data_->triggers.add(aTrigger);
+	Jupiter::Command::data_->triggers.add(new Jupiter::StringS(trigger));
 }
 
 const char *Jupiter::Command::getTrigger(short index) const
@@ -61,14 +57,14 @@ const char *Jupiter::Command::getTrigger(short index) const
 	return Jupiter::Command::data_->triggers.get(index)->c_str();
 }
 
-unsigned int Jupiter::Command::getTriggerCount() const
+size_t Jupiter::Command::getTriggerCount() const
 {
 	return Jupiter::Command::data_->triggers.size();
 }
 
-bool Jupiter::Command::matches(const char *trigger) const
+bool Jupiter::Command::matches(const Jupiter::ReadableString &trigger) const
 {
-	unsigned int size = Jupiter::Command::data_->triggers.size();
-	for (unsigned int i = 0; i < size; i++) if (Jupiter::Command::data_->triggers.get(i)->equalsi(trigger)) return true;
+	for (size_t i = 0; i != Jupiter::Command::data_->triggers.size(); i++)
+		if (Jupiter::Command::data_->triggers.get(i)->equalsi(trigger)) return true;
 	return false;
 }
