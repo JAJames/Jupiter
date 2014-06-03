@@ -214,7 +214,7 @@ bool Jupiter::SecureSocket::initSSL()
 		ERR_print_errors_fp(stderr);
 		return false;
 	}
-	if (SSL_set_tlsext_host_name(Jupiter::SecureSocket::SSLdata_->handle, this->getHostname()) != 1) // This is potentially redundant, but no documentation has been found.
+	if (SSL_set_tlsext_host_name(Jupiter::SecureSocket::SSLdata_->handle, this->getHost()) != 1) // This error check is potentially redundant, but no documentation has been found.
 	{
 		ERR_print_errors_fp(stderr);
 		return false;
