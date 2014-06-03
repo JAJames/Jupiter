@@ -12,6 +12,7 @@
 #include <time.h> // Used by getTime()
 #include <ctype.h> // toupper
 #include <wctype.h> // towupper
+#include <math.h> // pow
 #include "Functions.h"
 
 // Little Endian
@@ -605,6 +606,12 @@ unsigned int strtoui(const char *str, int base)
 	return strtoi_nospace(str, base);
 }
 
+double Jupiter_strtod(const char *str)
+{
+	while (isspace(*str)) str++;
+	return Jupiter_strtod_nospace(str);
+}
+
 int strtoi_nospace(const char *str, int base)
 {
 	if (*str != '-') return strtoui_nospace(str, base);
@@ -651,6 +658,39 @@ unsigned int strtoui_nospace(const char *str, int base)
 	return total;
 }
 
+double Jupiter_strtod_nospace(const char *str)
+{
+	const int base = 10;
+	double total = 0.0;
+	double decimal = 0.0;
+	int tval;
+
+	if (*str == '-') return -1 * Jupiter_strtod_nospace(++str);
+	if (*str == '+') str++;
+
+	while ((tval = getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		str++;
+	}
+
+	if (*str == '.')
+	{
+		str++;
+		tval = base;
+		while ((decimal = getBase(*str, base)) != -1)
+		{
+			total = total + (decimal / tval);
+			str++;
+			tval = tval * base;
+		}
+		if (*str == 'e' || *str == 'E')
+			total = total * pow(base, strtoi_nospace(++str, 10));
+	}
+
+	return total;
+}
+
 /** Safe string converters */
 
 int strtoi_s(const char *str, size_t length, int base)
@@ -671,6 +711,16 @@ unsigned int strtoui_s(const char *str, size_t length, int base)
 		length--;
 	}
 	return strtoui_nospace_s(str, length, base);
+}
+
+double Jupiter_strtod_s(const char *str, size_t length)
+{
+	while (isspace(*str))
+	{
+		str++;
+		length--;
+	}
+	return Jupiter_strtod_nospace_s(str, length);
 }
 
 signed int strtoi_nospace_s(const char *str, size_t length, int base)
@@ -728,6 +778,47 @@ unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
 		total = base * total + tval;
 		if (--length == 0) return total;
 		str++;
+	}
+
+	return total;
+}
+
+double Jupiter_strtod_nospace_s(const char *str, size_t length)
+{
+	const int base = 10;
+	double total = 0.0;
+	double decimal = 0.0;
+	int tval;
+
+	if (length == 0) return 0;
+	if (*str == '-') return -1 * Jupiter_strtod_nospace_s(++str, --length);
+	if (*str == '+')
+	{
+		str++;
+		length--;
+	}
+
+	while ((tval = getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		if (--length == 0) return total;
+		str++;
+	}
+
+	if (*str == '.')
+	{
+		str++;
+		length--;
+		tval = base;
+		while (length != 0 && (decimal = getBase(*str, base)) != -1)
+		{
+			total = total + (decimal / tval);
+			if (--length == 0) return total;
+			str++;
+			tval = tval * base;
+		}
+		if (*str == 'e' || *str == 'E')
+			total = total * pow(base, strtoi_nospace_s(++str, --length, 10));
 	}
 
 	return total;

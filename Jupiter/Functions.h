@@ -351,33 +351,61 @@ JUPITER_API int getBase(unsigned char c, int base);
 * @brief Interprets a string into an integer.
 *
 * @param str String to interpret.
-* @param base Base of the string to interpret. 0 is acceptable.
+* @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int strtoi(const char *str, int base);
 JUPITER_API unsigned int strtoui(const char *str, int base);
 
 /**
+* @brief Interpets a string into a floating point decimal number.
+*
+* @param str String to interpret.
+* @param length Length of the string to interpret.
+* @return Interpretation of the string as a floating point decimal on success, 0.0 otherwise.
+*/
+JUPITER_API double Jupiter_strtod(const char *str);
+
+/**
 * @brief Interprets a string into an integer.
 * Note: This function assumes no preceeding space characters exist.
 *
 * @param str String to interpret.
-* @param base Base of the string to interpret. 0 is acceptable.
+* @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int strtoi_nospace(const char *str, int base);
 JUPITER_API unsigned int strtoui_nospace(const char *str, int base);
 
 /**
+* @brief Interpets a string into a floating point decimal number.
+* Note: This function assumes no preceeding space characters exist.
+*
+* @param str String to interpret.
+* @param length Length of the string to interpret.
+* @return Interpretation of the string as a floating point decimal on success, 0.0 otherwise.
+*/
+JUPITER_API double Jupiter_strtod_nospace(const char *str);
+
+/**
 * @brief Interprets a string into an integer.
 *
 * @param str String to interpret.
 * @param length Length of str.
-* @param base Base of the string to interpret. 0 is acceptable.
+* @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int strtoi_s(const char *str, size_t length, int base);
 JUPITER_API unsigned int strtoui_s(const char *str, size_t length, int base);
+
+/**
+* @brief Interpets a string into a floating point decimal number.
+*
+* @param str String to interpret.
+* @param length Length of the string to interpret.
+* @return Interpretation of the string as a floating point decimal on success, 0.0 otherwise.
+*/
+JUPITER_API double Jupiter_strtod_s(const char *str, size_t length);
 
 /**
 * @brief Interprets a string into an integer.
@@ -385,11 +413,21 @@ JUPITER_API unsigned int strtoui_s(const char *str, size_t length, int base);
 *
 * @param str String to interpret.
 * @param length Length of str.
-* @param base Base of the string to interpret. 0 is acceptable.
+* @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int strtoi_nospace_s(const char *str, size_t length, int base);
 JUPITER_API unsigned int strtoui_nospace_s(const char *str, size_t length, int base);
+
+/**
+* @brief Interpets a string into a floating point decimal number.
+* Note: This function assumes no preceeding space characters exist.
+*
+* @param str String to interpret.
+* @param length Length of the string to interpret.
+* @return Interpretation of the string as a floating point decimal on success, 0.0 otherwise.
+*/
+JUPITER_API double Jupiter_strtod_nospace_s(const char *str, size_t length);
 
 #if defined __cplusplus
 }
