@@ -29,11 +29,11 @@
 
 namespace Jupiter
 {
-	static const unsigned int INVALID_INDEX = UINT_MAX;
+	static const size_t INVALID_INDEX = SIZE_MAX;
 	static const uint32_t INVALID_INDEX32 = UINT32_MAX;
 	static const uint64_t INVALID_INDEX64 = UINT64_MAX;
 
-	static const unsigned int ERROR_INDICATOR = INVALID_INDEX;
+	static const unsigned int ERROR_INDICATOR = UINT_MAX;
 	static const uint32_t ERROR_INDICATOR32 = INVALID_INDEX32;
 	static const uint64_t ERROR_INDICATOR64 = INVALID_INDEX32;
 }
@@ -45,11 +45,11 @@ extern "C"
 #include <limits.h>
 #endif // __cplusplus
 
-static const unsigned int JUPITER_INVALID_INDEX = UINT_MAX;
+static const size_t JUPITER_INVALID_INDEX = SIZE_MAX;
 static const uint32_t JUPITER_INVALID_INDEX32 = UINT32_MAX;
 static const uint64_t JUPITER_INVALID_INDEX64 = UINT64_MAX;
 
-static const unsigned int JUPITER_ERROR_INDICATOR = JUPITER_INVALID_INDEX;
+static const unsigned int JUPITER_ERROR_INDICATOR = UINT_MAX;
 static const uint32_t JUPITER_ERROR_INDICATOR32 = JUPITER_INVALID_INDEX32;
 static const uint64_t JUPITER_ERROR_INDICATOR64 = JUPITER_INVALID_INDEX32;
 
