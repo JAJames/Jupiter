@@ -25,7 +25,7 @@
 
 #include "ArrayList.h"
 #include "Thinker.h"
-#include "String_Type.h"
+#include "Readable_String.h"
 #include "Rehash.h"
 
 namespace Jupiter
@@ -73,14 +73,14 @@ namespace Jupiter
 		*
 		* @param raw The raw message.
 		*/
-		virtual void OnRaw(Jupiter::IRC::Client *server, const Jupiter::StringType &raw);
+		virtual void OnRaw(Jupiter::IRC::Client *server, const Jupiter::ReadableString &raw);
 
 		/**
 		* @brief This is called after an IRC numeric has been processed.
 		*
 		* @param raw The raw message.
 		*/
-		virtual void OnNumeric(Jupiter::IRC::Client *server, long int numeric, const Jupiter::StringType &raw);
+		virtual void OnNumeric(Jupiter::IRC::Client *server, long int numeric, const Jupiter::ReadableString &raw);
 
 		/**
 		* @brief This is called when an ERROR is received.
@@ -88,7 +88,7 @@ namespace Jupiter
 		*
 		* @param message Message sent by the server.
 		*/
-		virtual void OnError(Jupiter::IRC::Client *server, const Jupiter::StringType &message);
+		virtual void OnError(Jupiter::IRC::Client *server, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when a chat message is received.
@@ -97,7 +97,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnChat(Jupiter::IRC::Client *server, const Jupiter::StringType &channel, const Jupiter::StringType &nick, const Jupiter::StringType &message);
+		virtual void OnChat(Jupiter::IRC::Client *server, const Jupiter::ReadableString &channel, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when a notice is received.
@@ -106,7 +106,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnNotice(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &sender, const Jupiter::StringType &message);
+		virtual void OnNotice(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &sender, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when a server notice is received.
@@ -115,7 +115,7 @@ namespace Jupiter
 		* @param nick String containing the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnServerNotice(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &sender, const Jupiter::StringType &message);
+		virtual void OnServerNotice(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &sender, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when a CTCP message is received.
@@ -124,7 +124,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnCTCP(Jupiter::IRC::Client *server, const Jupiter::StringType &channel, const Jupiter::StringType &nick, const Jupiter::StringType &message);
+		virtual void OnCTCP(Jupiter::IRC::Client *server, const Jupiter::ReadableString &channel, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when an action message is received.
@@ -133,7 +133,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnAction(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &nick, const Jupiter::StringType &message);
+		virtual void OnAction(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when an invite is received.
@@ -142,7 +142,7 @@ namespace Jupiter
 		* @param inviter String containing the nickname of the inviter.
 		* @param invited String containing the nickname of the user invited.
 		*/
-		virtual void OnInvite(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &inviter, const Jupiter::StringType &invited);
+		virtual void OnInvite(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &inviter, const Jupiter::ReadableString &invited);
 
 		/**
 		* @brief This is called when a chat message is received.
@@ -151,7 +151,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the sender.
 		* @param message String containing the message sent.
 		*/
-		virtual void OnJoin(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &nick);
+		virtual void OnJoin(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick);
 
 		/**
 		* @brief This is called when a user parts a channel.
@@ -160,7 +160,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the user.
 		* @param reason String containing the reason for parting, or nullptr if none is specified.
 		*/
-		virtual void OnPart(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &nick, const Jupiter::StringType &reason);
+		virtual void OnPart(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &reason);
 
 		/**
 		* @brief This is called when a user changes their nickname.
@@ -168,7 +168,7 @@ namespace Jupiter
 		* @param oldnick String containing the old nickname of the user.
 		* @param newnick String containing the new nickname of the user.
 		*/
-		virtual void OnNick(Jupiter::IRC::Client *server, const Jupiter::StringType &oldnick, const Jupiter::StringType &newnick);
+		virtual void OnNick(Jupiter::IRC::Client *server, const Jupiter::ReadableString &oldnick, const Jupiter::ReadableString &newnick);
 
 		/**
 		* @brief This is called when a user is kicked from a channel.
@@ -178,7 +178,7 @@ namespace Jupiter
 		* @param kicked String containing the nickname of the user kicked.
 		* @param reason String containing the reason for the kick, or nullptr if none is specified.
 		*/
-		virtual void OnKick(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &kicker, const Jupiter::StringType &kicked, const Jupiter::StringType &reason);
+		virtual void OnKick(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &kicker, const Jupiter::ReadableString &kicked, const Jupiter::ReadableString &reason);
 
 		/**
 		* @brief This is called when a user quits the server.
@@ -186,7 +186,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the user.
 		* @param message String containing the reason for quiting.
 		*/
-		virtual void OnQuit(Jupiter::IRC::Client *server, const Jupiter::StringType &nick, const Jupiter::StringType &message);
+		virtual void OnQuit(Jupiter::IRC::Client *server, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
 
 		/**
 		* @brief This is called when a channel mode is changed.
@@ -195,7 +195,7 @@ namespace Jupiter
 		* @param nick String containing the nickname of the user.
 		* @param modeString String containing the modes changed.
 		*/
-		virtual void OnMode(Jupiter::IRC::Client *server, const Jupiter::StringType &chan, const Jupiter::StringType &nick, const Jupiter::StringType &modeString);
+		virtual void OnMode(Jupiter::IRC::Client *server, const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &modeString);
 
 		/**
 		* @brief This is called when a server "thinks".
@@ -217,7 +217,7 @@ namespace Jupiter
 		*
 		* @return String containing the name of the plugin.
 		*/
-		virtual const char *getName() = 0;
+		virtual const Jupiter::ReadableString &getName() = 0;
 
 		/**
 		* @brief Destructor for Plugin class.

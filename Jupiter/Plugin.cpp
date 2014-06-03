@@ -191,77 +191,77 @@ int Jupiter::Plugin::OnRehash()
 	return 0;
 }
 
-void Jupiter::Plugin::OnRaw(Jupiter::IRC::Client *, const Jupiter::StringType &)
+void Jupiter::Plugin::OnRaw(Jupiter::IRC::Client *, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnNumeric(Jupiter::IRC::Client *, long int, const Jupiter::StringType &)
+void Jupiter::Plugin::OnNumeric(Jupiter::IRC::Client *, long int, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnError(Jupiter::IRC::Client *, const Jupiter::StringType &)
+void Jupiter::Plugin::OnError(Jupiter::IRC::Client *, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnChat(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnChat(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnNotice(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnNotice(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnServerNotice(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnServerNotice(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnCTCP(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnCTCP(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnAction(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnAction(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnInvite(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnInvite(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnJoin(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnJoin(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnPart(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnPart(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnNick(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnNick(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnKick(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnKick(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnQuit(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnQuit(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::Plugin::OnMode(Jupiter::IRC::Client *, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::Plugin::OnMode(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
