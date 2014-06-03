@@ -32,16 +32,15 @@
 *	Reference_String
 */
 
-template<typename T> Jupiter::Reference_String<T>::Reference_String()
+template<typename T> Jupiter::Reference_String<T>::Reference_String() : Reference_String(nullptr, 0)
 {
-	Jupiter::Reference_String<T>::str = "";
-	Jupiter::Reference_String<T>::length = 0;
 }
 
 template<typename T> Jupiter::Reference_String<T>::Reference_String(const T *in)
 {
 	Jupiter::Reference_String<T>::str = in;
-	Jupiter::Reference_String<T>::length = Jupiter::strlen<T>(in);
+	if (in == nullptr) Jupiter::Reference_String<T>::length = 0;
+	else Jupiter::Reference_String<T>::length = Jupiter::strlen<T>(in);
 }
 
 template<typename T> Jupiter::Reference_String<T>::Reference_String(const T *in, size_t len)
@@ -79,6 +78,28 @@ template<typename T> size_t Jupiter::Reference_String<T>::size() const
 template<typename T> const T *Jupiter::Reference_String<T>::ptr() const
 {
 	return Jupiter::Reference_String<T>::str;
+}
+
+template<typename T> size_t Jupiter::Reference_String<T>::set(const Jupiter::Readable_String<T> &in)
+{
+	return this->set(in.ptr(), in.size());
+}
+
+template<typename T> size_t Jupiter::Reference_String<T>::set(const std::basic_string<T> &in)
+{
+	return this->set(in.data(), in.size());
+}
+
+template<typename T> size_t Jupiter::Reference_String<T>::set(const T *in, size_t len)
+{
+	Jupiter::Reference_String<T>::str = in;
+	return Jupiter::Reference_String<T>::length = len;
+}
+
+template<typename T> size_t Jupiter::Reference_String<T>::set(const T *in)
+{
+	if (in == nullptr) return this->set(in, 0);
+	return this->set(in, Jupiter::strlen<T>(in));
 }
 
 template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(size_t pos) const
@@ -142,5 +163,7 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 {
 	return Jupiter::Readable_String<T>::gotoWord<Jupiter::Reference_String>(in, pos, whitespace);
 }
+
+template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_String<T>::empty = Jupiter::Reference_String<T>();
 
 #endif // _REFERENCE_STRING_IMP

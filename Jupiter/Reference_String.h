@@ -62,6 +62,17 @@ namespace Jupiter
 		const T *ptr() const;
 
 		/**
+		* @brief Sets the reference to point to an input string.
+		*
+		* @param in String containing the data to be referenced.
+		* @return New size of the String.
+		*/
+		size_t set(const Jupiter::Readable_String<T> &in);
+		size_t set(const std::basic_string<T> &in);
+		size_t set(const T *in, size_t len);
+		size_t set(const T *in);
+
+		/**
 		* @brief Creates a partial copy of the string.
 		*
 		* @param pos Position in the string to start copying from.
@@ -191,6 +202,8 @@ namespace Jupiter
 		* @brief Copy constructor for the Reference_String class.
 		*/
 		Reference_String(const Jupiter::Reference_String<T> &in);
+
+		static const Jupiter::Reference_String<T> empty; /** Empty instantiation of Reference_String */
 
 	protected:
 
