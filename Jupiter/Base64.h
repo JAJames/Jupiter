@@ -172,4 +172,4 @@ JUPITER_API unsigned int Jupiter_base64decode_s(const char *data, size_t dataLen
 }
 #endif
 
-#endif _BASE64_H_HEADER
+#endif // _BASE64_H_HEADER
