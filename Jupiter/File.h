@@ -24,7 +24,7 @@
  */
 
 #include "Jupiter.h"
-#include "CString.h"
+#include "Readable_String.h"
 #include <cstdio>
 
 namespace Jupiter
@@ -39,7 +39,7 @@ namespace Jupiter
 		*
 		* @return Total number of lines.
 		*/
-		unsigned int getLineCount() const;
+		size_t getLineCount() const;
 
 		/**
 		* @brief Fetches a line of the file.
@@ -47,14 +47,14 @@ namespace Jupiter
 		* @param line Index of the line to fetch.
 		* @return Line of text at the specified index.
 		*/
-		const Jupiter::StringType &getLine(unsigned int line) const;
+		const Jupiter::ReadableString &getLine(size_t line) const;
 
 		/**
 		* @brief Returns the name of the first raw file originally loaded.
 		*
 		* @return String containing the name of the first file loaded into this file.
 		*/
-		const Jupiter::StringType &getFileName() const;
+		const Jupiter::ReadableString &getFileName() const;
 
 		/**
 		* @brief Adds data to a file, which may consist of one or more lines.
@@ -62,15 +62,7 @@ namespace Jupiter
 		* @param data Data to add to the file.
 		* @param True if data was added to the file, false otherwise.
 		*/
-		bool addData(const Jupiter::StringType &data);
-
-		/**
-		* @brief Adds data to a file, which may consist of one or more lines.
-		*
-		* @param data Data to add to the file.
-		* @param True if data was added to the file, false otherwise.
-		*/
-		bool addData(const char *data);
+		bool addData(const Jupiter::ReadableString &data);
 
 		/**
 		* @brief Loads a file from the drive into this file.
@@ -143,6 +135,11 @@ namespace Jupiter
 		* @brief Default constructor for File class.
 		*/
 		File();
+
+		/**
+		* @brief Move constructor for File class.
+		*/
+		File(File &&file);
 
 		/**
 		* @brief Copy constructor for File class.

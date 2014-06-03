@@ -24,7 +24,7 @@
  */
 
 #include "Jupiter.h"
-#include "String_Type.h"
+#include "Reference_String.h"
 #include "InvalidIndex.h"
 
 namespace Jupiter
@@ -55,28 +55,21 @@ namespace Jupiter
 				*
 				* @return Reference to the key String in the pair.
 				*/
-				const Jupiter::StringType &getKey() const;
+				const Jupiter::ReadableString &getKey() const;
 
 				/**
 				* @brief Fetches the value in the key-value pair.
 				*
 				* @return Reference to the value String in the pair.
 				*/
-				const Jupiter::StringType &getValue() const;
+				const Jupiter::ReadableString &getValue() const;
 
 				/**
 				* @brief Sets the value of a key-value pair.
 				*
 				* @param value Value to set the key-value pair to.
 				*/
-				void setValue(const Jupiter::StringType &value);
-
-				/**
-				* @brief Sets the value of a key-value pair.
-				*
-				* @param value Value to set the key-value pair to.
-				*/
-				void setValue(const char *value);
+				void setValue(const Jupiter::ReadableString &value);
 
 				/**
 				* @brief Default constructor for the KeyValuePair class.
@@ -103,7 +96,7 @@ namespace Jupiter
 			*
 			* @return Name of the section in a String.
 			*/
-			const Jupiter::StringType &getName() const;
+			const Jupiter::ReadableString &getName() const;
 
 			/**
 			* @brief Fetches the value of a key-value pair at a specified index.
@@ -111,7 +104,7 @@ namespace Jupiter
 			* @param index Index of the key-value pair.
 			* @return Value of a key-value pair at a specified index.
 			*/
-			const Jupiter::StringType &getValue(unsigned int index) const;
+			const Jupiter::ReadableString &getValue(unsigned int index) const;
 
 			/**
 			* @brief Fetches the value of a key-value pair.
@@ -119,15 +112,7 @@ namespace Jupiter
 			* @param key Key of the key-value pair.
 			* @return Value of a key-value pair, or an empty string if none is found.
 			*/
-			const Jupiter::StringType &getValue(const Jupiter::StringType &key) const;
-
-			/**
-			* @brief Fetches the value of a key-value pair.
-			*
-			* @param key Key of the key-value pair.
-			* @return Value of a key-value pair, or an empty string if none is found.
-			*/
-			const Jupiter::StringType &getValue(const char *key) const;
+			const Jupiter::ReadableString &getValue(const Jupiter::ReadableString &key) const;
 
 			/**
 			* @brief Fetches a key-value pair at a specified index.
@@ -143,15 +128,7 @@ namespace Jupiter
 			* @param key Key of the key-value pair.
 			* @return A key-value pair if a match is found, nullptr otherwise.
 			*/
-			Jupiter::INIFile::Section::KeyValuePair *getPair(const Jupiter::StringType &key) const;
-
-			/**
-			* @brief Fetches a key-value pair.
-			*
-			* @param key Key of the key-value pair.
-			* @return A key-value pair if a match is found, nullptr otherwise.
-			*/
-			Jupiter::INIFile::Section::KeyValuePair *getPair(const char *key) const;
+			Jupiter::INIFile::Section::KeyValuePair *getPair(const Jupiter::ReadableString &key) const;
 
 			/**
 			* @brief Fetches the number of key-value pairs in the section.
@@ -166,15 +143,7 @@ namespace Jupiter
 			* @param key Key of the key-value pair to search for.
 			* @return True if a match is found, false otherwise.
 			*/
-			bool hasKey(const Jupiter::StringType &key) const;
-
-			/**
-			* @brief Checks if a section has a key-value pair with a specified key.
-			*
-			* @param key Key of the key-value pair to search for.
-			* @return True if a match is found, false otherwise.
-			*/
-			bool hasKey(const char *key) const;
+			bool hasKey(const Jupiter::ReadableString &key) const;
 
 			/**
 			* @brief Sets a key-value pair's value to a specified value. Creates a new pair if none is found.
@@ -183,30 +152,14 @@ namespace Jupiter
 			* @param value Value to set the key-value pair to.
 			* @return True if a new key-value pair was created, false otherwise.
 			*/
-			bool set(Jupiter::StringType &key, Jupiter::StringType &value);
-
-			/**
-			* @brief Sets a key-value pair's value to a specified value. Creates a new pair if none is found.
-			*
-			* @param key Key of the key-value pair to search for or create.
-			* @param value Value to set the key-value pair to.
-			* @return True if a new key-value pair was created, false otherwise.
-			*/
-			bool set(const char *key, const char *value);
+			bool set(const Jupiter::ReadableString &key, const Jupiter::ReadableString &value);
 
 			/**
 			* @brief Sets the name of a section.
 			*
 			* @param name String to set the section name to.
 			*/
-			void setName(const Jupiter::StringType &name);
-
-			/**
-			* @brief Sets the name of a section.
-			*
-			* @param name String to set the section name to.
-			*/
-			void setName(const char *name);
+			void setName(const Jupiter::ReadableString &name);
 
 			/**
 			* @brief Removes a key-value pair from the section.
@@ -214,15 +167,7 @@ namespace Jupiter
 			* @param key Key of the key-value pair to remove.
 			* @return True if a key-value pair was removed, false otherwise.
 			*/
-			bool remove(Jupiter::StringType &key);
-
-			/**
-			* @brief Removes a key-value pair from the section.
-			*
-			* @param key Key of the key-value pair to remove.
-			* @return True if a key-value pair was removed, false otherwise.
-			*/
-			bool remove(const char *key);
+			bool remove(const Jupiter::ReadableString &key);
 
 			/**
 			* @brief Default constructor for the Section class.
@@ -232,8 +177,7 @@ namespace Jupiter
 			/**
 			* @brief Name-specifiable constructors for the Section class
 			*/
-			Section(const Jupiter::StringType &name);
-			Section(const char *name);
+			Section(const Jupiter::ReadableString &name);
 
 			/**
 			* @brief Copy constructor for the Section class.
@@ -299,7 +243,7 @@ namespace Jupiter
 		* @param keyValue String containing new key value.
 		* @return True if a new key was added, false otherwise.
 		*/
-		bool set(const char *section, const char *keyName, const char *keyValue);
+		bool set(const Jupiter::ReadableString &section, const Jupiter::ReadableString &keyName, const Jupiter::ReadableString &keyValue);
 
 		/**
 		* @brief Removes a key. Does not modify any files.
@@ -308,7 +252,7 @@ namespace Jupiter
 		* @param keyName String containing key name.
 		* @return True if an entry was removed, false otherwise.
 		*/
-		bool remove(const char *section, const char *keyName);
+		bool remove(const Jupiter::ReadableString &section, const Jupiter::ReadableString &keyName);
 
 		/**
 		* @brief Returns the number of sections in memory.
@@ -331,7 +275,7 @@ namespace Jupiter
 		* @param section The name of the section.
 		* @return The index of section if it exists, INVALID_INDEX (-1) otherwise.
 		*/
-		unsigned int getSectionIndex(const char *section) const;
+		unsigned int getSectionIndex(const Jupiter::ReadableString &section) const;
 
 		/**
 		* @brief Returns the number of keys in a section.
@@ -347,7 +291,7 @@ namespace Jupiter
 		* @param keyIndex Index of the key.
 		* @return Key name on success, nullptr otherwise.
 		*/
-		const char *getKey(const char *section, unsigned int index) const;
+		const Jupiter::ReadableString &getKey(const Jupiter::ReadableString &section, unsigned int index) const;
 
 		/**
 		* @brief Returns the index of a key.
@@ -356,7 +300,7 @@ namespace Jupiter
 		* @param key String containing key name.
 		* @return Index of key if it exists, INVALID_INDEX (-1) otherwise.
 		*/
-		unsigned int getKeyIndex(const char *section, const char *key) const;
+		unsigned int getKeyIndex(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key) const;
 
 		/**
 		* @brief Returns the value of a key.
@@ -366,7 +310,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return Pointer to a string containing key value if it exists, defaultValue otherwise.
 		*/
-		const char *get(const char *section, const char *key, const char *defaultValue = nullptr) const;
+		const Jupiter::ReadableString &get(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue = Jupiter::ReferenceString::empty) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a boolean.
@@ -376,7 +320,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return true if key exists and is not "false" or "0", defaultValue otherwise.
 		*/
-		bool getBool(const char *section, const char *key, bool defaultValue = false) const;
+		bool getBool(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, bool defaultValue = false) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a short.
@@ -386,7 +330,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return short value of the key if it exits, defaultValue otherwise.
 		*/
-		short getShort(const char *section, const char *key, short defaultValue = 0) const;
+		short getShort(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, short defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as an int.
@@ -396,7 +340,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return int value of the key if it exits, defaultValue otherwise.
 		*/
-		int getInt(const char *section, const char *key, int defaultValue = 0) const;
+		int getInt(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, int defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a long.
@@ -406,7 +350,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return long value of the key if it exits, defaultValue otherwise.
 		*/
-		long getLong(const char *section, const char *key, long defaultValue = 0) const;
+		long getLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a long long.
@@ -416,7 +360,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return long long value of the key if it exits, defaultValue otherwise.
 		*/
-		long long getLongLong(const char *section, const char *key, long long defaultValue = 0) const;
+		long long getLongLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long long defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a float.
@@ -426,7 +370,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return float value of the key if it exits, defaultValue otherwise.
 		*/
-		float getFloat(const char *section, const char *key, float defaultValue = 0) const;
+		float getFloat(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, float defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a double.
@@ -436,7 +380,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return double value of the key if it exits, defaultValue otherwise.
 		*/
-		double getDouble(const char *section, const char *key, double defaultValue = 0) const;
+		double getDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, double defaultValue = 0) const;
 
 		/**
 		* @brief Translates and returns the value of a key as a long double.
@@ -446,7 +390,7 @@ namespace Jupiter
 		* @param defaultValue Value to return if none is found.
 		* @return long double value of the key if it exits, defaultValue otherwise.
 		*/
-		long double getLongDouble(const char *section, const char *key, long double defaultValue = 0) const;
+		long double getLongDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long double defaultValue = 0) const;
 
 		/**
 		* @brief Default constructor for the INIFile class.

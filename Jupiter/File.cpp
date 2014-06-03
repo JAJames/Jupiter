@@ -8,11 +8,14 @@
 
 #include <sys/stat.h>
 #include "File.h"
+#include "CString.h"
+#include "String.h"
+#include "Reference_String.h"
+#include "ArrayList.h"
 
 /**
 * TODO:
-*	Upon writing Jupiter::String, port Jupiter::File to use Jupiter::String isntead of Jupiter::CString.
-*	Instead of an array of String, consider an ArrayList to remove the cost of constant construction/destruction when expanding.
+*	Consider replacing the ArrayList of Strings with a Rope (requires a Rope implementation).
 */
 
 #if defined _WIN32
@@ -29,12 +32,12 @@ int64_t getFileSize(const char *file)
 const size_t defaultBufferSize = 8192;
 
 template class JUPITER_API Jupiter::CString_Type<char>;
+template class JUPITER_API Jupiter::ArrayList<Jupiter::StringS>;
 
 struct JUPITER_API Jupiter::File::Data
 {
 	Jupiter::CStringS fileName;
-	size_t lineCount;
-	Jupiter::CStringS *lines;
+	Jupiter::ArrayList<Jupiter::StringS> lines;
 
 	Data();
 	Data(const Data &data);
@@ -43,29 +46,30 @@ struct JUPITER_API Jupiter::File::Data
 
 Jupiter::File::Data::Data()
 {
-	Jupiter::File::Data::lineCount = 0;
-	Jupiter::File::Data::lines = nullptr;
 }
 
 Jupiter::File::Data::Data(const Jupiter::File::Data &data)
 {
 	Jupiter::File::Data::fileName = data.fileName;
-	if ((Jupiter::File::Data::lineCount = data.lineCount) != 0)
-	{
-		Jupiter::File::Data::lines = new Jupiter::CStringS[Jupiter::File::Data::lineCount];
-		for (unsigned int i = 0; i != Jupiter::File::Data::lineCount; i++) Jupiter::File::Data::lines[i] = data.lines[i];
-	}
-	else Jupiter::File::Data::lines = nullptr;
+
+	for (size_t i = 0; i != Jupiter::File::Data::lines.size(); i++)
+		Jupiter::File::Data::lines.add(new Jupiter::StringS(*data.lines.get(i)));
 }
 
 Jupiter::File::Data::~Data()
 {
-	if (Jupiter::File::Data::lines != nullptr) delete[] Jupiter::File::Data::lines;
+	Jupiter::File::Data::lines.emptyAndDelete();
 }
 
 Jupiter::File::File()
 {
 	Jupiter::File::data_ = new Jupiter::File::Data();
+}
+
+Jupiter::File::File(File &&file)
+{
+	Jupiter::File::data_ = file.data_;
+	file.data_ = new Jupiter::File::Data();
 }
 
 Jupiter::File::File(const File &file)
@@ -78,57 +82,28 @@ Jupiter::File::~File()
 	delete Jupiter::File::data_;
 }
 
-unsigned int Jupiter::File::getLineCount() const
+size_t Jupiter::File::getLineCount() const
 {
-	return Jupiter::File::data_->lineCount;
+	return Jupiter::File::data_->lines.size();
 }
 
-const Jupiter::StringType &Jupiter::File::getLine(unsigned int line) const
+const Jupiter::ReadableString &Jupiter::File::getLine(size_t line) const
 {
-	return Jupiter::File::data_->lines[line];
+	return *Jupiter::File::data_->lines.get(line);
 }
 
-const Jupiter::StringType &Jupiter::File::getFileName() const
+const Jupiter::ReadableString &Jupiter::File::getFileName() const
 {
 	return Jupiter::File::data_->fileName;
 }
 
-bool Jupiter::File::addData(const Jupiter::StringType &data)
+bool Jupiter::File::addData(const Jupiter::ReadableString &data)
 {
-	if (Jupiter::File::data_->lineCount == 0)
-	{
-		if ((Jupiter::File::data_->lineCount = data.wordCount(ENDL)) != 0)
-		{
-			Jupiter::File::data_->lines = new Jupiter::CStringS[Jupiter::File::data_->lineCount];
-			for (unsigned int i = Jupiter::File::data_->lineCount - 1; i != 0; i--) Jupiter::File::data_->lines[i] = Jupiter::CStringS::getWord(data, i, ENDL);
-			Jupiter::File::data_->lines[0] = Jupiter::CStringS::getWord(data, 0, ENDL);
-			return true;
-		}
-		return false;
-	}
-	else
-	{
-		unsigned int wc = data.wordCount(ENDL);
-		if (wc != 0)
-		{
-			Jupiter::CStringS *oldLines = Jupiter::File::data_->lines;
-			Jupiter::File::data_->lines = new Jupiter::CStringS[Jupiter::File::data_->lineCount + wc];
+	unsigned int wc = data.wordCount(ENDL);
+	if (wc == 0) return false;
 
-			unsigned int i;
-			for (i = 0; i < Jupiter::File::data_->lineCount; i++) Jupiter::File::data_->lines[i] = oldLines[i];
-			delete[] oldLines;
-
-			Jupiter::File::data_->lineCount += wc;
-			for (unsigned int b = 0; b < wc; i++, b++) Jupiter::File::data_->lines[i] = Jupiter::CStringS::getWord(data, b, ENDL);
-			return true;
-		}
-		return false;
-	}
-}
-
-bool Jupiter::File::addData(const char *data)
-{
-	return Jupiter::File::addData(Jupiter::CStringS(data));
+	for (unsigned int i = 0; i < wc; i++) Jupiter::File::data_->lines.add(new Jupiter::StringS(std::move(Jupiter::StringS::getWord(data, 0, ENDL))));
+	return true;
 }
 
 bool Jupiter::File::load(const char *file)
@@ -143,27 +118,25 @@ bool Jupiter::File::load(const char *file)
 
 bool Jupiter::File::load(FILE *file)
 {
-	Jupiter::CStringL fileBuffer;
+	bool success = false;
 	char buffer[defaultBufferSize];
-	while (fgets(buffer, defaultBufferSize, file) != nullptr)
-	{
-		fileBuffer += buffer;
-		if (feof(file)) break;
-	}
 
-	return Jupiter::File::addData(fileBuffer);
+	while (!feof(file))
+		success |= Jupiter::File::addData(Jupiter::ReferenceString(buffer, fread(buffer, sizeof(char), sizeof(buffer), file)));
+
+	return success;
 }
 
 void Jupiter::File::unload()
 {
-	delete Jupiter::File::data_;
-	Jupiter::File::data_ = new Jupiter::File::Data();
+	Jupiter::File::data_->fileName.set("");
+	Jupiter::File::data_->lines.emptyAndDelete();
 }
 
 bool Jupiter::File::reload()
 {
 	if (Jupiter::File::data_->fileName.size() == 0) return false;
-	Jupiter::CStringS fileName = Jupiter::File::data_->fileName;
+	Jupiter::CStringS fileName(std::move(Jupiter::File::data_->fileName));
 	Jupiter::File::unload();
 	return Jupiter::File::load(fileName.c_str());
 }
@@ -197,9 +170,7 @@ bool Jupiter::File::sync(const char *file)
 
 bool Jupiter::File::sync(FILE *file)
 {
-	for (unsigned int i = 0; i < Jupiter::File::data_->lineCount; i++)
-	{
-		Jupiter::File::data_->lines[i].println(file);
-	}
+	for (size_t i = 0; i != Jupiter::File::data_->lines.size(); i++)
+		Jupiter::File::data_->lines.get(i)->println(file);
 	return true;
 }
