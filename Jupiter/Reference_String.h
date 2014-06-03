@@ -219,6 +219,8 @@ namespace Jupiter
 
 }
 
+#define STRING_LITERAL_AS_REFERENCE(str) Jupiter::ReferenceString(str, sizeof(str) - 1)
+
 #include "Reference_String_Imp.h"
 
 #endif // _REFERENCE_STRING_H_HEADER
