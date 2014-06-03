@@ -37,7 +37,7 @@ namespace Jupiter
 		* @param index Index of the data to get.
 		* @return Data stored at the specified index.
 		*/
-		virtual T *get(unsigned int index) const = 0;
+		virtual T *get(size_t index) const = 0;
 
 		/**
 		* @brief Removes the n'th Node in the list, and returns its contents.
@@ -45,7 +45,7 @@ namespace Jupiter
 		* @param n Index of the node to remove.
 		* @return Contents of the node removed.
 		*/
-		virtual T *remove(unsigned int n) = 0;
+		virtual T *remove(size_t n) = 0;
 
 		/**
 		* @brief Adds data to the list at a specified index.
@@ -53,7 +53,7 @@ namespace Jupiter
 		* @param data Data to add to the list.
 		* @param index Position in the list to add the data to.
 		*/
-		virtual void add(T *data, unsigned int index) = 0;
+		virtual void add(T *data, size_t index) = 0;
 
 		/**
 		* @brief Adds data to the list in an efficient manner.
@@ -67,10 +67,10 @@ namespace Jupiter
 		*
 		* @return Number of nodes in the list.
 		*/
-		unsigned int size() const { return Jupiter::List<T>::length; };
+		size_t size() const { return Jupiter::List<T>::length; };
 
 	protected:
-		unsigned int length = 0; /** Length (size) of the list. Returned by size(). Must be managed by extending classes. */
+		size_t length = 0; /** Length (size) of the list. Returned by size(). Must be managed by extending classes. */
 	};
 }
 

@@ -53,7 +53,7 @@ void *Jupiter::Queue::dequeue()
 	return nullptr;
 }
 
-unsigned int Jupiter::Queue::size() const
+size_t Jupiter::Queue::size() const
 {
 	return Jupiter::Queue::length;
 }

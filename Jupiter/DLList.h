@@ -51,7 +51,7 @@ namespace Jupiter
 		* @param n Index of the node to return.
 		* @return n'th Node in the list.
 		*/
-		Node *getNode(unsigned int n) const;
+		Node *getNode(size_t n) const;
 
 		/**
 		* @brief Gets the data at a specified index.
@@ -59,7 +59,7 @@ namespace Jupiter
 		* @param index Index of the data to get.
 		* @return Data stored at the specified index.
 		*/
-		T *get(unsigned int index) const;
+		T *get(size_t index) const;
 
 		/**
 		* @brief Removes the n'th Node in the list, and returns its contents.
@@ -67,7 +67,7 @@ namespace Jupiter
 		* @param n Index of the node to remove.
 		* @return Contents of the node removed.
 		*/
-		T *remove(unsigned int n);
+		T *remove(size_t n);
 
 		/**
 		* @brief Removes a node from the list.
@@ -83,7 +83,7 @@ namespace Jupiter
 		* @param data Data to add to the list.
 		* @param index Position in the list to add the data to.
 		*/
-		void add(T *data, unsigned int index);
+		void add(T *data, size_t index);
 
 		/**
 		* @brief Adds data to the end of the list.
@@ -176,26 +176,26 @@ template<typename T> Jupiter::DLList<T>::~DLList()
 	}
 }
 
-template<typename T> typename Jupiter::DLList<T>::Node *Jupiter::DLList<T>::getNode(unsigned int index) const
+template<typename T> typename Jupiter::DLList<T>::Node *Jupiter::DLList<T>::getNode(size_t index) const
 {
 	Jupiter::DLList<T>::Node *r;
 	if (index * 2 < Jupiter::List<T>::length)
 	{
 		r = Jupiter::DLList<T>::head;
-		for (unsigned int i = 0; i < index; i++) r = r->next;
+		for (size_t i = 0; i < index; i++) r = r->next;
 		return r;
 	}
 	r = Jupiter::DLList<T>::end;
-	for (unsigned int i = Jupiter::List<T>::length - 1; i > index; i--) r = r->previous;
+	for (size_t i = Jupiter::List<T>::length - 1; i > index; i--) r = r->previous;
 	return r;
 }
 
-template<typename T> T *Jupiter::DLList<T>::get(unsigned int index) const
+template<typename T> T *Jupiter::DLList<T>::get(size_t index) const
 {
 	return Jupiter::DLList<T>::getNode(index)->data;
 }
 
-template<typename T> T *Jupiter::DLList<T>::remove(unsigned int index)
+template<typename T> T *Jupiter::DLList<T>::remove(size_t index)
 {
 	return Jupiter::DLList<T>::remove(Jupiter::DLList<T>::getNode(index));
 }
@@ -224,7 +224,7 @@ template<typename T> T *Jupiter::DLList<T>::remove(Node *data)
 	return r;
 }
 
-template<typename T> void Jupiter::DLList<T>::add(T *data, unsigned int index)
+template<typename T> void Jupiter::DLList<T>::add(T *data, size_t index)
 {
 	Jupiter::DLList<T>::Node *node = new Jupiter::DLList<T>::Node();
 	node->data = data;

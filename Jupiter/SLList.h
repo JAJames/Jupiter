@@ -50,7 +50,7 @@ namespace Jupiter
 		* @param n Index of the node to return.
 		* @return n'th Node in the list.
 		*/
-		Node *getNode(unsigned int n) const;
+		Node *getNode(size_t n) const;
 
 		/**
 		* @brief Gets the data at a specified index.
@@ -58,7 +58,7 @@ namespace Jupiter
 		* @param index Index of the data to get.
 		* @return Data stored at the specified index.
 		*/
-		T *get(unsigned int index) const;
+		T *get(size_t index) const;
 
 		/**
 		* @brief Removes the n'th Node in the list, and returns its contents.
@@ -66,7 +66,7 @@ namespace Jupiter
 		* @param n Index of the node to remove.
 		* @return Contents of the node removed.
 		*/
-		T *remove(unsigned int n);
+		T *remove(size_t n);
 
 		/**
 		* @brief Removes the next node in the list.
@@ -82,7 +82,7 @@ namespace Jupiter
 		* @param data Data to add to the list.
 		* @param index Position in the list to add the data to.
 		*/
-		void add(T *data, unsigned int index);
+		void add(T *data, size_t index);
 
 		/**
 		* @brief Adds data to the front of the list.
@@ -154,27 +154,27 @@ template<typename T> Jupiter::SLList<T>::~SLList()
 	} while (c != nullptr);
 }
 
-template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getNode(unsigned int index) const
+template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getNode(size_t index) const
 {
 	Jupiter::SLList<T>::Node *t = head->next;
-	for (unsigned int i = 0; i != index; i++) t = t->next;
+	for (size_t i = 0; i != index; i++) t = t->next;
 	return t;
 }
 
-template<typename T> T *Jupiter::SLList<T>::get(unsigned int index)
+template<typename T> T *Jupiter::SLList<T>::get(size_t index)
 {
 	return Jupiter::SLList<T>::getNode(index)->data;
 }
 
-template<typename T> const T *Jupiter::SLList<T>::get(unsigned int index) const
+template<typename T> const T *Jupiter::SLList<T>::get(size_t index) const
 {
 	return Jupiter::SLList<T>::getNode(index)->data;
 }
 
-template<typename T> T *Jupiter::SLList<T>::remove(unsigned int index)
+template<typename T> T *Jupiter::SLList<T>::remove(size_t index)
 {
 	Jupiter::SLList<T>::Node *t = head;
-	for (unsigned int i = 0; i != index; i++) t = t->next;
+	for (size_t i = 0; i != index; i++) t = t->next;
 	Jupiter::SLList<T>::Node *t2 = t->next;
 	T *r = t2->data;
 	delete t2;
@@ -193,12 +193,12 @@ template<typename T> T *Jupiter::SLList<T>::removeNext(Jupiter::SLList<T>::Node 
 	return r;
 }
 
-template<typename T> void Jupiter::SLList<T>::add(T *data, unsigned int index)
+template<typename T> void Jupiter::SLList<T>::add(T *data, size_t index)
 {
 	Jupiter::SLList<T>::Node *n = new Jupiter::SLList<T>::Node();
 	n->data = data;
 	Jupiter::SLList<T>::Node *t = Jupiter::SLList<T>::head;
-	for (unsigned int i = 0; i < index; i++) t = t->next;
+	for (size_t i = 0; i < index; i++) t = t->next;
 	n->next = t->next;
 	t->next = n;
 	Jupiter::List<T>::length++;

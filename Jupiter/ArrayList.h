@@ -41,7 +41,7 @@ namespace Jupiter
 		* @param index Index of the data to get.
 		* @return Data stored at the specified index.
 		*/
-		T *get(unsigned int index) const;
+		T *get(size_t index) const;
 
 		/**
 		* @brief Removes the data at a specified index from the list, and returns the removed data.
@@ -49,7 +49,7 @@ namespace Jupiter
 		* @param n Index of the node to remove.
 		* @return Data removed.
 		*/
-		T *remove(unsigned int index);
+		T *remove(size_t index);
 
 		/**
 		* @brief Adds data to the list at a specified index.
@@ -57,7 +57,7 @@ namespace Jupiter
 		* @param data Data to add to the list.
 		* @param index Position in the list to add the data to.
 		*/
-		void add(T *data, unsigned int index);
+		void add(T *data, size_t index);
 
 		/**
 		* @brief Adds data to the end of the list.
@@ -103,20 +103,20 @@ namespace Jupiter
 	/** Private members */
 	private:
 		T **data;
-		unsigned int dataSize;
-		unsigned int expandArray();
+		size_t dataSize;
+		size_t expandArray();
 	};
 
 }
 
 // Implementation
 
-const unsigned int INIT_SIZE = 8;
+const size_t INIT_SIZE = 8;
 
-template<typename T> unsigned int Jupiter::ArrayList<T>::expandArray()
+template<typename T> size_t Jupiter::ArrayList<T>::expandArray()
 {
 	T **tmp = new T *[Jupiter::ArrayList<T>::dataSize * 2];
-	for (unsigned int i = 0; i < Jupiter::ArrayList<T>::dataSize; i++) tmp[i] = data[i];
+	for (size_t i = 0; i < Jupiter::ArrayList<T>::dataSize; i++) tmp[i] = data[i];
 	delete[] Jupiter::ArrayList<T>::data;
 	Jupiter::ArrayList<T>::data = tmp;
 	Jupiter::ArrayList<T>::dataSize *= 2;
@@ -139,7 +139,7 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList(const Jupiter::ArrayList<T
 	Jupiter::ArrayList<T>::dataSize = source.dataSize;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
 	Jupiter::List<T>::length = source.length;
-	for (unsigned int i = 0; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i] = source.data[i];
+	for (size_t i = 0; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i] = source.data[i];
 }
 
 template<typename T> Jupiter::ArrayList<T>::~ArrayList()
@@ -147,24 +147,24 @@ template<typename T> Jupiter::ArrayList<T>::~ArrayList()
 	delete[] Jupiter::ArrayList<T>::data;
 }
 
-template<typename T> T *Jupiter::ArrayList<T>::get(unsigned int index) const
+template<typename T> T *Jupiter::ArrayList<T>::get(size_t index) const
 {
 	return Jupiter::ArrayList<T>::data[index];
 }
 
-template<typename T> T *Jupiter::ArrayList<T>::remove(unsigned int index)
+template<typename T> T *Jupiter::ArrayList<T>::remove(size_t index)
 {
 	T *r = Jupiter::ArrayList<T>::data[index];
 	Jupiter::ArrayList<T>::data[index] = nullptr;
-	for (unsigned int i = index + 1; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i - 1] = Jupiter::ArrayList<T>::data[i];
+	for (size_t i = index + 1; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i - 1] = Jupiter::ArrayList<T>::data[i];
 	Jupiter::List<T>::length--;
 	return r;
 }
 
-template<typename T> void Jupiter::ArrayList<T>::add(T *ndata, unsigned int index)
+template<typename T> void Jupiter::ArrayList<T>::add(T *ndata, size_t index)
 {
 	if (Jupiter::List<T>::length == Jupiter::ArrayList<T>::dataSize) Jupiter::ArrayList<T>::expandArray();
-	for (unsigned int i = Jupiter::List<T>::length; i > index; i--) Jupiter::ArrayList<T>::data[i] = Jupiter::ArrayList<T>::data[i - 1];
+	for (size_t i = Jupiter::List<T>::length; i > index; i--) Jupiter::ArrayList<T>::data[i] = Jupiter::ArrayList<T>::data[i - 1];
 	Jupiter::ArrayList<T>::data[index] = ndata;
 	Jupiter::List<T>::length++;
 }
@@ -181,7 +181,7 @@ template<typename T> void Jupiter::ArrayList<T>::empty()
 
 template<typename T> void Jupiter::ArrayList<T>::emptyAndDelete()
 {
-	for (unsigned int i = 0; i < Jupiter::List<T>::length; i++) delete Jupiter::ArrayList<T>::data[i];
+	for (size_t i = 0; i < Jupiter::List<T>::length; i++) delete Jupiter::ArrayList<T>::data[i];
 	Jupiter::List<T>::length = 0;
 }
 

@@ -53,7 +53,7 @@ namespace Jupiter
 		*
 		* @return Number of elements in the Queue.
 		*/
-		unsigned int size() const;
+		size_t size() const;
 
 		/**
 		* @brief Default constructor for the Queue class.
@@ -71,7 +71,7 @@ namespace Jupiter
 		struct Data;
 		Data *head;
 		Data *end;
-		unsigned int length;
+		size_t length;
 	};
 
 }
