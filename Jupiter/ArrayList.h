@@ -82,6 +82,11 @@ namespace Jupiter
 		ArrayList();
 
 		/**
+		* @brief Initializes the ArrayList's underlying array to a specified size.
+		*/
+		ArrayList(size_t length);
+
+		/**
 		* @brief Copy constructor for the ArrayList class.
 		*/
 		ArrayList(const ArrayList<T> &);
@@ -118,9 +123,13 @@ template<typename T> unsigned int Jupiter::ArrayList<T>::expandArray()
 	return Jupiter::ArrayList<T>::dataSize;
 }
 
-template<typename T> Jupiter::ArrayList<T>::ArrayList()
+template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(length)
 {
-	Jupiter::ArrayList<T>::dataSize = INIT_SIZE;
+}
+
+template<typename T> Jupiter::ArrayList<T>::ArrayList(size_t length)
+{
+	Jupiter::ArrayList<T>::dataSize = length;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
 	Jupiter::List<T>::length = 0;
 }
