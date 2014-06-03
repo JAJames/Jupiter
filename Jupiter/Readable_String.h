@@ -26,6 +26,7 @@
 #include <cwchar> // wchar_t
 #include <cstdio> // FILE
 #include <string> // std::basic_string<T> type
+#include "InvalidIndex.h"
 
 namespace Jupiter
 {
@@ -69,6 +70,14 @@ namespace Jupiter
 		* @return True if a match is found, false otherwise.
 		*/
 		bool contains(const T &value) const;
+
+		/**
+		* @brief Returns the index of the first element in the string with the specified value.
+		*
+		* @param value Value of the element to search for.
+		* @return The index of an element if one is found, INVALID_INDEX otherwise.
+		*/
+		size_t find(const T &value) const;
 
 		/**
 		* @brief Compares another string against the String.
@@ -146,15 +155,16 @@ namespace Jupiter
 		* @return Integer representation of the string.
 		*/
 		int asInt(int base = 0) const;
+		unsigned int asUnsignedInt(int base = 0) const;
 
 		/**
-		* @brief Interprets the string as an integer.
+		* @brief Interprets the string as a floating-point decimal number.
 		* Note: This returns 0 on any value string type other than char.
 		*
 		* @param base Base of the string representation.
 		* @return Integer representation of the string.
 		*/
-		unsigned int asUnsignedInt(int base = 0) const;
+		double asDouble() const;
 
 		/**
 		* @brief Outputs the string to a FILE stream.

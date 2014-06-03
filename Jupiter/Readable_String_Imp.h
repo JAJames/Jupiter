@@ -40,6 +40,14 @@ template<typename T> bool Jupiter::Readable_String<T>::contains(const T &value) 
 	return false;
 }
 
+// find
+
+template<typename T> size_t Jupiter::Readable_String<T>::find(const T &value) const
+{
+	for (size_t i = 0; i != this->size(); i++) if (this->get(i) == value) return i;
+	return Jupiter::INVALID_INDEX;
+}
+
 // compare()
 
 template<typename T> int Jupiter::Readable_String<T>::compare(const Jupiter::Readable_String<T> &in) const
@@ -682,6 +690,16 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 
 // as<type>
 
+template<> int inline Jupiter::Readable_String<char>::asInt(int base) const
+{
+	return strtoi_s(this->ptr(), this->size(), base);
+}
+
+template<typename T> int Jupiter::Readable_String<T>::asInt(int base) const
+{
+	return 0;
+}
+
 template<> unsigned int inline Jupiter::Readable_String<char>::asUnsignedInt(int base) const
 {
 	return strtoui_s(this->ptr(), this->size(), base);
@@ -692,12 +710,12 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::asUnsignedInt(int
 	return 0;
 }
 
-template<> int inline Jupiter::Readable_String<char>::asInt(int base) const
+template<> double inline Jupiter::Readable_String<char>::asDouble() const
 {
-	return strtoi_s(this->ptr(), this->size(), base);
+	return Jupiter_strtod_s(this->ptr(), this->size());
 }
 
-template<typename T> int Jupiter::Readable_String<T>::asInt(int base) const
+template<typename T> double Jupiter::Readable_String<T>::asDouble() const
 {
 	return 0;
 }
