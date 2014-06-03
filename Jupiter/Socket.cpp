@@ -431,9 +431,14 @@ int Jupiter::Socket::send(const char *data, size_t datalen)
 	return ::send(Jupiter::Socket::data_->rawSock, data, datalen, 0);
 }
 
+int Jupiter::Socket::send(const Jupiter::ReadableString &str)
+{
+	return this->send(str.ptr(), str.size());
+}
+
 int Jupiter::Socket::send(const char *msg)
 {
-	return Jupiter::Socket::send(msg, strlen(msg));
+	return this->send(msg, strlen(msg));
 }
 
 int Jupiter::Socket::sendTo(const addrinfo *info, const char *data, size_t datalen)

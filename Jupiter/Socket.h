@@ -386,13 +386,24 @@ namespace Jupiter
 		virtual int send(const char *data, size_t datalen);
 
 		/**
+		* @brief Sends a string of data across the socket.
+		* Note: Internally, this just calls send(str.ptr(), str.size()).
+		*
+		* @param String containing the data to send.
+		* @return Number of bytes sent on success, SOCKET_ERROR (-1) otherwise.
+		* Note: Any returned value less than or equal to 0 should be treated as an error.
+		*/
+		int send(const Jupiter::ReadableString &str);
+
+		/**
 		* @brief Sends a null-terminated string of data across the socket.
+		* Note: Internally, this just calls send(msg, strlen(msg)).
 		*
 		* @param String containing the null-terminated data to send.
 		* @return Number of bytes sent on success, SOCKET_ERROR (-1) otherwise.
 		* Note: Any returned value less than or equal to 0 should be treated as an error.
 		*/
-		virtual int send(const char *msg);
+		int send(const char *msg);
 
 		/**
 		* @brief Sends data across the socket.
