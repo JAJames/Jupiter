@@ -40,7 +40,7 @@ template<typename T> Jupiter::String_Type<T>::String_Type(Jupiter::String_Type<T
 	source.str = nullptr;
 }
 
-template<typename T> T &Jupiter::String_Type<T>::get(size_t index) const
+template<typename T> const T &Jupiter::String_Type<T>::get(size_t index) const
 {
 	return Jupiter::String_Type<T>::str[index];
 }

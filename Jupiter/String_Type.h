@@ -46,7 +46,8 @@ namespace Jupiter
 		* @param index Index of the element to return.
 		* @return The element located at the specified index.
 		*/
-		T &get(size_t index) const;
+		const T &get(size_t index) const;
+		//T &get(size_t index) const;
 
 		/**
 		* @brief Returns the number of elements in the String.

@@ -46,7 +46,7 @@ namespace Jupiter
 		* @param index Index of the element to return.
 		* @return The element located at the specified index.
 		*/
-		virtual T &get(size_t index) const = 0;
+		virtual const T &get(size_t index) const = 0;
 
 		/**
 		* @brief Returns the number of elements in the String.
@@ -201,7 +201,7 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
 
 		/** Access operator */
-		inline T &operator[](size_t index) const { return this->get(index); };
+		inline const T &operator[](size_t index) const { return this->get(index); };
 
 		/** Comparative operators */
 		inline bool operator==(const Readable_String<T> &right)const{ return this->equals(right); }
