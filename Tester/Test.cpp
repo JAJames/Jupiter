@@ -1,11 +1,12 @@
 #include <chrono>
 #include <string>
-#include "../Jupiter/Functions.h"
-#include "../Jupiter/CString.h"
-#include "../Jupiter/String.h"
-#include "../Jupiter/File.h"
-#include "../Jupiter/Base64.h"
-#include "../Jupiter/InvalidIndex.h"
+#include "Jupiter/Functions.h"
+#include "Jupiter/CString.h"
+#include "Jupiter/String.h"
+#include "Jupiter/File.h"
+#include "Jupiter/Base64.h"
+#include "Jupiter/InvalidIndex.h"
+#include "Jupiter/Reference_String.h"
 
 using namespace Jupiter;
 
