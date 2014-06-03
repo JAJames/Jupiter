@@ -27,7 +27,7 @@ char *Jupiter::base64encode(const char *str)
 
 unsigned int Jupiter::base64decode(const char *data, size_t dataLength, unsigned char *result)
 {
-	return Jupiter_base64decode2(data, dataLength, result);
+	return Jupiter_base64decode_s(data, dataLength, result);
 }
 
 unsigned int Jupiter::base64decode(const char *data, size_t dataLength, unsigned char *result, size_t resultSize)

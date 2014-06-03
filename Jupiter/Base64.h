@@ -147,7 +147,7 @@ JUPITER_API bool Jupiter_isBase64(const char *str);
 * @param dataLength Length of the data to check.
 * @return True if the input buffer is a valid base64 string, false otherwise.
 */
-JUPITER_API bool Jupiter_isBase642(const char *data, size_t dataLength);
+JUPITER_API bool Jupiter_isBase64_s(const char *data, size_t dataLength);
 
 /**
 * @brief Decodes an input base64 C-String into a data buffer.
@@ -166,7 +166,7 @@ JUPITER_API unsigned int Jupiter_base64decode(const char *str, unsigned char *re
 * @param result Data buffer for output.
 * @return Number of bytes written to the output buffer.
 */
-JUPITER_API unsigned int Jupiter_base64decode2(const char *data, size_t dataLength, unsigned char *result);
+JUPITER_API unsigned int Jupiter_base64decode_s(const char *data, size_t dataLength, unsigned char *result);
 
 #if defined __cplusplus
 }

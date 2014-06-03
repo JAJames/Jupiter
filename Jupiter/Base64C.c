@@ -121,7 +121,7 @@ bool Jupiter_isBase64(const char *in)
 	return true;
 }
 
-bool Jupiter_isBase642(const char *in, size_t inLen)
+bool Jupiter_isBase64_s(const char *in, size_t inLen)
 {
 	if (inLen % 4 != 0)
 	{
@@ -192,7 +192,7 @@ endLoop:
 	return out - outOrig;
 }
 
-unsigned int Jupiter_base64decode2(const char *in, size_t inLen, unsigned char *out)
+unsigned int Jupiter_base64decode_s(const char *in, size_t inLen, unsigned char *out)
 {
 	unsigned char *outOrig = out;
 	const char *end = in + inLen;
