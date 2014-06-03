@@ -57,21 +57,21 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(Jupiter::String_St
 {
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.ptr(), in.size())
 {
-	while (Jupiter::String_Type<T>::length < in.size())
-	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
-		Jupiter::String_Type<T>::length++;
-	}
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const std::basic_string<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const std::basic_string<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.data(), in.size())
 {
-	while (Jupiter::String_Type<T>::length < in.size())
+}
+
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const T *in, size_t len) : Jupiter::String_Strict<T>::String_Strict(len)
+{
+	while (Jupiter::String_Type<T>::length != len)
 	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.at(Jupiter::String_Type<T>::length);
+		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *in;
 		Jupiter::String_Type<T>::length++;
+		in++;
 	}
 }
 
@@ -275,21 +275,21 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Strin
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
 }
 
-template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.size())
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.ptr(), in.size())
 {
-	while (Jupiter::String_Type<T>::length < in.size())
-	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
-		Jupiter::String_Type<T>::length++;
-	}
 }
 
-template<typename T> Jupiter::String_Loose<T>::String_Loose(const std::basic_string<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.size())
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const std::basic_string<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.data(), in.size())
 {
-	while (Jupiter::String_Type<T>::length < in.size())
+}
+
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const T *in, size_t len) : Jupiter::String_Loose<T>::String_Loose(len)
+{
+	while (Jupiter::String_Type<T>::length != len)
 	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.at(Jupiter::String_Type<T>::length);
+		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *in;
 		Jupiter::String_Type<T>::length++;
+		in++;
 	}
 }
 

@@ -189,6 +189,7 @@ namespace Jupiter
 		String_Strict(const String_Strict<T> &in) : String_Strict((Readable_String<T> &)in) {}
 		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
+		String_Strict(const T *in, size_t len);
 		String_Strict(const T *in);
 
 	protected:
@@ -349,6 +350,7 @@ namespace Jupiter
 		String_Loose(const String_Loose &in);
 		String_Loose(const Readable_String<T> &in);
 		String_Loose(const std::basic_string<T> &in);
+		String_Loose(const T *in, size_t len);
 		String_Loose(const T *in);
 
 		static const Jupiter::String_Loose<T> empty; /** Empty instantation of String_Loose */

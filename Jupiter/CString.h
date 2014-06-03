@@ -226,6 +226,7 @@ namespace Jupiter
 		CString_Type(const CString_Type<T> &in) : CString_Type((Readable_String<T> &)in) {}
 		CString_Type(const Readable_String<T> &in);
 		CString_Type(const std::basic_string<T> &in);
+		CString_Type(const T *in, size_t len);
 		CString_Type(const T *in);
 
 	protected:
@@ -378,6 +379,7 @@ namespace Jupiter
 		CString_Loose(const CString_Loose &in);
 		CString_Loose(const Readable_String<T> &in);
 		CString_Loose(const std::basic_string<T> &in);
+		CString_Loose(const T *in, size_t len);
 		CString_Loose(const T *in);
 
 		static const Jupiter::CString_Loose<T> empty; /** Empty instantation of CString_Loose */
