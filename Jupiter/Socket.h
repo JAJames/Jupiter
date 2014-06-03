@@ -25,6 +25,7 @@
 
 #include <cstring>
 #include "Jupiter.h"
+#include "Readable_String.h"
 
 struct addrinfo;
 
@@ -252,6 +253,13 @@ namespace Jupiter
 		*
 		* @return String containing the hostname.
 		*/
+		const Jupiter::ReadableString &getHostname() const;
+
+		/**
+		* @brief Returns the hostname of the server that the socket is connected to.
+		*
+		* @return String containing the hostname.
+		*/
 		const char *getHost() const;
 
 		/**
@@ -303,7 +311,7 @@ namespace Jupiter
 		*
 		* @return Size of the buffer.
 		*/
-		unsigned int getBufferSize() const;
+		size_t getBufferSize() const;
 
 		/**
 		* @brief Copies any new socket data to the buffer and returns it.
@@ -311,14 +319,6 @@ namespace Jupiter
 		* @return Socket buffer if new data is successfully received, nullptr otherwise.
 		*/
 		const char *getData();
-
-		/**
-		* @brief Returns the hostname of the server that the socket is connected to.
-		* Note: This is the same as getHost().
-		*
-		* @return String containing the hostname.
-		*/
-		const char *getHostname() const;
 
 		/**
 		* @brief Returns the local hostname of the local machine.
