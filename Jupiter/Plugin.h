@@ -25,7 +25,7 @@
 
 #include "ArrayList.h"
 #include "Thinker.h"
-#include "CString.h"
+#include "String_Type.h"
 #include "Rehash.h"
 
 namespace Jupiter
@@ -232,18 +232,17 @@ namespace Jupiter
 
 	/**
 	* @brief Sets the directory to look in for plugins.
-	* Note: This DOES NOT copy the input string.
 	*
 	* @param dir Directory to look for plugins in.
 	*/
-	JUPITER_API void setPluginDirectory(const char *dir);
+	JUPITER_API void setPluginDirectory(const Jupiter::ReadableString &dir);
 
 	/**
 	* @brief Returns the current plugin directory.
 	*
 	* @return String containing the directory which is prepended to module load attempts.
 	*/
-	JUPITER_API const char *getPluginDirectory();
+	JUPITER_API const Jupiter::ReadableString &getPluginDirectory();
 
 	/**
 	* @brief Loads a module, appending .so or .dll as appropriate for the operating system.
@@ -251,7 +250,7 @@ namespace Jupiter
 	* @param pluginName The name of the plugin to load.
 	* @return A pointer to the plugin that was loaded on success, nullptr otherwise.
 	*/
-	JUPITER_API Jupiter::Plugin *loadPlugin(const char *pluginName);
+	JUPITER_API Jupiter::Plugin *loadPlugin(const Jupiter::ReadableString &pluginName);
 
 	/**
 	* @brief Loads a module based on a true file name.
@@ -267,7 +266,7 @@ namespace Jupiter
 	* @param index Index of the module.
 	* @return True if a module was unloaded, false otherwise.
 	*/
-	JUPITER_API bool freePlugin(unsigned int index);
+	JUPITER_API bool freePlugin(size_t index);
 
 	/**
 	* @brief Unloads a module and removes it from the module list, based on its data.
@@ -284,7 +283,7 @@ namespace Jupiter
 	* @param pluginName Name of the module to unload.
 	* @return True if a module was unloaded, false otherwise.
 	*/
-	JUPITER_API bool freePlugin(const char *pluginName);
+	JUPITER_API bool freePlugin(const Jupiter::ReadableString &pluginName);
 
 	/**
 	* @brief Fetches a plugin from the list and returns it, based on its index.
@@ -292,7 +291,7 @@ namespace Jupiter
 	* @param index Index of the module to return.
 	* @return A module on success, nullptr otherwise.
 	*/
-	JUPITER_API Jupiter::Plugin *getPlugin(unsigned int index);
+	JUPITER_API Jupiter::Plugin *getPlugin(size_t index);
 
 	/**
 	* @brief Fetches a plugin from the list and returns it, based on its name.
@@ -300,7 +299,7 @@ namespace Jupiter
 	* @param pluginName String containing the name of the plugin.
 	* @return A module on success, nullptr otherwise.
 	*/
-	JUPITER_API Jupiter::Plugin *getPlugin(const char *pluginName);
+	JUPITER_API Jupiter::Plugin *getPlugin(const Jupiter::ReadableString &pluginName);
 }
 
 #endif // _PLUGIN_H_HEADER

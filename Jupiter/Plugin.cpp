@@ -23,8 +23,9 @@
 #include "Functions.h"
 #include "ArrayList.h"
 #include "CString.h"
+#include "String.h"
 
-Jupiter::CStringS pluginDir = DEFAULT_PLUGINS_DIRECTORY;
+Jupiter::StringS pluginDir = DEFAULT_PLUGINS_DIRECTORY;
 
 Jupiter::ArrayList<Jupiter::Plugin> _plugins;
 Jupiter::ArrayList<Jupiter::Plugin> *Jupiter::plugins = &_plugins;
@@ -60,31 +61,25 @@ dlib::~dlib()
 	}
 }
 
-void Jupiter::setPluginDirectory(const char *dir)
+void Jupiter::setPluginDirectory(const Jupiter::ReadableString &dir)
 {
-	if (dir == nullptr) pluginDir = DEFAULT_PLUGINS_DIRECTORY;
-	else
-	{
-		pluginDir = dir;
-		if (pluginDir.size() != 0 && dir[pluginDir.size() - 1] != DIR_CHR) pluginDir += DIR_CHR;
-	}
+	if (pluginDir.set(dir) != 0 && pluginDir.get(pluginDir.size() - 1) != DIR_CHR) pluginDir += DIR_CHR;
 }
 
-const char *Jupiter::getPluginDirectory()
+const Jupiter::ReadableString &Jupiter::getPluginDirectory()
 {
-	return pluginDir.c_str();
+	return pluginDir;
 }
 
-Jupiter::Plugin *Jupiter::loadPlugin(const char *pluginName)
-{
 #if defined _WIN32
-	char *fileName = new char[strlen(pluginName) + pluginDir.size() + 5];
-	sprintf(fileName, "%s%s.dll", pluginDir.c_str(), pluginName);
+#define MODULE_FILE_EXTENSION ".dll"
 #else // _WIN32
-	char *fileName = new char[strlen(pluginName) + pluginDirLen + 4];
-	sprintf(fileName, "%s%s.so", pluginDir.c_str(), pluginName);
+#define MODULE_FILE_EXTENSION ".so"
 #endif // _WIN32
-	return Jupiter::loadPluginFile(fileName);
+
+Jupiter::Plugin *Jupiter::loadPlugin(const Jupiter::ReadableString &pluginName)
+{
+	return Jupiter::loadPluginFile(Jupiter::CStringS::Format("%.*s%.*s" MODULE_FILE_EXTENSION, pluginDir.size(), pluginDir.ptr(), pluginName.size(), pluginName.ptr()).c_str());
 }
 
 Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
@@ -121,7 +116,7 @@ fail:
 	return nullptr;
 }
 
-bool Jupiter::freePlugin(unsigned int index)
+bool Jupiter::freePlugin(size_t index)
 {
 	if (index < _plugins.size())
 	{
@@ -146,30 +141,30 @@ bool Jupiter::freePlugin(unsigned int index)
 bool Jupiter::freePlugin(Jupiter::Plugin *plugin)
 {
 	if (plugin == nullptr) return false;
-	for (int i = _plugins.size() - 1; i >= 0; i--) if (_plugins.get(i) == plugin) return Jupiter::freePlugin(i);
+	for (size_t i = 0; i != _plugins.size(); i++) if (_plugins.get(i) == plugin) return Jupiter::freePlugin(i);
 	return false;
 }
 
-bool Jupiter::freePlugin(const char *pluginName)
+bool Jupiter::freePlugin(const Jupiter::ReadableString &pluginName)
 {
 	if (pluginName == nullptr) return false;
-	for (int i = _plugins.size() - 1; i >= 0; i--) if (strmatchi(pluginName, _plugins.get(i)->getName())) return Jupiter::freePlugin(i);
+	for (size_t i = 0; i != _plugins.size(); i++) if (pluginName.matchi(_plugins.get(i)->getName())) return Jupiter::freePlugin(i);
 	return false;
 }
 
-Jupiter::Plugin *Jupiter::getPlugin(unsigned int index)
+Jupiter::Plugin *Jupiter::getPlugin(size_t index)
 {
 	if (index < _plugins.size()) return _plugins.get(index);
 	return nullptr;
 }
 
-Jupiter::Plugin *Jupiter::getPlugin(const char *pluginName)
+Jupiter::Plugin *Jupiter::getPlugin(const Jupiter::ReadableString &pluginName)
 {
 	Jupiter::Plugin *p;
-	for (int i = _plugins.size() - 1; i >= 0; i--)
+	for (size_t i = 0; i != _plugins.size(); i++)
 	{
 		p = _plugins.get(i);
-		if (strmatchi(pluginName, p->getName())) return p;
+		if (pluginName.matchi(p->getName())) return p;
 	}
 	return nullptr;
 }
