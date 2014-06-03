@@ -7,9 +7,10 @@
  */
 
 #include <utility> // std::move
-#include "SecureSocket.h"
 #include <openssl/ssl.h> // OpenSSL SSL functions
 #include <openssl/err.h> // OpenSSL SSL errors
+#include "SecureSocket.h"
+#include "CString.h"
 
 struct Jupiter::SecureSocket::SSLData
 {
@@ -17,8 +18,8 @@ struct Jupiter::SecureSocket::SSLData
     SSL_CTX *context = nullptr;
 	const SSL_METHOD *method = nullptr;
 	Jupiter::SecureSocket::EncryptionMethod eMethod = ANY;
-	char *cert = nullptr;
-	char *key = nullptr;
+	Jupiter::CStringS cert;
+	Jupiter::CStringS key;
 	~SSLData();
 };
 
@@ -30,8 +31,6 @@ Jupiter::SecureSocket::SSLData::~SSLData()
 		SSL_free(Jupiter::SecureSocket::SSLData::handle);
 	}
 	if (Jupiter::SecureSocket::SSLData::context != nullptr) SSL_CTX_free(Jupiter::SecureSocket::SSLData::context);
-	if (Jupiter::SecureSocket::SSLData::cert != nullptr) delete[] Jupiter::SecureSocket::SSLData::cert;
-	if (Jupiter::SecureSocket::SSLData::key != nullptr) delete[] Jupiter::SecureSocket::SSLData::key;
 }
 
 Jupiter::SecureSocket::SecureSocket() : Jupiter::Socket()
@@ -147,15 +146,13 @@ bool loadCertificate(SSL_CTX *context, const char *cert, const char *key)
 	return true;
 }
 
-void Jupiter::SecureSocket::setCertificate(const char *cert, const char *key)
+void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &cert, const Jupiter::ReadableString &key)
 {
-	Jupiter::SecureSocket::SSLdata_->cert = new char[strlen(cert) + 1];
-	Jupiter::SecureSocket::SSLdata_->key = new char[strlen(key) + 1];
-	strcpy(Jupiter::SecureSocket::SSLdata_->cert, cert);
-	strcpy(Jupiter::SecureSocket::SSLdata_->key, key);
+	Jupiter::SecureSocket::SSLdata_->cert = cert;
+	Jupiter::SecureSocket::SSLdata_->key = key;
 }
 
-void Jupiter::SecureSocket::setCertificate(const char *pem)
+void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &pem)
 {
 	Jupiter::SecureSocket::setCertificate(pem, pem);
 }
@@ -185,11 +182,6 @@ int Jupiter::SecureSocket::send(const char *data, size_t datalen)
 	return SSL_write(Jupiter::SecureSocket::SSLdata_->handle, data, datalen);
 }
 
-int Jupiter::SecureSocket::send(const char *message)
-{
-	return Jupiter::SecureSocket::send(message, strlen(message));
-}
-
 bool Jupiter::SecureSocket::initSSL()
 {
 	SSL_load_error_strings();
@@ -202,7 +194,7 @@ bool Jupiter::SecureSocket::initSSL()
 		ERR_print_errors_fp(stderr);
 		return false;
 	}
-	if (Jupiter::SecureSocket::SSLdata_->cert != nullptr) loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert, Jupiter::SecureSocket::SSLdata_->key);
+	if (Jupiter::SecureSocket::SSLdata_->cert.size() != 0) loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
 	Jupiter::SecureSocket::SSLdata_->handle = SSL_new(Jupiter::SecureSocket::SSLdata_->context);
 	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr)
 	{

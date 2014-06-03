@@ -78,7 +78,7 @@ namespace Jupiter
 		* @param key String containing file location of private key.
 		* @return True on success, false otherwise.
 		*/
-		void setCertificate(const char *cert, const char *key);
+		void setCertificate(const Jupiter::ReadableString &cert, const Jupiter::ReadableString &key);
 
 		/**
 		* @brief Loads a certificate and key for use.
@@ -86,7 +86,7 @@ namespace Jupiter
 		* @param pem Combined certificate/key file.
 		* @return True on success, false otherwise.
 		*/
-		void setCertificate(const char *pem);
+		void setCertificate(const Jupiter::ReadableString &pem);
 
 		/**
 		* @brief Interface to provide simple connection establishing.
@@ -147,15 +147,6 @@ namespace Jupiter
 		* Note: Refer to SSL_write() for detailed return values.
 		*/
 		virtual int send(const char *data, size_t datalen);
-
-		/**
-		* @brief Sends a null-terminated string of data across the socket.
-		*
-		* @param String containing the null-terminated data to send.
-		* @return Number of bytes sent on success, less than or equal to 0 otherwise.
-		* Note: Refer to SSL_write() for detailed return values.
-		*/
-		virtual int send(const char *msg);
 
 		/**
 		* @brief Initializes SSL on the socket.
