@@ -47,7 +47,6 @@ namespace Jupiter
 		* @return The element located at the specified index.
 		*/
 		const T &get(size_t index) const;
-		//T &get(size_t index) const;
 
 		/**
 		* @brief Returns the number of elements in the String.
@@ -71,7 +70,7 @@ namespace Jupiter
 		virtual const T *c_str() const = 0;
 
 		/**
-		* @brief Sets the CString's contents based on the format string and input variables.
+		* @brief Sets the String's contents based on the format string and input variables.
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
 		* @param format Format that the string is compared against.
@@ -84,7 +83,7 @@ namespace Jupiter
 		virtual size_t vformat(const T *format, va_list args) = 0;
 
 		/**
-		* @brief Appends to a CString's contents based on the format string and input variables.
+		* @brief Appends to a String's contents based on the format string and input variables.
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
 		* @param format Format that the string is compared against.
@@ -127,7 +126,7 @@ namespace Jupiter
 		* @brief Copies the data from the input string and concatenates it to the end of String.
 		*
 		* @param in String containing the data to be concatenated.
-		* @return New size of the CString.
+		* @return New size of the String.
 		*/
 		virtual size_t concat(const Jupiter::Readable_String<T> &in);
 		virtual size_t concat(const std::basic_string<T> &in);
