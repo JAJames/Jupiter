@@ -88,6 +88,23 @@ template<typename T> size_t Jupiter::Reference_String<T>::truncate(size_t n)
 	return (Jupiter::Reference_String<T>::length -= n);
 }
 
+// shift
+
+template<typename T> size_t Jupiter::Reference_String<T>::shiftLeft(size_t len)
+{
+	Jupiter::String_Type<T>::str -= len;
+	Jupiter::String_Type<T>::length += len;
+	return len;
+}
+
+template<typename T> size_t Jupiter::Reference_String<T>::shiftRight(size_t len)
+{
+	if (len > Jupiter::String_Type<T>::length) len = Jupiter::String_Type<T>::length;
+	Jupiter::String_Type<T>::str += len;
+	Jupiter::String_Type<T>::length -= len;
+	return len;
+}
+
 // set
 
 template<typename T> size_t Jupiter::Reference_String<T>::set(const Jupiter::Readable_String<T> &in)
