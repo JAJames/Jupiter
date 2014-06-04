@@ -38,15 +38,15 @@ template<typename T> Jupiter::Shift_String_Type<T>::~Shift_String_Type()
 template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftLeft(size_t len)
 {
 	size_t offset = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
-	if (length > offset) length = offset;
+	if (len > offset) len = offset;
 	Jupiter::String_Type<T>::str -= len;
 	Jupiter::String_Type<T>::length += len;
-	return length;
+	return len;
 }
 
 template<typename T> size_t Jupiter::Shift_String_Type<T>::shiftRight(size_t len)
 {
-	if (length > Jupiter::String_Type<T>::length) length = Jupiter::String_Type<T>::length;
+	if (len > Jupiter::String_Type<T>::length) len = Jupiter::String_Type<T>::length;
 	Jupiter::String_Type<T>::str += len;
 	Jupiter::String_Type<T>::length -= len;
 	return len;
