@@ -68,6 +68,22 @@ template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Rea
 	return Jupiter::INVALID_INDEX;
 }
 
+// span()
+
+template<typename T> size_t Jupiter::Readable_String<T>::span(const Jupiter::Readable_String<T> &in) const
+{
+	size_t index = 0;
+	while (in.contains(this->get(index))) index++;
+	return index;
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::span(const T *in) const
+{
+	size_t index = 0;
+	while (containsSymbol(in, this->get(index))) index++;
+	return index;
+}
+
 // compare()
 
 template<typename T> int Jupiter::Readable_String<T>::compare(const Jupiter::Readable_String<T> &in) const

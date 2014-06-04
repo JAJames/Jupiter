@@ -82,6 +82,15 @@ namespace Jupiter
 		size_t find(const Readable_String<T> &in) const;
 
 		/**
+		* @brief Returns the number of elements of the string which match the input string.
+		*
+		* @param in Character set to match against.
+		* @return Number of elements at the start of the string that match the character set.
+		*/
+		size_t span(const Readable_String<T> &in) const;
+		size_t span(const T *str) const;
+
+		/**
 		* @brief Compares another string against the String.
 		*
 		* @param in String to compare against.
