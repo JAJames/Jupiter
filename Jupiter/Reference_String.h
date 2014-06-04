@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2014 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
