@@ -159,9 +159,8 @@ size_t Jupiter_vstrlen(const void *str, size_t size)
 
 const char *stristr(const char *str1, const char *str2)
 {
-	const char *strr;
-	int i;
-	int a;
+	size_t i;
+	size_t a;
 	for (i = 0; str1[i] != 0; i++)
 	{
 		if (toupper(str1[i]) == toupper(str2[0]))
@@ -174,8 +173,7 @@ const char *stristr(const char *str1, const char *str2)
 			}
 			if (str2[a] == 0)
 			{
-				strr = &str1[i];
-				return strr;
+				return str1 + i;
 			}
 		}
 	}
