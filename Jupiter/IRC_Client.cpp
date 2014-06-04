@@ -15,6 +15,7 @@
 #include "INIFile.h"
 #include "TCPSocket.h"
 #include "CString.h"
+#include "String.h"
 #include "Plugin.h"
 #include "Base64.h"
 
@@ -61,9 +62,9 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	Jupiter::CStringS modeD = "psitnm";
 	Jupiter::ArrayList<Channel> channels;
 	void delChannel(unsigned int index);
-	void delChannel(const char *chan);
-	void addNamesToChannel(unsigned int channelIndex, Jupiter::CStringS &names);
-	unsigned int addChannel(const char *chan);
+	void delChannel(const Jupiter::ReadableString &chan);
+	void addNamesToChannel(unsigned int channelIndex, Jupiter::ReadableString &names);
+	size_t addChannel(const Jupiter::ReadableString &chan);
 	bool joinOnKick;
 	Jupiter::CStringS autoPartMessage;
 	time_t reconnectDelay;
@@ -79,8 +80,8 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	bool startCAP();
 	bool registerClient();
 	Data(Jupiter::IRC::Client *interFace);
-	Jupiter::IRC::Client::User *findUser(const char *nick) const;
-	Jupiter::IRC::Client::User *findUserOrAdd(Jupiter::CStringS &nick);
+	Jupiter::IRC::Client::User *findUser(const Jupiter::ReadableString &nick) const;
+	Jupiter::IRC::Client::User *findUserOrAdd(const Jupiter::ReadableString &nick);
 };
 
 Jupiter::IRC::Client::Data::Data(Jupiter::IRC::Client *interFace)
@@ -106,12 +107,12 @@ struct Jupiter::IRC::Client::Channel::Data
 {
 	Jupiter::CStringS channel;
 	Jupiter::ArrayList<Jupiter::IRC::Client::Channel::User> users;
-	const char *serverPrefixSetPtr;
+	Jupiter::ReferenceString serverPrefixSetPtr;
 	int type;
 	bool isAddingNames;
 };
 
-Jupiter::IRC::Client::Client(const char *configSection)
+Jupiter::IRC::Client::Client(const Jupiter::ReadableString &configSection)
 {
 	Jupiter::IRC::Client::data_ = new Jupiter::IRC::Client::Data(this);
 	if (Jupiter::IRC::Client::Config == nullptr)
@@ -120,43 +121,43 @@ Jupiter::IRC::Client::Client(const char *configSection)
 		Jupiter::IRC::Client::Config->readFile(CONFIG_INI);
 	}
 	Jupiter::IRC::Client::data_->configSectionName = configSection;
-	Jupiter::IRC::Client::data_->serverHostname = Jupiter::IRC::Client::readConfigValue("Hostname", "irc.tibitek.com");
+	Jupiter::IRC::Client::data_->serverHostname = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Hostname"), STRING_LITERAL_AS_REFERENCE("irc.tibitek.com"));
 	
-	Jupiter::IRC::Client::data_->logFileName = Jupiter::IRC::Client::readConfigValue("LogFile");
-	Jupiter::IRC::Client::data_->nickname = Jupiter::IRC::Client::readConfigValue("Nick", "Jupiter");
+	Jupiter::IRC::Client::data_->logFileName = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("LogFile"));
+	Jupiter::IRC::Client::data_->nickname = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Nick"), STRING_LITERAL_AS_REFERENCE("Jupiter"));
 
-	Jupiter::IRC::Client::data_->realName = Jupiter::IRC::Client::readConfigValue("Realname", "Jupiter IRC Client");
+	Jupiter::IRC::Client::data_->realName = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Realname"), STRING_LITERAL_AS_REFERENCE("Jupiter IRC Client"));
 
-	Jupiter::IRC::Client::data_->saslPass = Jupiter::IRC::Client::readConfigValue("SASL.Password");
-	if (Jupiter::IRC::Client::data_->saslPass.size() == 0) Jupiter::IRC::Client::data_->saslPass = Jupiter::IRC::Client::readConfigValue("SASL.Pass");
+	Jupiter::IRC::Client::data_->saslPass = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("SASL.Password"));
+	if (Jupiter::IRC::Client::data_->saslPass.size() == 0) Jupiter::IRC::Client::data_->saslPass = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("SASL.Pass"));
 	
-	Jupiter::IRC::Client::data_->saslAccount = Jupiter::IRC::Client::readConfigValue("SASL.Account");
+	Jupiter::IRC::Client::data_->saslAccount = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("SASL.Account"));
 	if (Jupiter::IRC::Client::data_->saslAccount.size() == 0) Jupiter::IRC::Client::data_->saslAccount = Jupiter::IRC::Client::data_->nickname;
 
-	Jupiter::IRC::Client::data_->autoPartMessage = Jupiter::IRC::Client::readConfigValue("AutoPartMessage");
+	Jupiter::IRC::Client::data_->autoPartMessage = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("AutoPartMessage"));
 
-	Jupiter::IRC::Client::data_->ssl = Jupiter::IRC::Client::readConfigBool("SSL");
-	Jupiter::IRC::Client::data_->SSLCertificate = Jupiter::IRC::Client::readConfigValue("Certificate");
-	Jupiter::IRC::Client::data_->SSLKey = Jupiter::IRC::Client::readConfigValue("Key");
+	Jupiter::IRC::Client::data_->ssl = Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("SSL"));
+	Jupiter::IRC::Client::data_->SSLCertificate = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Certificate"));
+	Jupiter::IRC::Client::data_->SSLKey = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Key"));
 	if (Jupiter::IRC::Client::data_->SSLCertificate.size() == 0)
 	{
-		Jupiter::IRC::Client::data_->SSLCertificate = Jupiter::IRC::Client::readConfigValue("Cert");
+		Jupiter::IRC::Client::data_->SSLCertificate = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Cert"));
 		if (Jupiter::IRC::Client::data_->SSLCertificate.size() == 0) Jupiter::IRC::Client::data_->SSLCertificate = Jupiter::IRC::Client::data_->SSLKey;
 	}
 	if (Jupiter::IRC::Client::data_->SSLKey.size() == 0) Jupiter::IRC::Client::data_->SSLKey = Jupiter::IRC::Client::data_->SSLCertificate;
 
-	Jupiter::IRC::Client::data_->joinOnKick = Jupiter::IRC::Client::readConfigBool("AutoJoinOnKick");
-	Jupiter::IRC::Client::data_->reconnectDelay = Jupiter::IRC::Client::readConfigInt("AutoReconnectDelay");
-	Jupiter::IRC::Client::data_->maxReconnectAttempts = Jupiter::IRC::Client::readConfigInt("MaxReconnectAttempts");
-	Jupiter::IRC::Client::data_->serverPort = (unsigned short) Jupiter::IRC::Client::readConfigInt("Port");
+	Jupiter::IRC::Client::data_->joinOnKick = Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("AutoJoinOnKick"));
+	Jupiter::IRC::Client::data_->reconnectDelay = Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("AutoReconnectDelay"));
+	Jupiter::IRC::Client::data_->maxReconnectAttempts = Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("MaxReconnectAttempts"));
+	Jupiter::IRC::Client::data_->serverPort = (unsigned short)Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("Port"));
 	if (Jupiter::IRC::Client::data_->serverPort == 0)
 	{
 		if (Jupiter::IRC::Client::data_->ssl) Jupiter::IRC::Client::data_->serverPort = 994;
 		else Jupiter::IRC::Client::data_->serverPort = 194;
 	}
-	Jupiter::IRC::Client::data_->dChanType = (short) Jupiter::IRC::Client::readConfigInt("Channel.Type");
+	Jupiter::IRC::Client::data_->dChanType = (short)Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("Channel.Type"));
 
-	if (Jupiter::IRC::Client::readConfigBool("PrintOutput", true)) Jupiter::IRC::Client::data_->printOutput = stdout;
+	if (Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("PrintOutput"), true)) Jupiter::IRC::Client::data_->printOutput = stdout;
 	else Jupiter::IRC::Client::data_->printOutput = nullptr;
 	if (Jupiter::IRC::Client::data_->logFileName.size() != 0) Jupiter::IRC::Client::data_->logFile = fopen(Jupiter::IRC::Client::data_->logFileName.c_str(), "a+b");
 	else Jupiter::IRC::Client::data_->logFile = nullptr;
@@ -166,7 +167,7 @@ Jupiter::IRC::Client::Client(const char *configSection)
 		Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket();
 		if (Jupiter::IRC::Client::data_->SSLCertificate.size() != 0)
 		{
-			t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate.c_str(), Jupiter::IRC::Client::data_->SSLKey.c_str());
+			t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate, Jupiter::IRC::Client::data_->SSLKey);
 		}
 		Jupiter::IRC::Client::data_->sock = t;
 	}
@@ -203,112 +204,112 @@ void Jupiter::IRC::Client::OnReconnectAttempt(bool)
 	return;
 }
 
-void Jupiter::IRC::Client::OnRaw(const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnRaw(const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnNumeric(long int, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnNumeric(long int, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnError(const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnError(const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnChat(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnChat(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnNotice(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnNotice(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnServerNotice(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnServerNotice(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnCTCP(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnCTCP(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnAction(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnAction(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnInvite(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnInvite(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnJoin(const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnJoin(const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnPart(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnPart(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnNick(const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnNick(const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnKick(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnKick(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnQuit(const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnQuit(const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-void Jupiter::IRC::Client::OnMode(const Jupiter::StringType &, const Jupiter::StringType &, const Jupiter::StringType &)
+void Jupiter::IRC::Client::OnMode(const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &)
 {
 	return;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getConfigSection() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getConfigSection() const
 {
 	return Jupiter::IRC::Client::data_->configSectionName;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getLogFile() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getLogFile() const
 {
 	return Jupiter::IRC::Client::data_->logFileName;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getPrefixes() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getPrefixes() const
 {
 	return Jupiter::IRC::Client::data_->prefixes;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getNickname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getNickname() const
 {
 	return Jupiter::IRC::Client::data_->nickname;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getRealname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getRealname() const
 {
 	return Jupiter::IRC::Client::data_->realName;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getServerName() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getServerName() const
 {
 	return Jupiter::IRC::Client::data_->serverName;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getServerHostname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getServerHostname() const
 {
 	return Jupiter::IRC::Client::data_->serverHostname;
 }
@@ -358,7 +359,7 @@ inline Jupiter::CStringS getSender(Jupiter::CStringS &line)
 	return line.getWord(0, ":! ");
 }
 
-int Jupiter::IRC::Client::getAccessLevel(const char *chan, const char *nick) const
+int Jupiter::IRC::Client::getAccessLevel(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick) const
 {
 	Jupiter::IRC::Client::getChannelIndex(chan);
 	unsigned int i = 0;
@@ -370,18 +371,18 @@ int Jupiter::IRC::Client::getAccessLevel(const char *chan, const char *nick) con
 		{
 			char prefix = channel->getUserPrefix(nick);
 			if (prefix == 0) return 0;
-			return Jupiter::IRC::Client::data_->prefixes.size() - findSymbol(Jupiter::IRC::Client::data_->prefixes.c_str(), prefix, 0);
+			return Jupiter::IRC::Client::data_->prefixes.size() - Jupiter::IRC::Client::data_->prefixes.find(prefix);
 		}
 		i++;
 	}
 	return 0;
 }
 
-void Jupiter::IRC::Client::send(const char *rawMessage)
+void Jupiter::IRC::Client::send(const Jupiter::ReadableString &rawMessage)
 {
-	char *sentMessage = new char[strlen(rawMessage) + 3];
-	sprintf(sentMessage, "%s" ENDL, rawMessage);
-	Jupiter::IRC::Client::data_->sock->send(sentMessage);
+	Jupiter::CStringS out = rawMessage;
+	out += ENDL;
+	Jupiter::IRC::Client::data_->sock->send(out);
 }
 
 Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(unsigned int index) const
@@ -389,7 +390,7 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(unsigned int index) co
 	return Jupiter::IRC::Client::data_->users.get(index);
 }
 
-Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(const char *nickname) const
+Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(const Jupiter::ReadableString &nickname) const
 {
 	Jupiter::IRC::Client::User *r;
 	for (unsigned int i = 0; i < Jupiter::IRC::Client::data_->users.size(); i++)
@@ -400,7 +401,7 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(const char *nickname) 
 	return nullptr;
 }
 
-int Jupiter::IRC::Client::getUserIndex(const char *nickname) const
+int Jupiter::IRC::Client::getUserIndex(const Jupiter::ReadableString &nickname) const
 {
 	for (int i = Jupiter::IRC::Client::data_->users.size() - 1; i >= 0; i--) if (Jupiter::IRC::Client::data_->users.get(i)->getNickname().equalsi(nickname)) return i;
 	return -1;
@@ -427,21 +428,22 @@ Jupiter::IRC::Client::Channel *Jupiter::IRC::Client::getChannel(unsigned int ind
 	return Jupiter::IRC::Client::data_->channels.get(index);
 }
 
-Jupiter::IRC::Client::Channel *Jupiter::IRC::Client::getChannel(const char *chanName) const
+Jupiter::IRC::Client::Channel *Jupiter::IRC::Client::getChannel(const Jupiter::ReadableString &chanName) const
 {
 	int index = Jupiter::IRC::Client::getChannelIndex(chanName);
 	if (index < 0) return nullptr;
 	return Jupiter::IRC::Client::getChannel(index);
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::getChannelName(unsigned int index) const
+const Jupiter::ReadableString &Jupiter::IRC::Client::getChannelName(unsigned int index) const
 {
 	return Jupiter::IRC::Client::data_->channels.get(index)->getName();
 }
 
-int Jupiter::IRC::Client::getChannelIndex(const char *chanName) const
+int Jupiter::IRC::Client::getChannelIndex(const Jupiter::ReadableString &chanName) const
 {
-	for (unsigned int i = 0; i < Jupiter::IRC::Client::data_->channels.size(); i++) if (Jupiter::IRC::Client::data_->channels.get(i)->getName().equalsi(chanName)) return i;
+	for (size_t i = 0; i < Jupiter::IRC::Client::data_->channels.size(); i++)
+		if (Jupiter::IRC::Client::data_->channels.get(i)->getName().equalsi(chanName)) return i;
 	return -1;
 }
 
@@ -455,59 +457,41 @@ void Jupiter::IRC::Client::setAutoReconnect(int val)
 	Jupiter::IRC::Client::data_->maxReconnectAttempts = val;
 }
 
-void Jupiter::IRC::Client::joinChannel(const char *channel)
+void Jupiter::IRC::Client::joinChannel(const Jupiter::ReadableString &channel)
 {
-	char *msg = new char[strlen(channel) + 8];
-	sprintf(msg, "JOIN %s" ENDL, channel);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("JOIN %.*s" ENDL, channel.size(), channel.ptr()));
 }
 
-void Jupiter::IRC::Client::joinChannel(const char *channel, const char *password)
+void Jupiter::IRC::Client::joinChannel(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &password)
 {
-	char *msg = new char[strlen(channel) + strlen(password) + 9];
-	sprintf(msg, "JOIN %s %s" ENDL, channel, password);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("JOIN %.*s %.*s" ENDL, channel.size(), channel.ptr(), password.size(), password.ptr()));
 }
 
-void Jupiter::IRC::Client::partChannel(const char *channel)
+void Jupiter::IRC::Client::partChannel(const Jupiter::ReadableString &channel)
 {
-	char *msg = new char[strlen(channel) + 8];
-	sprintf(msg, "PART %s" ENDL, channel);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("PART %.*s" ENDL, channel.size(), channel.ptr()));
 	int index = Jupiter::IRC::Client::getChannelIndex(channel);
 	if (index >= 0) Jupiter::IRC::Client::data_->channels.get(index)->setType(-2);
 }
 
-void Jupiter::IRC::Client::partChannel(const char *channel, const char *message)
+void Jupiter::IRC::Client::partChannel(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &message)
 {
-	char *msg = new char[strlen(channel) + strlen(message) + 10];
-	sprintf(msg, "PART %s :%s" ENDL, channel, message);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("PART %.*s :%.*s" ENDL, channel.size(), channel.ptr(), message.size(), message.ptr()));
 	int index = Jupiter::IRC::Client::getChannelIndex(channel);
 	if (index >= 0) Jupiter::IRC::Client::data_->channels.get(index)->setType(-2);
 }
 
-void Jupiter::IRC::Client::sendMessage(const char *dest, const char *message)
+void Jupiter::IRC::Client::sendMessage(const Jupiter::ReadableString &dest, const Jupiter::ReadableString &message)
 {
-	char *msg = new char[strlen(dest) + strlen(message) + 13];
-	sprintf(msg, "PRIVMSG %s :%s" ENDL, dest, message);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("PRIVMSG %.*s :%.*s" ENDL, dest.size(), dest.ptr(), message.size(), message.ptr()));
 }
 
-void Jupiter::IRC::Client::sendNotice(const char *dest, const char *message)
+void Jupiter::IRC::Client::sendNotice(const Jupiter::ReadableString &dest, const Jupiter::ReadableString &message)
 {
-	char *msg = new char[strlen(dest) + strlen(message) + 12];
-	sprintf(msg, "NOTICE %s :%s" ENDL, dest, message);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("NOTICE %.*s :%.*s" ENDL, dest.size(), dest.ptr(), message.size(), message.ptr()));
 }
 
-unsigned int Jupiter::IRC::Client::messageChannels(short type, const char *message)
+unsigned int Jupiter::IRC::Client::messageChannels(short type, const Jupiter::ReadableString &message)
 {
 	unsigned int total = 0;
 	Jupiter::IRC::Client::Channel *channel;
@@ -516,14 +500,14 @@ unsigned int Jupiter::IRC::Client::messageChannels(short type, const char *messa
 		channel = Jupiter::IRC::Client::data_->channels.get(i);
 		if (channel->getType() == type)
 		{
-			Jupiter::IRC::Client::sendMessage(channel->getName().c_str(), message);
+			Jupiter::IRC::Client::sendMessage(channel->getName(), message);
 			total++;
 		}
 	}
 	return total;
 }
 
-unsigned int Jupiter::IRC::Client::messageChannels(const char *message)
+unsigned int Jupiter::IRC::Client::messageChannels(const Jupiter::ReadableString &message)
 {
 	unsigned int total = 0;
 	Jupiter::IRC::Client::Channel *channel;
@@ -532,7 +516,7 @@ unsigned int Jupiter::IRC::Client::messageChannels(const char *message)
 		channel = Jupiter::IRC::Client::data_->channels.get(i);
 		if (channel->getType() >= 0)
 		{
-			Jupiter::IRC::Client::sendMessage(channel->getName().c_str(), message);
+			Jupiter::IRC::Client::sendMessage(channel->getName(), message);
 			total++;
 		}
 	}
@@ -546,23 +530,22 @@ int Jupiter::IRC::Client::primaryHandler()
 	if (recvVal > 0)
 	{
 		Jupiter::IRC::Client::data_->buffer = Jupiter::IRC::Client::data_->sock->getBuffer();
-		unsigned int totalLines = countLines(Jupiter::IRC::Client::data_->buffer.c_str());
+		unsigned int totalLines = Jupiter::IRC::Client::data_->buffer.wordCount(ENDL);
 		for (unsigned int currentLine = 0; currentLine < totalLines; currentLine++)
 		{
 			Jupiter::CStringS buff = Jupiter::IRC::Client::data_->buffer.getWord(currentLine, ENDL);
 			if (buff.size() != 0)
 			{
-				Jupiter::IRC::Client::writeToLogs(buff.c_str());
+				Jupiter::IRC::Client::writeToLogs(buff);
 				if (Jupiter::IRC::Client::data_->printOutput != nullptr)
 				{
-					fputs(buff.c_str(), Jupiter::IRC::Client::data_->printOutput);
-					fputs(ENDL, Jupiter::IRC::Client::data_->printOutput);
+					buff.println(Jupiter::IRC::Client::data_->printOutput);
 				}
-				Jupiter::CStringS w1 = buff.getWord(0, WHITESPACE);
+				Jupiter::ReferenceString w1 = Jupiter::ReferenceString::getWord(buff, 0, WHITESPACE);
 				if (w1.size() != 0)
 				{
-					Jupiter::CStringS w2 = buff.getWord(1, WHITESPACE);
-					long int numeric = strtol(w2.c_str(), nullptr, 10);
+					Jupiter::ReferenceString w2 = Jupiter::ReferenceString::getWord(buff, 1, WHITESPACE);
+					int numeric = w2.asInt(10);
 					if (w1[0] == ':') //Messages
 					{
 						if (w2.size() != 0)
@@ -571,11 +554,11 @@ int Jupiter::IRC::Client::primaryHandler()
 							{
 							case IRC_RPL_BOUNCE: // 010
 							{
-								Jupiter::CStringS portToken = buff.getWord(4, " ");
+								Jupiter::ReferenceString portToken = Jupiter::ReferenceString::getWord(buff, 4, " ");
 								unsigned short port;
 								if (portToken[0] == '+') // This is most likely not used anywhere.
 								{
-									port = (unsigned short)strtoul(portToken.c_str() + 1, nullptr, 10);
+									port = (unsigned short)portToken.asUnsignedInt(10);
 									if (Jupiter::IRC::Client::data_->ssl == false)
 									{
 										Jupiter::IRC::Client::data_->ssl = true;
@@ -585,7 +568,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								}
 								else
 								{
-									port = (unsigned short)strtoul(portToken.c_str(), nullptr, 10);
+									port = (unsigned short)portToken.asUnsignedInt(10);
 									if (Jupiter::IRC::Client::data_->ssl == true)
 									{
 										Jupiter::IRC::Client::data_->ssl = false;
@@ -595,7 +578,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								}
 								if (port != 0) // Don't default -- could be non-compliant input.
 								{
-									Jupiter::IRC::Client::data_->serverHostname = buff.getWord(3, WHITESPACE);
+									Jupiter::IRC::Client::data_->serverHostname = Jupiter::ReferenceString::getWord(buff, 3, WHITESPACE);
 									Jupiter::IRC::Client::data_->serverPort = port;
 									puts("Reconnecting due to old bounce.");
 									this->reconnect();
@@ -612,12 +595,12 @@ int Jupiter::IRC::Client::primaryHandler()
 								case IRC_RPL_BOUNCEOLD: // 005
 									if (buff.matchi("*:Try server *, port *"))
 									{
-										Jupiter::CStringS portToken = buff.getWord(6, " ");
-										unsigned short bouncePort = (unsigned short)atoi(buff.getWord(6, " ").c_str());
+										Jupiter::ReferenceString portToken = Jupiter::ReferenceString::getWord(buff, 6, " ");
+										unsigned short bouncePort = (unsigned short)Jupiter::ReferenceString::getWord(buff, 6, " ").asInt(10);
 
 										if (portToken[0] == '+') // This is almost certainly not used anywhere.
 										{
-											bouncePort = (unsigned short)strtoul(portToken.c_str() + 1, nullptr, 10);
+											bouncePort = (unsigned short)portToken.asInt(10);
 											if (Jupiter::IRC::Client::data_->ssl == false)
 											{
 												Jupiter::IRC::Client::data_->ssl = true;
@@ -627,7 +610,7 @@ int Jupiter::IRC::Client::primaryHandler()
 										}
 										else
 										{
-											bouncePort = (unsigned short)strtoul(portToken.c_str(), nullptr, 10);
+											bouncePort = (unsigned short)portToken.asInt(10);
 											if (Jupiter::IRC::Client::data_->ssl == true)
 											{
 												Jupiter::IRC::Client::data_->ssl = false;
@@ -637,7 +620,7 @@ int Jupiter::IRC::Client::primaryHandler()
 										}
 										if (bouncePort != 0)
 										{
-											Jupiter::IRC::Client::data_->serverHostname = buff.getWord(4, " ");
+											Jupiter::IRC::Client::data_->serverHostname = Jupiter::ReferenceString::getWord(buff, 4, " ");
 											Jupiter::IRC::Client::data_->serverHostname.truncate(1); // trailing comma
 											Jupiter::IRC::Client::data_->serverPort = bouncePort;
 											puts("Reconnecting due to old bounce.");
@@ -648,7 +631,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									break;
 								case IRC_ERR_UNKNOWNCOMMAND: // 421
 								{
-									Jupiter::CStringS command = buff.getWord(2, " ");
+									Jupiter::ReferenceString command = Jupiter::ReferenceString::getWord(buff, 2, " ");
 									if (command.equalsi("STARTTLS")) // Server doesn't support STARTTLS
 									{
 										Jupiter::IRC::Client::data_->startCAP();
@@ -664,7 +647,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									// toggle blocking to prevent error
 									if (Jupiter::IRC::Client::data_->SSLCertificate.size() != 0)
 									{
-										t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate.c_str(), Jupiter::IRC::Client::data_->SSLKey.c_str());
+										t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate, Jupiter::IRC::Client::data_->SSLKey);
 									}
 
 									bool goodSSL;
@@ -698,7 +681,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								case 0:
 									if (w2.equalsi("CAP"))
 									{
-										Jupiter::CStringS w4 = buff.getWord(3, WHITESPACE);
+										Jupiter::ReferenceString w4 = Jupiter::ReferenceString::getWord(buff, 3, WHITESPACE);
 										if (w4.equals("LS"))
 										{
 											Jupiter::CStringS listParams = buff.gotoWord(4, WHITESPACE);
@@ -758,7 +741,7 @@ int Jupiter::IRC::Client::primaryHandler()
 								{
 									// We'll take any of these 4, just in-case any of them are missing. In general, this will trigger on 001.
 								case IRC_RPL_MYINFO: // 004
-									Jupiter::IRC::Client::data_->serverName = buff.getWord(3, " ");
+									Jupiter::IRC::Client::data_->serverName = Jupiter::ReferenceString::getWord(buff, 3, " ");
 								case IRC_RPL_WELCOME: // 001
 								case IRC_RPL_YOURHOST: // 002
 								case IRC_RPL_CREATED: // 003
@@ -772,8 +755,8 @@ int Jupiter::IRC::Client::primaryHandler()
 								case IRC_ERR_NICKNAMEINUSE: // 433
 								case IRC_ERR_NICKCOLLISION: // 436
 								case IRC_ERR_BANNICKCHANGE: // 437 -- Note: This conflicts with another token.
-									Jupiter::CStringS altNick = Jupiter::IRC::Client::readConfigValue("AltNick", "Jupiter");
-									Jupiter::CStringS configNick = Jupiter::IRC::Client::readConfigValue("Nick", "Jupiter");
+									const Jupiter::ReadableString &altNick = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("AltNick"), STRING_LITERAL_AS_REFERENCE("Jupiter"));
+									const Jupiter::ReadableString &configNick = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("Nick"), STRING_LITERAL_AS_REFERENCE("Jupiter"));
 									/*
 									* Possible Issues:
 									*	altNick != nickname after first nick change -- loop initiated?
@@ -788,12 +771,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									{
 										Jupiter::IRC::Client::data_->nickname = altNick;
 										if (Jupiter::IRC::Client::data_->nickname.size() != 0)
-										{
-											char *messageToSend = new char[Jupiter::IRC::Client::data_->nickname.size() + 8];
-											sprintf(messageToSend, "NICK %s" ENDL, Jupiter::IRC::Client::data_->nickname.c_str());
-											Jupiter::IRC::Client::data_->sock->send(messageToSend);
-											delete[] messageToSend;
-										}
+											Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("NICK %.*s" ENDL, Jupiter::IRC::Client::data_->nickname.size(), Jupiter::IRC::Client::data_->nickname.ptr()));
 									}
 									// Note: Add a series of contains() functions to String_Type.
 									else //if (stristr(Jupiter::IRC::Client::data_->nickname.c_str(), configNick.c_str()) == Jupiter::IRC::Client::data_->nickname.c_str()) // We're already adding numbers.
@@ -802,8 +780,8 @@ int Jupiter::IRC::Client::primaryHandler()
 										{
 											if (Jupiter::IRC::Client::data_->nickname.size() > configNick.size())
 											{
-												int n = atoi(Jupiter::IRC::Client::data_->nickname.c_str() + configNick.size()) + 1;
-												Jupiter::IRC::Client::data_->nickname.format("%s%d", configNick.c_str(), n);
+												int n = strtoi_nospace_s(Jupiter::IRC::Client::data_->nickname.ptr() + configNick.size(), Jupiter::IRC::Client::data_->nickname.size() - configNick.size(), 10);
+												Jupiter::IRC::Client::data_->nickname.format("%.*s%d", configNick.size(), configNick.ptr(), n);
 											}
 											else
 											{
@@ -834,9 +812,9 @@ int Jupiter::IRC::Client::primaryHandler()
 									{
 										ptr += 8;
 										int poff = findSymbol(ptr, ')', 0);
-										Jupiter::IRC::Client::data_->prefixModes = Jupiter::CStringS::getWord(ptr, 0, ")");
+										Jupiter::IRC::Client::data_->prefixModes = Jupiter::ReferenceString::getWord(ptr, 0, ")");
 										ptr += poff + 1;
-										Jupiter::IRC::Client::data_->prefixes = Jupiter::CStringS::getWord(ptr, 0, " " ENDL);
+										Jupiter::IRC::Client::data_->prefixes = Jupiter::ReferenceString::getWord(ptr, 0, " " ENDL);
 										ptr = nullptr;
 									}
 									ptr = strstr(buff.c_str(), "CHANMODES=");
@@ -846,20 +824,20 @@ int Jupiter::IRC::Client::primaryHandler()
 										int pos = findSymbol(ptr, ',', 0);
 										if (pos >= 0)
 										{
-											Jupiter::IRC::Client::data_->modeA = Jupiter::CStringS::getWord(ptr, 0, ", ");
+											Jupiter::IRC::Client::data_->modeA = Jupiter::ReferenceString::getWord(ptr, 0, ", ");
 											ptr += pos + 1;
 											pos = findSymbol(ptr, ',', 0);
 											if (pos >= 0)
 											{
-												Jupiter::IRC::Client::data_->modeB = Jupiter::CStringS::getWord(ptr, 0, ", ");
+												Jupiter::IRC::Client::data_->modeB = Jupiter::ReferenceString::getWord(ptr, 0, ", ");
 												ptr += pos + 1;
 												pos = findSymbol(ptr, ',', 0);
 												if (pos >= 0)
 												{
-													Jupiter::IRC::Client::data_->modeC = Jupiter::CStringS::getWord(ptr, 0, ", ");
+													Jupiter::IRC::Client::data_->modeC = Jupiter::ReferenceString::getWord(ptr, 0, ", ");
 													ptr += pos + 1;
 													pos = strcspn(ptr, " ");
-													if (pos >= 0) Jupiter::IRC::Client::data_->modeD = Jupiter::CStringS::getWord(ptr, 0, ", ");
+													if (pos >= 0) Jupiter::IRC::Client::data_->modeD = Jupiter::ReferenceString::getWord(ptr, 0, ", ");
 												}
 											}
 										}
@@ -868,7 +846,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									if (ptr != nullptr)
 									{
 										ptr += 10;
-										Jupiter::IRC::Client::data_->chanTypes = Jupiter::CStringS::getWord(ptr, 0, " ");
+										Jupiter::IRC::Client::data_->chanTypes = Jupiter::ReferenceString::getWord(ptr, 0, " ");
 									}
 								}
 									break;
@@ -877,15 +855,14 @@ int Jupiter::IRC::Client::primaryHandler()
 									Jupiter::CStringL key = "RawData.";
 									unsigned int offset;
 
-									Jupiter::CStringS tVal;
 									unsigned int i = 1;
 									do
 									{
 										offset = key.aformat("%u", i);
-										tVal = Jupiter::IRC::Client::readConfigValue(key.c_str());
+										const Jupiter::ReadableString &tVal = Jupiter::IRC::Client::readConfigValue(key);
 										if (tVal.size() == 0) break;
 										key -= offset;
-										Jupiter::IRC::Client::send(tVal.c_str());
+										Jupiter::IRC::Client::send(tVal);
 										i++;
 									} while (1);
 									key = "Channel.";
@@ -893,10 +870,10 @@ int Jupiter::IRC::Client::primaryHandler()
 									do
 									{
 										offset = key.aformat("%u", i);
-										tVal = Jupiter::IRC::Client::readConfigValue(key.c_str());
+										const Jupiter::ReadableString &tVal = Jupiter::IRC::Client::readConfigValue(key);
 										if (tVal.size() == 0) break;
 										key -= offset;
-										Jupiter::IRC::Client::joinChannel(tVal.c_str());
+										Jupiter::IRC::Client::joinChannel(tVal);
 										i++;
 									} while (1);
 
@@ -910,21 +887,21 @@ int Jupiter::IRC::Client::primaryHandler()
 								break;
 
 							default: // Post-registration.
-								if (streqli(w2.c_str(), "PRIVMSG"))
+								if (w2.equalsi("PRIVMSG"))
 								{
-									Jupiter::CStringS chan = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									if (chan.size() != 0)
 									{
 										Jupiter::CStringS nick = getSender(buff);
 										if (nick.size() != 0)
 										{
-											const char *premessage = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
+											Jupiter::ReferenceString premessage = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
 											if (premessage[0] == '\001') //CTCP (ACTIONs are included)
 											{
-												Jupiter::CStringS rawmessage = premessage + 1;
-												Jupiter::CStringS command = rawmessage.getWord(0, WHITESPACE);
+												Jupiter::ReferenceString rawmessage(premessage.ptr() + 1, premessage.size() - 1);
+												Jupiter::ReferenceString command = rawmessage.getWord(0, WHITESPACE);
 												if (command[command.size() - 1] == IRC::CTCP) command.truncate(1);
-												Jupiter::CStringS message = rawmessage.substring(findSymbol(rawmessage.c_str(), ' ', 0) + 1, findSymbol(rawmessage.c_str(), IRC::CTCP, 0));
+												Jupiter::ReferenceString message = rawmessage.substring(rawmessage.find(' ') + 1, rawmessage.find(IRC::CTCP));
 												if (message[message.size() - 1] == IRC::CTCP) message.truncate(1);
 
 												if (command.equals("ACTION"))
@@ -956,7 +933,7 @@ int Jupiter::IRC::Client::primaryHandler()
 														response += " :Query is unknown";
 													}
 													response += IRCCTCP ENDL;
-													Jupiter::IRC::Client::data_->sock->send(response.c_str());
+													Jupiter::IRC::Client::data_->sock->send(response);
 													this->OnCTCP(chan, nick, command, message);
 													for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnCTCP(this, chan, nick, message);
 												}
@@ -970,9 +947,9 @@ int Jupiter::IRC::Client::primaryHandler()
 										}
 									}
 								}
-								else if (streqli(w2.c_str(), "NOTICE"))
+								else if (w2.equalsi("NOTICE"))
 								{
-									CStringS chan = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									if (chan.size() != 0)
 									{
 										int pos = findSymbol(buff.c_str(), '!', 0);
@@ -994,7 +971,7 @@ int Jupiter::IRC::Client::primaryHandler()
 										}
 									}
 								}
-								else if (streqli(w2.c_str(), "NICK"))
+								else if (w2.equalsi("NICK"))
 								{
 									auto nick = getSender(buff);
 									const char *tnewnick = buff.c_str() + findSymbol(buff.c_str(), ' ', 1) + 1;
@@ -1004,7 +981,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									{
 										Jupiter::IRC::Client::data_->nickname = newnick;
 									}
-									Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::data_->findUser(nick.c_str());
+									Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::data_->findUser(nick);
 									if (user != nullptr)
 									{
 										user->data_->nickname = newnick;
@@ -1012,73 +989,73 @@ int Jupiter::IRC::Client::primaryHandler()
 									}
 									for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnNick(this, nick, newnick);
 								}
-								else if (streqli(w2.c_str(), "JOIN"))
+								else if (w2.equalsi("JOIN"))
 								{
 									auto nick = getSender(buff);
-									CStringS chan = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									if (chan[0] == ':') chan.shiftRight(1);
-									int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
+									int i = Jupiter::IRC::Client::getChannelIndex(chan);
 									if (Jupiter::IRC::Client::data_->nickname.equalsi(nick))
 									{
 										if (i >= 0) Jupiter::IRC::Client::data_->delChannel(i);
-										Jupiter::IRC::Client::Channel *channel = Jupiter::IRC::Client::data_->channels.get(Jupiter::IRC::Client::data_->addChannel(chan.c_str()));
+										Jupiter::IRC::Client::Channel *channel = Jupiter::IRC::Client::data_->channels.get(Jupiter::IRC::Client::data_->addChannel(chan));
 										channel->data_->isAddingNames = true;
 										if (channel->getType() < 0)
 										{
-											if (Jupiter::IRC::Client::data_->autoPartMessage.size() != 0) Jupiter::IRC::Client::partChannel(chan.c_str(), Jupiter::IRC::Client::data_->autoPartMessage.c_str());
-											else Jupiter::IRC::Client::partChannel(chan.c_str());
+											if (Jupiter::IRC::Client::data_->autoPartMessage.size() != 0) Jupiter::IRC::Client::partChannel(chan, Jupiter::IRC::Client::data_->autoPartMessage);
+											else Jupiter::IRC::Client::partChannel(chan);
 										}
 									}
 									else if (i >= 0) Jupiter::IRC::Client::data_->channels.get(i)->addUser(Jupiter::IRC::Client::data_->findUserOrAdd(nick));
 									this->OnJoin(chan, nick);
 									for (i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnJoin(this, chan, nick);
 								}
-								else if (streqli(w2.c_str(), "PART"))
+								else if (w2.equalsi("PART"))
 								{
 									auto nick = getSender(buff);
 									if (nick.size() != 0)
 									{
-										auto chan = buff.getWord(2, WHITESPACE);
+										Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 										if (chan.size() != 0)
 										{
-											int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
+											int i = Jupiter::IRC::Client::getChannelIndex(chan);
 											if (i >= 0)
 											{
-												int userIndex = Jupiter::IRC::Client::getUserIndex(nick.c_str());
+												int userIndex = Jupiter::IRC::Client::getUserIndex(nick);
 												if (userIndex >= 0)
 												{
 													Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::data_->users.get(userIndex);
-													Jupiter::IRC::Client::data_->channels.get(i)->delUser(nick.c_str());
+													Jupiter::IRC::Client::data_->channels.get(i)->delUser(nick);
 													int pos = findSymbol(buff.c_str(), ':', 1);
 													Jupiter::CStringS reason = buff.c_str() + pos + 1;
 													this->OnPart(chan, nick, reason);
 													for (i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnPart(this, chan, nick, reason);
-													if (nick.equalsi(Jupiter::IRC::Client::data_->nickname)) Jupiter::IRC::Client::data_->delChannel(chan.c_str());
+													if (nick.equalsi(Jupiter::IRC::Client::data_->nickname)) Jupiter::IRC::Client::data_->delChannel(chan);
 													if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
 												}
 											}
 										}
 									}
 								}
-								else if (streqli(w2.c_str(), "KICK"))
+								else if (w2.equalsi("KICK"))
 								{
-									auto chan = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									if (chan.size() != 0)
 									{
 										Jupiter::CStringS kicker = getSender(buff);
 										if (kicker.size() != 0)
 										{
-											auto kicked = buff.getWord(3, WHITESPACE);
+											Jupiter::ReferenceString kicked = Jupiter::ReferenceString::getWord(buff, 3, WHITESPACE);
 											if (kicked.size() != 0)
 											{
-												int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
+												int i = Jupiter::IRC::Client::getChannelIndex(chan);
 												if (i >= 0)
 												{
-													int userIndex = Jupiter::IRC::Client::getUserIndex(kicked.c_str());
+													int userIndex = Jupiter::IRC::Client::getUserIndex(kicked);
 													if (userIndex >= 0)
 													{
 														Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::data_->users.get(userIndex);
-														Jupiter::IRC::Client::data_->channels.get(i)->delUser(kicked.c_str());
+														Jupiter::IRC::Client::data_->channels.get(i)->delUser(kicked);
 														int pos = findSymbol(buff.c_str(), ':', 1);
 														Jupiter::CStringS reason;
 														if (pos >= 0) reason += buff.c_str() + pos + 1;
@@ -1086,8 +1063,8 @@ int Jupiter::IRC::Client::primaryHandler()
 														for (i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnKick(this, chan, kicker, kicked, reason);
 														if (kicked.equalsi(Jupiter::IRC::Client::data_->nickname))
 														{
-															Jupiter::IRC::Client::data_->delChannel(chan.c_str());
-															if (Jupiter::IRC::Client::data_->joinOnKick) Jupiter::IRC::Client::joinChannel(chan.c_str());
+															Jupiter::IRC::Client::data_->delChannel(chan);
+															if (Jupiter::IRC::Client::data_->joinOnKick) Jupiter::IRC::Client::joinChannel(chan);
 														}
 														if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
 													}
@@ -1096,35 +1073,36 @@ int Jupiter::IRC::Client::primaryHandler()
 										}
 									}
 								}
-								else if (streqli(w2.c_str(), "QUIT"))
+								else if (w2.equalsi("QUIT"))
 								{
 									Jupiter::CStringS nick = getSender(buff);
 									Jupiter::CStringS message = buff.substring(findSymbol(buff.c_str(), ':', 1) + 1, buff.size());
-									int userIndex = Jupiter::IRC::Client::getUserIndex(nick.c_str());
+									int userIndex = Jupiter::IRC::Client::getUserIndex(nick);
 									if (userIndex >= 0)
 									{
 										Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::data_->users.get(userIndex);
 										unsigned int i;
-										for (i = 0; i < Jupiter::IRC::Client::data_->channels.size(); i++) Jupiter::IRC::Client::data_->channels.get(i)->delUser(nick.c_str());
+										for (i = 0; i < Jupiter::IRC::Client::data_->channels.size(); i++)
+											Jupiter::IRC::Client::data_->channels.get(i)->delUser(nick);
 										this->OnQuit(nick, message);
 										for (i = 0; i < Jupiter::plugins->size(); i++) Jupiter::plugins->get(i)->OnQuit(this, nick, message);
 										if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
 									}
 								}
-								else if (streqli(w2.c_str(), "INVITE"))
+								else if (w2.equalsi("INVITE"))
 								{
 									Jupiter::CStringS inviter = getSender(buff);
-									auto invited = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString invited = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									Jupiter::CStringS chan = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
 									this->OnInvite(chan, inviter, invited);
 									for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnInvite(this, chan, inviter, invited);
 								}
-								else if (streqli(w2.c_str(), "MODE"))
+								else if (w2.equalsi("MODE"))
 								{
-									auto chan = buff.getWord(2, WHITESPACE);
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									if (chan.size() != 0)
 									{
-										if (containsSymbol(Jupiter::IRC::Client::data_->chanTypes.c_str(), chan[0]))
+										if (Jupiter::IRC::Client::data_->chanTypes.contains(chan[0]))
 										{
 											auto nick = getSender(buff);
 											if (nick.size() != 0)
@@ -1142,8 +1120,9 @@ int Jupiter::IRC::Client::primaryHandler()
 														for (uint8_t z = 0; modes[z] != 0; z++)
 														{
 															if (modes[z] == '+' || modes[z] == '-') symb = modes[z];
-															else if (findSymbol(Jupiter::IRC::Client::data_->prefixModes.c_str(), modes[z], 0) >= 0)
+															else if (Jupiter::IRC::Client::data_->prefixModes.contains(modes[z]))
 															{
+
 																tword = getWord(params, g);
 																if (tword != nullptr)
 																{
@@ -1151,22 +1130,21 @@ int Jupiter::IRC::Client::primaryHandler()
 																	for (unsigned int channelIndex = 0; channelIndex < Jupiter::IRC::Client::data_->channels.size(); channelIndex++)
 																	{
 																		channel = Jupiter::IRC::Client::data_->channels.get(channelIndex);
-																		if (channel->getName().equalsi(chan.c_str()))
+																		if (channel->getName().equalsi(chan))
 																		{
-																			if (symb == '+') channel->addUserPrefix(tword, Jupiter::IRC::Client::data_->prefixes[findSymbol(Jupiter::IRC::Client::data_->prefixModes.c_str(), modes[z], 0)]);
-																			else channel->delUserPrefix(tword, Jupiter::IRC::Client::data_->prefixes[findSymbol(Jupiter::IRC::Client::data_->prefixModes.c_str(), modes[z], 0)]);
+																			if (symb == '+') channel->addUserPrefix(Jupiter::ReferenceString(tword), Jupiter::IRC::Client::data_->prefixes[Jupiter::IRC::Client::data_->prefixModes.find(modes[z])]);
+																			else channel->delUserPrefix(Jupiter::ReferenceString(tword), Jupiter::IRC::Client::data_->prefixes[Jupiter::IRC::Client::data_->prefixModes.find(modes[z])]);
 																			break;
 																		}
 																	}
-																	free(tword);
 																}
 																g++;
 															}
 															else
 															{
-																if (containsSymbol(Jupiter::IRC::Client::data_->modeA.c_str(), modes[z])) g++;
-																else if (containsSymbol(Jupiter::IRC::Client::data_->modeB.c_str(), modes[z])) g++;
-																else if (containsSymbol(Jupiter::IRC::Client::data_->modeC.c_str(), modes[z]) && symb == '+') g++;
+																if (Jupiter::IRC::Client::data_->modeA.contains(modes[z])) g++;
+																else if (Jupiter::IRC::Client::data_->modeB.contains(modes[z])) g++;
+																else if (Jupiter::IRC::Client::data_->modeC.contains(modes[z]) && symb == '+') g++;
 															}
 														}
 														free(modes);
@@ -1183,23 +1161,23 @@ int Jupiter::IRC::Client::primaryHandler()
 								// else if CHGHOST
 								else if (numeric == IRC_RPL_NAMREPLY) // Some names.
 								{
-									Jupiter::CStringS chan = buff.getWord(4, " ");
-									Jupiter::CStringS names = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
-									int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 4, " ");
+									Jupiter::ReferenceString names = Jupiter::ReferenceString::substring(buff, buff.find(':', 1) + 1);
+									int i = Jupiter::IRC::Client::getChannelIndex(chan);
 									if (i >= 0)
 									{
 										if (Jupiter::IRC::Client::getChannel(i)->data_->isAddingNames == false)
 										{
 											Jupiter::IRC::Client::data_->delChannel(i);
-											Jupiter::IRC::Client::getChannel(Jupiter::IRC::Client::data_->addChannel(chan.c_str()))->data_->isAddingNames = true;
+											Jupiter::IRC::Client::getChannel(Jupiter::IRC::Client::data_->addChannel(chan))->data_->isAddingNames = true;
 										}
 										Jupiter::IRC::Client::data_->addNamesToChannel(i, names);
 									}
 								}
 								else if (numeric == IRC_RPL_ENDOFNAMES) // We're done here.
 								{
-									Jupiter::CStringS chan = buff.getWord(3, " ");
-									int i = Jupiter::IRC::Client::getChannelIndex(chan.c_str());
+									Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(buff, 3, " ");
+									int i = Jupiter::IRC::Client::getChannelIndex(chan);
 									if (i >= 0) Jupiter::IRC::Client::data_->channels.get(i)->data_->isAddingNames = false;
 								}
 								break;
@@ -1210,11 +1188,7 @@ int Jupiter::IRC::Client::primaryHandler()
 					{
 						if (w1.equals("PING"))
 						{
-							char *tempstr;
-							tempstr = new char[w2.size() + 8];
-							sprintf(tempstr, "PONG %s" ENDL, w2.c_str());
-							Jupiter::IRC::Client::data_->sock->send(tempstr);
-							delete[] tempstr;
+							Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("PONG %.*s" ENDL, w2.size(), w2.ptr()));
 						}
 						else if (w1.equals("NICK"))
 						{
@@ -1271,20 +1245,18 @@ int Jupiter::IRC::Client::primaryHandler()
 
 bool Jupiter::IRC::Client::connect()
 {
-	const char *clientAddress = Jupiter::IRC::Client::readConfigValue("ClientAddress").c_str();
-	if (*clientAddress == 0) clientAddress = nullptr;
-	bool r = Jupiter::IRC::Client::data_->sock->connectToHost(Jupiter::IRC::Client::data_->serverHostname.c_str(), Jupiter::IRC::Client::data_->serverPort, clientAddress, (unsigned short) Jupiter::IRC::Client::readConfigLong("ClientPort"));
-	if (r)
+	const Jupiter::ReadableString &clientAddress = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("ClientAddress"));
+	if (Jupiter::IRC::Client::data_->sock->connectToHost(Jupiter::IRC::Client::data_->serverHostname.c_str(), Jupiter::IRC::Client::data_->serverPort, clientAddress.size() == 0 ? nullptr : Jupiter::CStringS(clientAddress).c_str(), (unsigned short)Jupiter::IRC::Client::readConfigLong(STRING_LITERAL_AS_REFERENCE("ClientPort"))) == false)
+		return false;
+
+	Jupiter::IRC::Client::data_->sock->setBlocking(false);
+	if (Jupiter::IRC::Client::data_->ssl == false)
 	{
-		Jupiter::IRC::Client::data_->sock->setBlocking(false);
-		if (Jupiter::IRC::Client::data_->ssl == false)
-		{
-			Jupiter::IRC::Client::data_->sock->send("STARTTLS" ENDL);
-			Jupiter::IRC::Client::data_->connectionStatus = 1;
-		}
-		else Jupiter::IRC::Client::data_->startCAP();
+		Jupiter::IRC::Client::data_->sock->send("STARTTLS" ENDL);
+		Jupiter::IRC::Client::data_->connectionStatus = 1;
 	}
-	return r;
+	else Jupiter::IRC::Client::data_->startCAP();
+	return true;
 }
 
 void Jupiter::IRC::Client::disconnect(bool stayDead)
@@ -1298,18 +1270,15 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnDisconnect(this);
 }
 
-void Jupiter::IRC::Client::disconnect(const char *message, bool stayDead)
+void Jupiter::IRC::Client::disconnect(const Jupiter::ReadableString &message, bool stayDead)
 {
-	char *msg = new char[strlen(message) + 9];
-	sprintf(msg, "QUIT :%s" ENDL, message);
-	Jupiter::IRC::Client::data_->sock->send(msg);
-	delete[] msg;
+	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("QUIT :%.*s" ENDL, message.size(), message.ptr()));
 	Jupiter::IRC::Client::disconnect(stayDead);
 }
 
 void Jupiter::IRC::Client::reconnect()
 {
-	if (Jupiter::IRC::Client::data_->connectionStatus) Jupiter::IRC::Client::disconnect();
+	if (Jupiter::IRC::Client::data_->connectionStatus != 0) Jupiter::IRC::Client::disconnect();
 	Jupiter::IRC::Client::data_->reconnectAttempts++;
 	bool successConnect = Jupiter::IRC::Client::connect();
 	this->OnReconnectAttempt(successConnect);
@@ -1332,43 +1301,46 @@ int Jupiter::IRC::Client::think()
 	return 0;
 }
 
-Jupiter::CStringS Jupiter::IRC::Client::readConfigValue(const char *key, const char *defaultValue) const
+const Jupiter::ReadableString &Jupiter::IRC::Client::readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
 {
-	const char *val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName.c_str(), key);
-	if (val == nullptr) val = Jupiter::IRC::Client::Config->get("Default", key, defaultValue);
-	return val;
+	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
+	if (val.size() != 0) return val;
+	return Jupiter::IRC::Client::Config->get(STRING_LITERAL_AS_REFERENCE("Default"), key, defaultValue);
 }
 
-bool Jupiter::IRC::Client::readConfigBool(const char *key, bool defaultValue) const
+bool Jupiter::IRC::Client::readConfigBool(const Jupiter::ReadableString &key, bool defaultValue) const
 {
-	if (Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName.c_str(), key)) return Jupiter::IRC::Client::Config->getBool(Jupiter::IRC::Client::data_->configSectionName.c_str(), key);
-	return Jupiter::IRC::Client::Config->getBool("Default", key, defaultValue);
+	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
+	if (val.size() != 0) return val.asBool();
+	return Jupiter::IRC::Client::Config->getBool(STRING_LITERAL_AS_REFERENCE("Default"), key, defaultValue);
 }
 
-int Jupiter::IRC::Client::readConfigInt(const char *key, int defaultValue) const
+int Jupiter::IRC::Client::readConfigInt(const Jupiter::ReadableString &key, int defaultValue) const
 {
-	if (Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName.c_str(), key)) return Jupiter::IRC::Client::Config->getInt(Jupiter::IRC::Client::data_->configSectionName.c_str(), key);
-	return Jupiter::IRC::Client::Config->getInt("Default", key, defaultValue);
+	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
+	if (val.size() != 0) return val.asInt();
+	return Jupiter::IRC::Client::Config->getInt(STRING_LITERAL_AS_REFERENCE("Default"), key, defaultValue);
 }
 
-long Jupiter::IRC::Client::readConfigLong(const char *key, long defaultValue) const
+long Jupiter::IRC::Client::readConfigLong(const Jupiter::ReadableString &key, long defaultValue) const
 {
-	if (Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName.c_str(), key)) return Jupiter::IRC::Client::Config->getLong(Jupiter::IRC::Client::data_->configSectionName.c_str(), key);
-	return Jupiter::IRC::Client::Config->getLong("Default", key, defaultValue);
+	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
+	if (val.size() != 0) return val.asInt();
+	return Jupiter::IRC::Client::Config->getInt(STRING_LITERAL_AS_REFERENCE("Default"), key, defaultValue);
 }
 
-double Jupiter::IRC::Client::readConfigDouble(const char *key, double defaultValue) const
+double Jupiter::IRC::Client::readConfigDouble(const Jupiter::ReadableString &key, double defaultValue) const
 {
-	if (Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName.c_str(), key)) return Jupiter::IRC::Client::Config->getDouble(Jupiter::IRC::Client::data_->configSectionName.c_str(), key);
-	return Jupiter::IRC::Client::Config->getDouble("Default", key, defaultValue);
+	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
+	if (val.size() != 0) return val.asDouble();
+	return Jupiter::IRC::Client::Config->getDouble(STRING_LITERAL_AS_REFERENCE("Default"), key, defaultValue);
 }
 
-void Jupiter::IRC::Client::writeToLogs(const char *message)
+void Jupiter::IRC::Client::writeToLogs(const Jupiter::ReadableString &message)
 {
 	if (Jupiter::IRC::Client::data_->logFile != nullptr)
 	{
-		fputs(message, Jupiter::IRC::Client::data_->logFile);
-		fputs(ENDL, Jupiter::IRC::Client::data_->logFile);
+		message.println(Jupiter::IRC::Client::data_->logFile);
 		fflush(Jupiter::IRC::Client::data_->logFile);
 	}
 }
@@ -1377,7 +1349,7 @@ void Jupiter::IRC::Client::writeToLogs(const char *message)
 * @brief IRC Client Data Implementation
 */
 
-void Jupiter::IRC::Client::Data::delChannel(const char *chan)
+void Jupiter::IRC::Client::Data::delChannel(const Jupiter::ReadableString &chan)
 {
 	Jupiter::IRC::Client::Channel *channel;
 	for (unsigned int i = 0; i < Jupiter::IRC::Client::Data::channels.size(); i++)
@@ -1396,7 +1368,7 @@ void Jupiter::IRC::Client::Data::delChannel(unsigned int index)
 	delete Jupiter::IRC::Client::Data::channels.remove(index);
 }
 
-Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUser(const char *nick) const
+Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUser(const Jupiter::ReadableString &nick) const
 {
 	Jupiter::IRC::Client::User *r;
 	for (unsigned int i = 0; i < Jupiter::IRC::Client::Data::users.size(); i++)
@@ -1407,25 +1379,25 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUser(const char *nic
 	return nullptr;
 }
 
-Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUserOrAdd(Jupiter::CStringS &name)
+Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUserOrAdd(const Jupiter::ReadableString &name)
 {
 	unsigned int wc = name.wordCount("!@");
-	Jupiter::CStringS nick = (wc == 1) ? name : name.getWord(0, "!@");
-	Jupiter::IRC::Client::User *r = Jupiter::IRC::Client::Data::findUser(nick.c_str());
+	Jupiter::ReferenceString nick = (wc == 1) ? (name) : Jupiter::ReferenceString::getWord(name, 0, "!@");
+	Jupiter::IRC::Client::User *r = Jupiter::IRC::Client::Data::findUser(nick);
 	if (r == nullptr)
 	{
 		r = new Jupiter::IRC::Client::User();
 		switch (wc)
 		{
 		case 3:
-			r->data_->hostname = name.getWord(2, "!@");
+			r->data_->hostname = Jupiter::ReferenceString::getWord(name, 2, "!@");
 		case 2: // This shouldn't EVER happen.
-			r->data_->username = name.getWord(1, "!@");
+			r->data_->username = Jupiter::ReferenceString::getWord(name, 1, "!@");
 		case 1: // No user/host is in the string.
 			r->data_->nickname = nick;
 			break;
 		default:
-			fprintf(stderr, "ERROR: Failed to parse name mask: %s" ENDL, name.c_str());
+			fprintf(stderr, "ERROR: Failed to parse name mask: %.*s" ENDL, name.size(), name.ptr());
 			break;
 		}
 		Jupiter::IRC::Client::Data::users.add(r);
@@ -1433,35 +1405,32 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUserOrAdd(Jupiter::C
 	return r;
 }
 
-void Jupiter::IRC::Client::Data::addNamesToChannel(unsigned int index, Jupiter::CStringS &names)
+void Jupiter::IRC::Client::Data::addNamesToChannel(unsigned int index, Jupiter::ReadableString &names)
 {
-	Jupiter::CStringS t;
+	Jupiter::ReferenceString t;
 	size_t offset;
 	Jupiter::IRC::Client::Channel *channel = Jupiter::IRC::Client::Data::channels.get(index);
 	int nameLen = names.wordCount(" ");
 	for (short i = 0; i < nameLen; i++)
 	{
-		t = names.getWord(i, " ");
+		t = Jupiter::ReferenceString::getWord(names, i, " ");
 		if (t.size() != 0)
 		{
-			offset = strspn(t.c_str(), Jupiter::IRC::Client::Data::prefixes.c_str());
+			offset = t.span(Jupiter::IRC::Client::Data::prefixes.c_str());
 			t.shiftRight(offset);
 			Jupiter::IRC::Client::User *user = Jupiter::IRC::Client::Data::findUserOrAdd(t);
 			t.shiftLeft(offset);
 			unsigned int userIndex = channel->addUser(user);
-			if (offset > 0)
+			while (offset > 0)
 			{
-				while (offset > 0)
-				{
-					offset--;
-					channel->addUserPrefix(userIndex, t[offset]);
-				}
+				offset--;
+				channel->addUserPrefix(userIndex, t[offset]);
 			}
 		}
 	}
 }
 
-unsigned int Jupiter::IRC::Client::Data::addChannel(const char *chan)
+size_t Jupiter::IRC::Client::Data::addChannel(const Jupiter::ReadableString &chan)
 {
 	Jupiter::IRC::Client::Data::channels.add(new Channel(chan, Jupiter::IRC::Client::Data::iFace));
 	return Jupiter::IRC::Client::Data::channels.size() - 1;
@@ -1472,16 +1441,16 @@ bool Jupiter::IRC::Client::Data::startCAP()
 	Jupiter::IRC::Client::Data::connectionStatus = 2;
 	return Jupiter::IRC::Client::Data::sock->send("CAP LS" ENDL, 8) > 0;
 }
-
+//Jupiter::ReferenceString &
 bool Jupiter::IRC::Client::Data::registerClient()
 {
 	bool r = true;
 	const char *localHostname = Jupiter::Socket::getLocalHostname();
-	Jupiter::CStringL messageToSend;
-	messageToSend.format("USER %s %s %s :%s" ENDL, Jupiter::IRC::Client::Data::nickname.c_str(), localHostname, Jupiter::IRC::Client::Data::serverHostname.c_str(), Jupiter::IRC::Client::Data::realName.c_str());
-	if (Jupiter::IRC::Client::Data::sock->send(messageToSend.c_str(), messageToSend.size()) <= 0) r = false;
-	messageToSend.format("NICK %s" ENDL, Jupiter::IRC::Client::Data::nickname.c_str());
-	if (Jupiter::IRC::Client::Data::sock->send(messageToSend.c_str(), messageToSend.size()) <= 0) r = false;
+	Jupiter::StringS messageToSend;
+	messageToSend.format("USER %.*s %s %.*s :%.*s" ENDL, Jupiter::IRC::Client::Data::nickname.size(), Jupiter::IRC::Client::Data::nickname.ptr(), localHostname, Jupiter::IRC::Client::Data::serverHostname.size(), Jupiter::IRC::Client::Data::serverHostname.ptr(), Jupiter::IRC::Client::Data::realName.size(), Jupiter::IRC::Client::Data::realName.ptr());
+	if (Jupiter::IRC::Client::Data::sock->send(messageToSend) <= 0) r = false;
+	messageToSend.format("NICK %.*s" ENDL, Jupiter::IRC::Client::Data::nickname.size(), Jupiter::IRC::Client::Data::nickname.ptr());
+	if (Jupiter::IRC::Client::Data::sock->send(messageToSend) <= 0) r = false;
 	Jupiter::IRC::Client::Data::connectionStatus = 3;
 	return r;
 }
@@ -1500,22 +1469,22 @@ Jupiter::IRC::Client::User::~User()
 	delete Jupiter::IRC::Client::User::data_;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::User::getNickname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::User::getNickname() const
 {
 	return Jupiter::IRC::Client::User::data_->nickname;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::User::getUsername() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::User::getUsername() const
 {
 	return Jupiter::IRC::Client::User::data_->username;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::User::getHostname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::User::getHostname() const
 {
 	return Jupiter::IRC::Client::User::data_->hostname;
 }
 
-unsigned int Jupiter::IRC::Client::User::getChannelCount() const
+size_t Jupiter::IRC::Client::User::getChannelCount() const
 {
 	return Jupiter::IRC::Client::User::data_->channelCount;
 }
@@ -1524,50 +1493,51 @@ unsigned int Jupiter::IRC::Client::User::getChannelCount() const
 * Channel Implementation
 */
 
-Jupiter::IRC::Client::Channel::Channel(const char *channelName, Jupiter::IRC::Client *iFace)
+Jupiter::IRC::Client::Channel::Channel(const Jupiter::ReadableString &channelName, Jupiter::IRC::Client *iFace)
 {
 	Jupiter::IRC::Client::Channel::data_ = new Jupiter::IRC::Client::Channel::Data();
 	unsigned int i = 0;
-	const char *ptr = nullptr;
-	const char *section = iFace->getConfigSection().c_str();
-	char key[64];
-	int offset = sprintf(key, "Channel.");
-	Jupiter::CStringL channelKeyStr;
+	const Jupiter::ReadableString *ptr = nullptr;
+	Jupiter::ReferenceString section = iFace->getConfigSection();
+	Jupiter::String key = "Channel.";
 
+	size_t offset = 0;
 	// TODO: Make this more efficient -- consider moving responsibility elsewhere.
 	while (1)
 	{
 		i++;
-		sprintf(key + offset, "%u", i);
-		ptr = Jupiter::IRC::Client::Config->get(section, key);
-		if (ptr == nullptr)
+		offset = key.aformat("%u", i);
+		ptr = &Jupiter::IRC::Client::Config->get(iFace->getConfigSection(), Jupiter::ReferenceString(key));
+		if (ptr->size() == 0)
 		{
-			if (section != iFace->getConfigSection().c_str()) break;
+			if (section != iFace->getConfigSection()) break;
 			i = 0;
-			section = "Default";
+			section = STRING_LITERAL_AS_REFERENCE("Default");
+			key.truncate(offset);
 			continue;
 		}
-		channelKeyStr = ptr;
-		if (channelKeyStr.getWord(0, WHITESPACE).equalsi(channelName))
+		if (Jupiter::ReferenceString::getWord(*ptr, 0, WHITESPACE).equalsi(channelName))
 		{
-			sprintf(key + offset, "%u.Type", i);
-			ptr = Jupiter::IRC::Client::Config->get(section, key);
-			if (ptr != nullptr)
+			offset += key.aformat(".Type", i);
+			ptr = &Jupiter::IRC::Client::Config->get(iFace->getConfigSection(), Jupiter::ReferenceString(key));
+			if (ptr->size() != 0)
 			{
-				Jupiter::IRC::Client::Channel::data_->type = atoi(ptr);
+				Jupiter::IRC::Client::Channel::data_->type = ptr->asInt();
+				key.truncate(offset);
 				break;
 			}
 		}
+		key.truncate(offset);
 	}
-	if (ptr == nullptr)
+	if (ptr->size() == 0)
 	{
-		sprintf(key + offset, "%s.Type", channelName);
-		ptr = iFace->readConfigValue(key).c_str();
-		if (*ptr != 0) Jupiter::IRC::Client::Channel::data_->type = atoi(ptr);
+		key.aformat("%.*s.Type", channelName.size(), channelName.ptr());
+		Jupiter::CStringS val = iFace->readConfigValue(key);
+		if (val.size() != 0) Jupiter::IRC::Client::Channel::data_->type = val.asInt();
 		else Jupiter::IRC::Client::Channel::data_->type = iFace->getDefaultChanType();
 	}
 	Jupiter::IRC::Client::Channel::data_->channel = channelName;
-	Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr = iFace->getPrefixes().c_str();
+	Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr = iFace->getPrefixes();
 }
 
 Jupiter::IRC::Client::Channel::~Channel()
@@ -1592,13 +1562,13 @@ unsigned int Jupiter::IRC::Client::Channel::addUser(Jupiter::IRC::Client::User *
 	return r;
 }
 
-void Jupiter::IRC::Client::Channel::delUser(const char *nickname)
+void Jupiter::IRC::Client::Channel::delUser(const Jupiter::ReadableString &nickname)
 {
 	int index = getUserIndex(nickname);
 	if (index >= 0) Jupiter::IRC::Client::Channel::delUser(index);
 }
 
-void Jupiter::IRC::Client::Channel::delUser(unsigned int index)
+void Jupiter::IRC::Client::Channel::delUser(size_t index)
 {
 	if (index < Jupiter::IRC::Client::Channel::data_->users.size())
 	{
@@ -1608,7 +1578,7 @@ void Jupiter::IRC::Client::Channel::delUser(unsigned int index)
 	}
 }
 
-void Jupiter::IRC::Client::Channel::addUserPrefix(unsigned int index, char prefix)
+void Jupiter::IRC::Client::Channel::addUserPrefix(size_t index, char prefix)
 {
 	if (index < Jupiter::IRC::Client::Channel::data_->users.size())
 	{
@@ -1619,7 +1589,7 @@ void Jupiter::IRC::Client::Channel::addUserPrefix(unsigned int index, char prefi
 	}
 }
 
-void Jupiter::IRC::Client::Channel::addUserPrefix(const char *user, char prefix)
+void Jupiter::IRC::Client::Channel::addUserPrefix(const Jupiter::ReadableString &user, char prefix)
 {
 	int i = Jupiter::IRC::Client::Channel::getUserIndex(user);
 	if (i >= 0) Jupiter::IRC::Client::Channel::addUserPrefix(i, prefix);
@@ -1630,13 +1600,13 @@ void Jupiter::IRC::Client::Channel::delUserPrefix(unsigned int index, char prefi
 	if (index < Jupiter::IRC::Client::Channel::data_->users.size()) Jupiter::IRC::Client::Channel::data_->users.get(index)->data_->prefixes.remove(prefix);
 }
 
-void Jupiter::IRC::Client::Channel::delUserPrefix(const char *user, char prefix)
+void Jupiter::IRC::Client::Channel::delUserPrefix(const Jupiter::ReadableString &user, char prefix)
 {
 	int i = Jupiter::IRC::Client::Channel::getUserIndex(user);
 	if (i >= 0) Jupiter::IRC::Client::Channel::delUserPrefix(i, prefix);
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::Channel::getName() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::getName() const
 {
 	return Jupiter::IRC::Client::Channel::data_->channel;
 }
@@ -1648,7 +1618,7 @@ Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::getUser(unsi
 	return nullptr;
 }
 
-Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::getUser(const char *nickname) const
+Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::getUser(const Jupiter::ReadableString &nickname) const
 {
 	Jupiter::ArrayList<Jupiter::IRC::Client::Channel::User> &users = Jupiter::IRC::Client::Channel::data_->users;
 	Jupiter::IRC::Client::Channel::User *user;
@@ -1660,15 +1630,19 @@ Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::getUser(cons
 	return nullptr;
 }
 
-int Jupiter::IRC::Client::Channel::getUserIndex(const char *user) const
+int Jupiter::IRC::Client::Channel::getUserIndex(const Jupiter::ReadableString &user) const
 {
-	for (unsigned int i = 0; i < Jupiter::IRC::Client::Channel::data_->users.size(); i++) if (Jupiter::IRC::Client::Channel::data_->users[i] && Jupiter::IRC::Client::Channel::data_->users[i]->data_->user->getNickname().equalsi(user)) return i;
+	for (unsigned int i = 0; i < Jupiter::IRC::Client::Channel::data_->users.size(); i++)
+		if (Jupiter::IRC::Client::Channel::data_->users[i] && Jupiter::IRC::Client::Channel::data_->users[i]->data_->user->getNickname().equalsi(user))
+			return i;
 	return -1;
 }
 
-int Jupiter::IRC::Client::Channel::getUserIndexByPartName(const char *user) const
+int Jupiter::IRC::Client::Channel::getUserIndexByPartName(const Jupiter::ReadableString &user) const
 {
-	for (unsigned int i = 0; i < Jupiter::IRC::Client::Channel::data_->users.size(); i++) if (Jupiter::IRC::Client::Channel::data_->users[i] && stristr(Jupiter::IRC::Client::Channel::data_->users[i]->data_->user->getNickname().c_str(), user)) return i;
+	for (unsigned int i = 0; i < Jupiter::IRC::Client::Channel::data_->users.size(); i++)
+		if (Jupiter::IRC::Client::Channel::data_->users[i] && Jupiter::IRC::Client::Channel::data_->users[i]->data_->user->getNickname().find(user) != Jupiter::INVALID_INDEX)
+			return i;
 	return -1;
 }
 
@@ -1676,11 +1650,12 @@ char Jupiter::IRC::Client::Channel::getUserPrefix(unsigned int index) const
 {
 	if (index < Jupiter::IRC::Client::Channel::data_->users.size())
 		for (unsigned char i = 0; Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr[i]; i++)
-			if (containsSymbol(Jupiter::IRC::Client::Channel::data_->users.get(index)->data_->prefixes.c_str(), Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr[i])) return Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr[i];
+			if (containsSymbol(Jupiter::IRC::Client::Channel::data_->users.get(index)->data_->prefixes.c_str(), Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr[i]))
+				return Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr[i];
 	return 0;
 }
 
-char Jupiter::IRC::Client::Channel::getUserPrefix(const char *user) const
+char Jupiter::IRC::Client::Channel::getUserPrefix(const Jupiter::ReadableString &user) const
 {
 	int i = Jupiter::IRC::Client::Channel::getUserIndex(user);
 	if (i >= 0) return Jupiter::IRC::Client::Channel::getUserPrefix(i);
@@ -1721,22 +1696,22 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::Channel::User::getUser() const
 	return Jupiter::IRC::Client::Channel::User::data_->user;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::Channel::User::getPrefixes() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getPrefixes() const
 {
 	return Jupiter::IRC::Client::Channel::User::data_->prefixes;
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::Channel::User::getNickname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getNickname() const
 {
 	return Jupiter::IRC::Client::Channel::User::data_->user->getNickname();
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::Channel::User::getUsername() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getUsername() const
 {
 	return Jupiter::IRC::Client::Channel::User::data_->user->getUsername();
 }
 
-const Jupiter::StringType &Jupiter::IRC::Client::Channel::User::getHostname() const
+const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getHostname() const
 {
 	return Jupiter::IRC::Client::Channel::User::data_->user->getHostname();
 }
