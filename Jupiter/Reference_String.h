@@ -62,6 +62,14 @@ namespace Jupiter
 		const T *ptr() const;
 
 		/**
+		* @brief Truncates the string by a specified number of elements.
+		*
+		* @param n Number of elements to remove from the tail.
+		* @return New size of the String.
+		*/
+		virtual size_t truncate(size_t n);
+
+		/**
 		* @brief Sets the reference to point to an input string.
 		*
 		* @param in String containing the data to be referenced.

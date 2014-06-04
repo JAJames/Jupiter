@@ -80,6 +80,16 @@ template<typename T> const T *Jupiter::Reference_String<T>::ptr() const
 	return Jupiter::Reference_String<T>::str;
 }
 
+// truncate
+
+template<typename T> size_t Jupiter::Reference_String<T>::truncate(size_t n)
+{
+	if (n >= Jupiter::Reference_String<T>::length) return (Jupiter::Reference_String<T>::length = 0);
+	return (Jupiter::Reference_String<T>::length -= n);
+}
+
+// set
+
 template<typename T> size_t Jupiter::Reference_String<T>::set(const Jupiter::Readable_String<T> &in)
 {
 	return this->set(in.ptr(), in.size());
