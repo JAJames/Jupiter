@@ -75,9 +75,11 @@ namespace Jupiter
 		* @brief Returns the index of the first element in the string with the specified value.
 		*
 		* @param value Value of the element to search for.
+		* @param index Index of the match to return (i.e: 0 returns the first match).
 		* @return The index of an element if one is found, INVALID_INDEX otherwise.
 		*/
-		size_t find(const T &value) const;
+		size_t find(const T &value, size_t index = 0) const;
+		size_t find(const Readable_String<T> &in) const;
 
 		/**
 		* @brief Compares another string against the String.

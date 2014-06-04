@@ -42,9 +42,29 @@ template<typename T> bool Jupiter::Readable_String<T>::contains(const T &value) 
 
 // find
 
-template<typename T> size_t Jupiter::Readable_String<T>::find(const T &value) const
+template<typename T> size_t Jupiter::Readable_String<T>::find(const T &value, size_t index) const
 {
-	for (size_t i = 0; i != this->size(); i++) if (this->get(i) == value) return i;
+	for (size_t i = 0; i != this->size(); i++)
+	{
+		if (this->get(i) == value)
+		{
+			if (index == 0) return i;
+			else index--;
+		}
+	}
+	return Jupiter::INVALID_INDEX;
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Readable_String<T> &in) const
+{
+	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
+	size_t j;
+	for (size_t i = 0; i != this->size() - in.size() + 1; i++)
+	{
+		j = 0;
+		while (this->get(i + j) == in.get(j))
+			if (++j == in.size()) return i;
+	}
 	return Jupiter::INVALID_INDEX;
 }
 
