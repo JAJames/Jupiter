@@ -82,7 +82,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const T *in)
 
 	Jupiter::Shift_String_Type<T>::base = new T[Jupiter::String_Type<T>::length];
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
-	for (size_t index = 0; *in != 0; index++, in++) Jupiter::String_Type<T>::str[index] = *in;
+	for (size_t index = 0; index != Jupiter::String_Type<T>::length; index++, in++) Jupiter::String_Type<T>::str[index] = *in;
 }
 
 template<typename T> const T *Jupiter::String_Strict<T>::c_str() const
