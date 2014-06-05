@@ -123,7 +123,7 @@ template<typename T> size_t Jupiter::ArrayList<T>::expandArray()
 	return Jupiter::ArrayList<T>::dataSize;
 }
 
-template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(length)
+template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(INIT_SIZE)
 {
 }
 
