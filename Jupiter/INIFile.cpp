@@ -263,11 +263,12 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 		{
 			line.shiftRight(1);
 
-			while (line.size() != 0 && line.get(line.size() - 1) != ']') // This also inadvertently adds support for comments on section lines!
+			// Truncate up to the last ']'.
+			while (line.size() != 0 && line.get(line.size() - 1) != ']')
 				line.truncate(1);
+			line.truncate(1); // Truncate the ']' we stoped at.
 
-			if (line.size() != 0)
-				section.set(line);
+			section.set(line);
 		}
 		else if (line.contains('=')) // key/value pair.
 		{
