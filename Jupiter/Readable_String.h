@@ -50,6 +50,13 @@ namespace Jupiter
 		virtual const T &get(size_t index) const = 0;
 
 		/**
+		* @brief Returns a pointer to the underlying string of elements.
+		*
+		* @return Pointer to the underlying string of elements.
+		*/
+		virtual const T *ptr() const = 0;
+
+		/**
 		* @brief Returns the number of elements in the String.
 		*
 		* @return Number of elements in the string.
@@ -57,11 +64,11 @@ namespace Jupiter
 		virtual size_t size() const = 0;
 
 		/**
-		* @brief Returns a pointer to the underlying string of elements.
+		* @brief Checks if the String is empty.
 		*
-		* @return Pointer to the underlying string of elements.
+		* @return True if the String is empty, false otherwise.
 		*/
-		virtual const T *ptr() const = 0;
+		virtual bool isEmpty() const;
 
 		/**
 		* @brief Checks if the string contains an element with the specified value.

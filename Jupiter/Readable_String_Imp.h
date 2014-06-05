@@ -32,6 +32,13 @@
 *	Readable_String
 */
 
+// isEmpty
+
+template<typename T> bool Jupiter::Readable_String<T>::isEmpty() const
+{
+	return this->size() == 0;
+}
+
 // contains
 
 template<typename T> bool Jupiter::Readable_String<T>::contains(const T &value) const
