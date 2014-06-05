@@ -104,7 +104,7 @@ namespace Jupiter
 			* @param index Index of the key-value pair.
 			* @return Value of a key-value pair at a specified index.
 			*/
-			const Jupiter::ReadableString &getValue(unsigned int index) const;
+			const Jupiter::ReadableString &getValue(size_t index) const;
 
 			/**
 			* @brief Fetches the value of a key-value pair.
@@ -120,7 +120,7 @@ namespace Jupiter
 			* @param index Index of the key-value pair to fetch.
 			* @return The key-value pair at the specified index.
 			*/
-			Jupiter::INIFile::Section::KeyValuePair *getPair(unsigned int index) const;
+			Jupiter::INIFile::Section::KeyValuePair *getPair(size_t index) const;
 
 			/**
 			* @brief Fetches a key-value pair.
@@ -135,7 +135,7 @@ namespace Jupiter
 			*
 			* @return Number of key-value pairs in the section.
 			*/
-			unsigned int size() const;
+			size_t size() const;
 
 			/**
 			* @brief Checks if a section has a key-value pair with a specified key.
@@ -201,22 +201,19 @@ namespace Jupiter
 
 		/**
 		* @brief Reads data from a file.
-		* The readFile function does not currently support keys which
-		* are not under a section, though this is not currently an issue,
-		* and may still be added later. The parser will also automatically
-		* remove any excessive whitespace, including any whitespace prefixing
-		* a key name, prefixing a key value, trailing a key name, or traling
-		* a key value.
+		* The parser will automatically remove any excessive whitespace, including any whitespace
+		* prefixing a key name, prefixing a key value, trailing a key name, or trailing a key value.
+		* Whitespace is defined by locale. Please refer to C's isspace() documentation for details.
 		*
 		* @param fileName String containing the name of a file.
-		* @return The number of entries added on success, ERROR_INDICATOR (-1) otherwise.
+		* @return The number of key-value pairs added on success, ERROR_INDICATOR (-1) otherwise.
 		*/
 		unsigned int readFile(const char *fileName);
 
 		/**
 		* @brief Flushes all stored data and recollects from the last read file.
 		*
-		* @return The number of entries added on success, ERROR_INDICATOR (-1) otherwise.
+		* @return The number of key-value pairs added on success, ERROR_INDICATOR (-1) otherwise.
 		*/
 		unsigned int reload();
 
@@ -259,7 +256,7 @@ namespace Jupiter
 		*
 		* @return Number of sections.
 		*/
-		unsigned int getSections() const;
+		size_t getSections() const;
 
 		/**
 		* @brief Returns a section.
@@ -267,7 +264,7 @@ namespace Jupiter
 		* @param index Index of the section to get.
 		* @return String containing section if it exists, nullptr otherwise.
 		*/
-		Jupiter::INIFile::Section *getSection(unsigned int index) const;
+		Jupiter::INIFile::Section *getSection(size_t index) const;
 
 		/**
 		* @brief Returns the index of a section.
@@ -275,14 +272,14 @@ namespace Jupiter
 		* @param section The name of the section.
 		* @return The index of section if it exists, INVALID_INDEX (-1) otherwise.
 		*/
-		unsigned int getSectionIndex(const Jupiter::ReadableString &section) const;
+		size_t getSectionIndex(const Jupiter::ReadableString &section) const;
 
 		/**
 		* @brief Returns the number of keys in a section.
 		*
 		* @return Number of data entries in a section.
 		*/
-		unsigned int getSectionLength(unsigned int index) const;
+		size_t getSectionLength(size_t index) const;
 
 		/**
 		* @brief Returns a key name.
@@ -291,7 +288,7 @@ namespace Jupiter
 		* @param keyIndex Index of the key.
 		* @return Key name on success, nullptr otherwise.
 		*/
-		const Jupiter::ReadableString &getKey(const Jupiter::ReadableString &section, unsigned int index) const;
+		const Jupiter::ReadableString &getKey(const Jupiter::ReadableString &section, size_t index) const;
 
 		/**
 		* @brief Returns the index of a key.
@@ -300,7 +297,7 @@ namespace Jupiter
 		* @param key String containing key name.
 		* @return Index of key if it exists, INVALID_INDEX (-1) otherwise.
 		*/
-		unsigned int getKeyIndex(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key) const;
+		size_t getKeyIndex(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key) const;
 
 		/**
 		* @brief Returns the value of a key.
