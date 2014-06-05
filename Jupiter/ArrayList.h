@@ -97,6 +97,9 @@ namespace Jupiter
 		*/
 		~ArrayList();
 
+		/** Initial size constant */
+		static const size_t start_size = 8;
+
 		/** Access Operator */
 		inline T *operator[](size_t index) { return this->get(index); };
 
@@ -111,8 +114,6 @@ namespace Jupiter
 
 // Implementation
 
-const size_t INIT_SIZE = 8;
-
 template<typename T> size_t Jupiter::ArrayList<T>::expandArray()
 {
 	T **tmp = new T *[Jupiter::ArrayList<T>::dataSize * 2];
@@ -123,7 +124,7 @@ template<typename T> size_t Jupiter::ArrayList<T>::expandArray()
 	return Jupiter::ArrayList<T>::dataSize;
 }
 
-template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(INIT_SIZE)
+template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(Jupiter::ArrayList<T>::start_size)
 {
 }
 
