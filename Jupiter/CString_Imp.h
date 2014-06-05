@@ -292,16 +292,18 @@ template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::gotoWord
 template<typename T> size_t Jupiter::CString_Type<T>::set(const Jupiter::Readable_String<T> &in)
 {
 	this->setBufferSizeNoCopy(in.size());
-	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length < in.size() && in.get(Jupiter::String_Type<T>::length) != 0; Jupiter::String_Type<T>::length++)
+	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length != in.size() && in.get(Jupiter::String_Type<T>::length) != 0; Jupiter::String_Type<T>::length++)
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
+	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = 0;
 	return Jupiter::String_Type<T>::length;
 }
 
 template<typename T> size_t Jupiter::CString_Type<T>::set(const std::basic_string<T> &in)
 {
 	this->setBufferSizeNoCopy(in.size());
-	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length < in.size() && in.at(Jupiter::String_Type<T>::length) != 0; Jupiter::String_Type<T>::length++)
+	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length != in.size() && in.at(Jupiter::String_Type<T>::length) != 0; Jupiter::String_Type<T>::length++)
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.at(Jupiter::String_Type<T>::length);
+	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length]
 	return Jupiter::String_Type<T>::length;
 }
 
