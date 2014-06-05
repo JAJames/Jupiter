@@ -629,17 +629,22 @@ unsigned int strtoui_nospace(const char *str, int base)
 		if (*str == '0')
 		{
 			str++;
-			if (*str == 'x' || *str == 'X')
+			switch (*str)
 			{
+			case 'X':
+			case 'x':
 				str++;
 				base = 16;
-			}
-			else if (*str == 'b' || *str == 'B')
-			{
+				break;
+			case 'B':
+			case 'b':
 				str++;
 				base = 2;
+				break;
+			default:
+				base = 8;
+				break;
 			}
-			else base = 8;
 		}
 		else base = 10;
 	}
@@ -752,19 +757,24 @@ unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
 		{
 			if (--length == 0) return total;
 			str++;
-			if (*str == 'x' || *str == 'X')
+			switch (*str)
 			{
+			case 'X':
+			case 'x':
 				if (--length == 0) return total;
 				str++;
 				base = 16;
-			}
-			else if (*str == 'b' || *str == 'B')
-			{
+				break;
+			case 'B':
+			case 'b':
 				if (--length == 0) return total;
 				str++;
 				base = 2;
+				break;
+			default:
+				base = 8;
+				break;
 			}
-			else base = 8;
 		}
 		else base = 10;
 	}
