@@ -52,9 +52,9 @@ void Jupiter::Command::addTrigger(const Jupiter::ReadableString &trigger)
 	Jupiter::Command::data_->triggers.add(new Jupiter::StringS(trigger));
 }
 
-const char *Jupiter::Command::getTrigger(short index) const
+const Jupiter::ReadableString &Jupiter::Command::getTrigger(size_t index) const
 {
-	return Jupiter::Command::data_->triggers.get(index)->c_str();
+	return *Jupiter::Command::data_->triggers.get(index);
 }
 
 size_t Jupiter::Command::getTriggerCount() const

@@ -49,7 +49,7 @@ namespace Jupiter
 		* @param index Index of the trigger to return.
 		* @return Trigger of the command at the specified index.
 		*/
-		const char *getTrigger(short index = 0) const;
+		const Jupiter::ReadableString &getTrigger(size_t index = 0) const;
 
 		/**
 		* @brief Returns the number of triggers accepted by the command.
