@@ -303,7 +303,7 @@ template<typename T> size_t Jupiter::CString_Type<T>::set(const std::basic_strin
 	this->setBufferSizeNoCopy(in.size());
 	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length != in.size() && in.at(Jupiter::String_Type<T>::length) != 0; Jupiter::String_Type<T>::length++)
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.at(Jupiter::String_Type<T>::length);
-	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length]
+	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length];
 	return Jupiter::String_Type<T>::length;
 }
 
