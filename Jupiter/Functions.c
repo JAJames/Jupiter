@@ -634,6 +634,11 @@ unsigned int strtoui_nospace(const char *str, int base)
 				str++;
 				base = 16;
 			}
+			else if (*str == 'b' || *str == 'B')
+			{
+				str++;
+				base = 2;
+			}
 			else base = 8;
 		}
 		else base = 10;
@@ -752,6 +757,12 @@ unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
 				if (--length == 0) return total;
 				str++;
 				base = 16;
+			}
+			else if (*str == 'b' || *str == 'B')
+			{
+				if (--length == 0) return total;
+				str++;
+				base = 2;
 			}
 			else base = 8;
 		}
