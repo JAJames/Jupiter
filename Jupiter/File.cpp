@@ -102,7 +102,7 @@ bool Jupiter::File::addData(const Jupiter::ReadableString &data)
 	unsigned int wc = data.wordCount(ENDL);
 	if (wc == 0) return false;
 
-	for (unsigned int i = 0; i < wc; i++) Jupiter::File::data_->lines.add(new Jupiter::StringS(std::move(Jupiter::StringS::getWord(data, 0, ENDL))));
+	for (unsigned int i = 0; i < wc; i++) Jupiter::File::data_->lines.add(new Jupiter::StringS(std::move(Jupiter::StringS::getWord(data, i, ENDL))));
 	return true;
 }
 
