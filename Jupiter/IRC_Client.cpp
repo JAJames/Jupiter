@@ -717,7 +717,7 @@ int Jupiter::IRC::Client::primaryHandler()
 											}
 											if (!sasl)
 											{
-												Jupiter::IRC::Client::data_->sock->send("CAP END" ENDL);
+												Jupiter::IRC::Client::data_->sock->send(STRING_LITERAL_AS_REFERENCE("CAP END" ENDL));
 												Jupiter::IRC::Client::data_->registerClient();
 											}
 										}
@@ -853,29 +853,29 @@ int Jupiter::IRC::Client::primaryHandler()
 								case IRC_RPL_LUSERCLIENT: // 251
 								{
 									Jupiter::CStringL key = "RawData.";
-									unsigned int offset;
+									size_t offset;
 
 									unsigned int i = 1;
-									do
+									while (true)
 									{
 										offset = key.aformat("%u", i);
-										const Jupiter::ReadableString &tVal = Jupiter::IRC::Client::readConfigValue(key);
-										if (tVal.size() == 0) break;
-										key -= offset;
-										Jupiter::IRC::Client::send(tVal);
+										const Jupiter::ReadableString &value = Jupiter::IRC::Client::readConfigValue(key);
+										if (value.isEmpty()) break;
+										key.truncate(offset);
+										Jupiter::IRC::Client::send(value);
 										i++;
-									} while (1);
+									}
 									key = "Channel.";
 									i = 1;
-									do
+									while (true)
 									{
 										offset = key.aformat("%u", i);
 										const Jupiter::ReadableString &tVal = Jupiter::IRC::Client::readConfigValue(key);
-										if (tVal.size() == 0) break;
-										key -= offset;
+										if (tVal.isEmpty()) break;
+										key.truncate(offset);
 										Jupiter::IRC::Client::joinChannel(tVal);
 										i++;
-									} while (1);
+									}
 
 									Jupiter::IRC::Client::data_->connectionStatus = 5;
 									Jupiter::IRC::Client::data_->reconnectAttempts = 0;
@@ -1002,8 +1002,10 @@ int Jupiter::IRC::Client::primaryHandler()
 										channel->data_->isAddingNames = true;
 										if (channel->getType() < 0)
 										{
-											if (Jupiter::IRC::Client::data_->autoPartMessage.size() != 0) Jupiter::IRC::Client::partChannel(chan, Jupiter::IRC::Client::data_->autoPartMessage);
-											else Jupiter::IRC::Client::partChannel(chan);
+											if (Jupiter::IRC::Client::data_->autoPartMessage.size() != 0)
+												Jupiter::IRC::Client::partChannel(chan, Jupiter::IRC::Client::data_->autoPartMessage);
+											else
+												Jupiter::IRC::Client::partChannel(chan);
 										}
 									}
 									else if (i >= 0) Jupiter::IRC::Client::data_->channels.get(i)->addUser(Jupiter::IRC::Client::data_->findUserOrAdd(nick));
@@ -1381,25 +1383,14 @@ Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUser(const Jupiter::
 
 Jupiter::IRC::Client::User *Jupiter::IRC::Client::Data::findUserOrAdd(const Jupiter::ReadableString &name)
 {
-	unsigned int wc = name.wordCount("!@");
-	Jupiter::ReferenceString nick = (wc == 1) ? (name) : Jupiter::ReferenceString::getWord(name, 0, "!@");
+	Jupiter::ReferenceString nick = Jupiter::ReferenceString::getWord(name, 0, "!");
 	Jupiter::IRC::Client::User *r = Jupiter::IRC::Client::Data::findUser(nick);
 	if (r == nullptr)
 	{
 		r = new Jupiter::IRC::Client::User();
-		switch (wc)
-		{
-		case 3:
-			r->data_->hostname = Jupiter::ReferenceString::getWord(name, 2, "!@");
-		case 2: // This shouldn't EVER happen.
-			r->data_->username = Jupiter::ReferenceString::getWord(name, 1, "!@");
-		case 1: // No user/host is in the string.
-			r->data_->nickname = nick;
-			break;
-		default:
-			fprintf(stderr, "ERROR: Failed to parse name mask: %.*s" ENDL, name.size(), name.ptr());
-			break;
-		}
+		r->data_->nickname = nick;
+		r->data_->username = Jupiter::ReferenceString::getWord(name, 1, "!@");
+		r->data_->hostname = Jupiter::ReferenceString::getWord(name, 2, "!@");
 		Jupiter::IRC::Client::Data::users.add(r);
 	}
 	return r;
@@ -1496,48 +1487,45 @@ size_t Jupiter::IRC::Client::User::getChannelCount() const
 Jupiter::IRC::Client::Channel::Channel(const Jupiter::ReadableString &channelName, Jupiter::IRC::Client *iFace)
 {
 	Jupiter::IRC::Client::Channel::data_ = new Jupiter::IRC::Client::Channel::Data();
-	unsigned int i = 0;
-	const Jupiter::ReadableString *ptr = nullptr;
-	Jupiter::ReferenceString section = iFace->getConfigSection();
-	Jupiter::String key = "Channel.";
-
-	size_t offset = 0;
-	// TODO: Make this more efficient -- consider moving responsibility elsewhere.
-	while (1)
-	{
-		i++;
-		offset = key.aformat("%u", i);
-		ptr = &Jupiter::IRC::Client::Config->get(iFace->getConfigSection(), Jupiter::ReferenceString(key));
-		if (ptr->size() == 0)
-		{
-			if (section != iFace->getConfigSection()) break;
-			i = 0;
-			section = STRING_LITERAL_AS_REFERENCE("Default");
-			key.truncate(offset);
-			continue;
-		}
-		if (Jupiter::ReferenceString::getWord(*ptr, 0, WHITESPACE).equalsi(channelName))
-		{
-			offset += key.aformat(".Type", i);
-			ptr = &Jupiter::IRC::Client::Config->get(iFace->getConfigSection(), Jupiter::ReferenceString(key));
-			if (ptr->size() != 0)
-			{
-				Jupiter::IRC::Client::Channel::data_->type = ptr->asInt();
-				key.truncate(offset);
-				break;
-			}
-		}
-		key.truncate(offset);
-	}
-	if (ptr->size() == 0)
-	{
-		key.aformat("%.*s.Type", channelName.size(), channelName.ptr());
-		Jupiter::CStringS val = iFace->readConfigValue(key);
-		if (val.size() != 0) Jupiter::IRC::Client::Channel::data_->type = val.asInt();
-		else Jupiter::IRC::Client::Channel::data_->type = iFace->getDefaultChanType();
-	}
 	Jupiter::IRC::Client::Channel::data_->channel = channelName;
 	Jupiter::IRC::Client::Channel::data_->serverPrefixSetPtr = iFace->getPrefixes();
+
+	Jupiter::String key = "Channel.";
+	size_t offset = key.aformat("%.*s.Type", channelName.size(), channelName.ptr());
+
+	iFace->readConfigValue(key);
+	Jupiter::ReferenceString value = iFace->readConfigValue(key);
+	if (value.size() != 0)
+	{
+		Jupiter::IRC::Client::Channel::data_->type = value.asInt();
+		return;
+	}
+
+	// TODO: Make this more efficient -- consider moving responsibility elsewhere.
+	for (unsigned int i = 1;; i++)
+	{
+		key.truncate(offset);
+		offset = key.aformat("%u", i);
+		value.set(iFace->readConfigValue(key));
+
+		if (value.size() == 0) // No more channels in the list.
+			break;
+
+		if (value.getWord(0, WHITESPACE).equalsi(channelName)) // This is our channel.
+		{
+			offset += key.concat(".Type");
+			value.set(iFace->readConfigValue(key));
+			if (value.size() != 0)
+				Jupiter::IRC::Client::Channel::data_->type = value.asInt();
+			else if (iFace->getDefaultChanType() < 0)
+				Jupiter::IRC::Client::Channel::data_->type = 0;
+			else
+				Jupiter::IRC::Client::Channel::data_->type = iFace->getDefaultChanType();
+			return;
+		}
+	}
+
+	Jupiter::IRC::Client::Channel::data_->type = iFace->getDefaultChanType();
 }
 
 Jupiter::IRC::Client::Channel::~Channel()
