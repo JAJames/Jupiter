@@ -1252,7 +1252,7 @@ bool Jupiter::IRC::Client::connect()
 		return false;
 
 	Jupiter::IRC::Client::data_->sock->setBlocking(false);
-	if (Jupiter::IRC::Client::data_->ssl == false)
+	if (Jupiter::IRC::Client::data_->ssl == false && Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("STARTTLS"), true))
 	{
 		Jupiter::IRC::Client::data_->sock->send("STARTTLS" ENDL);
 		Jupiter::IRC::Client::data_->connectionStatus = 1;
@@ -1269,6 +1269,19 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 	Jupiter::IRC::Client::data_->reconnectTime = time(0) + Jupiter::IRC::Client::data_->reconnectDelay;
 	Jupiter::IRC::Client::data_->dead = stayDead;
 	this->OnDisconnect();
+	bool ssl = Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("SSL"));
+	if (ssl != Jupiter::IRC::Client::data_->ssl)
+	{
+		delete Jupiter::IRC::Client::data_->sock;
+		if (Jupiter::IRC::Client::data_->ssl = ssl)
+		{
+			Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket();
+			if (Jupiter::IRC::Client::data_->SSLCertificate.size() != 0)
+				t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate, Jupiter::IRC::Client::data_->SSLKey);
+			Jupiter::IRC::Client::data_->sock = t;
+		}
+		else Jupiter::IRC::Client::data_->sock = new Jupiter::TCPSocket();
+	}
 	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnDisconnect(this);
 }
 
