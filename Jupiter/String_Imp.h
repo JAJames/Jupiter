@@ -147,7 +147,7 @@ template<> size_t inline Jupiter::String_Strict<char>::avformat(const char *form
 	if (minLen < 0) return 0; // We simply can not work with this.
 
 	this->setBufferSize(Jupiter::String_Type<char>::length + minLen + 1); // vsnprintf REQUIRES space for an additional null character.
-	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length + 1, minLen + 1, format, args);
+	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length, minLen + 1, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::String_Type<char>::length += minLen;
 	return minLen;
@@ -163,7 +163,7 @@ template<> size_t inline Jupiter::String_Strict<wchar_t>::avformat(const wchar_t
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSize(minLen + Jupiter::String_Type<wchar_t>::length + 1); // vsnprintf REQUIRES space for an additional null character.
 
-	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::String_Type<wchar_t>::length + 1, minLen + 1, format, args);
+	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::String_Type<wchar_t>::length, minLen + 1, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::String_Type<wchar_t>::length += minLen;
 	return minLen;
@@ -387,7 +387,7 @@ template<> size_t inline Jupiter::String_Loose<char>::avformat(const char *forma
 	if (minLen < 0) return 0; // We simply can not work with this.
 
 	this->setBufferSize(Jupiter::String_Type<char>::length + minLen + 1); // vsnprintf REQUIRES space for an additional null character.
-	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length + 1, minLen + 1, format, args);
+	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length, minLen + 1, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::String_Type<char>::length += minLen;
 	return minLen;
@@ -403,7 +403,7 @@ template<> size_t inline Jupiter::String_Loose<wchar_t>::avformat(const wchar_t 
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSize(minLen + Jupiter::String_Type<wchar_t>::length + 1); // vsnprintf REQUIRES space for an additional null character.
 
-	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::String_Type<wchar_t>::length + 1, minLen + 1, format, args);
+	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::String_Type<wchar_t>::length, minLen + 1, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::String_Type<wchar_t>::length += minLen;
 	return minLen;
