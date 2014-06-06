@@ -13,6 +13,7 @@
 #include "File.h"
 #include "INIFile.h"
 #include "CString.h"
+#include "String.h"
 #include "ArrayList.h"
 #include "InvalidIndex.h"
 #include "Reference_String.h"
@@ -28,8 +29,8 @@
 
 struct Jupiter::INIFile::Section::KeyValuePair::Data
 {
-	Jupiter::CStringS key;
-	Jupiter::CStringS value;
+	Jupiter::StringS key;
+	Jupiter::StringS value;
 };
 
 Jupiter::INIFile::Section::KeyValuePair::KeyValuePair()
@@ -68,7 +69,7 @@ void Jupiter::INIFile::Section::KeyValuePair::setValue(const Jupiter::ReadableSt
 
 struct Jupiter::INIFile::Section::Data
 {
-	Jupiter::CStringS name;
+	Jupiter::StringS name;
 	Jupiter::ArrayList<Jupiter::INIFile::Section::KeyValuePair> data;
 	~Data();
 };
