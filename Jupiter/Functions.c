@@ -703,7 +703,7 @@ double Jupiter_strtod_nospace(const char *str)
 
 int strtoi_s(const char *str, size_t length, int base)
 {
-	while (isspace(*str))
+	while (length != 0 && isspace(*str))
 	{
 		str++;
 		length--;
@@ -713,7 +713,7 @@ int strtoi_s(const char *str, size_t length, int base)
 
 unsigned int strtoui_s(const char *str, size_t length, int base)
 {
-	while (isspace(*str))
+	while (length != 0 && isspace(*str))
 	{
 		str++;
 		length--;
@@ -723,7 +723,7 @@ unsigned int strtoui_s(const char *str, size_t length, int base)
 
 double Jupiter_strtod_s(const char *str, size_t length)
 {
-	while (isspace(*str))
+	while (length != 0 && isspace(*str))
 	{
 		str++;
 		length--;
