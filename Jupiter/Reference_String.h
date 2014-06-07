@@ -244,6 +244,7 @@ namespace Jupiter
 }
 
 #define STRING_LITERAL_AS_REFERENCE(str) Jupiter::ReferenceString(str, sizeof(str) - 1)
+#define STRING_LITERAL_AS_NAMED_REFERENCE(name, str) Jupiter::ReferenceString name = Jupiter::ReferenceString(str, sizeof(str) - 1)
 
 #include "Reference_String_Imp.h"
 
