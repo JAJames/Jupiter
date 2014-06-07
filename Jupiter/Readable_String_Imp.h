@@ -65,6 +65,9 @@ template<typename T> size_t Jupiter::Readable_String<T>::find(const T &value, si
 template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Readable_String<T> &in) const
 {
 	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size()) return this->equals(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.size() == 0) return 0;
+
 	size_t j;
 	for (size_t i = 0; i != this->size() - in.size() + 1; i++)
 	{
