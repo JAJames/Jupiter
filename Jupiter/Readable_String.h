@@ -89,6 +89,17 @@ namespace Jupiter
 		size_t find(const Readable_String<T> &in) const;
 
 		/**
+		* @brief Returns the index of the first element in the string with the specified value.
+		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
+		*
+		* @param value Value of the element to search for.
+		* @param index Index of the match to return (i.e: 0 returns the first match).
+		* @return The index of an element if one is found, INVALID_INDEX otherwise.
+		*/
+		size_t findi(const T &value, size_t index = 0) const;
+		size_t findi(const Readable_String<T> &in) const;
+
+		/**
 		* @brief Returns the number of elements of the string which match the input string.
 		*
 		* @param in Character set to match against.

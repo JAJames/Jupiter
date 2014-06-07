@@ -68,13 +68,82 @@ template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Rea
 	if (in.size() == this->size()) return this->equals(in) ? 0 : Jupiter::INVALID_INDEX;
 	if (in.size() == 0) return 0;
 
-	size_t j;
-	for (size_t i = 0; i != this->size() - in.size() + 1; i++)
+	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
 	{
 		j = 0;
 		while (this->get(i + j) == in.get(j))
 			if (++j == in.size()) return i;
 	}
+	return Jupiter::INVALID_INDEX;
+}
+
+// findi
+
+template<> size_t inline Jupiter::Readable_String<char>::findi(const char &value, size_t index) const
+{
+	const char upperValue = (const char) toupper(value);
+	for (size_t i = 0; i != this->size(); i++)
+	{
+		if (toupper(this->get(i)) == upperValue)
+		{
+			if (index == 0) return i;
+			else index--;
+		}
+	}
+	return Jupiter::INVALID_INDEX;
+}
+
+template<> size_t inline Jupiter::Readable_String<wchar_t>::findi(const wchar_t &value, size_t index) const
+{
+	const wchar_t upperValue = towupper(value);
+	for (size_t i = 0; i != this->size(); i++)
+	{
+		if (towupper(this->get(i)) == upperValue)
+		{
+			if (index == 0) return i;
+			else index--;
+		}
+	}
+	return Jupiter::INVALID_INDEX;
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::findi(const T &value, size_t index) const
+{
+	return Jupiter::INVALID_INDEX;
+}
+
+template<> size_t inline Jupiter::Readable_String<char>::findi(const Jupiter::Readable_String<char> &in) const
+{
+	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size()) return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.size() == 0) return 0;
+
+	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
+	{
+		j = 0;
+		while (toupper(this->get(i + j)) == toupper(in.get(j)))
+			if (++j == in.size()) return i;
+	}
+	return Jupiter::INVALID_INDEX;
+}
+
+template<> size_t inline Jupiter::Readable_String<wchar_t>::findi(const Jupiter::Readable_String<wchar_t> &in) const
+{
+	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size()) return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.size() == 0) return 0;
+
+	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
+	{
+		j = 0;
+		while (towupper(this->get(i + j)) == towupper(in.get(j)))
+			if (++j == in.size()) return i;
+	}
+	return Jupiter::INVALID_INDEX;
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::findi(const Jupiter::Readable_String<T> &) const
+{
 	return Jupiter::INVALID_INDEX;
 }
 
