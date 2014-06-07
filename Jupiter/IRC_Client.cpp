@@ -907,7 +907,8 @@ int Jupiter::IRC::Client::primaryHandler()
 												if (command.equals("ACTION"))
 												{
 													this->OnAction(chan, nick, message);
-													for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnAction(this, chan, nick, message);
+													for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+														Jupiter::plugins->get(i)->OnAction(this, chan, nick, message);
 												}
 												else
 												{
@@ -935,14 +936,16 @@ int Jupiter::IRC::Client::primaryHandler()
 													response += IRCCTCP ENDL;
 													Jupiter::IRC::Client::data_->sock->send(response);
 													this->OnCTCP(chan, nick, command, message);
-													for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnCTCP(this, chan, nick, message);
+													for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+														Jupiter::plugins->get(i)->OnCTCP(this, chan, nick, message);
 												}
 											}
 											else
 											{
 												Jupiter::CStringS message = premessage;
 												this->OnChat(chan, nick, message);
-												for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnChat(this, chan, nick, message);
+												for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+													Jupiter::plugins->get(i)->OnChat(this, chan, nick, message);
 											}
 										}
 									}
@@ -958,7 +961,8 @@ int Jupiter::IRC::Client::primaryHandler()
 										{
 											auto nick = buff.substring(1, pos);
 											this->OnNotice(chan, nick, message);
-											for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnNotice(this, chan, nick, message);
+											for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+												Jupiter::plugins->get(i)->OnNotice(this, chan, nick, message);
 										}
 										else
 										{
@@ -966,7 +970,8 @@ int Jupiter::IRC::Client::primaryHandler()
 											if (sender.size() != 0)
 											{
 												this->OnServerNotice(chan, sender, message);
-												for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnServerNotice(this, chan, sender, message);
+												for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+													Jupiter::plugins->get(i)->OnServerNotice(this, chan, sender, message);
 											}
 										}
 									}
@@ -987,7 +992,8 @@ int Jupiter::IRC::Client::primaryHandler()
 										user->data_->nickname = newnick;
 										this->OnNick(nick, newnick);
 									}
-									for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnNick(this, nick, newnick);
+									for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+										Jupiter::plugins->get(i)->OnNick(this, nick, newnick);
 								}
 								else if (w2.equalsi("JOIN"))
 								{
@@ -1097,7 +1103,8 @@ int Jupiter::IRC::Client::primaryHandler()
 									Jupiter::ReferenceString invited = Jupiter::ReferenceString::getWord(buff, 2, WHITESPACE);
 									Jupiter::CStringS chan = buff.c_str() + findSymbol(buff.c_str(), ':', 1) + 1;
 									this->OnInvite(chan, inviter, invited);
-									for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnInvite(this, chan, inviter, invited);
+									for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+										Jupiter::plugins->get(i)->OnInvite(this, chan, inviter, invited);
 								}
 								else if (w2.equalsi("MODE"))
 								{
@@ -1154,7 +1161,8 @@ int Jupiter::IRC::Client::primaryHandler()
 												}
 												Jupiter::CStringS modeString = modestring;
 												this->OnMode(chan, nick, modeString);
-												for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnMode(this, chan, nick, modeString);
+												for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+													Jupiter::plugins->get(i)->OnMode(this, chan, nick, modeString);
 											}
 										}
 									}
@@ -1200,7 +1208,8 @@ int Jupiter::IRC::Client::primaryHandler()
 						{
 							Jupiter::CStringS reason = buff.c_str() + strcspn(buff.c_str(), ":") + 1;
 							this->OnError(reason);
-							for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnError(this, reason);
+							for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+								Jupiter::plugins->get(i)->OnError(this, reason);
 							Jupiter::IRC::Client::disconnect();
 						}
 						else if (w1.equals("AUTHENTICATE"))
@@ -1229,11 +1238,13 @@ int Jupiter::IRC::Client::primaryHandler()
 					if (numeric != 0)
 					{
 						this->OnNumeric(numeric, buff);
-						for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnNumeric(this, numeric, buff);
+						for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+							Jupiter::plugins->get(i)->OnNumeric(this, numeric, buff);
 					}
 				}
 				this->OnRaw(buff);
-				for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnRaw(this, buff);
+				for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+					Jupiter::plugins->get(i)->OnRaw(this, buff);
 			}
 		}
 		return 0;
@@ -1288,7 +1299,8 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 			Jupiter::IRC::Client::data_->sock = t;
 		}
 	}
-	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnDisconnect(this);
+	for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+		Jupiter::plugins->get(i)->OnDisconnect(this);
 }
 
 void Jupiter::IRC::Client::disconnect(const Jupiter::ReadableString &message, bool stayDead)
@@ -1303,13 +1315,15 @@ void Jupiter::IRC::Client::reconnect()
 	Jupiter::IRC::Client::data_->reconnectAttempts++;
 	bool successConnect = Jupiter::IRC::Client::connect();
 	this->OnReconnectAttempt(successConnect);
-	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnReconnectAttempt(this, successConnect);
+	for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+		Jupiter::plugins->get(i)->OnReconnectAttempt(this, successConnect);
 }
 
 int Jupiter::IRC::Client::think()
 {
 	int r = Jupiter::IRC::Client::primaryHandler();
-	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnThink(this);
+	for (size_t i = 0; i != Jupiter::plugins->size(); i++)
+		Jupiter::plugins->get(i)->OnThink(this);
 	if (r)
 	{
 		if (Jupiter::IRC::Client::data_->dead == true) return r;
