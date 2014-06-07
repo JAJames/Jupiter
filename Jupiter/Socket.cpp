@@ -260,7 +260,7 @@ addrinfo *Jupiter::Socket::getAddrInfo(addrinfo *addr, int result) // static
 
 char *Jupiter::Socket::resolveAddress(const addrinfo *addr) // static
 {
-	char *resolved = new char[NI_MAXHOST];
+	static char resolved[NI_MAXHOST];
 	getnameinfo(addr->ai_addr, addr->ai_addrlen, resolved, NI_MAXHOST, 0, 0, NI_NUMERICHOST);
 	return resolved;
 }
@@ -281,7 +281,7 @@ char *Jupiter::Socket::resolveAddress(const char *hostname, int result) // stati
 
 char *Jupiter::Socket::resolveHostname(addrinfo *addr) // static
 {
-	char *resolved = new char[NI_MAXHOST];
+	static char resolved[NI_MAXHOST];
 	getnameinfo(addr->ai_addr, addr->ai_addrlen, resolved, NI_MAXHOST, 0, 0, 0);
 	return resolved;
 }
