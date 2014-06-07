@@ -71,6 +71,7 @@ namespace Jupiter
 		* @return True if a file was successfully loaded from the drive, false otherwise.
 		*/
 		bool load(const char *file);
+		bool load(const Jupiter::ReadableString &file);
 
 		/**
 		* @brief Loads a file from the drive into this file.
@@ -99,6 +100,7 @@ namespace Jupiter
 		* @return True if a file was successfully loaded from the drive, false otherwise.
 		*/
 		bool reload(const char *file);
+		bool reload(const Jupiter::ReadableString &file);
 
 		/**
 		* @brief Unloads all of a file's contents, and attempts to load from a specified file stream.
@@ -122,6 +124,7 @@ namespace Jupiter
 		* @return True if the file was successfully written to the drive, false otherwise.
 		*/
 		bool sync(const char *file);
+		bool sync(const Jupiter::ReadableString &file);
 
 		/**
 		* @brief Syncs data from the file to the drive.

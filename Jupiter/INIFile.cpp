@@ -288,6 +288,11 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 	return total;
 }
 
+unsigned int Jupiter::INIFile::readFile(const Jupiter::ReadableString &file)
+{
+	return Jupiter::INIFile::readFile(Jupiter::CStringS(file).c_str());
+}
+
 unsigned int Jupiter::INIFile::reload()
 {
 	Jupiter::CStringS fileName = Jupiter::INIFile::data_->fName;
@@ -323,6 +328,11 @@ bool Jupiter::INIFile::sync(const char *fileName)
 	fputs("; EOF", file);
 	fclose(file);
 	return true;
+}
+
+bool Jupiter::INIFile::sync(const Jupiter::ReadableString &file)
+{
+	return Jupiter::INIFile::sync(Jupiter::CStringS(file).c_str());
 }
 
 bool Jupiter::INIFile::sync()

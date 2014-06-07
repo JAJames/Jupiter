@@ -209,6 +209,7 @@ namespace Jupiter
 		* @return The number of key-value pairs added on success, ERROR_INDICATOR (-1) otherwise.
 		*/
 		unsigned int readFile(const char *fileName);
+		unsigned int readFile(const Jupiter::ReadableString &file);
 
 		/**
 		* @brief Flushes all stored data and recollects from the last read file.
@@ -224,6 +225,7 @@ namespace Jupiter
 		* @return True on success, false otherwise.
 		*/
 		bool sync(const char *fileName);
+		bool sync(const Jupiter::ReadableString &file);
 
 		/**
 		* @brief Syncs data to the file that was last read from.
