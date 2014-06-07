@@ -713,11 +713,11 @@ template<typename T> bool Jupiter::Readable_String<T>::matchi(const T *format) c
 template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T *whitespace) const
 {
 	unsigned int result = 0;
-	const T *p = this->ptr();
+	size_t i = 0;
 	bool prev = true;
-	while (*p != 0)
+	while (i != this->size())
 	{
-		if (Jupiter::strpbrk<T>(whitespace, *p) == nullptr) // This isn't whitespace!
+		if (Jupiter::strpbrk<T>(whitespace, this->get(i)) == nullptr) // This isn't whitespace!
 		{
 			if (prev == true) // We just left whitespace!
 			{
@@ -726,7 +726,7 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 			}
 		}
 		else prev = true; // This is whitespace!
-		p++;
+		i++;
 	}
 	return result;
 }
