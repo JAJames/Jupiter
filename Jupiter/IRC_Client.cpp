@@ -1272,15 +1272,21 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 	bool ssl = Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("SSL"));
 	if (ssl != Jupiter::IRC::Client::data_->ssl)
 	{
-		delete Jupiter::IRC::Client::data_->sock;
 		if (Jupiter::IRC::Client::data_->ssl = ssl)
 		{
-			Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket();
+			Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket(std::move(*Jupiter::IRC::Client::data_->sock));
 			if (Jupiter::IRC::Client::data_->SSLCertificate.size() != 0)
 				t->setCertificate(Jupiter::IRC::Client::data_->SSLCertificate, Jupiter::IRC::Client::data_->SSLKey);
+
+			delete Jupiter::IRC::Client::data_->sock;
 			Jupiter::IRC::Client::data_->sock = t;
 		}
-		else Jupiter::IRC::Client::data_->sock = new Jupiter::TCPSocket();
+		else
+		{
+			Jupiter::TCPSocket *t = new Jupiter::TCPSocket(std::move(*Jupiter::IRC::Client::data_->sock));
+			delete Jupiter::IRC::Client::data_->sock;
+			Jupiter::IRC::Client::data_->sock = t;
+		}
 	}
 	for (int i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnDisconnect(this);
 }
