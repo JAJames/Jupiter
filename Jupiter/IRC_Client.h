@@ -631,7 +631,7 @@ namespace Jupiter
 			* @brief Returns a channel.
 			*
 			* @param index Index of the chanel to return.
-			* @return The channel at index.
+			* @return The channel at the specified index.
 			*/
 			Channel *getChannel(unsigned int index) const;
 
@@ -639,7 +639,7 @@ namespace Jupiter
 			* @brief Returns a channel.
 			*
 			* @param chanName String containing the name of a channel.
-			* @return The channel at index.
+			* @return A channel with the specified name if it exists, nullptr otherwise.
 			*/
 			Channel *getChannel(const Jupiter::ReadableString &chanName) const;
 
