@@ -319,7 +319,7 @@ JUPITER_API uint64_t getPowerTwo64(uint64_t number);
 * @param c Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
-JUPITER_API bool isBase(unsigned char c, int base);
+JUPITER_API bool Jupiter_isBase(unsigned char c, int base);
 
 /**
 * @brief Checks if a character is a hexadecimal digit character. (base 16)
@@ -327,7 +327,7 @@ JUPITER_API bool isBase(unsigned char c, int base);
 * @param c Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
-JUPITER_API bool isHex(unsigned char c);
+JUPITER_API bool Jupiter_isHex(unsigned char c);
 
 /**
 * @brief Checks if a character is a decimal digit character. (base 10)
@@ -335,7 +335,7 @@ JUPITER_API bool isHex(unsigned char c);
 * @param c Character to check.
 * @return True if the character is a decimal digit, false otherwise.
 */
-JUPITER_API bool isDecimal(unsigned char c);
+JUPITER_API bool Jupiter_isDecimal(unsigned char c);
 
 /**
 * @brief Fetches a character's represented integral value.
@@ -345,7 +345,7 @@ JUPITER_API bool isDecimal(unsigned char c);
 * @param base Base of the representation.
 * @return A character's represented integral value on success, -1 otherwise.
 */
-JUPITER_API int getBase(unsigned char c, int base);
+JUPITER_API int Jupiter_getBase(unsigned char c, int base);
 
 /**
 * @brief Interprets a string into an integer.
@@ -354,8 +354,8 @@ JUPITER_API int getBase(unsigned char c, int base);
 * @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
-JUPITER_API int strtoi(const char *str, int base);
-JUPITER_API unsigned int strtoui(const char *str, int base);
+JUPITER_API int Jupiter_strtoi(const char *str, int base);
+JUPITER_API unsigned int Jupiter_strtoui(const char *str, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -374,8 +374,8 @@ JUPITER_API double Jupiter_strtod(const char *str);
 * @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
-JUPITER_API int strtoi_nospace(const char *str, int base);
-JUPITER_API unsigned int strtoui_nospace(const char *str, int base);
+JUPITER_API int Jupiter_strtoi_nospace(const char *str, int base);
+JUPITER_API unsigned int Jupiter_strtoui_nospace(const char *str, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -395,8 +395,8 @@ JUPITER_API double Jupiter_strtod_nospace(const char *str);
 * @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
-JUPITER_API int strtoi_s(const char *str, size_t length, int base);
-JUPITER_API unsigned int strtoui_s(const char *str, size_t length, int base);
+JUPITER_API int Jupiter_strtoi_s(const char *str, size_t length, int base);
+JUPITER_API unsigned int Jupiter_strtoui_s(const char *str, size_t length, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -416,8 +416,8 @@ JUPITER_API double Jupiter_strtod_s(const char *str, size_t length);
 * @param base Base of the string to interpret.
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
-JUPITER_API int strtoi_nospace_s(const char *str, size_t length, int base);
-JUPITER_API unsigned int strtoui_nospace_s(const char *str, size_t length, int base);
+JUPITER_API int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base);
+JUPITER_API unsigned int Jupiter_strtoui_nospace_s(const char *str, size_t length, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
