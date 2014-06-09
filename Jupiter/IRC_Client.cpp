@@ -774,13 +774,13 @@ int Jupiter::IRC::Client::primaryHandler()
 											Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("NICK %.*s" ENDL, Jupiter::IRC::Client::data_->nickname.size(), Jupiter::IRC::Client::data_->nickname.ptr()));
 									}
 									// Note: Add a series of contains() functions to String_Type.
-									else //if (stristr(Jupiter::IRC::Client::data_->nickname.c_str(), configNick.c_str()) == Jupiter::IRC::Client::data_->nickname.c_str()) // We're already adding numbers.
+									else
 									{
 										if (completelyBadNick == false) // If this nick is invalid, adding numbers won't help.
 										{
 											if (Jupiter::IRC::Client::data_->nickname.size() > configNick.size())
 											{
-												int n = strtoi_nospace_s(Jupiter::IRC::Client::data_->nickname.ptr() + configNick.size(), Jupiter::IRC::Client::data_->nickname.size() - configNick.size(), 10);
+												int n = Jupiter_strtoi_nospace_s(Jupiter::IRC::Client::data_->nickname.ptr() + configNick.size(), Jupiter::IRC::Client::data_->nickname.size() - configNick.size(), 10);
 												Jupiter::IRC::Client::data_->nickname.format("%.*s%d", configNick.size(), configNick.ptr(), n);
 											}
 											else
@@ -1283,7 +1283,8 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 	bool ssl = Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("SSL"));
 	if (ssl != Jupiter::IRC::Client::data_->ssl)
 	{
-		if (Jupiter::IRC::Client::data_->ssl = ssl)
+		Jupiter::IRC::Client::data_->ssl = ssl;
+		if (Jupiter::IRC::Client::data_->ssl)
 		{
 			Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket(std::move(*Jupiter::IRC::Client::data_->sock));
 			if (Jupiter::IRC::Client::data_->SSLCertificate.size() != 0)

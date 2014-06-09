@@ -19,7 +19,7 @@ struct TimerKiller
 
 TimerKiller::~TimerKiller()
 {
-	killTimers();
+	Jupiter_killTimers();
 }
 
 struct Jupiter::Timer::Data
@@ -104,22 +104,22 @@ bool Jupiter::Timer::kill()
 	return false;
 }
 
-extern "C" void addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters)
+extern "C" void Jupiter_addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters)
 {
 	new Jupiter::Timer(iterations, timeDelay, function, parameters, immediate);
 }
 
-extern "C" void addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int))
+extern "C" void Jupiter_addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int))
 {
 	new Jupiter::Timer(iterations, timeDelay, function, immediate);
 }
 
-extern "C" unsigned int totalTimers()
+extern "C" unsigned int Jupiter_totalTimers()
 {
 	return timers.size();
 }
 
-extern "C" unsigned int checkTimers()
+extern "C" unsigned int Jupiter_checkTimers()
 {
 	unsigned int r = 0;
 	Jupiter::Timer *t;
@@ -140,9 +140,10 @@ extern "C" unsigned int checkTimers()
 	return r;
 }
 
-extern "C" unsigned int killTimers()
+extern "C" unsigned int Jupiter_killTimers()
 {
 	unsigned int r = timers.size();
-	while (timers.size() != 0) delete timers.remove(unsigned int(0));
+	while (timers.size() != 0)
+		delete timers.remove(0U);
 	return r;
 }

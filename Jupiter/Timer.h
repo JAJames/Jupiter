@@ -151,7 +151,7 @@ extern "C"
 * @param function Function for the timer to call.
 * @param parameters Parameters to pass to the function.
 */
-JUPITER_API void addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters);
+JUPITER_API void Jupiter_addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters);
 
 /**
 * @brief Creates a timer.
@@ -161,28 +161,28 @@ JUPITER_API void addTimer(unsigned int iterations, time_t timeDelay, bool immedi
 * @param immediate True if the function should be execute on the next check.
 * @param function Function for the timer to call.
 */
-JUPITER_API void addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int));
+JUPITER_API void Jupiter_addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int));
 
 /**
 * @brief Fetches the number of active timers.
 *
 * @return Total number of timers active.
 */
-JUPITER_API unsigned int totalTimers();
+JUPITER_API unsigned int Jupiter_totalTimers();
 
 /**
 * @brief Calls think() for every timer, and removes them if neccessary.
 *
 * @return Total number of timers removed.
 */
-JUPITER_API unsigned int checkTimers();
+JUPITER_API unsigned int Jupiter_checkTimers();
 
 /**
 * @brief Immediately destroys all timers.
 *
 * @return Total number of timers removed.
 */
-JUPITER_API unsigned int killTimers();
+JUPITER_API unsigned int Jupiter_killTimers();
 
 #if defined __cplusplus
 }

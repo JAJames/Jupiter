@@ -830,7 +830,7 @@ template<typename T> bool Jupiter::Readable_String<T>::asBool() const
 
 template<> int inline Jupiter::Readable_String<char>::asInt(int base) const
 {
-	return strtoi_s(this->ptr(), this->size(), base);
+	return Jupiter_strtoi_s(this->ptr(), this->size(), base);
 }
 
 template<typename T> int Jupiter::Readable_String<T>::asInt(int base) const
@@ -840,7 +840,7 @@ template<typename T> int Jupiter::Readable_String<T>::asInt(int base) const
 
 template<> unsigned int inline Jupiter::Readable_String<char>::asUnsignedInt(int base) const
 {
-	return strtoui_s(this->ptr(), this->size(), base);
+	return Jupiter_strtoui_s(this->ptr(), this->size(), base);
 }
 
 template<typename T> unsigned int Jupiter::Readable_String<T>::asUnsignedInt(int base) const

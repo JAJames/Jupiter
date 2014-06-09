@@ -568,22 +568,22 @@ const unsigned char baseTable[] =
 
 /** Single character functions */
 
-bool isBase(unsigned char c, int base)
+bool Jupiter_isBase(unsigned char c, int base)
 {
 	return baseTable[c] < base;
 }
 
-bool isHex(unsigned char c)
+bool Jupiter_isHex(unsigned char c)
 {
-	return isBase(c, 16);
+	return Jupiter_isBase(c, 16);
 }
 
-bool isDecimal(unsigned char c)
+bool Jupiter_isDecimal(unsigned char c)
 {
-	return isBase(c, 10);
+	return Jupiter_isBase(c, 10);
 }
 
-int getBase(unsigned char c, int base)
+int Jupiter_getBase(unsigned char c, int base)
 {
 	c = baseTable[c];
 	if (c < base) return c;
@@ -592,16 +592,16 @@ int getBase(unsigned char c, int base)
 
 /** Unsafe string converters */
 
-int strtoi(const char *str, int base)
+int Jupiter_strtoi(const char *str, int base)
 {
 	while (isspace(*str)) str++;
-	return strtoi_nospace(str, base);
+	return Jupiter_strtoi_nospace(str, base);
 }
 
-unsigned int strtoui(const char *str, int base)
+unsigned int Jupiter_strtoui(const char *str, int base)
 {
 	while (isspace(*str)) str++;
-	return strtoi_nospace(str, base);
+	return Jupiter_strtoi_nospace(str, base);
 }
 
 double Jupiter_strtod(const char *str)
@@ -610,17 +610,17 @@ double Jupiter_strtod(const char *str)
 	return Jupiter_strtod_nospace(str);
 }
 
-int strtoi_nospace(const char *str, int base)
+int Jupiter_strtoi_nospace(const char *str, int base)
 {
-	if (*str != '-') return strtoui_nospace(str, base);
-	return -1 * strtoui_nospace(++str, base);
+	if (*str != '-') return Jupiter_strtoui_nospace(str, base);
+	return -1 * Jupiter_strtoui_nospace(++str, base);
 }
 
-unsigned int strtoui_nospace(const char *str, int base)
+unsigned int Jupiter_strtoui_nospace(const char *str, int base)
 {
 	unsigned int total = 0;
 	int tval;
-	if (*str == '-') return strtoi_nospace(str, base);
+	if (*str == '-') return Jupiter_strtoi_nospace(str, base);
 
 	if (*str == '+') str++;
 
@@ -657,7 +657,7 @@ unsigned int strtoui_nospace(const char *str, int base)
 		}
 	}
 
-	while ((tval = getBase(*str, base)) != -1)
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
 	{
 		total = base * total + tval;
 		str++;
@@ -676,7 +676,7 @@ double Jupiter_strtod_nospace(const char *str)
 	if (*str == '-') return -1 * Jupiter_strtod_nospace(++str);
 	if (*str == '+') str++;
 
-	while ((tval = getBase(*str, base)) != -1)
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
 	{
 		total = base * total + tval;
 		str++;
@@ -686,14 +686,14 @@ double Jupiter_strtod_nospace(const char *str)
 	{
 		str++;
 		tval = base;
-		while ((decimal = getBase(*str, base)) != -1)
+		while ((decimal = Jupiter_getBase(*str, base)) != -1)
 		{
 			total = total + (decimal / tval);
 			str++;
 			tval = tval * base;
 		}
 		if (*str == 'e' || *str == 'E')
-			total = total * pow(base, strtoi_nospace(++str, 10));
+			total = total * pow(base, Jupiter_strtoi_nospace(++str, 10));
 	}
 
 	return total;
@@ -701,24 +701,24 @@ double Jupiter_strtod_nospace(const char *str)
 
 /** Safe string converters */
 
-int strtoi_s(const char *str, size_t length, int base)
+int Jupiter_strtoi_s(const char *str, size_t length, int base)
 {
 	while (length != 0 && isspace(*str))
 	{
 		str++;
 		length--;
 	}
-	return strtoi_nospace_s(str, length, base);
+	return Jupiter_strtoi_nospace_s(str, length, base);
 }
 
-unsigned int strtoui_s(const char *str, size_t length, int base)
+unsigned int Jupiter_strtoui_s(const char *str, size_t length, int base)
 {
 	while (length != 0 && isspace(*str))
 	{
 		str++;
 		length--;
 	}
-	return strtoui_nospace_s(str, length, base);
+	return Jupiter_strtoui_nospace_s(str, length, base);
 }
 
 double Jupiter_strtod_s(const char *str, size_t length)
@@ -731,19 +731,19 @@ double Jupiter_strtod_s(const char *str, size_t length)
 	return Jupiter_strtod_nospace_s(str, length);
 }
 
-signed int strtoi_nospace_s(const char *str, size_t length, int base)
+signed int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base)
 {
 	if (length == 0) return 0;
-	if (*str != '-') return strtoui_nospace_s(str, length, base);
-	return -1 * strtoui_nospace_s(++str, --length, base);
+	if (*str != '-') return Jupiter_strtoui_nospace_s(str, length, base);
+	return -1 * Jupiter_strtoui_nospace_s(++str, --length, base);
 }
 
-unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
+unsigned int Jupiter_strtoui_nospace_s(const char *str, size_t length, int base)
 {
 	unsigned int total = 0;
 	int tval;
 	if (length == 0) return total;
-	if (*str == '-') return strtoi_nospace(str, base);
+	if (*str == '-') return Jupiter_strtoi_nospace(str, base);
 
 	if (*str == '+')
 	{
@@ -792,7 +792,7 @@ unsigned int strtoui_nospace_s(const char *str, size_t length, int base)
 		}
 	}
 
-	while ((tval = getBase(*str, base)) != -1)
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
 	{
 		total = base * total + tval;
 		if (--length == 0) return total;
@@ -817,7 +817,7 @@ double Jupiter_strtod_nospace_s(const char *str, size_t length)
 		length--;
 	}
 
-	while ((tval = getBase(*str, base)) != -1)
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
 	{
 		total = base * total + tval;
 		if (--length == 0) return total;
@@ -829,7 +829,7 @@ double Jupiter_strtod_nospace_s(const char *str, size_t length)
 		str++;
 		length--;
 		tval = base;
-		while (length != 0 && (decimal = getBase(*str, base)) != -1)
+		while (length != 0 && (decimal = Jupiter_getBase(*str, base)) != -1)
 		{
 			total = total + (decimal / tval);
 			if (--length == 0) return total;
@@ -837,7 +837,7 @@ double Jupiter_strtod_nospace_s(const char *str, size_t length)
 			tval = tval * base;
 		}
 		if (*str == 'e' || *str == 'E')
-			total = total * pow(base, strtoi_nospace_s(++str, --length, 10));
+			total = total * pow(base, Jupiter_strtoi_nospace_s(++str, --length, 10));
 	}
 
 	return total;
