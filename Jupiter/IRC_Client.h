@@ -564,7 +564,7 @@ namespace Jupiter
 			*
 			* @return Default channel type.
 			*/
-			short getDefaultChanType() const;
+			int getDefaultChanType() const;
 
 			/**
 			* @brief Returns if this prints to stdout.
@@ -721,7 +721,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			unsigned int messageChannels(short type, const Jupiter::ReadableString &message);
+			unsigned int messageChannels(int type, const Jupiter::ReadableString &message);
 
 			/**
 			* @brief Sends a message to all channels with a type of at least 0.

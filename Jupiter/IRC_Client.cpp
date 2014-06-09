@@ -73,7 +73,7 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	int reconnectAttempts;
 	FILE *printOutput;
 	FILE *logFile;
-	short dChanType;
+	int dChanType;
 	bool dead = false;
 	Jupiter::ArrayList<Jupiter::IRC::Client::User> users;
 
@@ -155,7 +155,7 @@ Jupiter::IRC::Client::Client(const Jupiter::ReadableString &configSection)
 		if (Jupiter::IRC::Client::data_->ssl) Jupiter::IRC::Client::data_->serverPort = 994;
 		else Jupiter::IRC::Client::data_->serverPort = 194;
 	}
-	Jupiter::IRC::Client::data_->dChanType = (short)Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("Channel.Type"));
+	Jupiter::IRC::Client::data_->dChanType = Jupiter::IRC::Client::readConfigInt(STRING_LITERAL_AS_REFERENCE("Channel.Type"));
 
 	if (Jupiter::IRC::Client::readConfigBool(STRING_LITERAL_AS_REFERENCE("PrintOutput"), true)) Jupiter::IRC::Client::data_->printOutput = stdout;
 	else Jupiter::IRC::Client::data_->printOutput = nullptr;
@@ -339,7 +339,7 @@ int Jupiter::IRC::Client::getMaxReconnectAttempts() const
 	return Jupiter::IRC::Client::data_->maxReconnectAttempts;
 }
 
-short Jupiter::IRC::Client::getDefaultChanType() const
+int Jupiter::IRC::Client::getDefaultChanType() const
 {
 	return Jupiter::IRC::Client::data_->dChanType;
 }
@@ -491,7 +491,7 @@ void Jupiter::IRC::Client::sendNotice(const Jupiter::ReadableString &dest, const
 	Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("NOTICE %.*s :%.*s" ENDL, dest.size(), dest.ptr(), message.size(), message.ptr()));
 }
 
-unsigned int Jupiter::IRC::Client::messageChannels(short type, const Jupiter::ReadableString &message)
+unsigned int Jupiter::IRC::Client::messageChannels(int type, const Jupiter::ReadableString &message)
 {
 	unsigned int total = 0;
 	Jupiter::IRC::Client::Channel *channel;
@@ -1435,8 +1435,8 @@ void Jupiter::IRC::Client::Data::addNamesToChannel(unsigned int index, Jupiter::
 	Jupiter::ReferenceString t;
 	size_t offset;
 	Jupiter::IRC::Client::Channel *channel = Jupiter::IRC::Client::Data::channels.get(index);
-	int nameLen = names.wordCount(" ");
-	for (short i = 0; i < nameLen; i++)
+	unsigned int nameLen = names.wordCount(" ");
+	for (unsigned int i = 0; i != nameLen; i++)
 	{
 		t = Jupiter::ReferenceString::getWord(names, i, " ");
 		if (t.size() != 0)
