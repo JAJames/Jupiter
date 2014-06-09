@@ -131,7 +131,7 @@ template<typename T> size_t Jupiter::String_Type<T>::truncate(size_t n)
 
 template<typename T> bool Jupiter::String_Type<T>::remove(const T &value)
 {
-	for (unsigned int i = 0; i < Jupiter::String_Type<T>::length - 1; i++)
+	for (size_t i = 0; i < Jupiter::String_Type<T>::length - 1; i++)
 	{
 		if (Jupiter::String_Type<T>::str[i] == value)
 		{
