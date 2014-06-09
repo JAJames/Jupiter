@@ -35,7 +35,14 @@ Jupiter::ArrayList<dlib> *libList = &_libList;
 
 Jupiter::Plugin::~Plugin()
 {
-	for (int i = _plugins.size(); i >= 0; i--) if (_plugins.get(i) == this) _plugins.remove(i);
+	for (size_t i = 0; i != _plugins.size(); i++)
+	{
+		if (_plugins.get(i) == this)
+		{
+			_plugins.remove(i);
+			break;
+		}
+	}
 }
 
 struct dlib

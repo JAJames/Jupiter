@@ -109,7 +109,7 @@ namespace Jupiter
 		* @param N Position of the addrinfo in the list to return.
 		* @return N'th addrinfo pointed to by addr.
 		*/
-		static addrinfo *getAddrInfo(addrinfo *addr, int N);
+		static addrinfo *getAddrInfo(addrinfo *addr, unsigned int N);
 
 		/**
 		* @brief Returns the text representation of an addrinfo's stored address.
@@ -126,7 +126,7 @@ namespace Jupiter
 		* @param result Which result to return.
 		* @return String containing the text representation of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveAddress(addrinfo *addr, int result);
+		static char *resolveAddress(addrinfo *addr, unsigned int result);
 
 		/**
 		* @brief Resolves a hostname to an IP address.
@@ -135,7 +135,7 @@ namespace Jupiter
 		* @param result Which resolution result to return.
 		* @return String containing the text representation of the resolved address on success, nullptr otherwise.
 		*/
-		static char *resolveAddress(const char *hostname, int result);
+		static char *resolveAddress(const char *hostname, unsigned int result);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -152,7 +152,7 @@ namespace Jupiter
 		* @param result Which result to return.
 		* @return String containing the hostname of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveHostname(addrinfo *addr, int result);
+		static char *resolveHostname(addrinfo *addr, unsigned int result);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -161,7 +161,7 @@ namespace Jupiter
 		* @param result Which resolution result to return.
 		* @return String containing the hostname of the resolved address on success, nullptr otherwise.
 		*/
-		static char *resolveHostname(const char *hostname, int result);
+		static char *resolveHostname(const char *hostname, unsigned int result);
 
 		/**
 		* @brief Interface to provide simple connection establishing.

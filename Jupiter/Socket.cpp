@@ -251,10 +251,10 @@ void Jupiter::Socket::freeAddrInfo(addrinfo *info) // static
 	freeaddrinfo(info);
 }
 
-addrinfo *Jupiter::Socket::getAddrInfo(addrinfo *addr, int result) // static
+addrinfo *Jupiter::Socket::getAddrInfo(addrinfo *addr, unsigned int result) // static
 {
 	addrinfo *ptr = addr;
-	for (int i = 0; i < result && ptr != nullptr; i++) ptr = ptr->ai_next;
+	for (unsigned int i = 0; i != result && ptr != nullptr; i++) ptr = ptr->ai_next;
 	return ptr;
 }
 
@@ -265,14 +265,14 @@ char *Jupiter::Socket::resolveAddress(const addrinfo *addr) // static
 	return resolved;
 }
 
-char *Jupiter::Socket::resolveAddress(addrinfo *addr, int result) // static
+char *Jupiter::Socket::resolveAddress(addrinfo *addr, unsigned int result) // static
 {
 	addrinfo *ptr = Jupiter::Socket::getAddrInfo(addr, result);
 	if (ptr == nullptr) return nullptr;
 	return Jupiter::Socket::resolveAddress(ptr);
 }
 
-char *Jupiter::Socket::resolveAddress(const char *hostname, int result) // static
+char *Jupiter::Socket::resolveAddress(const char *hostname, unsigned int result) // static
 {
 	addrinfo *info = Jupiter::Socket::getAddrInfo(hostname, 0);
 	if (info == nullptr) return nullptr;
@@ -286,14 +286,14 @@ char *Jupiter::Socket::resolveHostname(addrinfo *addr) // static
 	return resolved;
 }
 
-char *Jupiter::Socket::resolveHostname(addrinfo *addr, int result) // static
+char *Jupiter::Socket::resolveHostname(addrinfo *addr, unsigned int result) // static
 {
 	addrinfo *ptr = Jupiter::Socket::getAddrInfo(addr, result);
 	if (ptr == nullptr) return nullptr;
 	return Jupiter::Socket::resolveHostname(ptr);
 }
 
-char *Jupiter::Socket::resolveHostname(const char *hostname, int result) // static
+char *Jupiter::Socket::resolveHostname(const char *hostname, unsigned int result) // static
 {
 	addrinfo *info = Jupiter::Socket::getAddrInfo(hostname, 0);
 	if (info == nullptr) return nullptr;
