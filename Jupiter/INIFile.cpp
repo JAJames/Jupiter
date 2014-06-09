@@ -274,10 +274,10 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 		else if (line.contains('=')) // key/value pair.
 		{
 			Jupiter::ReferenceString key = line.getWord(0, "=");
+			Jupiter::ReferenceString value = line.substring(key.size() + 1);
 			while (key.size() != 0 && isspace(key.get(key.size() - 1)))
 				key.truncate(1);
 
-			Jupiter::ReferenceString value = line.gotoWord(1, "=");
 			while (value.size() != 0 && isspace(value.get(0)))
 				value.shiftRight(1);
 
