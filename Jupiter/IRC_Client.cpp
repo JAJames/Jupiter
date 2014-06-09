@@ -1218,9 +1218,9 @@ int Jupiter::IRC::Client::primaryHandler()
 							{
 								size_t authStringLen = Jupiter::IRC::Client::data_->nickname.size() + Jupiter::IRC::Client::data_->saslAccount.size() + Jupiter::IRC::Client::data_->saslPass.size() + 2;
 								char *authString = new char[authStringLen + 1];
-								int offset = sprintf(authString, "%s", Jupiter::IRC::Client::data_->nickname.c_str()) + 1;
-								offset += sprintf(authString + offset, "%s", Jupiter::IRC::Client::data_->saslAccount.c_str()) + 1;
-								offset += sprintf(authString + offset, "%s", Jupiter::IRC::Client::data_->saslPass.c_str());
+								int offset = sprintf(authString, "%.*s", Jupiter::IRC::Client::data_->nickname.size(), Jupiter::IRC::Client::data_->nickname.ptr()) + 1;
+								offset += sprintf(authString + offset, "%.*s", Jupiter::IRC::Client::data_->saslAccount.size(), Jupiter::IRC::Client::data_->saslAccount.ptr()) + 1;
+								offset += sprintf(authString + offset, "%.*s", Jupiter::IRC::Client::data_->saslPass.size(), Jupiter::IRC::Client::data_->saslPass.ptr());
 
 								char *enc = Jupiter::base64encode(authString, authStringLen);
 								delete[] authString;
