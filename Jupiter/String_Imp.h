@@ -85,19 +85,6 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const T *in)
 	for (size_t index = 0; index != Jupiter::String_Type<T>::length; index++, in++) Jupiter::String_Type<T>::str[index] = *in;
 }
 
-template<typename T> const T *Jupiter::String_Strict<T>::c_str() const
-{
-	static T *buff = new T[1];
-	delete[] buff;
-	
-	buff = new T[Jupiter::String_Type<T>::length + 1];
-	size_t index;
-	for (index = 0; index < Jupiter::String_Type<T>::length && Jupiter::String_Type<T>::str[index] != 0; index++) buff[index] = Jupiter::String_Type<T>::str[index];
-	buff[index] = 0;
-
-	return buff;
-}
-
 // vformat()
 
 template<> size_t inline Jupiter::String_Strict<char>::vformat(const char *format, va_list args)
@@ -323,19 +310,6 @@ template<typename T> bool Jupiter::String_Loose<T>::setBufferSize(size_t len)
 template<typename T> bool Jupiter::String_Loose<T>::setBufferSizeNoCopy(size_t len)
 {
 	return Jupiter::Shift_String_Type<T>::setBufferSizeNoCopy(Jupiter::String_Loose<T>::strSize = getPowerTwo32(len));
-}
-
-template<typename T> const T *Jupiter::String_Loose<T>::c_str() const
-{
-	static T *buff = new T[1];
-	delete[] buff;
-
-	buff = new T[Jupiter::String_Type<T>::length + 1];
-	size_t index;
-	for (index = 0; index < Jupiter::String_Type<T>::length && Jupiter::String_Type<T>::str[index] != 0; index++) buff[index] = Jupiter::String_Type<T>::str[index];
-	buff[index] = 0;
-
-	return buff;
 }
 
 // vformat()

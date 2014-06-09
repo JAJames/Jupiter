@@ -40,13 +40,6 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Returns a C-Style string representation of the String.
-		*
-		* @return C-Style string representation of the String.
-		*/
-		const T *c_str() const;
-
-		/**
 		* @brief Sets the String's contents based on the format string and input variables.
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
@@ -207,13 +200,6 @@ namespace Jupiter
 	template<typename T = char> class String_Loose : public Shift_String_Type<T>
 	{
 	public:
-
-		/**
-		* @brief Returns a C-Style string representation of the String.
-		*
-		* @return C-Style string representation of the String.
-		*/
-		const T *c_str() const;
 
 		/**
 		* @brief Sets the String's contents based on the format string and input variables.
