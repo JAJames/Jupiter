@@ -123,7 +123,7 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter
 		pair = Jupiter::INIFile::Section::data_->data.get(i);
 		if (pair->getKey().equalsi(key)) return pair->getValue();
 	}
-	return Jupiter::emptyString;
+	return Jupiter::ReferenceString::empty;
 }
 
 Jupiter::INIFile::Section::KeyValuePair *Jupiter::INIFile::Section::getPair(size_t index) const

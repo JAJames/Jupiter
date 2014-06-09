@@ -447,7 +447,6 @@ namespace Jupiter
 	static const Jupiter::CStringS &emptyCStringS = Jupiter::CStringS::empty;
 	static const Jupiter::CStringL &emptyCStringL = Jupiter::CStringL::empty;
 	static const Jupiter::CStringType &emptyCString = emptyCStringS;
-	static const Jupiter::StringType &emptyString = emptyCString;
 }
 
 /** Implementation for CString_Type and CString_Loose. Very scary. */
