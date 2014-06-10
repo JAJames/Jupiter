@@ -856,24 +856,25 @@ int Jupiter::IRC::Client::primaryHandler()
 									size_t offset;
 
 									unsigned int i = 1;
-									while (true)
+									Jupiter::ReferenceString value;
+									auto config_loop_condition = [&]
 									{
 										offset = key.aformat("%u", i);
-										const Jupiter::ReadableString &value = Jupiter::IRC::Client::readConfigValue(key);
-										if (value.isEmpty()) break;
+										value = Jupiter::IRC::Client::readConfigValue(key);
+										return !value.isEmpty();
+									};
+									while (config_loop_condition())
+									{
 										key.truncate(offset);
 										Jupiter::IRC::Client::send(value);
 										i++;
 									}
 									key = "Channel.";
 									i = 1;
-									while (true)
+									while (config_loop_condition())
 									{
-										offset = key.aformat("%u", i);
-										const Jupiter::ReadableString &tVal = Jupiter::IRC::Client::readConfigValue(key);
-										if (tVal.isEmpty()) break;
 										key.truncate(offset);
-										Jupiter::IRC::Client::joinChannel(tVal);
+										Jupiter::IRC::Client::joinChannel(value);
 										i++;
 									}
 
