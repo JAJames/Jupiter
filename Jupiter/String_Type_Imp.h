@@ -163,6 +163,103 @@ template<typename T> size_t Jupiter::String_Type<T>::set(const T in)
 	return Jupiter::String_Type<T>::length = 1;
 }
 
+// replace
+
+template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const T &value)
+{
+	if (index >= this->size())
+		return this->concat(value);
+
+	this->setBufferSize(this->size() + 1);
+	for (size_t i = this->size(); i != index; i--)
+		Jupiter::String_Type<T>::str[i] = this->get(i-1);
+
+	Jupiter::String_Type<T>::str[index] = value;
+	return ++Jupiter::String_Type<T>::length;
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const Jupiter::Readable_String<T> &value)
+{
+	if (index >= this->size())
+		return this->concat(value);
+
+	if (value.size() == 0)
+		return Jupiter::String_Type<T>::length;
+
+	if (value.size() == 1)
+		return this->insert(index, value.get(0));
+
+	this->setBufferSize(this->size() + value.size());
+	size_t i;
+	for (i = this->size() + value.size() - 1; i != index + value.size() - 1; i--)
+		Jupiter::String_Type<T>::str[i] = this->get(i - value.size());
+
+	while (i != index)
+	{
+		Jupiter::String_Type<T>::str[i] = value.get(i - index);
+		i--;
+	}
+	Jupiter::String_Type<T>::str[index] = value.get(0);
+
+	return Jupiter::String_Type<T>::length += value.size();
+}
+
+// replace
+
+template<typename T> size_t Jupiter::String_Type<T>::replace(const T &target, const T &value)
+{
+	for (size_t i = 0; i != this->size(); i++)
+	{
+		if (this->get(i) == target)
+			Jupiter::String_Type<T>::str[i] = value;
+	}
+	return Jupiter::String_Type<T>::length;
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, size_t targetSize, const T &value)
+{
+	if (targetSize != 0)
+	{
+		if (targetSize == 1)
+			return this->replace(*target, value);
+
+		if (targetSize < this->size())
+		{
+			size_t i = 0, j = 0, k;
+			while (j <= this->size() - targetSize)
+			{
+				k = 0;
+				while (this->get(j + k) == target[k])
+				{
+					if (++k == targetSize) // match found
+					{
+						Jupiter::String_Type<T>::str[i] = value;
+						i += 1;
+						j += k;
+						break;
+					}
+				}
+				if (k != targetSize)
+					Jupiter::String_Type<T>::str[i++] = Jupiter::String_Type<T>::str[j++];
+			}
+			while (j < this->size())
+				Jupiter::String_Type<T>::str[i++] = Jupiter::String_Type<T>::str[j++];
+
+			Jupiter::String_Type<T>::length = i;
+		}
+		else if (targetSize == this->size() && this->equals(target, targetSize))
+			return this->set(value);
+	}
+	return Jupiter::String_Type<T>::length;
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const T &value)
+{
+	return this->replace(target.ptr(), target.size(), value);
+}
+
+// concat
+
 template<typename T> size_t Jupiter::String_Type<T>::concat(const Jupiter::Readable_String<T> &in)
 {
 	size_t nSize = Jupiter::String_Type<T>::length + in.size();

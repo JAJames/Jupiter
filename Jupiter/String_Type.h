@@ -114,6 +114,34 @@ namespace Jupiter
 		virtual size_t set(const T in);
 
 		/**
+		* @brief Inserts data into a position in the string.
+		*
+		* @param index Index to insert data to.
+		* @param value Value to insert.
+		*/
+		virtual size_t insert(size_t index, const T &value);
+		virtual size_t insert(size_t index, const Jupiter::Readable_String<T> &value);
+
+		/**
+		* @brief Replaces all instances of one value with another value.
+		*
+		* @param target Target to search for and replace.
+		* @param value Value to replace the target with.
+		* @return New size of the string.
+		*/
+		virtual size_t replace(const T &target, const T &value);
+		virtual size_t replace(const T *target, size_t targetSize, const T &value);
+		virtual size_t replace(const Jupiter::Readable_String<T> &target, const T &value);
+
+		//virtual size_t replace(const T &target, const T *value, size_t valueSize);
+		//virtual size_t replace(const T &target, const Jupiter::Readable_String<T> &value);
+
+		//virtual size_t replace(const T *target, size_t targetSize, const T *value, size_t valueSize);
+		//virtual size_t replace(const T *target, size_t targetSize, const Jupiter::Readable_String<T> &value);
+		//virtual size_t replace(const Jupiter::Readable_String<T> &target, const T *value, size_t valueSize);
+		//virtual size_t replace(const Jupiter::Readable_String<T> &target, const Jupiter::Readable_String<T> &value);
+
+		/**
 		* @brief Copies the data from the input string and concatenates it to the end of String.
 		*
 		* @param in String containing the data to be concatenated.
