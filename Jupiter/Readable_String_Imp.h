@@ -233,34 +233,30 @@ template<typename T> int Jupiter::Readable_String<T>::compare(const std::nullptr
 
 template<typename T> bool Jupiter::Readable_String<T>::equals(const Jupiter::Readable_String<T> &in) const
 {
-	if (this->size() != in.size()) return false;
-
-	// rewrite to compare multiple bytes at a time.
-	size_t index = 0;
-	while (index != this->size())
-	{
-		if (this->get(index) != in.get(index)) return false;
-		index++;
-	}
-	return true;
+	return this->equals(in.ptr(), in.size());
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::equals(const std::basic_string<T> &in) const
 {
-	if (this->size() != in.size()) return false;
+	return this->equals(in.data(), in.size());
+}
+
+template<typename T> bool Jupiter::Readable_String<T>::equals(const T *in, size_t len) const
+{
+	if (this->size() != len)
+		return false;
 	// rewrite to compare multiple bytes at a time.
-	size_t index = 0;
-	while (index != this->size())
-	{
-		if (this->get(index) != in.at(index)) return false;
-		index++;
-	}
+	in += len;
+	while (len != 0)
+		if (this->get(--len) != *(--in))
+			return false;
+
 	return true;
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::equals(const T *in) const
 {
-	if (in == nullptr) return this->size() == 0;
+	if (in == nullptr) return this->isEmpty();
 	for (size_t index = 0; index != this->size(); index++)
 	{
 		if (*in == 0 || this->get(index) != *in) return false;
@@ -281,52 +277,42 @@ template<typename T> bool Jupiter::Readable_String<T>::equals(std::nullptr_t) co
 
 // equalsi()
 
-template<> bool inline Jupiter::Readable_String<char>::equalsi(const Jupiter::Readable_String<char> &in) const
-{
-	if (this->size() != in.size()) return false;
-	for (size_t index = 0; index != this->size(); index++)
-	{
-		if (toupper(this->get(index)) != toupper(in.get(index))) return false;
-	}
-	return true;
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::equalsi(const Jupiter::Readable_String<wchar_t> &in) const
-{
-	if (this->size() != in.size()) return false;
-	for (size_t index = 0; index != this->size(); index++)
-	{
-		if (towupper(this->get(index)) != towupper(in.get(index))) return false;
-	}
-	return true;
-}
-
 template<typename T> bool Jupiter::Readable_String<T>::equalsi(const Jupiter::Readable_String<T> &in) const
 {
-	return this->equals(in); // Concept of "case" not supported for type.
-}
-
-template<> bool inline Jupiter::Readable_String<char>::equalsi(const std::basic_string<char> &in) const
-{
-	if (this->size() != in.size()) return false;
-	for (size_t index = 0; index != this->size(); index++)
-	{
-		if (toupper(this->get(index)) != toupper(in.at(index))) return false;
-	}
-	return true;
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::equalsi(const std::basic_string<wchar_t> &in) const
-{
-	if (this->size() != in.size()) return false;
-	for (size_t index = 0; index != this->size(); index++)
-	{
-		if (towupper(this->get(index)) != towupper(in.at(index))) return false;
-	}
-	return true;
+	return this->equalsi(in.ptr(), in.size());
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::equalsi(const std::basic_string<T> &in) const
+{
+	return this->equalsi(in.data(), in.size());
+}
+
+template<> bool inline Jupiter::Readable_String<char>::equalsi(const char *in, size_t len) const
+{
+	if (this->size() != len)
+		return false;
+
+	in += len;
+	while (len != 0)
+		if (toupper(this->get(--len)) != toupper(*(--in)))
+			return false;
+
+	return true;
+}
+
+template<> bool inline Jupiter::Readable_String<wchar_t>::equalsi(const wchar_t *in, size_t len) const
+{
+	if (this->size() != len)
+		return false;
+
+	while (len != 0)
+		if (towupper(this->get(--len)) != towupper(*(--in)))
+			return false;
+
+	return true;
+}
+
+template<typename T> bool Jupiter::Readable_String<T>::equalsi(const T *in, size_t len) const
 {
 	return this->equals(in); // Concept of "case" not supported for type.
 }

@@ -129,6 +129,7 @@ namespace Jupiter
 		*/
 		bool equals(const Readable_String<T> &in) const;
 		bool equals(const std::basic_string<T> &in) const;
+		bool equals(const T *in, size_t len) const;
 		bool equals(const T *in) const;
 		bool equals(const T &in) const;
 		bool equals(const std::nullptr_t) const;
@@ -142,6 +143,7 @@ namespace Jupiter
 		*/
 		bool equalsi(const Readable_String<T> &in) const;
 		bool equalsi(const std::basic_string<T> &in) const;
+		bool equalsi(const T *in, size_t len) const;
 		bool equalsi(const T *in) const;
 		bool equalsi(const T &in) const;
 		bool equalsi(const std::nullptr_t) const;
