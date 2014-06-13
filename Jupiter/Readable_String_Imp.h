@@ -814,6 +814,8 @@ template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T *tok
 {
 	if (tokenLength == 0 || tokenLength > this->size())
 		return 0;
+	if (tokenLength == 1)
+		return this->tokenCount(*token);
 	if (tokenLength == this->size())
 		return this->equals(token, tokenLength) ? 1 : 0;
 
