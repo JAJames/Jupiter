@@ -789,6 +789,50 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 	return result;
 }
 
+// tokenCount()
+
+template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T &token) const
+{
+	size_t total = 0;
+	for (size_t i = 0; i != this->size(); i++)
+		if (this->get(i) == token)
+			total++;
+	return total;
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const Jupiter::Readable_String<T> &token) const
+{
+	return this->tokenCount(token.ptr(), token.size());
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const std::basic_string<T> &token) const
+{
+	return this->tokenCount(token.data(), token.size());
+}
+
+template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T *token, size_t tokenLength) const
+{
+	if (tokenLength == 0 || tokenLength > this->size())
+		return 0;
+	if (tokenLength == this->size())
+		return this->equals(token, tokenLength) ? 1 : 0;
+
+	size_t total = 0;
+	for (size_t i = 0, j; i != this->size() - tokenLength + 1; i++)
+	{
+		j = 0;
+		while (this->get(i + j) == token[j])
+		{
+			if (++j == tokenLength)
+			{
+				total++;
+				break;
+			}
+		}
+	}
+	return total;
+}
+
 // as<type>
 
 template<> bool inline Jupiter::Readable_String<char>::asBool() const

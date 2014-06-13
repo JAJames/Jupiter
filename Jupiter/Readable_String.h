@@ -179,6 +179,17 @@ namespace Jupiter
 		unsigned int wordCount(const T *whitespace) const;
 
 		/**
+		* @brief Counts the number of occurances for a specific token.
+		*
+		* @param token Token to scan for.
+		* @return Number of occurances of the specified token in the string.
+		*/
+		size_t tokenCount(const T &token) const;
+		size_t tokenCount(const Readable_String<T> &token) const;
+		size_t tokenCount(const std::basic_string<T> &token) const;
+		size_t tokenCount(const T *token, size_t tokenLength) const;
+
+		/**
 		* @brief Interprets the string as a bool.
 		*
 		* @return Bool interpretation of the string.
