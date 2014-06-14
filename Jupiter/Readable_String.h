@@ -247,6 +247,19 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> getWord(const T *in, size_t pos, const T *whitespace);
 
 		/**
+		* @brief Copies a the elements between two tokens from an input string and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the token to copy.
+		* @param token Token to scan for.
+		* @return Copy of the token at the specified index on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		template<template<typename> class R> static R<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
 		* @brief Copies a part of an input string starting at a specified "word" and returns it in an output type.
 		*
 		* @param R Type to return. Must be a subclass of String_Type.
@@ -258,6 +271,19 @@ namespace Jupiter
 		*/
 		template<template<typename> class R> static R<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 		template<template<typename> class R> static R<T> gotoWord(const T *in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Copies a part of an input string starting at a specified token and returns it in an output type.
+		*
+		* @param R Type to return. Must be a subclass of String_Type.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Index of the word to start copying from.
+		* @param token Token to scan for.
+		* @return Copy of the string starting at the specified word on success, an empty string otherwise.
+		*/
+		template<template<typename> class R> static R<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		template<template<typename> class R> static R<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
 		/** Access operator */
 		inline const T &operator[](size_t index) const { return this->get(index); };

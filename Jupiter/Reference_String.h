@@ -164,6 +164,27 @@ namespace Jupiter
 		static Reference_String<T> getWord(const T *in, size_t pos, const T *whitespace);
 
 		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		Reference_String<T> getToken(size_t pos, const T &token);
+		Reference_String<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of an input string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static Reference_String<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static Reference_String<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
 		*
 		* @param pos Position in the string to start copying from.
@@ -191,6 +212,27 @@ namespace Jupiter
 		* @return String containing a partial copy of the original string.
 		*/
 		static Reference_String<T> gotoWord(const T *in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		Reference_String<T> gotoToken(size_t pos, const T &token);
+		Reference_String<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static Reference_String<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static Reference_String<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
 		/**
 		* @brief Default constructor for the Reference_String class.

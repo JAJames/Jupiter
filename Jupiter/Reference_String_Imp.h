@@ -176,6 +176,26 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 	return Jupiter::Readable_String<T>::getWord<Jupiter::Reference_String>(in, pos, whitespace);
 }
 
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const T &token)
+{
+	return Jupiter::Reference_String<T>::getToken(*this, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	return Jupiter::Reference_String<T>::getToken(*this, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
+{
+	return Jupiter::Readable_String<T>::getToken<Jupiter::Reference_String>(in, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	return Jupiter::Readable_String<T>::getToken<Jupiter::Reference_String>(in, pos, token);
+}
+
 template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoWord(size_t pos, const T *whitespace) const
 {
 	return Jupiter::Reference_String<T>::gotoWord(*this, pos, whitespace);
@@ -189,6 +209,26 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoWord(const T *in, size_t pos, const T *whitespace)
 {
 	return Jupiter::Readable_String<T>::gotoWord<Jupiter::Reference_String>(in, pos, whitespace);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const T &token)
+{
+	return Jupiter::Reference_String<T>::gotoToken(*this, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	return Jupiter::Reference_String<T>::gotoToken(*this, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
+{
+	return Jupiter::Readable_String<T>::gotoToken<Jupiter::Reference_String>(in, pos, token);
+}
+
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	return Jupiter::Readable_String<T>::gotoToken<Jupiter::Reference_String>(in, pos, token);
 }
 
 template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_String<T>::empty = Jupiter::Reference_String<T>();

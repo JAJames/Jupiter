@@ -983,6 +983,59 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 	return R<T>::substring(in, x, y - x);
 }
 
+// getToken
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
+{
+	size_t x, y;
+	for (x = 0; x != in.size() && pos != 0; x++)
+		if (in.get(x) == token)
+			pos--;
+	for (y = x; y != in.size() && in.get(y) != token; y++);
+	return R<T>::substring(in, x, y - x);
+}
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	if (token.size() == 0)
+		return R<T>(in);
+	if (token.size() == 1)
+		return Jupiter::Readable_String<T>::getToken<R>(in, pos, token.get(0));
+	if (pos == 0)
+		return R<T>::substring(in, 0, in.find(token));
+
+	size_t i, j;
+	for (i = 0; i != in.size(); i++)
+	{
+		Jupiter_Readable_String_getToken_skip_increment:
+		j = 0;
+		while (in.get(i + j) == token.get(j))
+		{
+			if (++j == token.size())
+			{
+				i += j;
+				if (--pos == 0)
+				{
+					size_t k;
+					for (j = i; j != in.size(); j++)
+					{
+						k = 0;
+						while (in.get(j + k) == token.get(k))
+							if (++k == token.size())
+								return R<T>::substring(in, i, j - i);
+					}
+					return R<T>::substring(in, i);
+				}
+				else
+					goto Jupiter_Readable_String_getToken_skip_increment;
+				break;
+			}
+		}
+	}
+
+	return R<T>();
+}
+
 // gotoWord
 
 template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
@@ -1031,6 +1084,43 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 		}
 	}
 	return R<T>::substring(in, x);
+}
+
+// gotoToken
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
+{
+	size_t i;
+	for (i = 0; i != in.size() && pos != 0; i++)
+		if (in.get(i) == token)
+			pos--;
+
+	return R<T>::substring(in, i);
+}
+
+template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
+{
+	if (pos == 0 || token.size() == 0)
+		return R<T>(in);
+	if (token.size() == 1)
+		return Jupiter::Readable_String<T>::gotoToken<R>(in, pos, token.get(0));
+
+	size_t i, j;
+	for (i = 0; i != in.size(); i++)
+	{
+		j = 0;
+		while (in.get(i + j) == token.get(j))
+		{
+			if (++j == token.size())
+			{
+				if (pos-- == 0)
+					return R<T>::substring(in, i);
+				break;
+			}
+		}
+	}
+
+	return R<T>();
 }
 
 #endif // _READABLE_STRING_IMP_H_HEADER

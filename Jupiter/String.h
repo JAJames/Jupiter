@@ -137,6 +137,27 @@ namespace Jupiter
 		static String_Strict<T> getWord(const T *in, size_t pos, const T *whitespace);
 
 		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		String_Strict<T> getToken(size_t pos, const T &token);
+		String_Strict<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of an input string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static String_Strict<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static String_Strict<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
 		*
 		* @param pos Position in the string to start copying from.
@@ -154,6 +175,27 @@ namespace Jupiter
 		* @return String containing a partial copy of the original string.
 		*/
 		static String_Strict<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		String_Strict<T> gotoToken(size_t pos, const T &token);
+		String_Strict<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static String_Strict<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static String_Strict<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
 		/** Assignment Operators */
 		inline String_Strict<T> &operator=(const String_Strict<T> &right) { this->set(right); return *this; };
@@ -301,6 +343,27 @@ namespace Jupiter
 		static String_Loose<T> getWord(const T *in, size_t pos, const T *whitespace);
 
 		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		String_Loose<T> getToken(size_t pos, const T &token);
+		String_Loose<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of an input string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position of the token in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static String_Loose<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static String_Loose<T> getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
 		*
 		* @param pos Position in the string to start copying from.
@@ -318,6 +381,27 @@ namespace Jupiter
 		* @return String containing a partial copy of the original string.
 		*/
 		static String_Loose<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		String_Loose<T> gotoToken(size_t pos, const T &token);
+		String_Loose<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token);
+
+		/**
+		* @brief Creates a partial copy of the string, based on a token.
+		*
+		* @param in String to get a partial copy of.
+		* @param pos Position in the string to start copying from.
+		* @param token Token to scan for.
+		* @return String containing a partial copy of the original string.
+		*/
+		static String_Loose<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
+		static String_Loose<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
 		/** Default constructor */
 		String_Loose();
