@@ -793,7 +793,10 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 
 template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T &token) const
 {
-	size_t total = 0;
+	if (this->size() == 0)
+		return 0;
+
+	size_t total = 1;
 	for (size_t i = 0; i != this->size(); i++)
 		if (this->get(i) == token)
 			total++;
@@ -812,23 +815,28 @@ template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const std::b
 
 template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T *token, size_t tokenLength) const
 {
-	if (tokenLength == 0 || tokenLength > this->size())
-		return 0;
 	if (tokenLength == 1)
 		return this->tokenCount(*token);
+	if (tokenLength == 0 || tokenLength > this->size())
+		return 0;
 	if (tokenLength == this->size())
 		return this->equals(token, tokenLength) ? 1 : 0;
 
-	size_t total = 0;
+	size_t total = 1;
 	for (size_t i = 0, j; i != this->size() - tokenLength + 1; i++)
 	{
+		Jupiter_Readable_String_tokenCount_skip_increment:
 		j = 0;
 		while (this->get(i + j) == token[j])
 		{
 			if (++j == tokenLength)
 			{
+				i += j;
 				total++;
-				break;
+				if (i >= this->size() - tokenLength + 1)
+					return total;
+
+				goto Jupiter_Readable_String_tokenCount_skip_increment;
 			}
 		}
 	}

@@ -179,10 +179,10 @@ namespace Jupiter
 		unsigned int wordCount(const T *whitespace) const;
 
 		/**
-		* @brief Counts the number of occurances for a specific token.
+		* @brief Counts the number of token-deliminated strings in the string.
 		*
 		* @param token Token to scan for.
-		* @return Number of occurances of the specified token in the string.
+		* @return Number of token-deliminated strings in the string.
 		*/
 		size_t tokenCount(const T &token) const;
 		size_t tokenCount(const Readable_String<T> &token) const;
