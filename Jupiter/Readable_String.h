@@ -313,6 +313,9 @@ namespace Jupiter
 		inline bool operator>=(const std::basic_string<T> &right)const{ return !operator<(right); }
 		inline bool operator>=(const T *right)const{ return !operator<(right); }
 		inline bool operator>=(const T right)const{ return !operator<(right); }
+
+		/** Conversion operators */
+		explicit inline operator std::basic_string<T>() { return std::basic_string<T>(this->ptr(), this->size()); }
 	};
 
 	/** Generic Readable String Type */
