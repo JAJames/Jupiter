@@ -601,7 +601,7 @@ int Jupiter_strtoi(const char *str, int base)
 unsigned int Jupiter_strtoui(const char *str, int base)
 {
 	while (isspace(*str)) str++;
-	return Jupiter_strtoi_nospace(str, base);
+	return Jupiter_strtoui_nospace(str, base);
 }
 
 double Jupiter_strtod(const char *str)
