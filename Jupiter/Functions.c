@@ -598,10 +598,22 @@ int Jupiter_strtoi(const char *str, int base)
 	return Jupiter_strtoi_nospace(str, base);
 }
 
+long long Jupiter_strtoll(const char *str, int base)
+{
+	while (isspace(*str)) str++;
+	return Jupiter_strtoll_nospace(str, base);
+}
+
 unsigned int Jupiter_strtoui(const char *str, int base)
 {
 	while (isspace(*str)) str++;
 	return Jupiter_strtoui_nospace(str, base);
+}
+
+unsigned long long Jupiter_strtoull(const char *str, int base)
+{
+	while (isspace(*str)) str++;
+	return Jupiter_strtoull_nospace(str, base);
 }
 
 double Jupiter_strtod(const char *str)
@@ -616,9 +628,65 @@ int Jupiter_strtoi_nospace(const char *str, int base)
 	return -1 * Jupiter_strtoui_nospace(++str, base);
 }
 
+long long Jupiter_strtoll_nospace(const char *str, int base)
+{
+	if (*str != '-') return Jupiter_strtoull_nospace(str, base);
+	return -1 * Jupiter_strtoull_nospace(++str, base);
+}
+
 unsigned int Jupiter_strtoui_nospace(const char *str, int base)
 {
 	unsigned int total = 0;
+	int tval;
+	if (*str == '-') return Jupiter_strtoi_nospace(str, base);
+
+	if (*str == '+') str++;
+
+	if (base == 0) // Guess a base.
+	{
+		if (*str == '0')
+		{
+			str++;
+			switch (*str)
+			{
+			case 'X':
+			case 'x':
+				str++;
+				base = 16;
+				break;
+			case 'B':
+			case 'b':
+				str++;
+				base = 2;
+				break;
+			default:
+				base = 8;
+				break;
+			}
+		}
+		else base = 10;
+	}
+	else if (base == 16) // check for optional preceeding hexadecimal prefix.
+	{
+		if (*str == '0')
+		{
+			str++;
+			if (*str == 'x' || *str == 'X') str++;
+		}
+	}
+
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		str++;
+	}
+
+	return total;
+}
+
+unsigned long long Jupiter_strtoull_nospace(const char *str, int base)
+{
+	unsigned long long total = 0;
 	int tval;
 	if (*str == '-') return Jupiter_strtoi_nospace(str, base);
 
@@ -711,6 +779,16 @@ int Jupiter_strtoi_s(const char *str, size_t length, int base)
 	return Jupiter_strtoi_nospace_s(str, length, base);
 }
 
+long long Jupiter_strtoll_s(const char *str, size_t length, int base)
+{
+	while (length != 0 && isspace(*str))
+	{
+		str++;
+		length--;
+	}
+	return Jupiter_strtoll_nospace_s(str, length, base);
+}
+
 unsigned int Jupiter_strtoui_s(const char *str, size_t length, int base)
 {
 	while (length != 0 && isspace(*str))
@@ -719,6 +797,16 @@ unsigned int Jupiter_strtoui_s(const char *str, size_t length, int base)
 		length--;
 	}
 	return Jupiter_strtoui_nospace_s(str, length, base);
+}
+
+unsigned long long Jupiter_strtoull_s(const char *str, size_t length, int base)
+{
+	while (length != 0 && isspace(*str))
+	{
+		str++;
+		length--;
+	}
+	return Jupiter_strtoull_nospace_s(str, length, base);
 }
 
 double Jupiter_strtod_s(const char *str, size_t length)
@@ -731,7 +819,7 @@ double Jupiter_strtod_s(const char *str, size_t length)
 	return Jupiter_strtod_nospace_s(str, length);
 }
 
-signed int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base)
+int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base)
 {
 	if (length == 0) return 0;
 	if (*str != '-') return Jupiter_strtoui_nospace_s(str, length, base);
@@ -741,6 +829,77 @@ signed int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base)
 unsigned int Jupiter_strtoui_nospace_s(const char *str, size_t length, int base)
 {
 	unsigned int total = 0;
+	int tval;
+	if (length == 0) return total;
+	if (*str == '-') return Jupiter_strtoi_nospace(str, base);
+
+	if (*str == '+')
+	{
+		if (--length == 0) return total;
+		str++;
+	}
+
+	if (base == 0) // Guess a base.
+	{
+		if (*str == '0')
+		{
+			if (--length == 0) return total;
+			str++;
+			switch (*str)
+			{
+			case 'X':
+			case 'x':
+				if (--length == 0) return total;
+				str++;
+				base = 16;
+				break;
+			case 'B':
+			case 'b':
+				if (--length == 0) return total;
+				str++;
+				base = 2;
+				break;
+			default:
+				base = 8;
+				break;
+			}
+		}
+		else base = 10;
+	}
+	else if (base == 16) // check for optional preceeding hexadecimal prefix.
+	{
+		if (*str == '0')
+		{
+			if (--length == 0) return total;
+			str++;
+			if (*str == 'x' || *str == 'X')
+			{
+				if (--length == 0) return total;
+				str++;
+			}
+		}
+	}
+
+	while ((tval = Jupiter_getBase(*str, base)) != -1)
+	{
+		total = base * total + tval;
+		if (--length == 0) return total;
+		str++;
+	}
+
+	return total;
+}
+
+long long Jupiter_strtoll_nospace_s(const char *str, size_t length, int base)
+{
+	if (length == 0) return 0;
+	if (*str != '-') return Jupiter_strtoull_nospace_s(str, length, base);
+	return -1 * Jupiter_strtoull_nospace_s(++str, --length, base);
+}
+
+unsigned long long Jupiter_strtoull_nospace_s(const char *str, size_t length, int base)
+{
+	unsigned long long total = 0;
 	int tval;
 	if (length == 0) return total;
 	if (*str == '-') return Jupiter_strtoi_nospace(str, base);

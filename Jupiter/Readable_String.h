@@ -204,7 +204,9 @@ namespace Jupiter
 		* @return Integer representation of the string.
 		*/
 		int asInt(int base = 0) const;
+		long long asLongLong(int base = 0) const;
 		unsigned int asUnsignedInt(int base = 0) const;
+		unsigned long long asUnsignedLongLong(int base = 0) const;
 
 		/**
 		* @brief Interprets the string as a floating-point decimal number.

@@ -355,7 +355,9 @@ JUPITER_API int Jupiter_getBase(unsigned char c, int base);
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int Jupiter_strtoi(const char *str, int base);
+JUPITER_API long long Jupiter_strtoll(const char *str, int base);
 JUPITER_API unsigned int Jupiter_strtoui(const char *str, int base);
+JUPITER_API unsigned long long Jupiter_strtoull(const char *str, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -375,7 +377,9 @@ JUPITER_API double Jupiter_strtod(const char *str);
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int Jupiter_strtoi_nospace(const char *str, int base);
+JUPITER_API long long Jupiter_strtoll_nospace(const char *str, int base);
 JUPITER_API unsigned int Jupiter_strtoui_nospace(const char *str, int base);
+JUPITER_API unsigned long long Jupiter_strtoull_nospace(const char *str, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -396,7 +400,9 @@ JUPITER_API double Jupiter_strtod_nospace(const char *str);
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int Jupiter_strtoi_s(const char *str, size_t length, int base);
+JUPITER_API long long Jupiter_strtoll_s(const char *str, size_t length, int base);
 JUPITER_API unsigned int Jupiter_strtoui_s(const char *str, size_t length, int base);
+JUPITER_API unsigned long long Jupiter_strtoull_s(const char *str, size_t length, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.
@@ -417,7 +423,9 @@ JUPITER_API double Jupiter_strtod_s(const char *str, size_t length);
 * @return Interpretation of the string as an integer on success, 0 otherwise.
 */
 JUPITER_API int Jupiter_strtoi_nospace_s(const char *str, size_t length, int base);
+JUPITER_API long long Jupiter_strtoll_nospace_s(const char *str, size_t length, int base);
 JUPITER_API unsigned int Jupiter_strtoui_nospace_s(const char *str, size_t length, int base);
+JUPITER_API unsigned long long Jupiter_strtoull_nospace_s(const char *str, size_t length, int base);
 
 /**
 * @brief Interpets a string into a floating point decimal number.

@@ -878,12 +878,32 @@ template<typename T> int Jupiter::Readable_String<T>::asInt(int base) const
 	return 0;
 }
 
+template<> long long inline Jupiter::Readable_String<char>::asLongLong(int base) const
+{
+	return Jupiter_strtoll_s(this->ptr(), this->size(), base);
+}
+
+template<typename T> long long Jupiter::Readable_String<T>::asLongLong(int base) const
+{
+	return 0;
+}
+
 template<> unsigned int inline Jupiter::Readable_String<char>::asUnsignedInt(int base) const
 {
 	return Jupiter_strtoui_s(this->ptr(), this->size(), base);
 }
 
 template<typename T> unsigned int Jupiter::Readable_String<T>::asUnsignedInt(int base) const
+{
+	return 0;
+}
+
+template<> unsigned long long inline Jupiter::Readable_String<char>::asUnsignedLongLong(int base) const
+{
+	return Jupiter_strtoull_s(this->ptr(), this->size(), base);
+}
+
+template<typename T> unsigned long long Jupiter::Readable_String<T>::asUnsignedLongLong(int base) const
 {
 	return 0;
 }
