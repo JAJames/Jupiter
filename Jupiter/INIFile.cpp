@@ -378,12 +378,19 @@ Jupiter::INIFile::Section *Jupiter::INIFile::getSection(size_t index) const
 	return Jupiter::INIFile::data_->data.get(index);
 }
 
+Jupiter::INIFile::Section *Jupiter::INIFile::getSection(const Jupiter::ReadableString &section) const
+{
+	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
+		if (Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section))
+			return Jupiter::INIFile::data_->data.get(i);
+	return nullptr;
+}
+
 size_t Jupiter::INIFile::getSectionIndex(const Jupiter::ReadableString &section) const
 {
 	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
-	{
-		if (Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section)) return i;
-	}
+		if (Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section))
+			return i;
 	return Jupiter::INVALID_INDEX;
 }
 

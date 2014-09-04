@@ -264,14 +264,22 @@ namespace Jupiter
 		* @brief Returns a section.
 		*
 		* @param index Index of the section to get.
-		* @return String containing section if it exists, nullptr otherwise.
+		* @return Section if it exists, nullptr otherwise.
 		*/
 		Jupiter::INIFile::Section *getSection(size_t index) const;
 
 		/**
+		* @brief Returns a section.
+		*
+		* @param section Name of the section.
+		* @return Section if it exists, nullptr otherwise.
+		*/
+		Jupiter::INIFile::Section *getSection(const Jupiter::ReadableString &section) const;
+
+		/**
 		* @brief Returns the index of a section.
 		*
-		* @param section The name of the section.
+		* @param section Name of the section.
 		* @return The index of section if it exists, INVALID_INDEX (-1) otherwise.
 		*/
 		size_t getSectionIndex(const Jupiter::ReadableString &section) const;
