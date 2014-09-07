@@ -1254,9 +1254,10 @@ int Jupiter::IRC::Client::primaryHandler()
 		return 0;
 	}
 	int lastError = Jupiter::IRC::Client::data_->sock->getLastError();
-	if (lastError == 10035) return 0;
-	printf(ENDL ENDL "recv Value: %d -- Conneciton Error: %d -- Connection Status: %d" ENDL ENDL ENDL, recvVal, lastError, Jupiter::IRC::Client::data_->connectionStatus);
-	if (Jupiter::IRC::Client::data_->connectionStatus) Jupiter::IRC::Client::disconnect();
+	if (lastError == 10035)
+		return 0;
+	if (Jupiter::IRC::Client::data_->connectionStatus)
+		Jupiter::IRC::Client::disconnect();
 	return lastError;
 }
 
