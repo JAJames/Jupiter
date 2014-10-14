@@ -366,138 +366,147 @@ template<typename T> bool Jupiter::Readable_String<T>::equalsi(const std::nullpt
 
 // match()
 
-template<> bool inline Jupiter::Readable_String<char>::match(const Jupiter::Readable_String<char> &format) const
-{
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.get(formatIndex) == '*')
-		{
-			formatIndex++;
-			while (format.get(formatIndex) == '?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.get(formatIndex) == 0) return true;
-			if (format.get(formatIndex) == '*') continue;
-			while (format.get(formatIndex) != this->get(index))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.get(formatIndex) != '?' && format.get(formatIndex) != this->get(index)) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::match(const Jupiter::Readable_String<wchar_t> &format) const
-{
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.get(formatIndex) == '*')
-		{
-			formatIndex++;
-			while (format.get(formatIndex) == '?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.get(formatIndex) == 0) return true;
-			if (format.get(formatIndex) == '*') continue;
-			while (format.get(formatIndex) != this->get(index))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.get(formatIndex) != '?' && format.get(formatIndex) != this->get(index)) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
 template<typename T> bool Jupiter::Readable_String<T>::match(const Jupiter::Readable_String<T> &format) const
 {
-	return false; // Wildcard matching not supported for type.
-}
-
-template<> bool inline Jupiter::Readable_String<char>::match(const std::basic_string<char> &format) const
-{
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.at(formatIndex) == '*')
-		{
-			formatIndex++;
-			while (format.at(formatIndex) == '?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.at(formatIndex) == 0) return true;
-			if (format.at(formatIndex) == '*') continue;
-			while (format.at(formatIndex) != this->get(index))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.at(formatIndex) != '?' && format.at(formatIndex) != this->get(index)) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::match(const std::basic_string<wchar_t> &format) const
-{
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.at(formatIndex) == '*')
-		{
-			formatIndex++;
-			while (format.at(formatIndex) == '?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.at(formatIndex) == 0) return true;
-			if (format.at(formatIndex) == '*') continue;
-			while (format.at(formatIndex) != this->get(index))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.at(formatIndex) != '?' && format.at(formatIndex) != this->get(index)) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
+	return this->match(format.ptr(), format.size());
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::match(const std::basic_string<T> &format) const
 {
+	return this->match(format.data(), format.size());
+}
+
+template<> bool inline Jupiter::Readable_String<char>::match(const char *format, size_t formatSize) const
+{
+	if (this->size() == 0)
+	{
+		if (formatSize == 0)
+			return true;
+		while (format[--formatSize] == '*')
+			if (formatSize == 0)
+				return *format == '*';
+		return false;
+	}
+	size_t index = 0;
+	size_t formatIndex = 0;
+	while (formatIndex != formatSize)
+	{
+		if (format[formatIndex] == '*')
+		{
+			if (++formatIndex == formatSize)
+				return true;
+
+			while (format[formatIndex] == '?')
+			{
+				if (++formatIndex == formatSize)
+					return true;
+				if (++index == this->size())
+				{
+					while (format[formatIndex++] == '*')
+						if (formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+			if (format[formatIndex] == '*') continue;
+
+			while (format[formatIndex] != this->get(index))
+			{
+				if (++index == this->size())
+				{
+					while (format[formatIndex] == '*')
+						if (++formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+		}
+		else if (format[formatIndex] != '?' && format[formatIndex] != this->get(index)) return false;
+		formatIndex++;
+		if (++index == this->size())
+		{
+			if (formatIndex == formatSize)
+				return true;
+			while (format[formatIndex] == '*')
+				if (++formatIndex == formatSize)
+					return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+template<> bool inline Jupiter::Readable_String<wchar_t>::match(const wchar_t *format, size_t formatSize) const
+{
+	if (this->size() == 0)
+	{
+		if (formatSize == 0)
+			return true;
+		while (format[--formatSize] == L'*')
+			if (formatSize == 0)
+				return *format == L'*';
+		return false;
+	}
+	size_t index = 0;
+	size_t formatIndex = 0;
+	while (formatIndex != formatSize)
+	{
+		if (format[formatIndex] == L'*')
+		{
+			if (++formatIndex == formatSize)
+				return true;
+
+			while (format[formatIndex] == L'?')
+			{
+				if (++formatIndex == formatSize)
+					return index + 1 == this->size();
+				if (++index == this->size())
+				{
+					while (format[formatIndex++] == L'*')
+						if (formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+			if (format[formatIndex] == L'*') continue;
+
+			while (format[formatIndex] != this->get(index))
+			{
+				if (++index == this->size())
+				{
+					while (format[formatIndex] == L'*')
+						if (++formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+		}
+		else if (format[formatIndex] != L'?' && format[formatIndex] != this->get(index)) return false;
+		formatIndex++;
+		if (++index == this->size())
+		{
+			while (format[formatIndex] == L'*')
+				if (++formatIndex == formatSize)
+					return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+template<typename T> bool Jupiter::Readable_String<T>::match(const T *, size_t) const
+{
 	return false; // Wildcard matching not supported for type.
 }
 
-template<> inline bool Jupiter::Readable_String<char>::match(const char *format) const
+template<> bool inline Jupiter::Readable_String<char>::match(const char *format) const
 {
+	if (this->size() == 0)
+	{
+		while (*format == '*')
+			format++;
+		return *format == 0;
+	}
 	size_t index = 0;
 	while (*format != 0)
 	{
@@ -506,27 +515,47 @@ template<> inline bool Jupiter::Readable_String<char>::match(const char *format)
 			format++;
 			while (*format == '?')
 			{
-				if (this->get(index) == 0) return false;
 				format++;
-				index++;
+				if (++index == this->size())
+				{
+					while (*format == '*')
+						format++;
+					return *format == 0;
+				}
 			}
 			if (*format == 0) return true;
 			if (*format == '*') continue;
+
 			while (*format != this->get(index))
 			{
-				if (this->get(index) == 0) return false;
-				index++;
+				if (++index == this->size())
+				{
+					while (*format == '*')
+						format++;
+					return *format == 0;
+				}
 			}
 		}
 		else if (*format != '?' && *format != this->get(index)) return false;
 		format++;
-		index++;
+		if (++index == this->size())
+		{
+			while (*format == '*')
+				format++;
+			return *format == 0;
+		}
 	}
-	return index == this->size();
+	return false;
 }
 
-template<> inline bool Jupiter::Readable_String<wchar_t>::match(const wchar_t *format) const
+template<> bool inline Jupiter::Readable_String<wchar_t>::match(const wchar_t *format) const
 {
+	if (this->size() == 0)
+	{
+		while (*format == L'*')
+			format++;
+		return *format == 0;
+	}
 	size_t index = 0;
 	while (*format != 0)
 	{
@@ -535,23 +564,37 @@ template<> inline bool Jupiter::Readable_String<wchar_t>::match(const wchar_t *f
 			format++;
 			while (*format == L'?')
 			{
-				if (this->get(index) == 0) return false;
 				format++;
-				index++;
+				if (this->size() == 0)
+				{
+					while (*format == L'*')
+						format++;
+					return *format == 0;
+				}
 			}
 			if (*format == 0) return true;
-			if (*format == L'*') continue;
+			if (*format == '*') continue;
+
 			while (*format != this->get(index))
 			{
-				if (this->get(index) == 0) return false;
-				index++;
+				if (this->size() == 0)
+				{
+					while (*format == L'*')
+						format++;
+					return *format == 0;
+				}
 			}
 		}
 		else if (*format != L'?' && *format != this->get(index)) return false;
 		format++;
-		index++;
+		if (this->size() == 0)
+		{
+			while (*format == L'*')
+				format++;
+			return *format == 0;
+		}
 	}
-	return index == this->size();
+	return false;
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::match(const T *format) const
@@ -561,147 +604,147 @@ template<typename T> bool Jupiter::Readable_String<T>::match(const T *format) co
 
 // matchi()
 
-template<> bool inline Jupiter::Readable_String<char>::matchi(const Jupiter::Readable_String<char> &format) const
-{
-	int fUpper;
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.get(formatIndex) == L'*')
-		{
-			formatIndex++;
-			while (format.get(formatIndex) == L'?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.get(formatIndex) == 0) return true;
-			if (format.get(formatIndex) == '*') continue;
-			fUpper = toupper(format.get(formatIndex));
-			while (fUpper != toupper(this->get(index)))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.get(formatIndex) != L'?' && toupper(format.get(formatIndex)) != toupper(this->get(index))) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::matchi(const Jupiter::Readable_String<wchar_t> &format) const
-{
-	wint_t fUpper;
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.get(formatIndex) == L'*')
-		{
-			formatIndex++;
-			while (format.get(formatIndex) == L'?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.get(formatIndex) == 0) return true;
-			if (format.get(formatIndex) == '*') continue;
-			fUpper = towupper(format.get(formatIndex));
-			while (fUpper != towupper(this->get(index)))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.get(formatIndex) != L'?' && towupper(format.get(formatIndex)) != towupper(this->get(index))) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
 template<typename T> bool Jupiter::Readable_String<T>::matchi(const Jupiter::Readable_String<T> &format) const
 {
-	return false; // Wildcard matching not supported for type. Concept of "case" not supported for type.
-}
-
-template<> bool inline Jupiter::Readable_String<char>::matchi(const std::basic_string<char> &format) const
-{
-	int fUpper;
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.at(formatIndex) == L'*')
-		{
-			formatIndex++;
-			while (format.at(formatIndex) == L'?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.at(formatIndex) == 0) return true;
-			if (format.at(formatIndex) == '*') continue;
-			fUpper = toupper(format.at(formatIndex));
-			while (fUpper != toupper(this->get(index)))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.at(formatIndex) != L'?' && toupper(format.at(formatIndex)) != toupper(this->get(index))) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
-}
-
-template<> bool inline Jupiter::Readable_String<wchar_t>::matchi(const std::basic_string<wchar_t> &format) const
-{
-	wint_t fUpper;
-	size_t index = 0;
-	size_t formatIndex = 0;
-	while (formatIndex != format.size())
-	{
-		if (format.at(formatIndex) == L'*')
-		{
-			formatIndex++;
-			while (format.at(formatIndex) == L'?')
-			{
-				if (this->get(index) == 0) return false;
-				formatIndex++;
-				index++;
-			}
-			if (format.at(formatIndex) == 0) return true;
-			if (format.at(formatIndex) == '*') continue;
-			fUpper = towupper(format.at(formatIndex));
-			while (fUpper != towupper(this->get(index)))
-			{
-				if (this->get(index) == 0) return false;
-				index++;
-			}
-		}
-		else if (format.at(formatIndex) != L'?' && towupper(format.at(formatIndex)) != towupper(this->get(index))) return false;
-		formatIndex++;
-		index++;
-	}
-	return index == this->size();
+	return this->matchi(format.ptr(), format.size());
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::matchi(const std::basic_string<T> &format) const
+{
+	return this->matchi(format.data(), format.size());
+}
+
+template<> bool inline Jupiter::Readable_String<char>::matchi(const char *format, size_t formatSize) const
+{
+	if (this->size() == 0)
+	{
+		if (formatSize == 0)
+			return true;
+		while (format[--formatSize] == '*')
+			if (formatSize == 0)
+				return *format == '*';
+		return false;
+	}
+	size_t index = 0;
+	size_t formatIndex = 0;
+	while (formatIndex != formatSize)
+	{
+		if (format[formatIndex] == '*')
+		{
+			if (++formatIndex == formatSize)
+				return true;
+
+			while (format[formatIndex] == '?')
+			{
+				if (++formatIndex == formatSize)
+					return true;
+				if (++index == this->size())
+				{
+					while (format[formatIndex++] == '*')
+						if (formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+			if (format[formatIndex] == '*') continue;
+
+			while (toupper(format[formatIndex]) != toupper(this->get(index)))
+			{
+				if (++index == this->size())
+				{
+					while (format[formatIndex] == '*')
+						if (++formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+		}
+		else if (format[formatIndex] != '?' && toupper(format[formatIndex]) != toupper(this->get(index))) return false;
+		formatIndex++;
+		if (++index == this->size())
+		{
+			if (formatIndex == formatSize)
+				return true;
+			while (format[formatIndex] == '*')
+				if (++formatIndex == formatSize)
+					return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+template<> bool inline Jupiter::Readable_String<wchar_t>::matchi(const wchar_t *format, size_t formatSize) const
+{
+	if (this->size() == 0)
+	{
+		if (formatSize == 0)
+			return true;
+		while (format[--formatSize] == L'*')
+			if (formatSize == 0)
+				return *format == L'*';
+		return false;
+	}
+	size_t index = 0;
+	size_t formatIndex = 0;
+	while (formatIndex != formatSize)
+	{
+		if (format[formatIndex] == L'*')
+		{
+			if (++formatIndex == formatSize)
+				return true;
+
+			while (format[formatIndex] == L'?')
+			{
+				if (++formatIndex == formatSize)
+					return index + 1 == this->size();
+				if (++index == this->size())
+				{
+					while (format[formatIndex++] == L'*')
+						if (formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+			if (format[formatIndex] == L'*') continue;
+
+			while (towupper(format[formatIndex]) != towupper(this->get(index)))
+			{
+				if (++index == this->size())
+				{
+					while (format[formatIndex] == L'*')
+						if (++formatIndex == formatSize)
+							return true;
+					return false;
+				}
+			}
+		}
+		else if (format[formatIndex] != L'?' && towupper(format[formatIndex]) != towupper(this->get(index))) return false;
+		formatIndex++;
+		if (++index == this->size())
+		{
+			while (format[formatIndex] == L'*')
+				if (++formatIndex == formatSize)
+					return true;
+			return false;
+		}
+	}
+	return false;
+}
+
+template<typename T> bool Jupiter::Readable_String<T>::matchi(const T *, size_t) const
 {
 	return false; // Wildcard matching not supported for type. Concept of "case" not supported for type.
 }
 
 template<> bool inline Jupiter::Readable_String<char>::matchi(const char *format) const
 {
-	int fUpper;
+	if (this->size() == 0)
+	{
+		while (*format == '*')
+			format++;
+		return *format == 0;
+	}
 	size_t index = 0;
 	while (*format != 0)
 	{
@@ -710,29 +753,47 @@ template<> bool inline Jupiter::Readable_String<char>::matchi(const char *format
 			format++;
 			while (*format == '?')
 			{
-				if (this->get(index) == 0) return false;
 				format++;
-				index++;
+				if (++index == this->size())
+				{
+					while (*format == '*')
+						format++;
+					return *format == 0;
+				}
 			}
 			if (*format == 0) return true;
 			if (*format == '*') continue;
-			fUpper = toupper(*format);
-			while (fUpper != toupper(this->get(index)))
+
+			while (toupper(*format) != toupper(this->get(index)))
 			{
-				if (this->get(index) == 0) return false;
-				index++;
+				if (++index == this->size())
+				{
+					while (*format == '*')
+						format++;
+					return *format == 0;
+				}
 			}
 		}
 		else if (*format != '?' && toupper(*format) != toupper(this->get(index))) return false;
 		format++;
-		index++;
+		if (++index == this->size())
+		{
+			while (*format == '*')
+				format++;
+			return *format == 0;
+		}
 	}
-	return index == this->size();
+	return false;
 }
 
 template<> bool inline Jupiter::Readable_String<wchar_t>::matchi(const wchar_t *format) const
 {
-	wint_t fUpper;
+	if (this->size() == 0)
+	{
+		while (*format == L'*')
+			format++;
+		return *format == 0;
+	}
 	size_t index = 0;
 	while (*format != 0)
 	{
@@ -741,24 +802,37 @@ template<> bool inline Jupiter::Readable_String<wchar_t>::matchi(const wchar_t *
 			format++;
 			while (*format == L'?')
 			{
-				if (this->get(index) == 0) return false;
 				format++;
-				index++;
+				if (this->size() == 0)
+				{
+					while (*format == L'*')
+						format++;
+					return *format == 0;
+				}
 			}
 			if (*format == 0) return true;
 			if (*format == '*') continue;
-			fUpper = towupper(*format);
-			while (fUpper != towupper(this->get(index)))
+
+			while (towupper(*format) != towupper(this->get(index)))
 			{
-				if (this->get(index) == 0) return false;
-				index++;
+				if (this->size() == 0)
+				{
+					while (*format == L'*')
+						format++;
+					return *format == 0;
+				}
 			}
 		}
 		else if (*format != L'?' && towupper(*format) != towupper(this->get(index))) return false;
 		format++;
-		index++;
+		if (this->size() == 0)
+		{
+			while (*format == L'*')
+				format++;
+			return *format == 0;
+		}
 	}
-	return index == this->size();
+	return false;
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::matchi(const T *format) const

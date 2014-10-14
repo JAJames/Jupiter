@@ -157,6 +157,7 @@ namespace Jupiter
 		*/
 		bool match(const Readable_String<T> &format) const;
 		bool match(const std::basic_string<T> &format) const;
+		bool match(const T *format, size_t formatSize) const;
 		bool match(const T *format) const;
 
 		/**
@@ -168,6 +169,7 @@ namespace Jupiter
 		*/
 		bool matchi(const Readable_String<T> &format) const;
 		bool matchi(const std::basic_string<T> &format) const;
+		bool matchi(const T *format, size_t formatSize) const;
 		bool matchi(const T *format) const;
 
 		/**
