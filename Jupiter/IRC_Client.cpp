@@ -297,6 +297,11 @@ const Jupiter::ReadableString &Jupiter::IRC::Client::getPrefixes() const
 	return Jupiter::IRC::Client::data_->prefixes;
 }
 
+const Jupiter::ReadableString &Jupiter::IRC::Client::getPrefixModes() const
+{
+	return Jupiter::IRC::Client::data_->prefixModes;
+}
+
 const Jupiter::ReadableString &Jupiter::IRC::Client::getNickname() const
 {
 	return Jupiter::IRC::Client::data_->nickname;

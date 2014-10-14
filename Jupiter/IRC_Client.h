@@ -494,6 +494,13 @@ namespace Jupiter
 			const Jupiter::ReadableString &getPrefixes() const;
 
 			/**
+			* @brief Returns mode symbols for nickname prefixes supported by the connected server.
+			*
+			* @return String containing mode symbols for nickname prefixes.
+			*/
+			const Jupiter::ReadableString &getPrefixModes() const;
+
+			/**
 			* @brief Returns the client's current nickname.
 			*
 			* @return String containing a nickame.
