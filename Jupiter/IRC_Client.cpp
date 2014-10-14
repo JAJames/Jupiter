@@ -818,7 +818,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									{
 										Jupiter::ReferenceString ref = Jupiter::ReferenceString::substring(buff, pos + 8);
 										Jupiter::IRC::Client::data_->prefixModes = Jupiter::ReferenceString::getWord(ref, 0, ")");
-										ref.shiftRight(ref.find(')'));
+										ref.shiftRight(ref.find(')') + 1);
 										Jupiter::IRC::Client::data_->prefixes = Jupiter::ReferenceString::getWord(ref, 0, " " ENDL);
 									}
 									pos = buff.find(STRING_LITERAL_AS_REFERENCE("CHANMODES="));
