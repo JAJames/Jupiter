@@ -59,14 +59,21 @@ unsigned int Jupiter::rehash()
 	if (rehashables.size() == 0) return 0;
 	unsigned int total = 0;
 	int r;
-	for (Jupiter::DLList<Jupiter::Rehashable>::Node *n = rehashables.getNode(0); n != nullptr; n = n->next)
+	Jupiter::DLList<Jupiter::Rehashable>::Node *n = rehashables.getNode(0);
+	while (n != nullptr)
 	{
 		r = n->data->OnRehash();
 		if (r != 0)
 		{
 			total++;
-			if (r < 0) delete n->data;
+			if (r < 0)
+			{
+				n = n->next;
+				delete rehashables.remove(n->previous);
+				continue;
+			}
 		}
+		n = n->next;
 	}
 	return total;
 }
