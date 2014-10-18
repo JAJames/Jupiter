@@ -543,13 +543,16 @@ char *makestr(const char *str)
 
 char *getTime()
 {
-	time_t rawtime = time(0);
-	static char rtime[256];
-	strftime(rtime, sizeof(rtime), "%a %b %d %H:%M:%S %Y %Z", localtime(&rawtime));
-	return rtime;
+	return getTimeFormat("%a %b %d %H:%M:%S %Y %Z");
 }
 
-
+char *getTimeFormat(const char *format)
+{
+	time_t rawtime = time(0);
+	static char rtime[256];
+	strftime(rtime, sizeof(rtime), format, localtime(&rawtime));
+	return rtime;
+}
 
 /** Character to integer conversion table */
 

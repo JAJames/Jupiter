@@ -285,16 +285,26 @@ JUPITER_API bool containsSymbol(const char *str, char c);
 JUPITER_API char *makestr(const char *str);
 
 /**
-* @brief returns the current time in a string format.
+* @brief Returns the current time in a string format.
 * This will vary depending on locale.
 * Format: Day_of_week Month Day hh:mm:ss Year Timezone.
 * Example 1: Sun Aug 18 13:52:21 2013 EST
 * Example 2: Thu Nov 14 03:52:57 2013 Eastern Standard Time
 * Exmaple 3: Sun Nov 17 15:06:19 2013 Tokyo Standard Time
+* This is the same as getTimeFormat("%a %b %d %H:%M:%S %Y %Z").
 *
 * @return A string containing the time in the format specified above.
 */
 JUPITER_API char *getTime();
+
+/**
+* @brief Returns the current time in a string format, based on an input format.
+* Format specifiers are the same as strftime().
+*
+* @param format String denoting the desired format of the output string.
+* @return A string containing the time in the format specified above.
+*/
+JUPITER_API char *getTimeFormat(const char *format);
 
 /**
 * @brief Gets the next power of 2 after a specified number.
