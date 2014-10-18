@@ -220,6 +220,24 @@ namespace Jupiter
 		double asDouble() const;
 
 		/**
+		* @brief Sums together all of the elements in the string.
+		*
+		* @param T Integral type to return
+		*
+		* @return Sum of all the elements in the string
+		*/
+		template<typename R = unsigned int> R calcChecksum() const;
+
+		/**
+		* @brief Sums together the uppercase version of all of the elements in the string.
+		*
+		* @param T Integral type to return
+		*
+		* @return Sum of all the elements in the string
+		*/
+		template<typename R = unsigned int> R calcChecksumi() const;
+
+		/**
 		* @brief Outputs the string to a FILE stream.
 		*
 		* @param out Stream to output to.
@@ -320,6 +338,9 @@ namespace Jupiter
 
 		/** Conversion operators */
 		explicit inline operator std::basic_string<T>() { return std::basic_string<T>(this->ptr(), this->size()); }
+
+	private:
+		template<typename R> R calcChecksumiHelper() const;
 	};
 
 	/** Generic Readable String Type */

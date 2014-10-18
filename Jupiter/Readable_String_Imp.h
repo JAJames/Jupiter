@@ -992,6 +992,47 @@ template<typename T> double Jupiter::Readable_String<T>::asDouble() const
 	return 0;
 }
 
+// calcChecksum
+
+template<typename T> template<typename R> R Jupiter::Readable_String<T>::calcChecksum() const
+{
+	R sum = 0;
+	size_t index = this->size();
+	while (index != 0)
+		sum += this->get(--index);
+	return sum;
+}
+
+// calcChecksumi
+
+template<typename T> template<typename R> R Jupiter::Readable_String<T>::calcChecksumi() const
+{
+	return this->calcChecksumiHelper<R>();
+}
+
+template<> template<typename R> R inline Jupiter::Readable_String<char>::calcChecksumiHelper() const
+{
+	R sum = 0;
+	size_t index = this->size();
+	while (index != 0)
+		sum += toupper(this->get(--index));
+	return sum;
+}
+
+template<> template<typename R> R inline Jupiter::Readable_String<wchar_t>::calcChecksumiHelper() const
+{
+	R sum = 0;
+	size_t index = this->size();
+	while (index != 0)
+		sum += towupper(this->get(--index));
+	return sum;
+}
+
+template<typename T> template<typename R> R Jupiter::Readable_String<T>::calcChecksumiHelper() const
+{
+	return this->calcChecksum<R>();
+}
+
 // Stream output
 
 template<typename T> size_t Jupiter::Readable_String<T>::print(FILE *out) const
