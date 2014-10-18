@@ -29,6 +29,7 @@
 
 struct Jupiter::INIFile::Section::KeyValuePair::Data
 {
+	unsigned int keySum = 0;
 	Jupiter::StringS key;
 	Jupiter::StringS value;
 };
@@ -43,11 +44,17 @@ Jupiter::INIFile::Section::KeyValuePair::KeyValuePair(const KeyValuePair &source
 	Jupiter::INIFile::Section::KeyValuePair::data_ = new Jupiter::INIFile::Section::KeyValuePair::Data();
 	Jupiter::INIFile::Section::KeyValuePair::data_->key = source.data_->key;
 	Jupiter::INIFile::Section::KeyValuePair::data_->value = source.data_->value;
+	Jupiter::INIFile::Section::KeyValuePair::data_->keySum = Jupiter::INIFile::Section::KeyValuePair::data_->key.calcChecksumi();
 }
 
 Jupiter::INIFile::Section::KeyValuePair::~KeyValuePair()
 {
 	delete Jupiter::INIFile::Section::KeyValuePair::data_;
+}
+
+unsigned int Jupiter::INIFile::Section::KeyValuePair::getKeyChecksum() const
+{
+	return Jupiter::INIFile::Section::KeyValuePair::data_->keySum;
 }
 
 const Jupiter::ReadableString &Jupiter::INIFile::Section::KeyValuePair::getKey() const
@@ -69,6 +76,7 @@ void Jupiter::INIFile::Section::KeyValuePair::setValue(const Jupiter::ReadableSt
 
 struct Jupiter::INIFile::Section::Data
 {
+	unsigned int nameSum = 0;
 	Jupiter::StringS name;
 	Jupiter::ArrayList<Jupiter::INIFile::Section::KeyValuePair> data;
 	~Data();
@@ -87,6 +95,7 @@ Jupiter::INIFile::Section::Section()
 Jupiter::INIFile::Section::Section(const Jupiter::ReadableString &name)
 {
 	Jupiter::INIFile::Section::data_ = new Jupiter::INIFile::Section::Data();
+	Jupiter::INIFile::Section::data_->nameSum = name.calcChecksumi();
 	Jupiter::INIFile::Section::data_->name = name;
 }
 
@@ -94,15 +103,18 @@ Jupiter::INIFile::Section::Section(const Jupiter::INIFile::Section &source)
 {
 	Jupiter::INIFile::Section::data_ = new Jupiter::INIFile::Section::Data();
 	Jupiter::INIFile::Section::data_->name = source.data_->name;
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
-	{
+	for (size_t i = 0, sourceSize = source.data_->data.size(); i != sourceSize; i++)
 		Jupiter::INIFile::Section::data_->data.add(new Jupiter::INIFile::Section::KeyValuePair(*source.data_->data.get(i)));
-	}
 }
 
 Jupiter::INIFile::Section::~Section()
 {
 	delete Jupiter::INIFile::Section::data_;
+}
+
+unsigned int Jupiter::INIFile::Section::getNameChecksum() const
+{
+	return Jupiter::INIFile::Section::data_->nameSum;
 }
 
 const Jupiter::ReadableString &Jupiter::INIFile::Section::getName() const
@@ -118,10 +130,13 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(size_t index)
 const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter::ReadableString &key) const
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
+	const unsigned int keySum = key.calcChecksumi();
+	size_t index = Jupiter::INIFile::Section::data_->data.size();
+	while (index != 0)
 	{
-		pair = Jupiter::INIFile::Section::data_->data.get(i);
-		if (pair->getKey().equalsi(key)) return pair->getValue();
+		pair = Jupiter::INIFile::Section::data_->data.get(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
+			return pair->getValue();
 	}
 	return Jupiter::ReferenceString::empty;
 }
@@ -134,10 +149,13 @@ Jupiter::INIFile::Section::KeyValuePair *Jupiter::INIFile::Section::getPair(size
 Jupiter::INIFile::Section::KeyValuePair *Jupiter::INIFile::Section::getPair(const Jupiter::ReadableString &key) const
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
+	const unsigned int keySum = key.calcChecksumi();
+	size_t index = Jupiter::INIFile::Section::data_->data.size();
+	while (index != 0)
 	{
-		pair = Jupiter::INIFile::Section::data_->data.get(i);
-		if (pair->getKey().equalsi(key)) return pair;
+		pair = Jupiter::INIFile::Section::data_->data.get(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
+			return pair;
 	}
 	return nullptr;
 }
@@ -150,10 +168,13 @@ size_t Jupiter::INIFile::Section::size() const
 bool Jupiter::INIFile::Section::hasKey(const Jupiter::ReadableString &key) const
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
+	const unsigned int keySum = key.calcChecksumi();
+	size_t index = Jupiter::INIFile::Section::data_->data.size();
+	while (index != 0)
 	{
-		pair = Jupiter::INIFile::Section::data_->data.get(i);
-		if (pair->getKey().equalsi(key)) return true;
+		pair = Jupiter::INIFile::Section::data_->data.get(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
+			return true;
 	}
 	return false;
 }
@@ -161,16 +182,19 @@ bool Jupiter::INIFile::Section::hasKey(const Jupiter::ReadableString &key) const
 bool Jupiter::INIFile::Section::set(const Jupiter::ReadableString &key, const Jupiter::ReadableString &value)
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
+	const unsigned int keySum = key.calcChecksumi();
+	size_t index = Jupiter::INIFile::Section::data_->data.size();
+	while (index != 0)
 	{
-		pair = Jupiter::INIFile::Section::data_->data.get(i);
-		if (pair->getKey().equalsi(key))
+		pair = Jupiter::INIFile::Section::data_->data.get(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
 		{
 			pair->data_->value = value;
 			return false;
 		}
 	}
 	pair = new Jupiter::INIFile::Section::KeyValuePair();
+	pair->data_->keySum = keySum;
 	pair->data_->key = key;
 	pair->data_->value = value;
 	Jupiter::INIFile::Section::data_->data.add(pair);
@@ -179,16 +203,21 @@ bool Jupiter::INIFile::Section::set(const Jupiter::ReadableString &key, const Ju
 
 void Jupiter::INIFile::Section::setName(const Jupiter::ReadableString &name)
 {
+	Jupiter::INIFile::Section::data_->nameSum = name.calcChecksumi();
 	Jupiter::INIFile::Section::data_->name = name;
 }
 
 bool Jupiter::INIFile::Section::remove(const Jupiter::ReadableString &key)
 {
-	for (size_t i = 0; i != Jupiter::INIFile::Section::data_->data.size(); i++)
+	Jupiter::INIFile::Section::KeyValuePair *pair;
+	const unsigned int keySum = key.calcChecksumi();
+	size_t index = Jupiter::INIFile::Section::data_->data.size();
+	while (index != 0)
 	{
-		if (Jupiter::INIFile::Section::data_->data.get(i)->getKey().equalsi(key))
+		pair = Jupiter::INIFile::Section::data_->data.get(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
 		{
-			delete Jupiter::INIFile::Section::data_->data.remove(i);
+			delete Jupiter::INIFile::Section::data_->data.remove(index);
 			return true;
 		}
 	}
@@ -218,10 +247,8 @@ Jupiter::INIFile::INIFile(const INIFile &source)
 {
 	Jupiter::INIFile::data_ = new Jupiter::INIFile::Data;
 	Jupiter::INIFile::data_->fName = source.data_->fName;
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
-	{
+	for (size_t i = 0, sourceSize = source.data_->data.size(); i != sourceSize; i++)
 		Jupiter::INIFile::data_->data.add(new Jupiter::INIFile::Section(*source.data_->data.get(i)));
-	}
 }
 
 Jupiter::INIFile::~INIFile()
@@ -235,7 +262,6 @@ void Jupiter::INIFile::flushData()
 	Jupiter::INIFile::data_ = new Jupiter::INIFile::Data();
 }
 
-// TODO: Rewrite this.
 unsigned int Jupiter::INIFile::readFile(const char *fileName)
 {
 	size_t total = 0;
@@ -344,10 +370,12 @@ bool Jupiter::INIFile::sync()
 bool Jupiter::INIFile::set(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, const Jupiter::ReadableString &value)
 {
 	Jupiter::INIFile::Section *sec;
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
+	unsigned int nameSum = section.calcChecksumi();
+	size_t index = Jupiter::INIFile::data_->data.size();
+	while (index != 0)
 	{
-		sec = Jupiter::INIFile::data_->data.get(i);
-		if (sec->getName().equalsi(section))
+		sec = Jupiter::INIFile::data_->data.get(--index);
+		if (nameSum == sec->getNameChecksum() && sec->getName().equalsi(section))
 			return sec->set(key, value);
 	}
 	sec = new Jupiter::INIFile::Section(section);
@@ -359,11 +387,13 @@ bool Jupiter::INIFile::set(const Jupiter::ReadableString &section, const Jupiter
 bool Jupiter::INIFile::remove(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key)
 {
 	Jupiter::INIFile::Section *sec;
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
+	unsigned int nameSum = section.calcChecksumi();
+	size_t index = Jupiter::INIFile::data_->data.size();
+	while (index != 0)
 	{
-		sec = Jupiter::INIFile::data_->data.get(i);
-		if (sec->getName().equalsi(section)) return sec->remove(key);
-		i++;
+		sec = Jupiter::INIFile::data_->data.get(--index);
+		if (nameSum == sec->getNameChecksum() && sec->getName().equalsi(section))
+			return sec->remove(key);
 	}
 	return false;
 }
@@ -380,17 +410,29 @@ Jupiter::INIFile::Section *Jupiter::INIFile::getSection(size_t index) const
 
 Jupiter::INIFile::Section *Jupiter::INIFile::getSection(const Jupiter::ReadableString &section) const
 {
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
-		if (Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section))
-			return Jupiter::INIFile::data_->data.get(i);
+	Jupiter::INIFile::Section *sec;
+	unsigned int nameSum = section.calcChecksumi();
+	size_t index = Jupiter::INIFile::data_->data.size();
+	while (index != 0)
+	{
+		sec = Jupiter::INIFile::data_->data.get(--index);
+		if (nameSum == sec->getNameChecksum() && sec->getName().equalsi(section))
+			return Jupiter::INIFile::data_->data.get(index);
+	}
 	return nullptr;
 }
 
 size_t Jupiter::INIFile::getSectionIndex(const Jupiter::ReadableString &section) const
 {
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
-		if (Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section))
-			return i;
+	Jupiter::INIFile::Section *sec;
+	unsigned int nameSum = section.calcChecksumi();
+	size_t index = Jupiter::INIFile::data_->data.size();
+	while (index != 0)
+	{
+		sec = Jupiter::INIFile::data_->data.get(--index);
+		if (nameSum == sec->getNameChecksum() && sec->getName().equalsi(section))
+			return index;
+	}
 	return Jupiter::INVALID_INDEX;
 }
 
@@ -402,30 +444,43 @@ size_t Jupiter::INIFile::getSectionLength(size_t index) const
 const Jupiter::ReadableString &Jupiter::INIFile::getKey(const Jupiter::ReadableString &section, size_t index) const
 {
 	size_t sectionIndex = Jupiter::INIFile::getSectionIndex(section);
-	if (sectionIndex == Jupiter::INVALID_INDEX) return Jupiter::ReferenceString::empty;
+	if (sectionIndex == Jupiter::INVALID_INDEX)
+		return Jupiter::ReferenceString::empty;
 	return Jupiter::INIFile::data_->data.get(sectionIndex)->getPair(index)->getKey();
 }
 
 size_t Jupiter::INIFile::getKeyIndex(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key) const
 {
 	size_t sectionIndex = Jupiter::INIFile::getSectionIndex(section);
-	if (sectionIndex == Jupiter::INVALID_INDEX) return Jupiter::INVALID_INDEX;
-	Jupiter::INIFile::Section *sect = Jupiter::INIFile::data_->data.get(sectionIndex);
-	size_t sectionSize = sect->size();
-	for (size_t i = 0; i != sectionSize; i++) if (sect->getPair(i)->getKey().equalsi(key)) return i;
+	if (sectionIndex == Jupiter::INVALID_INDEX)
+		return Jupiter::INVALID_INDEX;
+
+	Jupiter::INIFile::Section::KeyValuePair *pair;
+	Jupiter::INIFile::Section *sec = Jupiter::INIFile::data_->data.get(sectionIndex);
+	unsigned int keySum = key.calcChecksumi();
+	size_t index = sec->size();
+	while (index != 0)
+	{
+		pair = sec->getPair(--index);
+		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
+			return index;
+	}
 	return Jupiter::INVALID_INDEX;
 }
 
 const Jupiter::ReadableString &Jupiter::INIFile::get(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
 {
-	Jupiter::INIFile::Section *sect;
-	for (size_t i = 0; i != Jupiter::INIFile::data_->data.size(); i++)
+	Jupiter::INIFile::Section *sec;
+	unsigned int nameSum = section.calcChecksumi();
+	size_t index = Jupiter::INIFile::data_->data.size();
+	while (index != 0)
 	{
-		sect = Jupiter::INIFile::data_->data.get(i);
-		if (sect->getName().equalsi(section))
+		sec = Jupiter::INIFile::data_->data.get(--index);
+		if (nameSum == sec->getNameChecksum() && sec->getName().equalsi(section))
 		{
-			Jupiter::INIFile::Section::KeyValuePair *pair = sect->getPair(key);
-			if (pair == nullptr) return defaultValue;
+			Jupiter::INIFile::Section::KeyValuePair *pair = sec->getPair(key);
+			if (pair == nullptr)
+				return defaultValue;
 			return pair->getValue();
 		}
 	}
@@ -435,53 +490,60 @@ const Jupiter::ReadableString &Jupiter::INIFile::get(const Jupiter::ReadableStri
 bool Jupiter::INIFile::getBool(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, bool defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asBool();
+	if (val.isEmpty() == false)
+		return val.asBool();
 	return defaultValue;
 }
 
 short Jupiter::INIFile::getShort(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, short defaultValue) const
 {
-	return (short)Jupiter::INIFile::getInt(section, key, defaultValue);
+	return static_cast<short>(Jupiter::INIFile::getInt(section, key, defaultValue));
 }
 
 int Jupiter::INIFile::getInt(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, int defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asInt();
+	if (val.isEmpty() == false)
+		return val.asInt();
 	return defaultValue;
 }
 
 long Jupiter::INIFile::getLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asInt();
+	if (val.isEmpty() == false)
+		return val.asInt();
 	return defaultValue;
 }
 
 long long Jupiter::INIFile::getLongLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asInt();
+	if (val.isEmpty() == false)
+		return val.asLongLong();
 	return defaultValue;
 }
 
 float Jupiter::INIFile::getFloat(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, float defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return float(val.asDouble());
+	if (val.isEmpty() == false)
+		return float(val.asDouble());
 	return defaultValue;
 }
 
 double Jupiter::INIFile::getDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asDouble();
+	if (val.isEmpty() == false)
+		return val.asDouble();
 	return defaultValue;
 }
 
 long double Jupiter::INIFile::getLongDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.size() != 0) return val.asDouble();
+	if (val.isEmpty() == false)
+		return val.asDouble();
 	return defaultValue;
 }

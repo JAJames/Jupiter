@@ -51,6 +51,13 @@ namespace Jupiter
 			public:
 
 				/**
+				* @brief Fetches the checksum of the key in a key-value pair.
+				*
+				* @return Checksum of the key.
+				*/
+				unsigned int getKeyChecksum() const;
+
+				/**
 				* @brief Fetches the key in the key-value pair.
 				*
 				* @return Reference to the key String in the pair.
@@ -90,6 +97,13 @@ namespace Jupiter
 				struct Data;
 				Data *data_;
 			};
+
+			/**
+			* @brief Fetches the checksum of the name of a section.
+			*
+			* @return Checmsum of the name.
+			*/
+			unsigned int getNameChecksum() const;
 
 			/**
 			* @brief Fetches the name of a section.
