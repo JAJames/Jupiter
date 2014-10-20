@@ -20,6 +20,7 @@ class RehashFunction : public Jupiter::Rehashable
 public:
 	int(*function)(void);
 	int OnRehash() { return function(); };
+	bool OnBadRehash(bool removed) { return removed; };
 	RehashFunction(int(*func)(void)) { RehashFunction::function = func; };
 };
 
@@ -60,6 +61,7 @@ unsigned int Jupiter::rehash()
 	unsigned int total = 0;
 	int r;
 	Jupiter::DLList<Jupiter::Rehashable>::Node *n = rehashables.getNode(0);
+	Jupiter::DLList<Jupiter::Rehashable>::Node *d;
 	while (n != nullptr)
 	{
 		r = n->data->OnRehash();
@@ -68,10 +70,14 @@ unsigned int Jupiter::rehash()
 			total++;
 			if (r < 0)
 			{
+				d = n;
 				n = n->next;
-				delete rehashables.remove(n->previous);
+				if (d->data->OnBadRehash(true))
+					delete rehashables.remove(d);
+				else rehashables.remove(d);
 				continue;
 			}
+			rehashables.remove(n)->OnBadRehash(false);
 		}
 		n = n->next;
 	}

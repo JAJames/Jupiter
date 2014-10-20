@@ -37,9 +37,17 @@ namespace Jupiter
 		/**
 		* @brief Rehashes an object's status.
 		*
-		* @return 0 if no error occurs, a postive integer if an error occurs, or a negative integer if an error occurs and the object should be deleted.
+		* @return 0 if no error occurs, a postive integer if an error occurs, or a negative integer if an error occurs and the object should be removed.
 		*/
 		virtual int OnRehash() = 0;
+
+		/**
+		* @brief Fires when a non-zero value is returned by an object during a call to rehash().
+		*
+		* @param removed True if the object was removed from the rehashable objects list, false otherwise.
+		* @return True if the object should be deleted, false otherwise.
+		*/
+		virtual bool OnBadRehash(bool removed) = 0;
 
 		/**
 		* @brief Default constructor for the Rehashable class.
