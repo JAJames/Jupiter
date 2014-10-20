@@ -31,7 +31,6 @@ Jupiter::ArrayList<Jupiter::Plugin> _plugins;
 Jupiter::ArrayList<Jupiter::Plugin> *Jupiter::plugins = &_plugins;
 struct dlib;
 Jupiter::ArrayList<dlib> _libList;
-Jupiter::ArrayList<dlib> *libList = &_libList;
 
 Jupiter::Plugin::~Plugin()
 {
@@ -113,7 +112,7 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 	dPlug->plugin = func();
 	if (dPlug->plugin == nullptr) goto fail;
 
-	libList->add(dPlug);
+	_libList.add(dPlug);
 	_plugins.add(dPlug->plugin);
 
 	return dPlug->plugin;
@@ -129,7 +128,7 @@ bool Jupiter::freePlugin(size_t index)
 	{
 		// Do not free() the plugin; plugin gets free'd by FreeLibrary().
 		_plugins.remove(index);
-		dlib *dPlug = libList->remove(index);
+		dlib *dPlug = _libList.remove(index);
 
 		typedef void (*func_type)(void);
 #if defined _WIN32
@@ -178,6 +177,27 @@ Jupiter::Plugin *Jupiter::getPlugin(const Jupiter::ReadableString &pluginName)
 
 // Event Placeholders
 
+int Jupiter::Plugin::think()
+{
+	return 0;
+}
+
+int Jupiter::Plugin::OnRehash()
+{
+	return 0;
+}
+
+bool Jupiter::Plugin::OnBadRehash(bool removed)
+{
+	Jupiter::Plugin::_shouldRemove = removed;
+	return false;
+}
+
+bool Jupiter::Plugin::shouldRemove()
+{
+	return Jupiter::Plugin::_shouldRemove;
+}
+
 void Jupiter::Plugin::OnConnect(Jupiter::IRC::Client *)
 {
 	return;
@@ -191,11 +211,6 @@ void Jupiter::Plugin::OnDisconnect(Jupiter::IRC::Client *)
 void Jupiter::Plugin::OnReconnectAttempt(Jupiter::IRC::Client *, bool)
 {
 	return;
-}
-
-int Jupiter::Plugin::OnRehash()
-{
-	return 0;
 }
 
 void Jupiter::Plugin::OnRaw(Jupiter::IRC::Client *, const Jupiter::ReadableString &)
@@ -276,9 +291,4 @@ void Jupiter::Plugin::OnMode(Jupiter::IRC::Client *, const Jupiter::ReadableStri
 void Jupiter::Plugin::OnThink(Jupiter::IRC::Client *)
 {
 	return;
-}
-
-int Jupiter::Plugin::think()
-{
-	return 0;
 }

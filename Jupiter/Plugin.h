@@ -38,7 +38,43 @@ namespace Jupiter
 	*/
 	class JUPITER_API Plugin : public Jupiter::Thinker, public Jupiter::Rehashable
 	{
-	public:
+	public: // Jupiter::Thinker
+		/**
+		* @brief Makes the Plugin "think". This does nothing, unless overloaded.
+		* This method should return an error other than 0 if you want the plugin to be released.
+		*
+		* @return 0 when no error occurs, an error otherwise.
+		*/
+		virtual int think() override;
+
+	public: // Jupiter::Rehashable
+		/**
+		* @brief This is called when rehash() is called.
+		* @see Jupiter::Rehashable::OnRehash().
+		*
+		* @return 0 if no error occurs, a postive integer if an error occurs, or a negative integer if an error occurs and the object should be deleted.
+		*/
+		virtual int OnRehash() override;
+
+		/**
+		* @brief This is called when OnRehash() returns an error during rehash().
+		* @see Jupiter::Rehashable::OnRehash().
+		* Note: If you override this, be sure to call Jupiter::Plugin::OnBadRehash(removed) before returning.
+		*
+		* @param removed True if the object was removed from the rehash list, false otherwise.
+		* @return True if the object should be deleted, false otherwise.
+		*/
+		virtual bool OnBadRehash(bool removed) override;
+
+	public: // Jupiter::Plugin
+		/**
+		* @brief Checks if this plugin should be unloaded.
+		* This returns "true" after a call to OnBadRehash().
+		*
+		* @returns True if this plugin should be unloaded, false otherwise.
+		*/
+		bool shouldRemove();
+
 		/**
 		* @brief This is called when a connection has been successfully established.
 		* The current implementation calls this after the MOTD.
@@ -58,14 +94,6 @@ namespace Jupiter
 		* @see connect().
 		*/
 		virtual void OnReconnectAttempt(Jupiter::IRC::Client *server, bool successConnect);
-
-		/**
-		* @brief This is called when rehash() is called.
-		* @see Jupiter::Rehashable::OnRehash().
-		*
-		* @return 0 if no error occurs, a postive integer if an error occurs, or a negative integer if an error occurs and the object should be deleted.
-		*/
-		virtual int OnRehash();
 
 		/**
 		* @brief This is called after a message has been normally processed.
@@ -205,14 +233,6 @@ namespace Jupiter
 		virtual void OnThink(Jupiter::IRC::Client *server);
 
 		/**
-		* @brief Makes the Plugin "think". This does nothing, unless overloaded.
-		* This method should return an error other than 0 if you want the plugin to be released.
-		*
-		* @return 0 when no error occurs, an error otherwise.
-		*/
-		virtual int think();
-
-		/**
 		* @brief Returns the name of the plugin.
 		*
 		* @return String containing the name of the plugin.
@@ -223,6 +243,9 @@ namespace Jupiter
 		* @brief Destructor for Plugin class.
 		*/
 		virtual ~Plugin();
+
+	protected:
+		bool _shouldRemove = false;
 	};
 
 	/** Plugin management functions */
