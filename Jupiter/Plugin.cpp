@@ -100,7 +100,7 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #endif // _WIN32
 	if (dPlug->lib == nullptr)
 	{
-		fprintf(stderr, "Error: Unable to load plugin file \"%s\" (File failed to load)", file);
+		fprintf(stderr, "Error: Unable to load plugin file \"%s\" (File failed to load)" ENDL, file);
 		goto fail;
 	}
 
@@ -114,18 +114,19 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #endif // _WIN32
 		if (func == nullptr)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Invalid plugin)", file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Invalid plugin)" ENDL, file);
 			goto fail;
 		}
 
 		dPlug->plugin = func();
 		if (dPlug->plugin == nullptr)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to initialize)", file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to initialize)" ENDL, file);
 			goto fail;
 		}
 	}
 	{
+		// Get and execute the "load" function if it exists
 		typedef bool(*func_type)(void);
 #if defined _WIN32
 		func_type func = (func_type)GetProcAddress(dPlug->lib, "load");
@@ -134,7 +135,7 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #endif // _WIN32
 		if (func != nullptr && func() == false)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to load)", file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to load)" ENDL, file);
 			goto fail;
 		}
 	}
