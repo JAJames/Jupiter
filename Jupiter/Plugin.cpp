@@ -98,19 +98,46 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #else // _WIN32
 	dPlug->lib = dlopen(file, RTLD_LAZY);
 #endif // _WIN32
-	if (dPlug->lib == nullptr) goto fail;
+	if (dPlug->lib == nullptr)
+	{
+		fprintf(stderr, "Error: Unable to load plugin file \"%s\" (File failed to load)", file);
+		goto fail;
+	}
 
-	// Get the "getPlugin" function
-	typedef Jupiter::Plugin *(*func_type)(void);
+	{
+		// Get the "getPlugin" function
+		typedef Jupiter::Plugin *(*func_type)(void);
 #if defined _WIN32
-	func_type func = (func_type) GetProcAddress(dPlug->lib, "getPlugin");
+		func_type func = (func_type)GetProcAddress(dPlug->lib, "getPlugin");
 #else // _WIN32
-	func_type func = (func_type)dlsym(dPlug->lib, "getPlugin");
+		func_type func = (func_type)dlsym(dPlug->lib, "getPlugin");
 #endif // _WIN32
-	if (func == nullptr) goto fail;
+		if (func == nullptr)
+		{
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Invalid plugin)", file);
+			goto fail;
+		}
 
-	dPlug->plugin = func();
-	if (dPlug->plugin == nullptr) goto fail;
+		dPlug->plugin = func();
+		if (dPlug->plugin == nullptr)
+		{
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to initialize)", file);
+			goto fail;
+		}
+	}
+	{
+		typedef bool(*func_type)(void);
+#if defined _WIN32
+		func_type func = (func_type)GetProcAddress(dPlug->lib, "load");
+#else // _WIN32
+		func_type func = (func_type)dlsym(dPlug->lib, "load");
+#endif // _WIN32
+		if (func != nullptr && func() == false)
+		{
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to load)", file);
+			goto fail;
+		}
+	}
 
 	_libList.add(dPlug);
 	_plugins.add(dPlug->plugin);
