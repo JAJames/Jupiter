@@ -126,7 +126,7 @@ namespace Jupiter
 			* @param key Key of the key-value pair.
 			* @return Value of a key-value pair, or an empty string if none is found.
 			*/
-			const Jupiter::ReadableString &getValue(const Jupiter::ReadableString &key) const;
+			const Jupiter::ReadableString &getValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue = Jupiter::ReferenceString::empty) const;
 
 			/**
 			* @brief Fetches a key-value pair at a specified index.

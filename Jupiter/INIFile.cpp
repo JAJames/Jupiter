@@ -127,7 +127,7 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(size_t index)
 	return Jupiter::INIFile::Section::data_->data.get(index)->data_->value;
 }
 
-const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter::ReadableString &key) const
+const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
 	const unsigned int keySum = key.calcChecksumi();
@@ -138,7 +138,7 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter
 		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
 			return pair->getValue();
 	}
-	return Jupiter::ReferenceString::empty;
+	return defaultValue;
 }
 
 Jupiter::INIFile::Section::KeyValuePair *Jupiter::INIFile::Section::getPair(size_t index) const
