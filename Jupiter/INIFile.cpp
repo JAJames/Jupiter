@@ -122,12 +122,12 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getName() const
 	return Jupiter::INIFile::Section::data_->name;
 }
 
-const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(size_t index) const
+const Jupiter::ReadableString &Jupiter::INIFile::Section::get(size_t index) const
 {
 	return Jupiter::INIFile::Section::data_->data.get(index)->data_->value;
 }
 
-const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
+const Jupiter::ReadableString &Jupiter::INIFile::Section::get(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
 {
 	Jupiter::INIFile::Section::KeyValuePair *pair;
 	const unsigned int keySum = key.calcChecksumi();
@@ -138,6 +138,67 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::getValue(const Jupiter
 		if (keySum == pair->getKeyChecksum() && pair->getKey().equalsi(key))
 			return pair->getValue();
 	}
+	return defaultValue;
+}
+
+bool Jupiter::INIFile::Section::getBool(const Jupiter::ReadableString &key, bool defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asBool();
+	return defaultValue;
+}
+
+short Jupiter::INIFile::Section::getShort(const Jupiter::ReadableString &key, short defaultValue) const
+{
+	return static_cast<short>(Jupiter::INIFile::Section::getInt(key, defaultValue));
+}
+
+int Jupiter::INIFile::Section::getInt(const Jupiter::ReadableString &key, int defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asInt();
+	return defaultValue;
+}
+
+long Jupiter::INIFile::Section::getLong(const Jupiter::ReadableString &key, long defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asInt();
+	return defaultValue;
+}
+
+long long Jupiter::INIFile::Section::getLongLong(const Jupiter::ReadableString &key, long long defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asLongLong();
+	return defaultValue;
+}
+
+float Jupiter::INIFile::Section::getFloat(const Jupiter::ReadableString &key, float defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return float(val.asDouble());
+	return defaultValue;
+}
+
+double Jupiter::INIFile::Section::getDouble(const Jupiter::ReadableString &key, double defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asDouble();
+	return defaultValue;
+}
+
+long double Jupiter::INIFile::Section::getLongDouble(const Jupiter::ReadableString &key, long double defaultValue) const
+{
+	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
+	if (val.isEmpty() == false)
+		return val.asDouble();
 	return defaultValue;
 }
 

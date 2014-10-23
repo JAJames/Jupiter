@@ -118,7 +118,7 @@ namespace Jupiter
 			* @param index Index of the key-value pair.
 			* @return Value of a key-value pair at a specified index.
 			*/
-			const Jupiter::ReadableString &getValue(size_t index) const;
+			const Jupiter::ReadableString &get(size_t index) const;
 
 			/**
 			* @brief Fetches the value of a key-value pair.
@@ -126,7 +126,79 @@ namespace Jupiter
 			* @param key Key of the key-value pair.
 			* @return Value of a key-value pair, or an empty string if none is found.
 			*/
-			const Jupiter::ReadableString &getValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue = Jupiter::ReferenceString::empty) const;
+			const Jupiter::ReadableString &get(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue = Jupiter::ReferenceString::empty) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a boolean.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return true if key exists and is not "false" or "0", defaultValue otherwise.
+			*/
+			bool getBool(const Jupiter::ReadableString &key, bool defaultValue = false) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a short.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return short value of the key if it exits, defaultValue otherwise.
+			*/
+			short getShort(const Jupiter::ReadableString &key, short defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as an int.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return int value of the key if it exits, defaultValue otherwise.
+			*/
+			int getInt(const Jupiter::ReadableString &key, int defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a long.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return long value of the key if it exits, defaultValue otherwise.
+			*/
+			long getLong(const Jupiter::ReadableString &key, long defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a long long.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return long long value of the key if it exits, defaultValue otherwise.
+			*/
+			long long getLongLong(const Jupiter::ReadableString &key, long long defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a float.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return float value of the key if it exits, defaultValue otherwise.
+			*/
+			float getFloat(const Jupiter::ReadableString &key, float defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a double.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return double value of the key if it exits, defaultValue otherwise.
+			*/
+			double getDouble(const Jupiter::ReadableString &key, double defaultValue = 0) const;
+
+			/**
+			* @brief Translates and returns the value of a key-value pair as a long double.
+			*
+			* @param key String containing key name.
+			* @param defaultValue Value to return if none is found.
+			* @return long double value of the key if it exits, defaultValue otherwise.
+			*/
+			long double getLongDouble(const Jupiter::ReadableString &key, long double defaultValue = 0) const;
 
 			/**
 			* @brief Fetches a key-value pair at a specified index.
