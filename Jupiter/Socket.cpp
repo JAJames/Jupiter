@@ -300,6 +300,22 @@ char *Jupiter::Socket::resolveHostname(const char *hostname, unsigned int result
 	return Jupiter::Socket::resolveHostname(info, result);
 }
 
+uint32_t Jupiter::Socket::pton4(const char *str)
+{
+	in_addr r;
+	if (inet_pton(AF_INET, str, &r) <= 0)
+		return 0;
+	return *reinterpret_cast<uint32_t *>(&r);
+}
+
+in_addr6 Jupiter::Socket::pton6(const char *str)
+{
+	in_addr6 r;
+	if (inet_pton(AF_INET6, str, &r) <= 0)
+		memset(&r, 0, sizeof(in_addr6));
+	return r;
+}
+
 Jupiter::Socket *Jupiter::Socket::acceptConnection()
 {
 	SOCKET tSock = accept(Socket::data_->rawSock, 0, 0);

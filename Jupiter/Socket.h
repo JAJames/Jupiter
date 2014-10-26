@@ -28,6 +28,7 @@
 #include "Readable_String.h"
 
 struct addrinfo;
+struct in_addr6;
 
 namespace Jupiter
 {
@@ -162,6 +163,22 @@ namespace Jupiter
 		* @return String containing the hostname of the resolved address on success, nullptr otherwise.
 		*/
 		static char *resolveHostname(const char *hostname, unsigned int result);
+
+		/**
+		* @brief Reinterprets an IPv4 address as a 32-bit integer in network byte order.
+		*
+		* @param str String representation of an IPv4 address.
+		* @return IPv4 address in network byte order.
+		*/
+		static uint32_t pton4(const char *str);
+
+		/**
+		* @brief Reinterprets an IPv6 address as a 128-bit integer in network byte order.
+		*
+		* @param str String representation of an IPv6 address.
+		* @return IPv6 address in network byte order.
+		*/
+		static in_addr6 pton6(const char *str);
 
 		/**
 		* @brief Interface to provide simple connection establishing.
