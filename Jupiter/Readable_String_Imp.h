@@ -1256,8 +1256,8 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 		{
 			if (++j == token.size())
 			{
-				if (pos-- == 0)
-					return R<T>::substring(in, i);
+				if (--pos == 0)
+					return R<T>::substring(in, i + token.size());
 				break;
 			}
 		}
