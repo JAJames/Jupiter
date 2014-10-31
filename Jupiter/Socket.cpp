@@ -316,6 +316,35 @@ in_addr6 Jupiter::Socket::pton6(const char *str)
 	return r;
 }
 
+Jupiter::StringS Jupiter::Socket::ntop4(uint32_t ip)
+{
+	static char buf[16];
+	if (inet_ntop(AF_INET, &ip, buf, sizeof(buf)) == nullptr)
+		return Jupiter::StringS::empty;
+	return Jupiter::String(buf);
+}
+
+Jupiter::StringS Jupiter::Socket::ntop6(in_addr6 ip)
+{
+	static char buf[46];
+	if (inet_ntop(AF_INET6, &ip, buf, sizeof(buf)) == nullptr)
+		return Jupiter::StringS::empty;
+	return Jupiter::String(buf);
+}
+
+Jupiter::StringS Jupiter::Socket::ntop(void *ip, size_t size)
+{
+	switch (size)
+	{
+	case 4:
+		return ntop4(*reinterpret_cast<uint32_t *>(ip));
+	case 16:
+		return ntop6(*reinterpret_cast<in_addr6 *>(ip));
+	default:
+		return Jupiter::StringS::empty;
+	}
+}
+
 Jupiter::Socket *Jupiter::Socket::acceptConnection()
 {
 	SOCKET tSock = accept(Socket::data_->rawSock, 0, 0);

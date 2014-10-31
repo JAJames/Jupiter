@@ -26,6 +26,7 @@
 #include <cstring>
 #include "Jupiter.h"
 #include "Readable_String.h"
+#include "String.h"
 
 struct addrinfo;
 struct in_addr6;
@@ -179,6 +180,32 @@ namespace Jupiter
 		* @return IPv6 address in network byte order.
 		*/
 		static in_addr6 pton6(const char *str);
+
+		/**
+		* @brief Formats an IPv4 address in its string presentation format.
+		*
+		* @param ip IP to format
+		* @return String containing the address's string presentation.
+		*/
+		static Jupiter::StringS ntop4(uint32_t ip);
+
+		/**
+		* @brief Formats an IPv6 address in its string presentation format.
+		*
+		* @param ip IP to format
+		* @return String containing the address's string presentation.
+		*/
+		static Jupiter::StringS ntop6(in_addr6 ip);
+
+		/**
+		* @brief Formats an IPvX address in its string presentation format.
+		* Currently supports: IPv4, IPv6.
+		*
+		* @param ip IP to format
+		* @param size Size of the input type
+		* @return String containing the address's string presentation.
+		*/
+		static Jupiter::StringS ntop(void *ip, size_t size);
 
 		/**
 		* @brief Interface to provide simple connection establishing.
