@@ -131,13 +131,38 @@ bool Jupiter::File::load(const Jupiter::ReadableString &file)
 
 bool Jupiter::File::load(FILE *file)
 {
-	bool success = false;
-	char buffer[defaultBufferSize];
+	Jupiter::String buffer(defaultBufferSize);
+	int c;
 
-	while (!feof(file))
-		success |= Jupiter::File::addData(Jupiter::ReferenceString(buffer, fread(buffer, sizeof(char), sizeof(buffer), file)));
+	for (;;)
+	{
+		c = fgetc(file);
+		if (c == EOF)
+			return false;
+		if (containsSymbol(ENDL, static_cast<char>(c)))
+		{
+			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			buffer.truncate(buffer.size());
+			break;
+		}
+		else
+			buffer.concat(static_cast<char>(c));
+	}
+	for (;;)
+	{
+		c = fgetc(file);
+		if (c == EOF)
+			return true;
+		if (containsSymbol(ENDL, static_cast<char>(c)))
+		{
+			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			buffer.truncate(buffer.size());
+		}
+		else
+			buffer.concat(static_cast<char>(c));
+	}
 
-	return success;
+	return false;
 }
 
 void Jupiter::File::unload()
