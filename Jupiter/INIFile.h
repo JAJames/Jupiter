@@ -340,6 +340,16 @@ namespace Jupiter
 		bool remove(const Jupiter::ReadableString &section, const Jupiter::ReadableString &keyName);
 
 		/**
+		* @brief Removes a section. Does not modify any files.
+		*
+		* @param section Section to remove.
+		* @return True if a section was removed, false otherwise.
+		*/
+		bool remove(size_t section_index);
+		bool remove(const Jupiter::INIFile::Section *section);
+		bool remove(const Jupiter::ReadableString &section);
+
+		/**
 		* @brief Returns the number of sections in memory.
 		*
 		* @return Number of sections.

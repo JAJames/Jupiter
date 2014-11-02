@@ -459,6 +459,31 @@ bool Jupiter::INIFile::remove(const Jupiter::ReadableString &section, const Jupi
 	return false;
 }
 
+bool Jupiter::INIFile::remove(size_t section_index)
+{
+	delete Jupiter::INIFile::data_->data.remove(section_index);
+	return true;
+}
+
+bool Jupiter::INIFile::remove(const Jupiter::INIFile::Section *section)
+{
+	size_t i = Jupiter::INIFile::data_->data.size();
+	while (i != 0)
+		if (Jupiter::INIFile::data_->data.get(--i) == section)
+			return Jupiter::INIFile::remove(i);
+	return false;
+}
+
+bool Jupiter::INIFile::remove(const Jupiter::ReadableString &section)
+{
+	unsigned int nameSum = section.calcChecksumi();
+	size_t i = Jupiter::INIFile::data_->data.size();
+	while (i != 0)
+		if (Jupiter::INIFile::data_->data.get(--i)->getNameChecksum() == nameSum && Jupiter::INIFile::data_->data.get(i)->getName().equalsi(section))
+			return Jupiter::INIFile::remove(i);
+	return false;
+}
+
 size_t Jupiter::INIFile::getSections() const
 {
 	return Jupiter::INIFile::data_->data.size();
