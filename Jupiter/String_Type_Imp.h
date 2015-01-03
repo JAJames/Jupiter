@@ -289,6 +289,8 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 								size_t *tInstances = new size_t[instancesSize * 2];
 								for (instanceCount = 0; instanceCount != instancesSize; instanceCount++)
 									tInstances[instanceCount] = instances[instanceCount];
+								delete[] instances;
+								instances = tInstances;
 								instancesSize *= 2;
 							}
 							instances[instanceCount] = i;
