@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -35,7 +35,7 @@
 #define JUPITER_API
 #endif // _WIN32
 
-#define JUPITER_VERSION "Jupiter 0.12" /** Version of this program at compile time. */
+#define JUPITER_VERSION "Jupiter 0.13" /** Version of this program at compile time. */
 
 #if defined __cplusplus
 extern "C"
