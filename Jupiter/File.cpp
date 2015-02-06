@@ -132,22 +132,22 @@ bool Jupiter::File::load(const Jupiter::ReadableString &file)
 bool Jupiter::File::load(FILE *file)
 {
 	Jupiter::String buffer(defaultBufferSize);
-	int c;
+	int c = fgetc(file);
 
-	for (;;)
+	if (c == EOF)
+		return false;
+	if (containsSymbol(ENDL, static_cast<char>(c)))
 	{
+		Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
 		c = fgetc(file);
 		if (c == EOF)
-			return false;
-		if (containsSymbol(ENDL, static_cast<char>(c)))
-		{
-			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
-			buffer.truncate(buffer.size());
-			break;
-		}
-		else
+			return true;
+		if (containsSymbol(ENDL, static_cast<char>(c)) == false)
 			buffer.concat(static_cast<char>(c));
 	}
+	else
+		buffer.concat(static_cast<char>(c));
+
 	for (;;)
 	{
 		c = fgetc(file);
@@ -157,12 +157,17 @@ bool Jupiter::File::load(FILE *file)
 		{
 			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
 			buffer.truncate(buffer.size());
+			c = fgetc(file);
+			if (c == EOF)
+				return true;
+			if (containsSymbol(ENDL, static_cast<char>(c)) == false)
+				buffer.concat(static_cast<char>(c));
 		}
 		else
 			buffer.concat(static_cast<char>(c));
 	}
 
-	return false;
+	return true;
 }
 
 void Jupiter::File::unload()
