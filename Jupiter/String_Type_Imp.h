@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -132,31 +132,93 @@ template<typename T> bool Jupiter::String_Type<T>::remove(const T &value)
 	return false;
 }
 
+// set
+
+template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const T &in)
+{
+	if (index == this->size())
+		return this->concat(in);
+
+	if (index > this->size())
+	{
+		this->setBufferSize(index + 1);
+		while (Jupiter::String_Type<T>::length != index)
+			Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length++] = 0;
+		Jupiter::String_Type<T>::length++;
+	}
+	Jupiter::String_Type<T>::str[index] = in;
+	return Jupiter::String_Type<T>::length;
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const T *in, size_t inSize)
+{
+	if (index == this->size())
+		return this->concat(in);
+
+	if (index > this->size())
+	{
+		this->setBufferSize(index + inSize);
+		while (Jupiter::String_Type<T>::length != index)
+			Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length++] = 0;
+		index = 0;
+		while (index != inSize)
+			Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length++] = in[index];
+	}
+	else
+	{
+		index += inSize;
+		if (index > Jupiter::String_Type<T>::length)
+		{
+			this->setBufferSize(index);
+			Jupiter::String_Type<T>::length = index;
+		}
+		while (inSize != 0)
+			Jupiter::String_Type<T>::str[--index] = in[--inSize];
+	}
+	return Jupiter::String_Type<T>::length;
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const Jupiter::Readable_String<T> &in)
+{
+	return this->set(index, in.ptr(), in.size());
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const std::basic_string<T> &in)
+{
+	return this->set(index, in.c_str(), in.size());
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const T *in)
+{
+	return this->set(index, in, Jupiter::strlen<T>(in));
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::set(const T *in, size_t inSize)
+{
+	this->setBufferSizeNoCopy(inSize);
+	Jupiter::String_Type<T>::length = inSize;
+	while (inSize-- != 0)
+		*Jupiter::String_Type<T>::str++ = *in++;
+	Jupiter::String_Type<T>::str -= Jupiter::String_Type<T>::length;
+	return Jupiter::String_Type<T>::length;
+}
+
 template<typename T> size_t Jupiter::String_Type<T>::set(const Jupiter::Readable_String<T> &in)
 {
-	this->setBufferSizeNoCopy(in.size());
-	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length < in.size() != 0; Jupiter::String_Type<T>::length++)
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
-	return Jupiter::String_Type<T>::length;
+	return this->set(in.ptr(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::set(const std::basic_string<T> &in)
 {
-	this->setBufferSizeNoCopy(in.size());
-	for (Jupiter::String_Type<T>::length = 0; Jupiter::String_Type<T>::length < in.size(); Jupiter::String_Type<T>::length++)
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.at(Jupiter::String_Type<T>::length);
-	return Jupiter::String_Type<T>::length;
+	return this->set(in.c_str(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::set(const T *in)
 {
-	size_t nLen = Jupiter::strlen<T>(in);
-	this->setBufferSizeNoCopy(nLen);
-	for (Jupiter::String_Type<T>::length = 0; *in != 0; Jupiter::String_Type<T>::length++, in++) Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *in;
-	return Jupiter::String_Type<T>::length;
+	return this->set(in, Jupiter::strlen<T>(in));
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::set(const T in)
+template<typename T> size_t Jupiter::String_Type<T>::set(const T &in)
 {
 	this->setBufferSizeNoCopy(1);
 	*Jupiter::String_Type<T>::str = in;
@@ -373,48 +435,30 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Read
 
 // concat
 
+template<typename T> size_t Jupiter::String_Type<T>::concat(const T *in, size_t inSize)
+{
+	this->setBufferSize(Jupiter::String_Type<T>::length + inSize);
+	while (inSize-- != 0)
+		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length++] = *in++;
+	return Jupiter::String_Type<T>::length;
+}
+
 template<typename T> size_t Jupiter::String_Type<T>::concat(const Jupiter::Readable_String<T> &in)
 {
-	size_t nSize = Jupiter::String_Type<T>::length + in.size();
-	const T *inData = in.ptr();
-	this->setBufferSize(nSize);
-	while (Jupiter::String_Type<T>::length != nSize)
-	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *inData;
-		Jupiter::String_Type<T>::length++;
-		inData++;
-	}
-	return Jupiter::String_Type<T>::length;
+	return this->concat(in.ptr(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::concat(const std::basic_string<T> &in)
 {
-	size_t nSize = Jupiter::String_Type<T>::length + in.size();
-	const T *inData = in.data();
-	this->setBufferSize(nSize);
-	while (Jupiter::String_Type<T>::length != nSize)
-	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *inData;
-		Jupiter::String_Type<T>::length++;
-		inData++;
-	}
-	return Jupiter::String_Type<T>::length;
+	return this->concat(in.c_str(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::concat(const T *in)
 {
-	size_t nSize = Jupiter::String_Type<T>::length + Jupiter::strlen<T>(in);
-	this->setBufferSize(nSize);
-	while (*in != 0)
-	{
-		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *in;
-		Jupiter::String_Type<T>::length++;
-		in++;
-	}
-	return Jupiter::String_Type<T>::length;
+	return this->concat(in, Jupiter::strlen<T>(in));
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::concat(const T c)
+template<typename T> size_t Jupiter::String_Type<T>::concat(const T &c)
 {
 	this->setBufferSize(Jupiter::String_Type<T>::length + 1);
 	Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = c;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -103,15 +103,30 @@ namespace Jupiter
 		virtual bool remove(const T &value);
 
 		/**
+		* @brief Sets the value of an element at the specified index.
+		* Note: If the index is not in the string, it will be added.
+		*
+		* @param index Index of element to replace.
+		* @param in Value to set element to.
+		* @return New size of the String.
+		*/
+		virtual size_t set(size_t index, const T &in);
+		virtual size_t set(size_t index, const T *in, size_t inSize);
+		virtual size_t set(size_t index, const Jupiter::Readable_String<T> &in);
+		virtual size_t set(size_t index, const std::basic_string<T> &in);
+		virtual size_t set(size_t index, const T *in);
+		
+		/**
 		* @brief Copies the data from the input string to the String.
 		*
 		* @param in String containing the data to be copied.
 		* @return New size of the String.
 		*/
+		virtual size_t set(const T *in, size_t inSize);
 		virtual size_t set(const Jupiter::Readable_String<T> &in);
 		virtual size_t set(const std::basic_string<T> &in);
 		virtual size_t set(const T *in);
-		virtual size_t set(const T in);
+		virtual size_t set(const T &in);
 
 		/**
 		* @brief Inserts data into a position in the string.
@@ -147,10 +162,11 @@ namespace Jupiter
 		* @param in String containing the data to be concatenated.
 		* @return New size of the String.
 		*/
+		virtual size_t concat(const T *in, size_t inSize);
 		virtual size_t concat(const Jupiter::Readable_String<T> &in);
 		virtual size_t concat(const std::basic_string<T> &in);
 		virtual size_t concat(const T *in);
-		virtual size_t concat(const T in);
+		virtual size_t concat(const T &in);
 
 		/**
 		* @brief Copies a part of an input string and returns it in an output type.
