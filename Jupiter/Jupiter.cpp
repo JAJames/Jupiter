@@ -11,7 +11,7 @@
 extern "C"
 {
 	const char *Jupiter_version = JUPITER_VERSION;
-	const char *Jupiter_copyright = "Copyright (C) 2013-2014 Justin James - All Rights Reserved.";
+	const char *Jupiter_copyright = "Copyright (C) 2013-2015 Justin James - All Rights Reserved.";
 }
 
 const char *Jupiter::version = Jupiter_version;
