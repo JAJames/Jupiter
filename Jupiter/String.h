@@ -143,8 +143,8 @@ namespace Jupiter
 		* @param token Token to scan for.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Strict<T> getToken(size_t pos, const T &token);
-		String_Strict<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token);
+		String_Strict<T> getToken(size_t pos, const T &token) const;
+		String_Strict<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token) const;
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a token.
@@ -183,8 +183,8 @@ namespace Jupiter
 		* @param token Token to scan for.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Strict<T> gotoToken(size_t pos, const T &token);
-		String_Strict<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token);
+		String_Strict<T> gotoToken(size_t pos, const T &token) const;
+		String_Strict<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token) const;
 
 		/**
 		* @brief Creates a partial copy of the string, based on a token.

@@ -176,12 +176,12 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 	return Jupiter::Readable_String<T>::getWord<Jupiter::Reference_String>(in, pos, whitespace);
 }
 
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const T &token)
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const T &token) const
 {
 	return Jupiter::Reference_String<T>::getToken(*this, pos, token);
 }
 
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const Jupiter::Readable_String<T> &token)
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getToken(size_t pos, const Jupiter::Readable_String<T> &token) const
 {
 	return Jupiter::Reference_String<T>::getToken(*this, pos, token);
 }
@@ -211,12 +211,12 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 	return Jupiter::Readable_String<T>::gotoWord<Jupiter::Reference_String>(in, pos, whitespace);
 }
 
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const T &token)
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const T &token) const
 {
 	return Jupiter::Reference_String<T>::gotoToken(*this, pos, token);
 }
 
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const Jupiter::Readable_String<T> &token)
+template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoToken(size_t pos, const Jupiter::Readable_String<T> &token) const
 {
 	return Jupiter::Reference_String<T>::gotoToken(*this, pos, token);
 }
