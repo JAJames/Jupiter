@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -92,5 +92,15 @@ template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSizeNoCopy(siz
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 	return false;
 }
+
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Shift_String_Type>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::Shift_String_Type<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+};
 
 #endif // _SHIFT_STRING_IMP_H_HEADER

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -57,6 +57,10 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(Jupiter::String_St
 {
 }
 
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::String_Strict<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.ptr(), in.size())
+{
+}
+
 template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.ptr(), in.size())
 {
 }
@@ -83,6 +87,10 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const T *in)
 	Jupiter::Shift_String_Type<T>::base = new T[Jupiter::String_Type<T>::length];
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 	for (size_t index = 0; index != Jupiter::String_Type<T>::length; index++, in++) Jupiter::String_Type<T>::str[index] = *in;
+}
+
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::DataBuffer &in) : String_Strict(reinterpret_cast<T *>(in.getHead()), in.size() / sizeof(T))
+{
 }
 
 // vformat()
@@ -268,6 +276,25 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoTo
 
 template<typename T> const Jupiter::String_Strict<T> Jupiter::String_Strict<T>::empty = Jupiter::String_Strict<T>();
 
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Strict>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Strict<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::String_Strict<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::String_Strict<Y> r = Jupiter::String_Strict<Y>(reinterpret_cast<Y *>(head), size_);
+		head += size_;
+		return r;
+	}
+};
+
 /**
 * IMPLEMENTATION:
 *	String_Loose
@@ -340,6 +367,10 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const T *in)
 		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 		for (Jupiter::String_Type<T>::length = 0; *in != 0; Jupiter::String_Type<T>::length++, in++) Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = *in;
 	}
+}
+
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::DataBuffer &in) : String_Loose(reinterpret_cast<T *>(in.getHead()), in.size() / sizeof(T))
+{
 }
 
 template<typename T> bool Jupiter::String_Loose<T>::setBufferSize(size_t len)
@@ -534,5 +565,24 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToke
 }
 
 template<typename T> const Jupiter::String_Loose<T> Jupiter::String_Loose<T>::empty = Jupiter::String_Loose<T>();
+
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Loose>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Loose<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::String_Loose<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::String_Loose<Y> r = Jupiter::String_Loose<Y>(reinterpret_cast<T *>(head), size_);
+		head += size_;
+		return r;
+	}
+};
 
 #endif // _STRING_IMP_H_HEADER

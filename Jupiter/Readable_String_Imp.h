@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -1265,5 +1265,17 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 
 	return R<T>();
 }
+
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::Readable_String<Y> *data)
+	{
+		buffer->secure(sizeof(size_t) + data->size() * sizeof(Y));
+		buffer->push<size_t>(data->size());
+		buffer->push(reinterpret_cast<const uint8_t *>(data->ptr()), data->size() * sizeof(Y));
+	};
+};
 
 #endif // _READABLE_STRING_IMP_H_HEADER

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -221,11 +221,12 @@ namespace Jupiter
 		String_Strict(String_Strict<T> &&source);
 
 		/** Copy Constructors */
-		String_Strict(const String_Strict<T> &in) : String_Strict((Readable_String<T> &)in) {}
+		String_Strict(const String_Strict<T> &in);
 		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
 		String_Strict(const T *in, size_t len);
 		String_Strict(const T *in);
+		String_Strict(const Jupiter::DataBuffer &in);
 
 	protected:
 
@@ -422,6 +423,7 @@ namespace Jupiter
 		String_Loose(const std::basic_string<T> &in);
 		String_Loose(const T *in, size_t len);
 		String_Loose(const T *in);
+		String_Loose(const Jupiter::DataBuffer &in);
 
 		static const Jupiter::String_Loose<T> empty; /** Empty instantation of String_Loose */
 		static const size_t start_size = 8; /** Starting size for loose Strings. */

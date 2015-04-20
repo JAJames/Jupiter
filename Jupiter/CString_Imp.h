@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -375,6 +375,25 @@ template<typename T> size_t Jupiter::CString_Type<T>::concat(const T c)
 
 template<typename T> const Jupiter::CString_Type<T> Jupiter::CString_Type<T>::empty = Jupiter::CString_Type<T>();
 
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::CString_Type>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::CString_Type<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::CString_Type<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::CString_Type<Y> r = Jupiter::CString_Type<Y>(reinterpret_cast<T *>(head), size_);
+		head += size_;
+		return r;
+	}
+};
+
 /**
 * IMPLEMENTATION:
 *	CString_Loose
@@ -560,5 +579,24 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::gotoWo
 }
 
 template<typename T> const Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::empty = Jupiter::CString_Loose<T>();
+
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::CString_Loose>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::CString_Loose<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::CString_Loose<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::CString_Loose<Y> r = Jupiter::CString_Loose<Y>(reinterpret_cast<T *>(head), size_);
+		head += size_;
+		return r;
+	}
+};
 
 #endif // _CSTRING_IMP_H_HEADER

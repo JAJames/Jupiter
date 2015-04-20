@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -212,5 +212,26 @@ template<typename T> void Jupiter::SLList<T>::add(T *data)
 	Jupiter::SLList<T>::head->next = n;
 	Jupiter::List<T>::length++;
 }
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::SLList>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::SLList<Y> *data)
+	{
+		buffer->push<size_t>(data->size());
+		Jupiter::SLList<Y>::Node *head = data->getNode(0);
+		while (head != nullptr)
+			buffer->push<Y>(*head++->data);
+	};
+
+	template<typename Y> static Jupiter::SLList<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::SLList<Y> r;
+		while (size_-- != 0)
+			r.add(Jupiter::DataBuffer::interpret_data<Y>(head));
+		return r;
+	}
+};
 
 #endif // _SLLIST_H_HEADER

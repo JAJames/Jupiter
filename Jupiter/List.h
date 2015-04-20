@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -24,6 +24,7 @@
  */
 
 #include "Jupiter.h"
+#include "DataBuffer.h"
 
 namespace Jupiter
 {
@@ -73,5 +74,15 @@ namespace Jupiter
 		size_t length = 0; /** Length (size) of the list. Returned by size(). Must be managed by extending classes. */
 	};
 }
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::List>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::List<Y> *data)
+	{
+		buffer->push<size_t>(data->size());
+		for (size_t index = 0; index != data->size(); index++)
+			buffer->push<Y>(*data->get(index));
+	};
+};
 
 #endif // _LIST_H_HEADER

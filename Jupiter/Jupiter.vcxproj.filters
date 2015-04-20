@@ -46,6 +46,9 @@
     <Filter Include="Source Files\Object Extensions">
       <UniqueIdentifier>{37b5eaf6-0e4f-4609-8518-1b72f93aebe5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DataBuffer">
+      <UniqueIdentifier>{aef2e303-8a68-4cf9-8464-c4aef776d3f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.c">
@@ -101,6 +104,27 @@
     </ClCompile>
     <ClCompile Include="IRC_Client.cpp">
       <Filter>Source Files\IRC</Filter>
+    </ClCompile>
+    <ClCompile Include="XML.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JSON.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="YAML.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XINI.cpp">
+      <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +238,18 @@
     </ClInclude>
     <ClInclude Include="Reference_String_Imp.h">
       <Filter>Header Files\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Header Files\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBuffer_Imp.h">
+      <Filter>Header Files\DataBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBuffer.h">
+      <Filter>Header Files\DataBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -128,9 +128,9 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList() : ArrayList(Jupiter::Arr
 {
 }
 
-template<typename T> Jupiter::ArrayList<T>::ArrayList(size_t length)
+template<typename T> Jupiter::ArrayList<T>::ArrayList(size_t length_)
 {
-	Jupiter::ArrayList<T>::dataSize = length;
+	Jupiter::ArrayList<T>::dataSize = length_;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
 	Jupiter::List<T>::length = 0;
 }
@@ -185,5 +185,23 @@ template<typename T> void Jupiter::ArrayList<T>::emptyAndDelete()
 	for (size_t i = 0; i < Jupiter::List<T>::length; i++) delete Jupiter::ArrayList<T>::data[i];
 	Jupiter::List<T>::length = 0;
 }
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::ArrayList>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::ArrayList<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::List>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::ArrayList<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::ArrayList<Y> r = Jupiter::ArrayList<Y>(size_);
+		while (size_-- != 0)
+			r.add(Jupiter::DataBuffer::interpret_data<Y>(head));
+		return r;
+	}
+};
 
 #endif // _ARRAYLIST_H_HEADER

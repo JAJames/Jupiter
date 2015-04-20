@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -268,6 +268,11 @@ namespace Jupiter
 		* @brief Copy constructor for the Reference_String class.
 		*/
 		Reference_String(const Jupiter::Reference_String<T> &in);
+
+		/**
+		* @brief Conversion constructor for Jupiter::DataBuffer class.
+		*/
+		Reference_String(const Jupiter::DataBuffer &in);
 
 		static const Jupiter::Reference_String<T> empty; /** Empty instantiation of Reference_String */
 

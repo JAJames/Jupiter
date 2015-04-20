@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -170,6 +170,6 @@ JUPITER_API unsigned int Jupiter_base64decode_s(const char *data, size_t dataLen
 
 #if defined __cplusplus
 }
-#endif
+#endif // __cplusplus
 
 #endif // _BASE64_H_HEADER

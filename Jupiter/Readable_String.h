@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -27,6 +27,7 @@
 #include <cstdio> // FILE
 #include <string> // std::basic_string<T> type
 #include "InvalidIndex.h"
+#include "DataBuffer.h"
 
 namespace Jupiter
 {

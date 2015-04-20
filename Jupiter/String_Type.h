@@ -224,6 +224,7 @@ namespace Jupiter
 		* A copy constructor for std::basic_string<T>.
 		* A copy constructor for C-style strings.
 		* A copy constructor for memory array strings.
+		* A conversion constructor for Jupiter::DataBuffer
 		*/
 
 	protected:

@@ -511,4 +511,14 @@ namespace Jupiter
 	static struct String_Constructor_Base {} stringConstructorBase;
 }
 
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Type<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+};
+
 #endif // _STRING_TYPE_IMP_H_HEADER

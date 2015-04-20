@@ -273,4 +273,28 @@ template<typename T> void Jupiter::DLList<T>::add(T *data)
 	Jupiter::List<T>::length++;
 }
 
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::DLList>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::DLList<Y> *data)
+	{
+		buffer->push<size_t>(data->size());
+		Jupiter::DLList<Y>::Node *head = data->getNode(0);
+		while (head != nullptr)
+		{
+			buffer->push<Y>(*head->data);
+			head++;
+		}
+	};
+
+	template<typename Y> static Jupiter::DLList<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::DLList<Y> r;
+		while (size_-- != 0)
+			r.add(Jupiter::DataBuffer::interpret_data<Y>(head));
+		return r;
+	}
+};
+
 #endif // _DLLIST_H_HEADER

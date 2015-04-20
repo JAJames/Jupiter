@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Justin James.
+ * Copyright (C) 2014-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -62,6 +62,10 @@ template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupite
 }
 
 template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupiter::Reference_String<T> &in) : Reference_String(in.str, in.length)
+{
+}
+
+template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupiter::DataBuffer &in) : Reference_String(reinterpret_cast<T *>(in.getHead()), in.size() / sizeof(T))
 {
 }
 
@@ -232,5 +236,24 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 }
 
 template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_String<T>::empty = Jupiter::Reference_String<T>();
+
+// Jupiter::DataBuffer specialization
+
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Reference_String>
+{
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::Reference_String<Y> *data)
+	{
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	};
+
+	template<typename Y> static Jupiter::Reference_String<Y> interpret(uint8_t *&head)
+	{
+		size_t size_ = *reinterpret_cast<size_t *>(head);
+		head += sizeof(size_t);
+		Jupiter::Reference_String<Y> r = Jupiter::Reference_String<Y>(reinterpret_cast<Y *>(head), size_);
+		head += size_;
+		return r;
+	}
+};
 
 #endif // _REFERENCE_STRING_IMP
