@@ -24,6 +24,7 @@
  */
 
 #include <cstdint>
+#include <cstdio>
 #include "Jupiter.h"
 
 namespace Jupiter
@@ -201,6 +202,8 @@ namespace Jupiter
 
 		DataBuffer();
 		DataBuffer(size_t size);
+		DataBuffer(FILE *file);
+		DataBuffer(FILE *file, size_t size);
 		~DataBuffer();
 
 	private:

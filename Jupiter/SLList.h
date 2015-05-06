@@ -161,12 +161,7 @@ template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getN
 	return t;
 }
 
-template<typename T> T *Jupiter::SLList<T>::get(size_t index)
-{
-	return Jupiter::SLList<T>::getNode(index)->data;
-}
-
-template<typename T> const T *Jupiter::SLList<T>::get(size_t index) const
+template<typename T> T *Jupiter::SLList<T>::get(size_t index) const
 {
 	return Jupiter::SLList<T>::getNode(index)->data;
 }

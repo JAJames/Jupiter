@@ -26,6 +26,46 @@ Jupiter::DataBuffer::DataBuffer(size_t size_)
 	Jupiter::DataBuffer::bufferSize = size_;
 }
 
+Jupiter::DataBuffer::DataBuffer(FILE *file)
+{
+	fread(std::addressof(Jupiter::DataBuffer::bufferSize), sizeof(size_t), 1, file);
+	Jupiter::DataBuffer::base = reinterpret_cast<uint8_t *>(malloc(Jupiter::DataBuffer::bufferSize * sizeof(uint8_t)));
+	Jupiter::DataBuffer::head = Jupiter::DataBuffer::base;
+	Jupiter::DataBuffer::end = Jupiter::DataBuffer::head + Jupiter::DataBuffer::bufferSize;
+	int chr;
+	while (Jupiter::DataBuffer::head != Jupiter::DataBuffer::end)
+	{
+		chr = fgetc(file);
+		if (chr == EOF)
+		{
+			Jupiter::DataBuffer::end = Jupiter::DataBuffer::head + 1;
+			break;
+		}
+		*Jupiter::DataBuffer::head++ = static_cast<uint8_t>(chr);
+	}
+	Jupiter::DataBuffer::head = Jupiter::DataBuffer::base;
+}
+
+Jupiter::DataBuffer::DataBuffer(FILE *file, size_t size_)
+{
+	Jupiter::DataBuffer::bufferSize = size_;
+	Jupiter::DataBuffer::base = reinterpret_cast<uint8_t *>(malloc(Jupiter::DataBuffer::bufferSize * sizeof(uint8_t)));
+	Jupiter::DataBuffer::head = Jupiter::DataBuffer::base;
+	Jupiter::DataBuffer::end = Jupiter::DataBuffer::head + Jupiter::DataBuffer::bufferSize;
+	int chr;
+	while (Jupiter::DataBuffer::head != Jupiter::DataBuffer::end)
+	{
+		chr = fgetc(file);
+		if (chr == EOF)
+		{
+			Jupiter::DataBuffer::end = Jupiter::DataBuffer::head + 1;
+			break;
+		}
+		*Jupiter::DataBuffer::head++ = static_cast<uint8_t>(chr);
+	}
+	Jupiter::DataBuffer::head = Jupiter::DataBuffer::base;
+}
+
 Jupiter::DataBuffer::~DataBuffer()
 {
 	free(Jupiter::DataBuffer::base);
