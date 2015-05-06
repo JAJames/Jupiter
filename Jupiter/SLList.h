@@ -177,7 +177,7 @@ template<typename T> T *Jupiter::SLList<T>::remove(size_t index)
 	return r;
 }
 
-template<typename T> T *Jupiter::SLList<T>::removeNext(Jupiter::SLList<T>::Node *data)
+template<typename T> T *Jupiter::SLList<T>::removeNext(Node *data)
 {
 	Jupiter::SLList<T>::Node *t = data->next;
 	if (t == nullptr) return nullptr;
