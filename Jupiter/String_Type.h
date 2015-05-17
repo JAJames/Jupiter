@@ -103,6 +103,20 @@ namespace Jupiter
 		virtual bool remove(const T &value);
 
 		/**
+		* @brief Removes a number of elements starting at an index.
+		*
+		* @param index Index to start removing elements at.
+		* @param length Number of elements to remove.
+		*/
+		virtual void remove(size_t index, size_t length);
+
+		/**
+		* @brief Processes escape sequences in a string.
+		* Source reference: http://en.cppreference.com/w/cpp/language/escape
+		*/
+		virtual void processEscapeSequences();
+
+		/**
 		* @brief Sets the value of an element at the specified index.
 		* Note: If the index is not in the string, it will be added.
 		*
@@ -136,6 +150,18 @@ namespace Jupiter
 		*/
 		virtual size_t insert(size_t index, const T &value);
 		virtual size_t insert(size_t index, const Jupiter::Readable_String<T> &value);
+
+		/**
+		* @brief Replaces data at an index with a specified value.
+		*
+		* @param index Index to start replacing at.
+		* @param length Number of elements to replace.
+		* @param value Value to write over the elements.
+		* @return New size of the string.
+		*/
+		virtual size_t replace(size_t index, size_t length, const T &value);
+		virtual size_t replace(size_t index, size_t length, const T *value, size_t valueSize);
+		virtual size_t replace(size_t index, size_t length, const Jupiter::Readable_String<T> &value);
 
 		/**
 		* @brief Replaces all instances of one value with another value.

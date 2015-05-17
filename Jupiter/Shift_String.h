@@ -60,7 +60,15 @@ namespace Jupiter
 		* @param value Value of the element to remove.
 		* @return True if an element was removed, false otherwise.
 		*/
-		virtual bool remove(const T &value);
+		virtual bool remove(const T &value) override;
+
+		/**
+		* @brief Removes a number of elements starting at an index.
+		*
+		* @param index Index to start removing elements at.
+		* @param length Number of elements to remove.
+		*/
+		virtual void remove(size_t index, size_t length) override;
 
 		/**
 		* @brief Default constructor for the Shift_String_Type class.
