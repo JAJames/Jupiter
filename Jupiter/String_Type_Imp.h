@@ -164,7 +164,6 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 	size_t index = 0;
 	while (index + 1 != Jupiter::String_Type<char>::length)
 	{
-		printf("Processing: %c (%u) @ %u" ENDL, this->get(index), this->get(index), index);
 		if (this->get(index) == '\\')
 		{
 			switch (this->get(++index))
