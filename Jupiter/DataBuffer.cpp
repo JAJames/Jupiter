@@ -74,13 +74,73 @@ Jupiter::DataBuffer::~DataBuffer()
 void Jupiter::DataBuffer::push(const uint8_t *data, size_t size_)
 {
 	Jupiter::DataBuffer::secure(size_);
-	fputs("Pushing: \"", stdout);
+	while (size_-- != 0)
+		*Jupiter::DataBuffer::end++ = *data++;
+}
+
+void Jupiter::DataBuffer::peek_from(FILE *file)
+{
+	fpos_t pos;
+	fgetpos(file, &pos);
+	Jupiter::DataBuffer::pop_from(file);
+	fsetpos(file, &pos);
+}
+
+void Jupiter::DataBuffer::peek_from(FILE *file, size_t size_)
+{
+	fpos_t pos;
+	fgetpos(file, &pos);
+	Jupiter::DataBuffer::pop_from(file, size_);
+	fsetpos(file, &pos);
+}
+
+void Jupiter::DataBuffer::pop_from(FILE *file)
+{
+	size_t size_;
+	fread(&size_, sizeof(size_t), 1, file);
+	Jupiter::DataBuffer::pop_from(file, size_);
+}
+
+void Jupiter::DataBuffer::pop_from(FILE *file, size_t size_)
+{
+	Jupiter::DataBuffer::secure(size_);
+	int chr;
 	while (size_-- != 0)
 	{
-		fputc(*data, stdout);
-		*Jupiter::DataBuffer::end++ = *data++;
+		chr = fgetc(file);
+		if (chr == EOF)
+			break;
+		*Jupiter::DataBuffer::end++ = static_cast<uint8_t>(chr);
 	}
-	puts("\"");
+}
+
+void Jupiter::DataBuffer::copy_to(FILE *file)
+{
+	fwrite(std::addressof<const size_t>(Jupiter::DataBuffer::size()), sizeof(size_t), 1, file);
+	Jupiter::DataBuffer::copy_to(file, Jupiter::DataBuffer::size());
+}
+
+void Jupiter::DataBuffer::copy_to(FILE *file, size_t size_)
+{
+	fwrite(Jupiter::DataBuffer::head, sizeof(uint8_t), size_, file);
+}
+
+void Jupiter::DataBuffer::copy_to(FILE *file, size_t index, size_t size_)
+{
+	fwrite(Jupiter::DataBuffer::head + index, sizeof(uint8_t), size_, file);
+}
+
+void Jupiter::DataBuffer::push_to(FILE *file)
+{
+	Jupiter::DataBuffer::copy_to(file);
+	Jupiter::DataBuffer::head = Jupiter::DataBuffer::base;
+	Jupiter::DataBuffer::end = Jupiter::DataBuffer::head;
+}
+
+void Jupiter::DataBuffer::push_to(FILE *file, size_t size_)
+{
+	Jupiter::DataBuffer::copy_to(file, size_);
+	Jupiter::DataBuffer::head += size_;
 }
 
 size_t Jupiter::DataBuffer::shrink()

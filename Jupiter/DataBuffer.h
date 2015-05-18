@@ -142,6 +142,54 @@ namespace Jupiter
 		void push(const uint8_t *data, size_t size);
 
 		/**
+		* @brief Peeks a DataBuffer from a file, and appends it to the buffer.
+		*
+		* @param file FILE to peek from
+		*/
+		void peek_from(FILE *file);
+
+		/**
+		* @brief Peeks data from a file, and pushes it to the buffer.
+		*
+		* @param file FILE to peek from
+		* @param size Number of octets to peek
+		*/
+		void peek_from(FILE *file, size_t size);
+
+		/**
+		* @brief Pops a DataBuffer from a file, and appends it to the buffer.
+		*
+		* @param file FILE to pop from
+		*/
+		void pop_from(FILE *file);
+
+		/**
+		* @brief Pops data from a file, and pushes it to the buffer.
+		*
+		* @param file FILE to pop from
+		* @param size Number of octets to pop
+		*/
+		void pop_from(FILE *file, size_t size);
+
+		/**
+		* @brief Copies the buffer to a file.
+		*
+		* @param file FILE to copy to
+		*/
+		void copy_to(FILE *file);
+
+		/**
+		* @brief Copies data from the buffer to a file.
+		*
+		* @param file FILE to copy to
+		* @param size Number of octets to copy
+		*/
+		void copy_to(FILE *file, size_t size);
+		void copy_to(FILE *file, size_t index, size_t size);
+		void push_to(FILE *file);
+		void push_to(FILE *file, size_t size);
+
+		/**
 		* @brief Shrinks the buffer to the smallest possible size.
 		*
 		* @return New size of the buffer in octets.
