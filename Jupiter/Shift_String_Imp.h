@@ -64,12 +64,12 @@ template<typename T> bool Jupiter::Shift_String_Type<T>::remove(const T &value)
 	return Jupiter::String_Type<T>::remove(value);
 }
 
-template<typename T> void Jupiter::Shift_String_Type<T>::remove(size_t index, size_t length)
+template<typename T> void Jupiter::Shift_String_Type<T>::remove(size_t index, size_t len)
 {
 	if (index == 0)
-		this->shiftRight(length);
+		this->shiftRight(len);
 	else
-		Jupiter::String_Type<T>::remove(index, length);
+		Jupiter::String_Type<T>::remove(index, len);
 }
 
 template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSize(size_t len)

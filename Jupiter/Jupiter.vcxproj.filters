@@ -261,10 +261,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\static\libeay32MD.lib">
+    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\libeay32MD.lib">
       <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\static\ssleay32MD.lib">
+    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\ssleay32MD.lib">
       <Filter>Resource Files</Filter>
     </Library>
   </ItemGroup>

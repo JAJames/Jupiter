@@ -234,6 +234,13 @@ namespace Jupiter
 		static Reference_String<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
 		static Reference_String<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
+		/** Mutative operators */
+		inline Readable_String<T> &operator-=(size_t right) { this->truncate(right); return *this; };
+		inline Readable_String<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
+		inline Readable_String<T> &operator=(const Reference_String<T> &right) { this->set(right); return *this; };
+		inline Readable_String<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
+		inline Readable_String<T> &operator=(const T *right) { this->set(right); return *this; };
+
 		/**
 		* @brief Default constructor for the Reference_String class.
 		*/

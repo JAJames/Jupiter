@@ -123,11 +123,8 @@ namespace Jupiter
 		void set_auto_create(bool auto_create);
 
 	private:
-		bool process_file();
-		static bool create_database(FILE *file, Jupiter::DataBuffer *header);
-
-		bool auto_create = true;
-		Jupiter::CStringS file_name;
+		struct Data;
+		Data *data_;
 	};
 }
 

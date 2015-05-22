@@ -27,6 +27,12 @@
 #include <cstdarg> // va_list
 #include "Readable_String.h"
 
+/** Disable warning 4458 */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'length' hides class member
+#endif
+
 namespace Jupiter
 {
 
@@ -284,6 +290,11 @@ namespace Jupiter
 	typedef String_Type<wchar_t> WStringType;
 
 }
+
+/** Re-enable warning */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 /** Implementation for String_Type. */
 #include "String_Type_Imp.h"

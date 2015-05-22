@@ -27,6 +27,12 @@
 
 #include "Shift_String.h"
 
+/** Disable warning 4458 */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'length' hides class member
+#endif
+
 namespace Jupiter
 {
 
@@ -484,6 +490,11 @@ namespace Jupiter
 	static const Jupiter::StringL &emptyStringL = Jupiter::StringL::empty;
 	//static const Jupiter::StringType &emptyString = emptyStringS;
 }
+
+/** Re-enable warning */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 /** Implementation for String_Strict and String_Loose. Very scary. */
 #include "String_Imp.h"

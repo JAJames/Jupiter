@@ -8,6 +8,15 @@
 
 #include "Database.h"
 
+struct Jupiter::Database::Data
+{
+	static bool process_file(Jupiter::Database *db);
+	static bool create_database(FILE *file, Jupiter::DataBuffer *header);
+
+	bool auto_create = true;
+	Jupiter::CStringS file_name;
+};
+
 void Jupiter::Database::process_header(FILE *)
 {
 }
@@ -18,39 +27,39 @@ void Jupiter::Database::create_header(FILE *)
 
 bool Jupiter::Database::process_file(Jupiter::ReadableString &file)
 {
-	Jupiter::Database::file_name = file;
-	return Jupiter::Database::process_file();
+	Jupiter::Database::data_->file_name = file;
+	return Jupiter::Database::Data::process_file(this);
 }
 
 bool Jupiter::Database::process_file(Jupiter::CStringType &file)
 {
-	Jupiter::Database::file_name = file;
-	return Jupiter::Database::process_file();
+	Jupiter::Database::data_->file_name = file;
+	return Jupiter::Database::Data::process_file(this);
 }
 
 bool Jupiter::Database::process_file(const char *file)
 {
-	Jupiter::Database::file_name = file;
-	return Jupiter::Database::process_file();
+	Jupiter::Database::data_->file_name = file;
+	return Jupiter::Database::Data::process_file(this);
 }
 
-bool Jupiter::Database::process_file()
+bool Jupiter::Database::Data::process_file(Jupiter::Database *db)
 {
-	FILE *file = fopen(Jupiter::Database::file_name.c_str(), "rb");
+	FILE *file = fopen(db->data_->file_name.c_str(), "rb");
 	if (file == nullptr)
 	{
-		if (Jupiter::Database::auto_create)
+		if (db->data_->auto_create)
 		{
-			file = fopen(Jupiter::Database::file_name.c_str(), "wb");
+			file = fopen(db->data_->file_name.c_str(), "wb");
 			if (file != nullptr)
 			{
-				this->create_header(file);
+				db->create_header(file);
 				return true;
 			}
 		}
 		return false;
 	}
-	bool r = Jupiter::Database::process_file(file);
+	bool r = db->process_file(file);
 	fclose(file);
 	return r;
 }
@@ -85,7 +94,7 @@ void Jupiter::Database::process_file_finish(FILE *)
 
 bool Jupiter::Database::append(Jupiter::DataBuffer &data)
 {
-	return Jupiter::Database::append(Jupiter::Database::file_name, data);
+	return Jupiter::Database::append(Jupiter::Database::data_->file_name, data);
 }
 
 bool Jupiter::Database::append(Jupiter::ReadableString &file, Jupiter::DataBuffer &data)
@@ -145,10 +154,10 @@ bool Jupiter::Database::create_database(const char *file, Jupiter::DataBuffer *h
 	FILE *f = fopen(file, "wb");
 	if (file == nullptr)
 		return false;
-	return Jupiter::Database::create_database(f, header);
+	return Jupiter::Database::Data::create_database(f, header);
 }
 
-bool Jupiter::Database::create_database(FILE *file, Jupiter::DataBuffer *header)
+bool Jupiter::Database::Data::create_database(FILE *file, Jupiter::DataBuffer *header)
 {
 	if (header != nullptr)
 		fwrite(header->getHead(), sizeof(uint8_t), header->size(), file);
@@ -158,10 +167,10 @@ bool Jupiter::Database::create_database(FILE *file, Jupiter::DataBuffer *header)
 
 bool Jupiter::Database::is_auto_create()
 {
-	return Jupiter::Database::auto_create;
+	return Jupiter::Database::data_->auto_create;
 }
 
-void Jupiter::Database::set_auto_create(bool auto_create_)
+void Jupiter::Database::set_auto_create(bool in)
 {
-	Jupiter::Database::auto_create = auto_create_;
+	Jupiter::Database::data_->auto_create = in;
 }

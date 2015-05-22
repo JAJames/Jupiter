@@ -27,6 +27,12 @@
 
 #include "Shift_String.h"
 
+/** Disable warning 4458 */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'length' hides class member
+#endif
+
 namespace Jupiter
 {
 	/**
@@ -448,6 +454,11 @@ namespace Jupiter
 	static const Jupiter::CStringL &emptyCStringL = Jupiter::CStringL::empty;
 	static const Jupiter::CStringType &emptyCString = emptyCStringS;
 }
+
+/** Re-enable warning */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 /** Implementation for CString_Type and CString_Loose. Very scary. */
 #include "CString_Imp.h"

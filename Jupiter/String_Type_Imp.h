@@ -59,10 +59,11 @@ template<typename T> const T *Jupiter::String_Type<T>::ptr() const
 
 template<typename T> size_t Jupiter::String_Type<T>::format(const std::basic_string<T> &format, ...)
 {
+	const char *ptr = format.c_str();
 	size_t r;
 	va_list args;
-	va_start(args, format);
-	r = this->vformat(format.c_str(), args);
+	va_start(args, ptr);
+	r = this->vformat(ptr, args);
 	va_end(args);
 	return r;
 }
@@ -81,10 +82,11 @@ template<typename T> size_t Jupiter::String_Type<T>::format(const T *format, ...
 
 template<typename T> size_t Jupiter::String_Type<T>::aformat(const std::basic_string<T> &format, ...)
 {
+	const char *ptr = format.c_str();
 	size_t r;
 	va_list args;
-	va_start(args, format);
-	r = this->avformat(format.c_str(), args);
+	va_start(args, ptr);
+	r = this->avformat(ptr, args);
 	va_end(args);
 	return r;
 }
@@ -132,21 +134,21 @@ template<typename T> bool Jupiter::String_Type<T>::remove(const T &value)
 	return false;
 }
 
-template<typename T> void Jupiter::String_Type<T>::remove(size_t index, size_t length)
+template<typename T> void Jupiter::String_Type<T>::remove(size_t index, size_t len)
 {
 	if (index >= Jupiter::String_Type<T>::length)
 		return;
 
-	if (index + length >= Jupiter::String_Type<T>::length)
+	if (index + len >= Jupiter::String_Type<T>::length)
 		Jupiter::String_Type<T>::length = index;
 	else
 	{
-		Jupiter::String_Type<T>::length -= length;
-		length += index;
+		Jupiter::String_Type<T>::length -= len;
+		len += index;
 
-		Jupiter::String_Type<T>::str[index] = Jupiter::String_Type<T>::str[length];
+		Jupiter::String_Type<T>::str[index] = Jupiter::String_Type<T>::str[len];
 		while (++index != Jupiter::String_Type<T>::length)
-			Jupiter::String_Type<T>::str[index] = Jupiter::String_Type<T>::str[++length];
+			Jupiter::String_Type<T>::str[index] = Jupiter::String_Type<T>::str[++len];
 	}
 }
 

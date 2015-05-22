@@ -141,12 +141,6 @@ bool Jupiter_isBase64_s(const char *in, size_t inLen)
 	return true;
 }
 
-/** Disable warning 4244 */
-#if defined _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4244) // conversion from 'size_t' to 'unsigned char', possible loss of data
-#endif
-
 unsigned int Jupiter_base64decode(const char *in, unsigned char *out)
 {
 	unsigned char *outOrig = out;
@@ -172,9 +166,9 @@ unsigned int Jupiter_base64decode(const char *in, unsigned char *out)
 			/* If the buffer is full, split it into bytes */
 			if (buf & 0x1000000)
 			{
-				*out++ = buf >> 16;
-				*out++ = buf >> 8;
-				*out++ = buf;
+				*out++ = (unsigned char) (buf >> 16);
+				*out++ = (unsigned char) (buf >> 8);
+				*out++ = (unsigned char) buf;
 				buf = 1;
 			}
 			break;
@@ -184,10 +178,10 @@ endLoop:
 
 	if (buf & 0x40000)
 	{
-		*out++ = buf >> 10;
-		*out++ = buf >> 2;
+		*out++ = (unsigned char) (buf >> 10);
+		*out++ = (unsigned char) (buf >> 2);
 	}
-	else if (buf & 0x1000) *out++ = buf >> 4;
+	else if (buf & 0x1000) *out++ = (unsigned char) (buf >> 4);
 
 	return out - outOrig;
 }
@@ -218,9 +212,9 @@ unsigned int Jupiter_base64decode_s(const char *in, size_t inLen, unsigned char 
 			/* If the buffer is full, split it into bytes */
 			if (buf & 0x1000000)
 			{
-				*out++ = buf >> 16;
-				*out++ = buf >> 8;
-				*out++ = buf;
+				*out++ = (unsigned char) (buf >> 16);
+				*out++ = (unsigned char) (buf >> 8);
+				*out++ = (unsigned char) buf;
 				buf = 1;
 			}
 			break;
@@ -229,15 +223,11 @@ unsigned int Jupiter_base64decode_s(const char *in, size_t inLen, unsigned char 
 
 	if (buf & 0x40000)
 	{
-		*out++ = buf >> 10;
-		*out++ = buf >> 2;
+		*out++ = (unsigned char) (buf >> 10);
+		*out++ = (unsigned char) (buf >> 2);
 	}
-	else if (buf & 0x1000) *out++ = buf >> 4;
+	else if (buf & 0x1000)
+		*out++ = (unsigned char) (buf >> 4);
 
 	return out - outOrig;
 }
-
-/** Re-enable warning */
-#if defined _MSC_VER
-#pragma warning(pop)
-#endif

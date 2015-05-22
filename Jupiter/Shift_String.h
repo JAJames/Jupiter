@@ -25,6 +25,12 @@
 
 #include "String_Type.h"
 
+/** Disable warning 4458 */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4458) // declaration of 'length' hides class member
+#endif
+
 namespace Jupiter
 {
 
@@ -108,6 +114,11 @@ namespace Jupiter
 		T *base; /** Base pointer for the underlying String's memory allocation */
 	};
 }
+
+/** Re-enable warning */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 #include "Shift_String_Imp.h"
 
