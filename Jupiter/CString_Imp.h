@@ -146,7 +146,7 @@ template<> size_t inline Jupiter::CString_Type<char>::vformat(const char *format
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSizeNoCopy(minLen);
 	Jupiter::String_Type<char>::length = minLen;
-	vsnprintf(Jupiter::String_Type<char>::str, Jupiter::String_Type<char>::length, format, args);
+	vsnprintf(Jupiter::String_Type<char>::str, Jupiter::String_Type<char>::length + 1, format, args);
 	Jupiter::String_Type<char>::str[Jupiter::String_Type<char>::length] = 0;
 	return Jupiter::String_Type<char>::length;
 }
@@ -183,7 +183,7 @@ template<> size_t inline Jupiter::CString_Type<char>::avformat(const char *forma
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSize(Jupiter::String_Type<char>::length + minLen);
 
-	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length, minLen, format, args);
+	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length, minLen + 1, format, args);
 	if (minLen <= 0) return 0;
 	Jupiter::String_Type<char>::length += minLen;
 	Jupiter::String_Type<char>::str[Jupiter::String_Type<char>::length] = 0;
