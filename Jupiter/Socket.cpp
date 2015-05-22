@@ -148,17 +148,17 @@ int Jupiter::Socket::getProtocol() const
 	return Jupiter::Socket::data_->sockProto;
 }
 
-bool Jupiter::Socket::connectToHost(addrinfo *info)
+bool Jupiter::Socket::connect(addrinfo *info)
 {
 #if defined _WIN32
 	if (!socketInit && !Jupiter::Socket::init()) return false;
 #endif // _WIN32
 	Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-	if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || (Jupiter::Socket::data_->sockType != SOCK_RAW && Jupiter::Socket::data_->sockProto != IPPROTO_RAW && connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)) return false;
+	if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || (Jupiter::Socket::data_->sockType != SOCK_RAW && Jupiter::Socket::data_->sockProto != IPPROTO_RAW && ::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)) return false;
 	return true;
 }
 
-bool Jupiter::Socket::connectToHost(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)
+bool Jupiter::Socket::connect(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)
 {
 #if defined _WIN32
 	if (!socketInit && !Jupiter::Socket::init()) return false;
@@ -180,8 +180,8 @@ bool Jupiter::Socket::connectToHost(const char *hostname, unsigned short iPort, 
 		sockaddr *asock = ainfo->ai_addr;
 		Jupiter::Socket::data_->rawSock = socket(ainfo->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
 		if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET) continue;
-		if (clientAddress != nullptr) this->bindToPort(clientAddress, clientPort, false);
-		if (connect(Jupiter::Socket::data_->rawSock, asock, ainfo->ai_addrlen) == SOCKET_ERROR)
+		if (clientAddress != nullptr) this->bind(clientAddress, clientPort, false);
+		if (::connect(Jupiter::Socket::data_->rawSock, asock, ainfo->ai_addrlen) == SOCKET_ERROR)
 		{
 			i++;
 			continue;
@@ -192,7 +192,7 @@ bool Jupiter::Socket::connectToHost(const char *hostname, unsigned short iPort, 
 	return false;
 }
 
-bool Jupiter::Socket::bindToPort(const char *hostname, unsigned short iPort, bool andListen)
+bool Jupiter::Socket::bind(const char *hostname, unsigned short iPort, bool andListen)
 {
 #if defined _WIN32
 	if (!socketInit && !Jupiter::Socket::init()) return false;
@@ -212,7 +212,7 @@ bool Jupiter::Socket::bindToPort(const char *hostname, unsigned short iPort, boo
 			return false;
 		}
 		Jupiter::Socket::data_->rawSock = socket(ainfo->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-		if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || bind(Jupiter::Socket::data_->rawSock, ainfo->ai_addr, ainfo->ai_addrlen) == SOCKET_ERROR)
+		if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || ::bind(Jupiter::Socket::data_->rawSock, ainfo->ai_addr, ainfo->ai_addrlen) == SOCKET_ERROR)
 		{
 			i++;
 			continue;

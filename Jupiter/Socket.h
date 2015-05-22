@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -215,7 +215,7 @@ namespace Jupiter
 		* @param info addrinfo containing the information required to initialize the socket and attempt a connection.
 		* @return True on success, false otherwise.
 		*/
-		virtual bool connectToHost(addrinfo *info);
+		virtual bool connect(addrinfo *info);
 
 		/**
 		* @brief Interface to provide simple connection establishing.
@@ -226,7 +226,7 @@ namespace Jupiter
 		* @param clientPort Optional parameter to specify the port for socket to bind to.
 		* @return True on success, false otherwise.
 		*/
-		virtual bool connectToHost(const char *hostname, unsigned short iPort, const char *clientHostname = nullptr, unsigned short clientPort = 0);
+		virtual bool connect(const char *hostname, unsigned short iPort, const char *clientHostname = nullptr, unsigned short clientPort = 0);
 
 		/**
 		* @brief Interface to provide simple binding to ports.
@@ -236,7 +236,7 @@ namespace Jupiter
 		* @param andListen True if listen() should be called, false otherwise.
 		* @return True on success, false otherwise.
 		*/
-		virtual bool bindToPort(const char *hostname, unsigned short iPort, bool andListen = true);
+		virtual bool bind(const char *hostname, unsigned short iPort, bool andListen = true);
 
 		/**
 		* @brief Accepts an incoming connection for the port bound to.

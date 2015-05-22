@@ -81,9 +81,9 @@ Jupiter::SecureSocket *Jupiter::SecureSocket::accept()
 	return nullptr;
 }
 
-bool Jupiter::SecureSocket::bindToPort(const char *hostname, unsigned short iPort, bool andListen)
+bool Jupiter::SecureSocket::bind(const char *hostname, unsigned short iPort, bool andListen)
 {
-	return Jupiter::Socket::bindToPort(hostname, iPort, andListen);
+	return Jupiter::Socket::bind(hostname, iPort, andListen);
 }
 
 void Jupiter::SecureSocket::closeSocket()
@@ -165,9 +165,9 @@ void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &pem)
 	Jupiter::SecureSocket::setCertificate(pem, pem);
 }
 
-bool Jupiter::SecureSocket::connectToHost(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)
+bool Jupiter::SecureSocket::connect(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)
 {
-	return Jupiter::Socket::connectToHost(hostname, iPort, clientAddress, clientPort) && this->initSSL();
+	return Jupiter::Socket::connect(hostname, iPort, clientAddress, clientPort) && this->initSSL();
 }
 
 int Jupiter::SecureSocket::peek()

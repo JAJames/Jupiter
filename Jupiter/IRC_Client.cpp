@@ -1269,7 +1269,7 @@ int Jupiter::IRC::Client::primaryHandler()
 bool Jupiter::IRC::Client::connect()
 {
 	const Jupiter::ReadableString &clientAddress = Jupiter::IRC::Client::readConfigValue(STRING_LITERAL_AS_REFERENCE("ClientAddress"));
-	if (Jupiter::IRC::Client::data_->sock->connectToHost(Jupiter::IRC::Client::data_->serverHostname.c_str(), Jupiter::IRC::Client::data_->serverPort, clientAddress.size() == 0 ? nullptr : Jupiter::CStringS(clientAddress).c_str(), (unsigned short)Jupiter::IRC::Client::readConfigLong(STRING_LITERAL_AS_REFERENCE("ClientPort"))) == false)
+	if (Jupiter::IRC::Client::data_->sock->connect(Jupiter::IRC::Client::data_->serverHostname.c_str(), Jupiter::IRC::Client::data_->serverPort, clientAddress.size() == 0 ? nullptr : Jupiter::CStringS(clientAddress).c_str(), (unsigned short)Jupiter::IRC::Client::readConfigLong(STRING_LITERAL_AS_REFERENCE("ClientPort"))) == false)
 		return false;
 
 	Jupiter::IRC::Client::data_->sock->setBlocking(false);
