@@ -35,7 +35,11 @@ namespace Jupiter
 	class JUPITER_API UDPSocket : public Socket
 	{
 	public:
+		UDPSocket &UDPSocket::operator=(UDPSocket &&source);
 		UDPSocket();
+		UDPSocket(const UDPSocket &) = delete;
+		UDPSocket(size_t bufferSize);
+		UDPSocket(Jupiter::Socket &&source);
 	};
 
 }

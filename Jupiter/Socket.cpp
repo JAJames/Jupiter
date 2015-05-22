@@ -79,6 +79,13 @@ Jupiter::Socket::Data::~Data()
 	if (Jupiter::Socket::Data::buff != nullptr) delete[] Jupiter::Socket::Data::buff;
 }
 
+Jupiter::Socket &Jupiter::Socket::operator=(Jupiter::Socket &&source)
+{
+	Jupiter::Socket::data_ = source.data_;
+	source.data_ = nullptr;
+	return *this;
+}
+
 Jupiter::Socket::Socket() : Jupiter::Socket::Socket(4096)
 {
 }

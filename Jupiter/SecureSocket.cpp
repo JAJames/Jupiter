@@ -33,6 +33,14 @@ Jupiter::SecureSocket::SSLData::~SSLData()
 	if (Jupiter::SecureSocket::SSLData::context != nullptr) SSL_CTX_free(Jupiter::SecureSocket::SSLData::context);
 }
 
+Jupiter::SecureSocket &Jupiter::SecureSocket::operator=(Jupiter::SecureSocket &&source)
+{
+	Jupiter::Socket::operator=(std::move(source));
+	Jupiter::SecureSocket::SSLdata_ = source.SSLdata_;
+	source.SSLdata_ = nullptr;
+	return *this;
+}
+
 Jupiter::SecureSocket::SecureSocket() : Jupiter::Socket()
 {
 	Jupiter::SecureSocket::SSLdata_ = new Jupiter::SecureSocket::SSLData();

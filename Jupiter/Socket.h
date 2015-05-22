@@ -498,6 +498,14 @@ namespace Jupiter
 		static bool cleanup();
 
 		/**
+		* @brief Move assignment operator for the Socket class
+		*
+		* @param source Socket to move data from
+		* @return Reference to this socket.
+		*/
+		Socket &Socket::operator=(Socket &&source);
+
+		/**
 		* @brief Default constructor for the Socket class.
 		* This constructor will set the buffer size to 4096 chars.
 		*/

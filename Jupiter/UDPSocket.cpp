@@ -15,8 +15,31 @@
 #include <netinet/in.h>
 #endif // _WIN32
 
-Jupiter::UDPSocket::UDPSocket()
+void setSocketUDP(Jupiter::Socket *sock)
 {
-	this->setType(SOCK_DGRAM);
-	this->setProtocol(IPPROTO_UDP);
+	sock->setType(SOCK_DGRAM);
+	sock->setProtocol(IPPROTO_UDP);
+}
+
+/** UDPSocket Implementation */
+
+Jupiter::UDPSocket &Jupiter::UDPSocket::operator=(Jupiter::UDPSocket &&source)
+{
+	Jupiter::Socket::operator=(std::move(source));
+	return *this;
+}
+
+Jupiter::UDPSocket::UDPSocket() : Socket()
+{
+	setSocketUDP(this);
+}
+
+Jupiter::UDPSocket::UDPSocket(size_t bufferSize) : Socket(bufferSize)
+{
+	setSocketUDP(this);
+}
+
+Jupiter::UDPSocket::UDPSocket(Jupiter::Socket &&source) : Socket(std::move(source))
+{
+	setSocketUDP(this);
 }

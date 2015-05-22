@@ -36,6 +36,7 @@ namespace Jupiter
 	class JUPITER_API TCPSocket : public Socket
 	{
 	public:
+		TCPSocket &TCPSocket::operator=(TCPSocket &&source);
 		TCPSocket();
 		TCPSocket(const TCPSocket &) = delete;
 		TCPSocket(size_t bufferSize);
@@ -49,6 +50,7 @@ namespace Jupiter
 	class JUPITER_API SecureTCPSocket : public SecureSocket
 	{
 	public:
+		SecureTCPSocket &SecureTCPSocket::operator=(SecureTCPSocket &&source);
 		SecureTCPSocket();
 		SecureTCPSocket(const SecureTCPSocket &) = delete;
 		SecureTCPSocket(size_t bufferSize);

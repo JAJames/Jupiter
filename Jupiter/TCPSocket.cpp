@@ -24,6 +24,12 @@ void setSocketTCP(Jupiter::Socket *sock)
 
 /** TCPSocket Implementation */
 
+Jupiter::TCPSocket &Jupiter::TCPSocket::operator=(Jupiter::TCPSocket &&source)
+{
+	Jupiter::Socket::operator=(std::move(source));
+	return *this;
+}
+
 Jupiter::TCPSocket::TCPSocket() : Socket()
 {
 	setSocketTCP(this);
@@ -40,6 +46,12 @@ Jupiter::TCPSocket::TCPSocket(Jupiter::Socket &&source) : Socket(std::move(sourc
 }
 
 /** SecureTCPSocket Implementation */
+
+Jupiter::SecureTCPSocket &Jupiter::SecureTCPSocket::operator=(Jupiter::SecureTCPSocket &&source)
+{
+	Jupiter::SecureSocket::operator=(std::move(source));
+	return *this;
+}
 
 Jupiter::SecureTCPSocket::SecureTCPSocket() : SecureSocket()
 {

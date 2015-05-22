@@ -157,6 +157,14 @@ namespace Jupiter
 		bool initSSL();
 
 		/**
+		* @brief Move assignment operator for the Socket class
+		*
+		* @param source Socket to move data from
+		* @return Reference to this socket.
+		*/
+		SecureSocket &SecureSocket::operator=(SecureSocket &&source);
+
+		/**
 		* @brief Default constructor for the SecureSocket class.
 		* This constructor will set the buffer size to 4096 chars.
 		*/
