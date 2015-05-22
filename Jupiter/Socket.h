@@ -243,7 +243,7 @@ namespace Jupiter
 		*
 		* @return A valid Socket on success, nullptr otherwise.
 		*/
-		virtual Socket *acceptConnection();
+		virtual Socket *accept();
 
 		/**
 		* @brief Sets the timeout for recv() in milliseconds.

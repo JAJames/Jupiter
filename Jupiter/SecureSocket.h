@@ -96,7 +96,7 @@ namespace Jupiter
 		* @param Address for client to bind to.
 		* @return True on success, false otherwise.
 		*/
-		virtual bool connectToHost(const char *hostname, unsigned short iPort, const char *clientAddress = nullptr, unsigned short clientPort = 0);
+		virtual bool connectToHost(const char *hostname, unsigned short iPort, const char *clientAddress = nullptr, unsigned short clientPort = 0) override;
 
 		/**
 		* @brief Interface to provide simple binding to ports.
@@ -106,19 +106,19 @@ namespace Jupiter
 		* @param andListen True if listen() should be called, false otherwise.
 		* @return True on success, false otherwise.
 		*/
-		virtual bool bindToPort(const char *hostname, unsigned short iPort, bool andListen = true);
+		virtual bool bindToPort(const char *hostname, unsigned short iPort, bool andListen = true) override;
 
 		/**
 		* @brief Accepts an incoming connection for the port bound to.
 		*
 		* @return A valid SecureSocket on success, nullptr otherwise.
 		*/
-		virtual SecureSocket *acceptConnection();
+		virtual SecureSocket *accept() override;
 
 		/**
 		* @brief Closes the socket.
 		*/
-		virtual void closeSocket();
+		virtual void closeSocket() override;
 
 		/**
 		* @brief Writes new data from the socket to the buffer, without removing it from the socket queue.
@@ -127,7 +127,7 @@ namespace Jupiter
 		* @return Number of bytes received on success, less than or equal to 0 otherwise.
 		* Note: Refer to SSL_read() for detailed return values.
 		*/
-		virtual int peek();
+		virtual int peek() override;
 
 		/**
 		* @brief Writes new data from the socket to the buffer.
@@ -136,7 +136,7 @@ namespace Jupiter
 		* @return Number of bytes received on success, less than or equal to 0 otherwise.
 		* Note: Refer to SSL_read() for detailed return values.
 		*/
-		virtual int recv();
+		virtual int recv() override;
 
 		/**
 		* @brief Sends data across the socket.
@@ -146,7 +146,7 @@ namespace Jupiter
 		* @return Number of bytes sent on success, less than or equal to 0 otherwise.
 		* Note: Refer to SSL_write() for detailed return values.
 		*/
-		virtual int send(const char *data, size_t datalen);
+		virtual int send(const char *data, size_t datalen) override;
 
 		/**
 		* @brief Initializes SSL on the socket.

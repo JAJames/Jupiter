@@ -352,15 +352,28 @@ Jupiter::StringS Jupiter::Socket::ntop(void *ip, size_t size)
 	}
 }
 
-Jupiter::Socket *Jupiter::Socket::acceptConnection()
+Jupiter::Socket *Jupiter::Socket::accept()
 {
-	SOCKET tSock = accept(Socket::data_->rawSock, 0, 0);
+	sockaddr addr;
+	int size = sizeof(addr);
+	SOCKET tSock = ::accept(Socket::data_->rawSock, &addr, &size);
 	if (tSock != INVALID_SOCKET)
 	{
+		char resolved[NI_MAXHOST];
+		getnameinfo(&addr, size, resolved, NI_MAXHOST, 0, 0, NI_NUMERICHOST);
 		Socket *r = new Socket(Jupiter::Socket::data_->bufflen);
 		r->data_->rawSock = tSock;
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
+		r->data_->host.set(resolved);
+		char *end = resolved + r->data_->host.size();
+		while (end != resolved)
+		{
+			if (*--end == ':')
+				break;
+			r->data_->port *= 10;
+			r->data_->port += static_cast<unsigned char>(Jupiter_getBase(*end, 10));
+		}
 		return r;
 	}
 	return nullptr;

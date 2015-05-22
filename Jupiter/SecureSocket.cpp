@@ -67,7 +67,7 @@ Jupiter::SecureSocket::~SecureSocket()
 	if (Jupiter::SecureSocket::SSLdata_ != nullptr) delete Jupiter::SecureSocket::SSLdata_;
 }
 
-Jupiter::SecureSocket *Jupiter::SecureSocket::acceptConnection()
+Jupiter::SecureSocket *Jupiter::SecureSocket::accept()
 {
 	int tSock = SSL_accept(Jupiter::SecureSocket::SSLdata_->handle);
 	if (tSock > 0)
