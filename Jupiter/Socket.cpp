@@ -366,13 +366,17 @@ Jupiter::Socket *Jupiter::Socket::accept()
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
 		r->data_->host.set(resolved);
-		char *end = resolved + r->data_->host.size();
-		while (end != resolved)
+		switch (addr.sa_family)
 		{
-			if (*--end == ':')
-				break;
-			r->data_->port *= 10;
-			r->data_->port += static_cast<unsigned char>(Jupiter_getBase(*end, 10));
+		case AF_INET:
+			r->data_->port = ntohs(reinterpret_cast<sockaddr_in *>(&addr)->sin_port);
+			break;
+		case AF_INET6:
+			r->data_->port = ntohs(reinterpret_cast<sockaddr_in6 *>(&addr)->sin6_port);
+			break;
+		default:
+			r->data_->port = 0x00000000;
+			break;
 		}
 		return r;
 	}
