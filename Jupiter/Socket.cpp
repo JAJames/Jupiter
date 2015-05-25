@@ -360,24 +360,14 @@ Jupiter::Socket *Jupiter::Socket::accept()
 	if (tSock != INVALID_SOCKET)
 	{
 		char resolved[NI_MAXHOST];
-		getnameinfo(&addr, size, resolved, NI_MAXHOST, 0, 0, NI_NUMERICHOST);
+		char resolved_port[NI_MAXSERV];
+		getnameinfo(&addr, size, resolved, sizeof(resolved), resolved_port, sizeof(resolved_port), NI_NUMERICHOST | NI_NUMERICSERV);
 		Socket *r = new Socket(Jupiter::Socket::data_->bufflen);
 		r->data_->rawSock = tSock;
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
 		r->data_->host.set(resolved);
-		switch (addr.sa_family)
-		{
-		case AF_INET:
-			r->data_->port = ntohs(reinterpret_cast<sockaddr_in *>(&addr)->sin_port);
-			break;
-		case AF_INET6:
-			r->data_->port = ntohs(reinterpret_cast<sockaddr_in6 *>(&addr)->sin6_port);
-			break;
-		default:
-			r->data_->port = 0x00000000;
-			break;
-		}
+		r->data_->port = Jupiter_strtoi(resolved_port, 10);
 		return r;
 	}
 	return nullptr;
