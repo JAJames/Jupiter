@@ -161,33 +161,35 @@ bool Jupiter::Socket::connect(addrinfo *info)
 bool Jupiter::Socket::connect(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)
 {
 #if defined _WIN32
-	if (!socketInit && !Jupiter::Socket::init()) return false;
+	if (!socketInit && !Jupiter::Socket::init())
+		return false;
 #endif // _WIN32
 	Jupiter::Socket::data_->host.set(hostname);
 	Jupiter::Socket::data_->port = iPort;
-	int i = 0;
-	static char portString[256];
-	sprintf(portString, "%hu", Jupiter::Socket::data_->port);
-	addrinfo *info = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), portString);
-	while (info != nullptr)
+	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->port).c_str());
+	if (info_head != nullptr)
 	{
-		addrinfo *ainfo = Jupiter::Socket::getAddrInfo(info, i);
-		if (ainfo == nullptr)
+		addrinfo *info = info_head;
+		do
 		{
-			Jupiter::Socket::freeAddrInfo(info);
-			return false;
-		}
-		sockaddr *asock = ainfo->ai_addr;
-		Jupiter::Socket::data_->rawSock = socket(ainfo->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-		if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET) continue;
-		if (clientAddress != nullptr) this->bind(clientAddress, clientPort, false);
-		if (::connect(Jupiter::Socket::data_->rawSock, asock, ainfo->ai_addrlen) == SOCKET_ERROR)
-		{
-			i++;
-			continue;
-		}
-		Jupiter::Socket::freeAddrInfo(info);
-		return true;
+			Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
+			if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET)
+			{
+				info = info->ai_next;
+				continue;
+			}
+
+			if (clientAddress != nullptr)
+				this->bind(clientAddress, clientPort, false);
+			if (::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
+			{
+				info = info->ai_next;
+				continue;
+			}
+			Jupiter::Socket::freeAddrInfo(info_head);
+			return true;
+		} while (info != nullptr);
+		Jupiter::Socket::freeAddrInfo(info_head);
 	}
 	return false;
 }
@@ -195,31 +197,29 @@ bool Jupiter::Socket::connect(const char *hostname, unsigned short iPort, const 
 bool Jupiter::Socket::bind(const char *hostname, unsigned short iPort, bool andListen)
 {
 #if defined _WIN32
-	if (!socketInit && !Jupiter::Socket::init()) return false;
+	if (!socketInit && !Jupiter::Socket::init())
+		return false;
 #endif // _WIN32
 	Jupiter::Socket::data_->host.set(hostname);
 	Jupiter::Socket::data_->port = iPort;
-	int i = 0;
-	static char portString[256];
-	sprintf(portString, "%hu", Jupiter::Socket::data_->port);
-	addrinfo *info = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), portString);
-	while (info != nullptr)
+	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->port).c_str());
+	if (info_head != nullptr)
 	{
-		addrinfo *ainfo = Jupiter::Socket::getAddrInfo(info, i);
-		if (ainfo == nullptr)
+		addrinfo *info = info_head;
+		do
 		{
-			Jupiter::Socket::freeAddrInfo(info);
-			return false;
-		}
-		Jupiter::Socket::data_->rawSock = socket(ainfo->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-		if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || ::bind(Jupiter::Socket::data_->rawSock, ainfo->ai_addr, ainfo->ai_addrlen) == SOCKET_ERROR)
-		{
-			i++;
-			continue;
-		}
-		Jupiter::Socket::freeAddrInfo(info);
-		if (andListen && Jupiter::Socket::data_->sockType == SOCK_STREAM && listen(Jupiter::Socket::data_->rawSock, SOMAXCONN) == SOCKET_ERROR) return false;
-		return true;
+			Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
+			if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || ::bind(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
+			{
+				info = info->ai_next;
+				continue;
+			}
+			Jupiter::Socket::freeAddrInfo(info_head);
+			if (andListen && Jupiter::Socket::data_->sockType == SOCK_STREAM && ::listen(Jupiter::Socket::data_->rawSock, SOMAXCONN) == SOCKET_ERROR)
+				return false;
+			return true;
+		} while (info != nullptr);
+		Jupiter::Socket::freeAddrInfo(info_head);
 	}
 	return false;
 }
