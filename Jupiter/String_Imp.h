@@ -37,6 +37,16 @@
 
 #endif // va_copy
 
+#if !defined JUPITER_VSCPRINTF
+
+#if defined _WIN32
+#define JUPITER_VSCPRINTF(format, format_args) _vscprintf(format, format_args)
+#else // _WIN32
+#define JUPITER_VSCPRINTF(format, format_args) vsnprintf(nullptr, 0, format, format_args)
+#endif // _WIN32
+
+#endif // JUPITER_VSCPRINTF
+
 /**
 * IMPLEMENTATION:
 *	String_Strict
@@ -100,7 +110,7 @@ template<> size_t inline Jupiter::String_Strict<char>::vformat(const char *forma
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vsnprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
@@ -137,7 +147,7 @@ template<> size_t inline Jupiter::String_Strict<char>::avformat(const char *form
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vsnprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
@@ -390,7 +400,7 @@ template<> size_t inline Jupiter::String_Loose<char>::vformat(const char *format
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vsnprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
@@ -427,7 +437,7 @@ template<> size_t inline Jupiter::String_Loose<char>::avformat(const char *forma
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vsnprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
