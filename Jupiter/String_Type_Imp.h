@@ -521,16 +521,19 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_
 		}
 		else
 		{
-			this->setBufferSize(Jupiter::String_Type<T>::length + valueSize - targetSize);
-			Jupiter::String_Type<T>::length += valueSize - targetSize;
-
 			size_t i = Jupiter::String_Type<T>::length;
-			while (--i != index + targetSize + 1)
-				Jupiter::String_Type<T>::str[i] = Jupiter::String_Type<T>::str[i - valueSize + targetSize];
-			this->println(stdout);
+			valueSize -= targetSize;
+			this->setBufferSize(Jupiter::String_Type<T>::length + valueSize);
+			Jupiter::String_Type<T>::length += valueSize;
+
+			index += targetSize;
+			while (i-- != index)
+				Jupiter::String_Type<T>::str[i + valueSize] = Jupiter::String_Type<T>::str[i];
+			index -= targetSize;
+			valueSize += targetSize;
 
 			Jupiter::String_Type<T>::str[index] = *value;
-			while (index != i)
+			while (--valueSize != 0)
 				Jupiter::String_Type<T>::str[++index] = *++value;
 		}
 	}

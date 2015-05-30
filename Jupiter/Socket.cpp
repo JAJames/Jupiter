@@ -367,7 +367,7 @@ Jupiter::Socket *Jupiter::Socket::accept()
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
 		r->data_->host.set(resolved);
-		r->data_->port = Jupiter_strtoi(resolved_port, 10);
+		r->data_->port = static_cast<unsigned short>(Jupiter_strtoi(resolved_port, 10));
 		return r;
 	}
 	return nullptr;
