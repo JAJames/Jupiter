@@ -72,6 +72,13 @@ namespace Jupiter
 		virtual bool isEmpty() const;
 
 		/**
+		* @brief Checks if the String is not empty.
+		*
+		* @return True if the String is not empty, false otherwise.
+		*/
+		virtual bool isNotEmpty() const;
+
+		/**
 		* @brief Checks if the string contains an element with the specified value.
 		*
 		* @param value Value of the element to search for.

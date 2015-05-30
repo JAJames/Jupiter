@@ -202,7 +202,8 @@ bool Jupiter::SecureSocket::initSSL()
 		ERR_print_errors_fp(stderr);
 		return false;
 	}
-	if (Jupiter::SecureSocket::SSLdata_->cert.size() != 0) loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
+	if (Jupiter::SecureSocket::SSLdata_->cert.isNotEmpty())
+		loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
 	Jupiter::SecureSocket::SSLdata_->handle = SSL_new(Jupiter::SecureSocket::SSLdata_->context);
 	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr)
 	{

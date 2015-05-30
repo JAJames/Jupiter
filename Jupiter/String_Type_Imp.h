@@ -429,7 +429,7 @@ template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const 
 	if (index >= Jupiter::String_Type<T>::length)
 		return this->concat(value);
 
-	if (value.size() == 0)
+	if (value.isEmpty())
 		return Jupiter::String_Type<T>::length;
 
 	if (value.size() == 1)

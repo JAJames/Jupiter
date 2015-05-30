@@ -39,6 +39,11 @@ template<typename T> bool Jupiter::Readable_String<T>::isEmpty() const
 	return this->size() == 0;
 }
 
+template<typename T> bool Jupiter::Readable_String<T>::isNotEmpty() const
+{
+	return this->size() != 0;
+}
+
 // contains
 
 template<typename T> bool Jupiter::Readable_String<T>::contains(const T &value) const
@@ -64,9 +69,12 @@ template<typename T> size_t Jupiter::Readable_String<T>::find(const T &value, si
 
 template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Readable_String<T> &in) const
 {
-	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
-	if (in.size() == this->size()) return this->equals(in) ? 0 : Jupiter::INVALID_INDEX;
-	if (in.size() == 0) return 0;
+	if (in.size() > this->size())
+		return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size())
+		return this->equals(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.isEmpty())
+		return 0;
 
 	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
 	{
@@ -114,9 +122,12 @@ template<typename T> size_t Jupiter::Readable_String<T>::findi(const T &value, s
 
 template<> size_t inline Jupiter::Readable_String<char>::findi(const Jupiter::Readable_String<char> &in) const
 {
-	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
-	if (in.size() == this->size()) return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
-	if (in.size() == 0) return 0;
+	if (in.size() > this->size())
+		return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size())
+		return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.isEmpty())
+		return 0;
 
 	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
 	{
@@ -129,9 +140,12 @@ template<> size_t inline Jupiter::Readable_String<char>::findi(const Jupiter::Re
 
 template<> size_t inline Jupiter::Readable_String<wchar_t>::findi(const Jupiter::Readable_String<wchar_t> &in) const
 {
-	if (in.size() > this->size()) return Jupiter::INVALID_INDEX;
-	if (in.size() == this->size()) return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
-	if (in.size() == 0) return 0;
+	if (in.size() > this->size())
+		return Jupiter::INVALID_INDEX;
+	if (in.size() == this->size())
+		return this->equalsi(in) ? 0 : Jupiter::INVALID_INDEX;
+	if (in.isEmpty())
+		return 0;
 
 	for (size_t i = 0, j; i != this->size() - in.size() + 1; i++)
 	{
@@ -1140,7 +1154,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 
 template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
 {
-	if (token.size() == 0)
+	if (token.isEmpty())
 		return R<T>(in);
 	if (token.size() == 1)
 		return Jupiter::Readable_String<T>::getToken<R>(in, pos, token.get(0));
@@ -1243,7 +1257,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 
 template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
 {
-	if (pos == 0 || token.size() == 0)
+	if (pos == 0 || token.isEmpty())
 		return R<T>(in);
 	if (token.size() == 1)
 		return Jupiter::Readable_String<T>::gotoToken<R>(in, pos, token.get(0));

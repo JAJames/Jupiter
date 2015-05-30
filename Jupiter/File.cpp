@@ -110,7 +110,7 @@ bool Jupiter::File::load(const char *file)
 {
 	FILE *filePtr = fopen(file, "rb");
 	if (filePtr == nullptr) return false;
-	if (Jupiter::File::data_->fileName.size() == 0)
+	if (Jupiter::File::data_->fileName.isEmpty())
 		Jupiter::File::data_->fileName = file;
 	bool r = Jupiter::File::load(filePtr);
 	fclose(filePtr);
@@ -122,7 +122,7 @@ bool Jupiter::File::load(const Jupiter::ReadableString &file)
 	Jupiter::CStringS fileName = file;
 	FILE *filePtr = fopen(fileName.c_str(), "rb");
 	if (filePtr == nullptr) return false;
-	if (Jupiter::File::data_->fileName.size() == 0)
+	if (Jupiter::File::data_->fileName.isEmpty())
 		Jupiter::File::data_->fileName = file;
 	bool r = Jupiter::File::load(filePtr);
 	fclose(filePtr);
@@ -178,7 +178,8 @@ void Jupiter::File::unload()
 
 bool Jupiter::File::reload()
 {
-	if (Jupiter::File::data_->fileName.size() == 0) return false;
+	if (Jupiter::File::data_->fileName.isEmpty())
+		return false;
 	Jupiter::CStringS fileName(std::move(Jupiter::File::data_->fileName));
 	Jupiter::File::unload();
 	return Jupiter::File::load(fileName.c_str());
@@ -204,7 +205,8 @@ bool Jupiter::File::reload(FILE *file)
 
 bool Jupiter::File::sync()
 {
-	if (Jupiter::File::data_->fileName.size() == 0) return false;
+	if (Jupiter::File::data_->fileName.isEmpty())
+		return false;
 	return Jupiter::File::sync(Jupiter::File::data_->fileName.c_str());
 }
 

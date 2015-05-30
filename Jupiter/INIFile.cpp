@@ -144,7 +144,7 @@ const Jupiter::ReadableString &Jupiter::INIFile::Section::get(const Jupiter::Rea
 bool Jupiter::INIFile::Section::getBool(const Jupiter::ReadableString &key, bool defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asBool();
 	return defaultValue;
 }
@@ -157,7 +157,7 @@ short Jupiter::INIFile::Section::getShort(const Jupiter::ReadableString &key, sh
 int Jupiter::INIFile::Section::getInt(const Jupiter::ReadableString &key, int defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asInt();
 	return defaultValue;
 }
@@ -165,7 +165,7 @@ int Jupiter::INIFile::Section::getInt(const Jupiter::ReadableString &key, int de
 long Jupiter::INIFile::Section::getLong(const Jupiter::ReadableString &key, long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asInt();
 	return defaultValue;
 }
@@ -173,7 +173,7 @@ long Jupiter::INIFile::Section::getLong(const Jupiter::ReadableString &key, long
 long long Jupiter::INIFile::Section::getLongLong(const Jupiter::ReadableString &key, long long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asLongLong();
 	return defaultValue;
 }
@@ -181,7 +181,7 @@ long long Jupiter::INIFile::Section::getLongLong(const Jupiter::ReadableString &
 float Jupiter::INIFile::Section::getFloat(const Jupiter::ReadableString &key, float defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return float(val.asDouble());
 	return defaultValue;
 }
@@ -189,7 +189,7 @@ float Jupiter::INIFile::Section::getFloat(const Jupiter::ReadableString &key, fl
 double Jupiter::INIFile::Section::getDouble(const Jupiter::ReadableString &key, double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asDouble();
 	return defaultValue;
 }
@@ -197,7 +197,7 @@ double Jupiter::INIFile::Section::getDouble(const Jupiter::ReadableString &key, 
 long double Jupiter::INIFile::Section::getLongDouble(const Jupiter::ReadableString &key, long double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::Section::get(key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asDouble();
 	return defaultValue;
 }
@@ -338,11 +338,11 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 		line = file.getLine(index);
 
 		// check if line is a comment.
-		while (line.size() != 0 && isspace(line.get(0)))
+		while (line.isNotEmpty() && isspace(line.get(0)))
 			line.shiftRight(1);
 
-		if (line.size() == 0) continue; // Completely whitespace.
-		if (line.get(0) == ';') continue; // Comment.
+		if (line.isEmpty() || line.get(0) == ';')
+			continue;
 
 		while (isspace(line.get(line.size() - 1))) // This is safe due to the previous check, which confirms that there is a non-whitespace character.
 			line.truncate(1);
@@ -352,7 +352,7 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 			line.shiftRight(1);
 
 			// Truncate up to the last ']'.
-			while (line.size() != 0 && line.get(line.size() - 1) != ']')
+			while (line.isNotEmpty() && line.get(line.size() - 1) != ']')
 				line.truncate(1);
 			line.truncate(1); // Truncate the ']' we stoped at.
 
@@ -362,10 +362,10 @@ unsigned int Jupiter::INIFile::readFile(const char *fileName)
 		{
 			Jupiter::ReferenceString key = line.getWord(0, "=");
 			Jupiter::ReferenceString value = line.substring(key.size() + 1);
-			while (key.size() != 0 && isspace(key.get(key.size() - 1)))
+			while (key.isNotEmpty() && isspace(key.get(key.size() - 1)))
 				key.truncate(1);
 
-			while (value.size() != 0 && isspace(value.get(0)))
+			while (value.isNotEmpty() && isspace(value.get(0)))
 				value.shiftRight(1);
 
 			if (Jupiter::INIFile::set(section, key, value))
@@ -424,7 +424,8 @@ bool Jupiter::INIFile::sync(const Jupiter::ReadableString &file)
 
 bool Jupiter::INIFile::sync()
 {
-	if (Jupiter::INIFile::data_->fName.size() == 0) return false;
+	if (Jupiter::INIFile::data_->fName.isEmpty())
+		return false;
 	return Jupiter::INIFile::sync(Jupiter::INIFile::data_->fName.c_str());
 }
 
@@ -576,7 +577,7 @@ const Jupiter::ReadableString &Jupiter::INIFile::get(const Jupiter::ReadableStri
 bool Jupiter::INIFile::getBool(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, bool defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asBool();
 	return defaultValue;
 }
@@ -589,7 +590,7 @@ short Jupiter::INIFile::getShort(const Jupiter::ReadableString &section, const J
 int Jupiter::INIFile::getInt(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, int defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asInt();
 	return defaultValue;
 }
@@ -597,7 +598,7 @@ int Jupiter::INIFile::getInt(const Jupiter::ReadableString &section, const Jupit
 long Jupiter::INIFile::getLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asInt();
 	return defaultValue;
 }
@@ -605,7 +606,7 @@ long Jupiter::INIFile::getLong(const Jupiter::ReadableString &section, const Jup
 long long Jupiter::INIFile::getLongLong(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long long defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asLongLong();
 	return defaultValue;
 }
@@ -613,7 +614,7 @@ long long Jupiter::INIFile::getLongLong(const Jupiter::ReadableString &section, 
 float Jupiter::INIFile::getFloat(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, float defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return float(val.asDouble());
 	return defaultValue;
 }
@@ -621,7 +622,7 @@ float Jupiter::INIFile::getFloat(const Jupiter::ReadableString &section, const J
 double Jupiter::INIFile::getDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asDouble();
 	return defaultValue;
 }
@@ -629,7 +630,7 @@ double Jupiter::INIFile::getDouble(const Jupiter::ReadableString &section, const
 long double Jupiter::INIFile::getLongDouble(const Jupiter::ReadableString &section, const Jupiter::ReadableString &key, long double defaultValue) const
 {
 	const Jupiter::ReadableString &val = Jupiter::INIFile::get(section, key);
-	if (val.isEmpty() == false)
+	if (val.isNotEmpty())
 		return val.asDouble();
 	return defaultValue;
 }
