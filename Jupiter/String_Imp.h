@@ -41,8 +41,10 @@
 
 #if defined _WIN32
 #define JUPITER_VSCPRINTF(format, format_args) _vscprintf(format, format_args)
+#define JUPITER_VSCWPRINTF(format, format_args) _vscwprintf(format, format_args)
 #else // _WIN32
 #define JUPITER_VSCPRINTF(format, format_args) vsnprintf(nullptr, 0, format, format_args)
+#define JUPITER_VSCWPRINTF(format, format_args) vswprintf(nullptr, 0, format, format_args)
 #endif // _WIN32
 
 #endif // JUPITER_VSCPRINTF
@@ -125,7 +127,7 @@ template<> size_t inline Jupiter::String_Strict<wchar_t>::vformat(const wchar_t 
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vswprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCWPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
@@ -163,7 +165,7 @@ template<> size_t inline Jupiter::String_Strict<wchar_t>::avformat(const wchar_t
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vswprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCWPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSize(minLen + Jupiter::String_Type<wchar_t>::length + 1); // vsnprintf REQUIRES space for an additional null character.
@@ -415,7 +417,7 @@ template<> size_t inline Jupiter::String_Loose<wchar_t>::vformat(const wchar_t *
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vswprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCWPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 
@@ -453,7 +455,7 @@ template<> size_t inline Jupiter::String_Loose<wchar_t>::avformat(const wchar_t 
 	int minLen;
 	va_list sargs;
 	va_copy(sargs, args);
-	minLen = vswprintf(nullptr, 0, format, sargs);
+	minLen = JUPITER_VSCWPRINTF(format, sargs);
 	va_end(sargs);
 	if (minLen < 0) return 0; // We simply can not work with this.
 	this->setBufferSize(minLen + Jupiter::String_Type<wchar_t>::length + 1); // vsnprintf REQUIRES space for an additional null character.
