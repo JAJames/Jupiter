@@ -203,15 +203,6 @@ namespace Jupiter
 		static String_Strict<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
 		static String_Strict<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
-		/** Assignment Operators */
-		inline String_Strict<T> &operator=(const String_Strict<T> &right) { this->set(right); return *this; };
-		inline String_Strict<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
-		inline String_Strict<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
-		inline String_Strict<T> &operator=(const T *right) { this->set(right); return *this; };
-		inline String_Strict<T> &operator=(const T right) { this->set(right); return *this; };
-
-		static const Jupiter::String_Strict<T> empty; /** Empty instantation of String_Strict */
-
 		/** Default Constructor */
 		String_Strict();
 
@@ -234,11 +225,32 @@ namespace Jupiter
 		String_Strict(const T *in);
 		String_Strict(const Jupiter::DataBuffer &in);
 
+		/** Concatenation Constructor */
+		String_Strict(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+
+		/** Addition Operators */
+		inline String_Strict<T> operator+(const String_Strict<T> &rhs) const;
+		inline String_Strict<T> operator+(const Readable_String<T> &rhs) const;
+
+		/** Assignment Operators */
+		inline String_Strict<T> &operator=(const String_Strict<T> &right) { this->set(right); return *this; };
+		inline String_Strict<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
+		inline String_Strict<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
+		inline String_Strict<T> &operator=(const T *right) { this->set(right); return *this; };
+		inline String_Strict<T> &operator=(const T right) { this->set(right); return *this; };
+
+		static const Jupiter::String_Strict<T> empty; /** Empty instantiation of String_Strict */
+
 	protected:
 
 		/** Dummy constructor to prevent string initialization */
 		String_Strict(Jupiter::String_Constructor_Base &) {};
 	};
+
+#if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
+	/** String_Loose<T> Addition Operator */
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
+#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
 	/**
 	* @brief Provides a "loose" String implementation that's more optimized for repeated concatenations.
@@ -424,15 +436,19 @@ namespace Jupiter
 		String_Loose(String_Loose<T> &&source);
 
 		/** Copy Constructors */
-		String_Loose(const String_Loose &in);
+		String_Loose(const String_Loose<T> &in);
 		String_Loose(const Readable_String<T> &in);
 		String_Loose(const std::basic_string<T> &in);
 		String_Loose(const T *in, size_t len);
 		String_Loose(const T *in);
 		String_Loose(const Jupiter::DataBuffer &in);
 
-		static const Jupiter::String_Loose<T> empty; /** Empty instantation of String_Loose */
-		static const size_t start_size = 8; /** Starting size for loose Strings. */
+		/** Concatenation Constructor */
+		String_Loose(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+
+		/** Addition Operators */
+		inline String_Loose<T> operator+(const String_Loose<T> &rhs) const;
+		inline String_Loose<T> operator+(const Readable_String<T> &rhs) const;
 
 		/** Assignment Operators */
 		inline String_Loose<T> &operator=(const String_Loose<T> &right) { this->set(right); return *this; };
@@ -440,6 +456,9 @@ namespace Jupiter
 		inline String_Loose<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const T right) { this->set(right); return *this; };
+
+		static const Jupiter::String_Loose<T> empty; /** Empty instantiation of String_Loose */
+		static const size_t start_size = 8; /** Starting size for loose Strings. */
 
 	protected:
 
@@ -466,6 +485,13 @@ namespace Jupiter
 
 		size_t strSize; /** Size of underlying string buffer */
 	};
+
+#if !defined JUPITER_STRING_STRICT_OPERATOR_PLUS
+#if !defined DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
+	/** String_Loose<T> Addition Operator */
+	template<typename T> static inline Jupiter::String_Loose<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
+#endif // DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
+#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
 	/** Definition of a Loose String. */
 	typedef String_Loose<char> StringL;

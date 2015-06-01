@@ -108,6 +108,36 @@ template<typename T> Jupiter::CString_Type<T>::CString_Type(const T *in)
 	}
 }
 
+template<typename T> Jupiter::CString_Type<T>::CString_Type(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : CString_Type<T>(lhs.size() + rhs.size())
+{
+	const T *itr;
+	const T *end;
+
+	if (lhs.isNotEmpty())
+	{
+		itr = lhs.ptr();
+		end = itr + lhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	if (rhs.isNotEmpty())
+	{
+		itr = rhs.ptr();
+		end = itr + rhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	*Jupiter::String_Type<T>::str = 0;
+	Jupiter::String_Type<T>::length = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+}
+
 template<typename T> bool Jupiter::CString_Type<T>::setBufferSize(size_t len)
 {
 	if (Jupiter::Shift_String_Type<T>::setBufferSize(len + 1))
@@ -385,6 +415,24 @@ template<typename T> size_t Jupiter::CString_Type<T>::concat(const T c)
 	return Jupiter::String_Type<T>::length;
 }
 
+// Operators
+template<typename T> inline Jupiter::CString_Type<T> Jupiter::CString_Type<T>::operator+(const Jupiter::CString_Type<T> &rhs) const
+{
+	return Jupiter::CString_Type<T>::operator+(reinterpret_cast<const Jupiter::Readable_String<T> &>(rhs));
+}
+
+template<typename T> inline Jupiter::CString_Type<T> Jupiter::CString_Type<T>::operator+(const Jupiter::Readable_String<T> &rhs) const
+{
+	return Jupiter::operator+(*this, rhs);
+}
+
+#if defined JUPITER_CSTRING_TYPE_OPERATOR_PLUS
+template<typename T> static inline Jupiter::CString_Type<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
+{
+	return Jupiter::CString_Type<T>(lhs, rhs);
+}
+#endif // JUPITER_CSTRING_TYPE_OPERATOR_PLUS
+
 template<typename T> const Jupiter::CString_Type<T> Jupiter::CString_Type<T>::empty = Jupiter::CString_Type<T>();
 
 // Jupiter::DataBuffer specialization
@@ -477,6 +525,36 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in) : Jup
 		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 		Jupiter::strcpy<T>(Jupiter::String_Type<T>::str, in);
 	}
+}
+
+template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : CString_Loose<T>(lhs.size() + rhs.size())
+{
+	const T *itr;
+	const T *end;
+
+	if (lhs.isNotEmpty())
+	{
+		itr = lhs.ptr();
+		end = itr + lhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	if (rhs.isNotEmpty())
+	{
+		itr = rhs.ptr();
+		end = itr + rhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	*Jupiter::String_Type<T>::str = 0;
+	Jupiter::String_Type<T>::length = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 }
 
 template<typename T> bool Jupiter::CString_Loose<T>::setBufferSize(size_t len)
@@ -589,6 +667,24 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::gotoWo
 {
 	return Jupiter::Readable_String<T>::gotoWord<Jupiter::CString_Loose>(in, pos, whitespace);
 }
+
+// Operators
+template<typename T> inline Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::operator+(const Jupiter::CString_Loose<T> &rhs) const
+{
+	return Jupiter::CString_Loose<T>::operator+(reinterpret_cast<const Jupiter::Readable_String<T> &>(rhs));
+}
+
+template<typename T> inline Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::operator+(const Jupiter::Readable_String<T> &rhs) const
+{
+	return Jupiter::operator+(*this, rhs);
+}
+
+#if defined JUPITER_CSTRING_LOOSE_OPERATOR_PLUS
+template<typename T> static inline Jupiter::CString_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
+{
+	return Jupiter::CString_Loose<T>(lhs, rhs);
+}
+#endif // JUPITER_CSTRING_LOOSE_OPERATOR_PLUS
 
 template<typename T> const Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::empty = Jupiter::CString_Loose<T>();
 

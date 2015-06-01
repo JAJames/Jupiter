@@ -77,6 +77,11 @@ namespace Jupiter
 		virtual void remove(size_t index, size_t length) override;
 
 		/**
+		* @brief Removes all elements from the string.
+		*/
+		virtual void erase();
+
+		/**
 		* @brief Default constructor for the Shift_String_Type class.
 		*/
 		Shift_String_Type() {}

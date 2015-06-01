@@ -105,6 +105,35 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Dat
 {
 }
 
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Strict<T>(lhs.size() + rhs.size())
+{
+	const T *itr;
+	const T *end;
+
+	if (lhs.isNotEmpty())
+	{
+		itr = lhs.ptr();
+		end = itr + lhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	if (rhs.isNotEmpty())
+	{
+		itr = rhs.ptr();
+		end = itr + rhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	Jupiter::String_Type<T>::length = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+}
+
 // vformat()
 
 template<> size_t inline Jupiter::String_Strict<char>::vformat(const char *format, va_list args)
@@ -286,6 +315,24 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoTo
 	return Jupiter::Readable_String<T>::gotoToken<Jupiter::String_Strict>(in, pos, token);
 }
 
+// Operators
+template<typename T> inline Jupiter::String_Strict<T> Jupiter::String_Strict<T>::operator+(const Jupiter::String_Strict<T> &rhs) const
+{
+	return Jupiter::String_Strict<T>::operator+(reinterpret_cast<const Jupiter::Readable_String<T> &>(rhs));
+}
+
+template<typename T> inline Jupiter::String_Strict<T> Jupiter::String_Strict<T>::operator+(const Jupiter::Readable_String<T> &rhs) const
+{
+	return Jupiter::operator+(*this, rhs);
+}
+
+#if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
+{
+	return Jupiter::String_Strict<T>(lhs, rhs);
+}
+#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
+
 template<typename T> const Jupiter::String_Strict<T> Jupiter::String_Strict<T>::empty = Jupiter::String_Strict<T>();
 
 // Jupiter::DataBuffer specialization
@@ -383,6 +430,35 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const T *in)
 
 template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::DataBuffer &in) : String_Loose(reinterpret_cast<T *>(in.getHead()), in.size() / sizeof(T))
 {
+}
+
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Loose<T>(lhs.size() + rhs.size())
+{
+	const T *itr;
+	const T *end;
+
+	if (lhs.isNotEmpty())
+	{
+		itr = lhs.ptr();
+		end = itr + lhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	if (rhs.isNotEmpty())
+	{
+		itr = rhs.ptr();
+		end = itr + rhs.size();
+		*Jupiter::String_Type<T>::str = *itr;
+		while (++itr != end)
+			*++Jupiter::String_Type<T>::str = *itr;
+		++Jupiter::String_Type<T>::str;
+	}
+
+	Jupiter::String_Type<T>::length = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 }
 
 template<typename T> bool Jupiter::String_Loose<T>::setBufferSize(size_t len)
@@ -575,6 +651,26 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToke
 {
 	return Jupiter::Readable_String<T>::gotoToken<Jupiter::String_Loose>(in, pos, token);
 }
+
+// Operators
+template<typename T> inline Jupiter::String_Loose<T> Jupiter::String_Loose<T>::operator+(const Jupiter::String_Loose<T> &rhs) const
+{
+	return Jupiter::String_Loose<T>::operator+(reinterpret_cast<const Jupiter::Readable_String<T> &>(rhs));
+}
+
+template<typename T> inline Jupiter::String_Loose<T> Jupiter::String_Loose<T>::operator+(const Jupiter::Readable_String<T> &rhs) const
+{
+	return Jupiter::operator+(*this, rhs);
+}
+
+#if !defined JUPITER_STRING_STRICT_OPERATOR_PLUS
+#if !defined DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
+template<typename T> static inline Jupiter::String_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
+{
+	return Jupiter::String_Loose<T>(lhs, rhs);
+}
+#endif // DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
+#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
 template<typename T> const Jupiter::String_Loose<T> Jupiter::String_Loose<T>::empty = Jupiter::String_Loose<T>();
 

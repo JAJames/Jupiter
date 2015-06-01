@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2014 Justin James.
+ * Copyright (C) 2013-2015 Justin James.
  *
  * This license must be preserved.
  * Any applications, libraries, or code which make any use of any
@@ -205,15 +205,6 @@ namespace Jupiter
 		size_t concat(const T *in);
 		size_t concat(const T in);
 
-		/** Assignment Operators */
-		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
-		inline CString_Type<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
-		inline CString_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
-		inline CString_Type<T> &operator=(const T *right) { this->set(right); return *this; };
-		inline CString_Type<T> &operator=(const T right) { this->set(right); return *this; };
-
-		static const Jupiter::CString_Type<T> empty; /** Empty instantation of CString_Type */
-
 		/** Default Constructor */
 		CString_Type();
 
@@ -234,6 +225,22 @@ namespace Jupiter
 		CString_Type(const std::basic_string<T> &in);
 		CString_Type(const T *in, size_t len);
 		CString_Type(const T *in);
+
+		/** Concatenation Constructor */
+		CString_Type(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+
+		/** Addition Operators */
+		inline CString_Type<T> operator+(const CString_Type<T> &rhs) const;
+		inline CString_Type<T> operator+(const Readable_String<T> &rhs) const;
+
+		/** Assignment Operators */
+		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
+		inline CString_Type<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
+		inline CString_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
+		inline CString_Type<T> &operator=(const T *right) { this->set(right); return *this; };
+		inline CString_Type<T> &operator=(const T right) { this->set(right); return *this; };
+
+		static const Jupiter::CString_Type<T> empty; /** Empty instantiation of CString_Type */
 
 	protected:
 
@@ -259,6 +266,11 @@ namespace Jupiter
 		CString_Type(Jupiter::String_Constructor_Base &) {};
 	};
 	template<typename T = char> using CString_Strict = CString_Type<T>;
+
+#if defined JUPITER_CSTRING_TYPE_OPERATOR_PLUS
+	/** String_Loose<T> Addition Operator */
+	template<typename T> static inline Jupiter::CString_Type<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
+#endif // JUPITER_CSTRING_TYPE_OPERATOR_PLUS
 
 	/**
 	* @brief Provides a "loose" CString implementation that's more optimized for repeated concatenations.
@@ -382,14 +394,18 @@ namespace Jupiter
 		CString_Loose(CString_Loose<T> &&source);
 
 		/** Copy Constructors */
-		CString_Loose(const CString_Loose &in);
+		CString_Loose(const CString_Loose<T> &in);
 		CString_Loose(const Readable_String<T> &in);
 		CString_Loose(const std::basic_string<T> &in);
 		CString_Loose(const T *in, size_t len);
 		CString_Loose(const T *in);
 
-		static const Jupiter::CString_Loose<T> empty; /** Empty instantation of CString_Loose */
-		static const size_t start_size = 8; /** Starting size for loose CStrings. */
+		/** Concatenation Constructor */
+		CString_Loose(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+
+		/** Addition Operators */
+		inline CString_Loose<T> operator+(const CString_Loose<T> &rhs) const;
+		inline CString_Loose<T> operator+(const Readable_String<T> &rhs) const;
 
 		/** Assignment Operators */
 		inline CString_Loose<T> &operator=(const CString_Loose<T> &right) { this->set(right); return *this; };
@@ -398,6 +414,9 @@ namespace Jupiter
 		inline CString_Loose<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline CString_Loose<T> &operator=(const T right) { this->set(right); return *this; };
+
+		static const Jupiter::CString_Loose<T> empty; /** Empty instantiation of CString_Loose */
+		static const size_t start_size = 8; /** Starting size for loose CStrings. */
 
 	protected:
 
@@ -424,6 +443,11 @@ namespace Jupiter
 
 		size_t strSize; /** Size of underlying C-string buffer */
 	};
+
+#if defined JUPITER_CSTRING_LOOSE_OPERATOR_PLUS
+	/** String_Loose<T> Addition Operator */
+	template<typename T> static inline Jupiter::CString_LOOSE<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
+#endif // JUPITER_CSTRING_LOOSE_OPERATOR_PLUS
 
 	/** Definition of a Loose CString. */
 	typedef CString_Loose<char> CStringL;

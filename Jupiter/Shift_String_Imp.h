@@ -72,6 +72,12 @@ template<typename T> void Jupiter::Shift_String_Type<T>::remove(size_t index, si
 		Jupiter::String_Type<T>::remove(index, len);
 }
 
+template<typename T> void Jupiter::Shift_String_Type<T>::erase()
+{
+	Jupiter::String_Type<T>::erase();
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+}
+
 template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSize(size_t len)
 {
 	if (len > Jupiter::String_Type<T>::length)

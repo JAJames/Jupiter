@@ -117,6 +117,11 @@ namespace Jupiter
 		virtual void remove(size_t index, size_t length);
 
 		/**
+		* @brief Removes all elements from the string.
+		*/
+		virtual void erase();
+
+		/**
 		* @brief Processes escape sequences in a string.
 		* Source reference: http://en.cppreference.com/w/cpp/language/escape
 		*/

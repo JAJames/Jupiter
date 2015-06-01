@@ -152,6 +152,13 @@ template<typename T> void Jupiter::String_Type<T>::remove(size_t index, size_t l
 	}
 }
 
+// erase
+
+template<typename T> void Jupiter::String_Type<T>::erase()
+{
+	Jupiter::String_Type<T>::length = 0;
+}
+
 // processEscapeSequences
 
 template<typename T> void Jupiter::String_Type<T>::processEscapeSequences()
