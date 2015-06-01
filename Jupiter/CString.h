@@ -473,10 +473,24 @@ namespace Jupiter
 	/** Definition of a Strict Wide CString */
 	typedef WCStringType WCStringS;
 
-	/** Empty String constants */
-	static const Jupiter::CStringS &emptyCStringS = Jupiter::CStringS::empty;
-	static const Jupiter::CStringL &emptyCStringL = Jupiter::CStringL::empty;
-	static const Jupiter::CStringType &emptyCString = emptyCStringS;
+	namespace literals
+	{
+		/** CString_Strict literals */
+		inline Jupiter::CStringType operator""_jcst(const char *str, size_t len) { return Jupiter::CStringType(str, len); }
+		inline Jupiter::WCStringType operator""_jwcst(const wchar_t *str, size_t len) { return Jupiter::WCStringType(str, len); }
+
+		/** CString_Strict literals */
+		inline Jupiter::CStringS operator""_jcss(const char *str, size_t len) { return Jupiter::CStringS(str, len); }
+		inline Jupiter::WCStringS operator""_jwcss(const wchar_t *str, size_t len) { return Jupiter::WCStringS(str, len); }
+
+		/** CString_Loose literals */
+		inline Jupiter::CStringL operator""_jcsl(const char *str, size_t len) { return Jupiter::CStringL(str, len); }
+		inline Jupiter::WCStringL operator""_jwcsl(const wchar_t *str, size_t len) { return Jupiter::WCStringL(str, len); }
+
+		/** CString literals */
+		inline Jupiter::CStringS operator""_jcs(const char *str, size_t len) { return Jupiter::CString(str, len); }
+		inline Jupiter::WCStringS operator""_jwcs(const wchar_t *str, size_t len) { return Jupiter::WCString(str, len); }
+	}
 }
 
 /** Re-enable warning */

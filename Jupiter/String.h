@@ -493,17 +493,17 @@ namespace Jupiter
 #endif // DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
 #endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
-	/** Definition of a Loose String. */
-	typedef String_Loose<char> StringL;
-
-	/** Definition of a Loose Wide String */
-	typedef String_Loose<wchar_t> WStringL;
-
 	/** Definition of a Strict String. */
 	typedef String_Strict<char> StringS;
 
 	/** Definition of a Strict Wide String */
 	typedef String_Strict<wchar_t> WStringS;
+
+	/** Definition of a Loose String. */
+	typedef String_Loose<char> StringL;
+
+	/** Definition of a Loose Wide String */
+	typedef String_Loose<wchar_t> WStringL;
 
 	/** Definition of a String. */
 	typedef StringL String;
@@ -511,10 +511,20 @@ namespace Jupiter
 	/** Definition of a Wide String */
 	typedef WStringL WString;
 
-	/** Empty String constants */
-	static const Jupiter::StringS &emptyStringS = Jupiter::StringS::empty;
-	static const Jupiter::StringL &emptyStringL = Jupiter::StringL::empty;
-	//static const Jupiter::StringType &emptyString = emptyStringS;
+	namespace literals
+	{
+		/** String_Strict literals */
+		inline Jupiter::StringS operator""_jss(const char *str, size_t len) { return Jupiter::StringS(str, len); }
+		inline Jupiter::WStringS operator""_jwss(const wchar_t *str, size_t len) { return Jupiter::WStringS(str, len); }
+
+		/** String_Loose literals */
+		inline Jupiter::StringL operator""_jsl(const char *str, size_t len) { return Jupiter::StringL(str, len); }
+		inline Jupiter::WStringL operator""_jwsl(const wchar_t *str, size_t len) { return Jupiter::WStringL(str, len); }
+
+		/** String literals */
+		inline Jupiter::StringS operator""_js(const char *str, size_t len) { return Jupiter::String(str, len); }
+		inline Jupiter::WStringS operator""_jws(const wchar_t *str, size_t len) { return Jupiter::WString(str, len); }
+	}
 }
 
 /** Re-enable warning */

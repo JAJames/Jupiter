@@ -295,10 +295,17 @@ namespace Jupiter
 	/** Generic Wide Reference String Type */
 	typedef Reference_String<wchar_t> ReferenceWString;
 
+	namespace literals
+	{
+		/** Reference_String literals */
+		inline Jupiter::ReferenceString operator""_jrs(const char *str, size_t len) { return Jupiter::ReferenceString(str, len); }
+		inline Jupiter::ReferenceWString operator""_jrws(const wchar_t *str, size_t len) { return Jupiter::ReferenceWString(str, len); }
+	}
 }
 
-#define STRING_LITERAL_AS_REFERENCE(str) Jupiter::ReferenceString(str, sizeof(str) - 1)
-#define STRING_LITERAL_AS_NAMED_REFERENCE(name, str) Jupiter::ReferenceString name = Jupiter::ReferenceString(str, sizeof(str) - 1)
+/** DEPRECATED */
+#define STRING_LITERAL_AS_REFERENCE(str) Jupiter::literals::operator""_jrs(str, sizeof(str) - 1)
+#define STRING_LITERAL_AS_NAMED_REFERENCE(name, str) Jupiter::ReferenceString name = STRING_LITERAL_AS_REFERENCE(str)
 
 #include "Reference_String_Imp.h"
 

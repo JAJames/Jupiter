@@ -1,5 +1,6 @@
 #include <chrono>
 #include <string>
+#include <iostream>
 #include "Jupiter/Functions.h"
 #include "Jupiter/CString.h"
 #include "Jupiter/String.h"
@@ -7,8 +8,10 @@
 #include "Jupiter/Base64.h"
 #include "Jupiter/InvalidIndex.h"
 #include "Jupiter/Reference_String.h"
+#include "Jupiter/DataBuffer.h"
 
 using namespace Jupiter;
+using namespace Jupiter::literals;
 
 unsigned int goodTests = 0;
 unsigned int totalTests = 0;
