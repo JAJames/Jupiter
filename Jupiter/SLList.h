@@ -169,11 +169,13 @@ template<typename T> T *Jupiter::SLList<T>::get(size_t index) const
 template<typename T> T *Jupiter::SLList<T>::remove(size_t index)
 {
 	Jupiter::SLList<T>::Node *t = head;
-	for (size_t i = 0; i != index; i++) t = t->next;
+	for (size_t i = 0; i != index; i++)
+		t = t->next;
 	Jupiter::SLList<T>::Node *t2 = t->next;
+	t->next = t2->next;
 	T *r = t2->data;
 	delete t2;
-	Jupiter::List<T>::length--;
+	--Jupiter::List<T>::length;
 	return r;
 }
 
