@@ -91,8 +91,13 @@ void Jupiter::SecureSocket::closeSocket()
 	if (Jupiter::SecureSocket::SSLdata_ != nullptr)
 	{
 		Jupiter::Socket::closeSocket();
-		delete Jupiter::SecureSocket::SSLdata_;
-		Jupiter::SecureSocket::SSLdata_ = new Jupiter::SecureSocket::SSLData();
+		if (Jupiter::SecureSocket::SSLdata_->handle != nullptr)
+		{
+			if (SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle) == 0)
+				SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle);
+			SSL_free(Jupiter::SecureSocket::SSLdata_->handle);
+			Jupiter::SecureSocket::SSLdata_->handle = nullptr;
+		}
 	}
 }
 
@@ -194,16 +199,26 @@ bool Jupiter::SecureSocket::initSSL()
 {
 	SSL_load_error_strings();
 	SSL_library_init();
-	Jupiter::SecureSocket::SSLdata_->method = translateEncryptionMethod(Jupiter::SecureSocket::SSLdata_->eMethod);
-	if (Jupiter::SecureSocket::SSLdata_->method == nullptr) return false;
-	Jupiter::SecureSocket::SSLdata_->context = SSL_CTX_new(Jupiter::SecureSocket::SSLdata_->method);
+
 	if (Jupiter::SecureSocket::SSLdata_->context == nullptr)
 	{
-		ERR_print_errors_fp(stderr);
-		return false;
+		if (Jupiter::SecureSocket::SSLdata_->method == nullptr)
+		{
+			Jupiter::SecureSocket::SSLdata_->method = translateEncryptionMethod(Jupiter::SecureSocket::SSLdata_->eMethod);
+			if (Jupiter::SecureSocket::SSLdata_->method == nullptr)
+				return false;
+		}
+
+		Jupiter::SecureSocket::SSLdata_->context = SSL_CTX_new(Jupiter::SecureSocket::SSLdata_->method);
+		if (Jupiter::SecureSocket::SSLdata_->context == nullptr)
+		{
+			ERR_print_errors_fp(stderr);
+			return false;
+		}
+		if (Jupiter::SecureSocket::SSLdata_->cert.isNotEmpty())
+			loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
 	}
-	if (Jupiter::SecureSocket::SSLdata_->cert.isNotEmpty())
-		loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
+
 	Jupiter::SecureSocket::SSLdata_->handle = SSL_new(Jupiter::SecureSocket::SSLdata_->context);
 	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr)
 	{
