@@ -13,4 +13,5 @@ const char Jupiter::IRC::bold = IRCBOLD[0]; /** IRC bold character */
 const char Jupiter::IRC::color = IRCCOLOR[0]; /** IRC color character */
 const char Jupiter::IRC::normal = IRCNORMAL[0]; /** IRC normal character */
 const char Jupiter::IRC::reverse = IRCREVERSE[0]; /** IRC reverse character */
+const char Jupiter::IRC::italicize = IRCITALICIZE[0]; /** IRC italicize character */
 const char Jupiter::IRC::underline = IRCUNDERLINE[0]; /** IRC underline character */

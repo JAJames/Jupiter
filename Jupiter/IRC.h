@@ -32,6 +32,7 @@
 #define IRCCOLOR "\003" /** IRC color character contained in a string literal */
 #define IRCNORMAL "\017" /** IRC normal character contained in a string literal */
 #define IRCREVERSE "\026" /** IRC reverse character contained in a string literal */
+#define IRCITALICIZE "\035" /** IRC italicize character contained in a string literal */
 #define IRCUNDERLINE "\037" /** IRC underline character contained in a string literal */
 
 #if defined __cplusplus
@@ -45,6 +46,7 @@ namespace Jupiter
 		JUPITER_API extern const char color; /** IRC color character */
 		JUPITER_API extern const char normal; /** IRC normal character */
 		JUPITER_API extern const char reverse; /** IRC reverse character */
+		JUPITER_API extern const char italicize; /** IRC italicize character */
 		JUPITER_API extern const char underline; /** IRC underline character */
 	}
 }
