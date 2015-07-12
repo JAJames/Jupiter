@@ -1147,7 +1147,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 				goto loop_end;
 		}
 
-		if (++in == 0)
+		if (*++in == 0)
 			return R<T>();
 		goto loop_start;
 	}
