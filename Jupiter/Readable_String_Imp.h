@@ -1117,27 +1117,48 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 
 template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getWord(const T *in, size_t pos, const T *whitespace)
 {
-	unsigned int x = 0;
-	unsigned int y = 1;
-	for (unsigned int i = 0; i < pos || y == 1; x++)
+	if (*in == 0)
+		return R<T>();
+
+	while (Jupiter::strpbrk<T>(whitespace, *in) != nullptr)
+		if (*++in == 0)
+			return R<T>();
+
+	if (pos == 0)
 	{
-		if (in[x] == 0) return R<T>();
-		if (Jupiter::strpbrk<T>(whitespace, in[x]) != nullptr)
-		{
-			if (y != 1)
-			{
-				y = 1;
-				i++;
-			}
-		}
-		else
-		{
-			if (i >= pos) break;
-			y = 0;
-		}
+		do
+			++in, ++pos;
+		while (*in != 0 && Jupiter::strpbrk<T>(whitespace, *in) == nullptr);
+
+		in -= pos;
+		return R<T>::substring(in, 0, pos);
 	}
-	for (y = x; in[y] != 0 && Jupiter::strpbrk<T>(whitespace, in[y]) == nullptr; y++);
-	return R<T>::substring(in, x, y - x);
+
+	loop_start:
+	{
+		if (Jupiter::strpbrk<T>(whitespace, *in) != nullptr)
+		{
+			do
+				if (*++in == 0)
+					return R<T>();
+			while (Jupiter::strpbrk<T>(whitespace, *in) != nullptr);
+
+			if (--pos == 0)
+				goto loop_end;
+		}
+
+		if (++in == 0)
+			return R<T>();
+		goto loop_start;
+	}
+	loop_end:
+
+	do
+		++in, ++pos;
+	while (*in != 0 && Jupiter::strpbrk<T>(whitespace, *in) == nullptr);
+
+	in -= pos;
+	return R<T>::substring(in, 0, pos);
 }
 
 // getToken

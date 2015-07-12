@@ -182,8 +182,8 @@ template<typename T> void Jupiter::ArrayList<T>::empty()
 
 template<typename T> void Jupiter::ArrayList<T>::emptyAndDelete()
 {
-	for (size_t i = 0; i < Jupiter::List<T>::length; i++) delete Jupiter::ArrayList<T>::data[i];
-	Jupiter::List<T>::length = 0;
+	while (Jupiter::List<T>::length != 0)
+		delete Jupiter::ArrayList<T>::data[--Jupiter::List<T>::length];
 }
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::ArrayList>
