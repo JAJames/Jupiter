@@ -103,12 +103,12 @@ namespace Jupiter
 		* @param flie Name of the Database to generate
 		* @param header DataBuffer containing the header to write to the file
 		*/
-		static bool create_database(Jupiter::ReadableString &file, Jupiter::DataBuffer *header = nullptr);
-		static bool create_database(Jupiter::CStringType &file, Jupiter::DataBuffer *header = nullptr);
-		static bool create_database(const char *file, Jupiter::DataBuffer *header = nullptr);
+		static bool create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header = nullptr);
+		static bool create_database(const Jupiter::CStringType &file, const Jupiter::DataBuffer *header = nullptr);
+		static bool create_database(const char *file, const Jupiter::DataBuffer *header = nullptr);
 
 		/**
-		* @brief When True, process_file() will automatically call create_header() if so such file exists.
+		* @brief When True, process_file() will automatically call create_header() if no such file exists.
 		* Default: true
 		*
 		* @return True if databases should automatically be generated, false otherwise.
@@ -121,6 +121,21 @@ namespace Jupiter
 		* @param auto_create True if databases should be automatically generated, false otherwise.
 		*/
 		void set_auto_create(bool auto_create);
+
+		/**
+		* @brief Default constructor for the Database class.
+		*/
+		Database();
+
+		/**
+		* @brief Copy constructor for the Database class.
+		*/
+		Database(const Database &) = delete;
+
+		/**
+		* @brief Destructor for the Database class.
+		*/
+		~Database();
 
 	private:
 		struct Data;

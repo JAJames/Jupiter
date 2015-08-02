@@ -11,7 +11,7 @@
 struct Jupiter::Database::Data
 {
 	static bool process_file(Jupiter::Database *db);
-	static bool create_database(FILE *file, Jupiter::DataBuffer *header);
+	static bool create_database(FILE *file, const Jupiter::DataBuffer *header);
 
 	bool auto_create = true;
 	Jupiter::CStringS file_name;
@@ -54,6 +54,7 @@ bool Jupiter::Database::Data::process_file(Jupiter::Database *db)
 			if (file != nullptr)
 			{
 				db->create_header(file);
+				fclose(file);
 				return true;
 			}
 		}
@@ -62,6 +63,16 @@ bool Jupiter::Database::Data::process_file(Jupiter::Database *db)
 	bool r = db->process_file(file);
 	fclose(file);
 	return r;
+}
+
+Jupiter::Database::Database()
+{
+	Jupiter::Database::data_ = new Jupiter::Database::Data();
+}
+
+Jupiter::Database::~Database()
+{
+	delete Jupiter::Database::data_;
 }
 
 bool Jupiter::Database::process_file(FILE *file)
@@ -134,7 +145,7 @@ bool Jupiter::Database::append(FILE *file, Jupiter::DataBuffer &data)
 	return true;
 }
 
-bool Jupiter::Database::create_database(Jupiter::ReadableString &file, Jupiter::DataBuffer *header)
+bool Jupiter::Database::create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header)
 {
 	char *str = new char[file.size() + 1];
 	memcpy(str, file.ptr(), file.size() * sizeof(char));
@@ -144,12 +155,12 @@ bool Jupiter::Database::create_database(Jupiter::ReadableString &file, Jupiter::
 	return r;
 }
 
-bool Jupiter::Database::create_database(Jupiter::CStringType &file, Jupiter::DataBuffer *header)
+bool Jupiter::Database::create_database(const Jupiter::CStringType &file, const Jupiter::DataBuffer *header)
 {
 	return Jupiter::Database::create_database(file.c_str(), header);
 }
 
-bool Jupiter::Database::create_database(const char *file, Jupiter::DataBuffer *header)
+bool Jupiter::Database::create_database(const char *file, const Jupiter::DataBuffer *header)
 {
 	FILE *f = fopen(file, "wb");
 	if (file == nullptr)
@@ -157,7 +168,7 @@ bool Jupiter::Database::create_database(const char *file, Jupiter::DataBuffer *h
 	return Jupiter::Database::Data::create_database(f, header);
 }
 
-bool Jupiter::Database::Data::create_database(FILE *file, Jupiter::DataBuffer *header)
+bool Jupiter::Database::Data::create_database(FILE *file, const Jupiter::DataBuffer *header)
 {
 	if (header != nullptr)
 		fwrite(header->getHead(), sizeof(uint8_t), header->size(), file);
