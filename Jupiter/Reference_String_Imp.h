@@ -237,6 +237,38 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 
 template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_String<T>::empty = Jupiter::Reference_String<T>();
 
+// tokenize
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T &separator) const
+{
+	return Jupiter::Reference_String<T>::tokenize(*this, separator);
+}
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &separator) const
+{
+	return Jupiter::Reference_String<T>::tokenize(*this, separator);
+}
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T *separator, size_t separator_size) const
+{
+	return Jupiter::Reference_String<T>::tokenize(*this, separator, separator_size);
+}
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+{
+	return Jupiter::Readable_String<T>::tokenize<Jupiter::Reference_String>(in, token);
+}
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+{
+	return Jupiter::Readable_String<T>::tokenize<Jupiter::Reference_String>(in, separator);
+}
+
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+{
+	return Jupiter::Readable_String<T>::tokenize<Jupiter::Reference_String>(in, separator, separator_size);
+}
+
 // Jupiter::DataBuffer specialization
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Reference_String>

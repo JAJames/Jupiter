@@ -184,15 +184,37 @@ namespace Jupiter
 		static CString_Type<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
 
 		/**
+		* @brief Tokenizes a string, based on an input token separator
+		*
+		* @param separator Separator to split tokens by
+		* @return TokenizeResult containing the results of the tokenization process.
+		*/
+		TokenizeResult<Jupiter::CString_Type> tokenize(const T &separator) const;
+		TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &separator) const;
+		TokenizeResult<Jupiter::CString_Type> tokenize(const T *separator, size_t separator_size) const;
+
+		/**
+		* @brief Tokenizes a string, based on an input token separator
+		*
+		* @param in String to split into tokens
+		* @param separator Separator to split tokens by
+		* @return TokenizeResult containing the results of the tokenization process.
+		*/
+		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+
+		/**
 		* @brief Copies the data from the input string to the CString.
 		*
 		* @param in String containing the data to be copied.
 		* @return New size of the CString.
 		*/
-		size_t set(const Readable_String<T> &in);
-		size_t set(const std::basic_string<T> &in);
-		size_t set(const T *in);
-		size_t set(const T in);
+		size_t set(const T *in, size_t inSize) override;
+		size_t set(const Jupiter::Readable_String<T> &in) override;
+		size_t set(const std::basic_string<T> &in) override;
+		size_t set(const T *in) override;
+		size_t set(const T &in) override;
 
 		/**
 		* @brief Copies the data from the input string and concatenates it to the end of CString.
@@ -200,10 +222,11 @@ namespace Jupiter
 		* @param in String containing the data to be concatenated.
 		* @return New size of the CString.
 		*/
-		size_t concat(const Readable_String<T> &in);
-		size_t concat(const std::basic_string<T> &in);
-		size_t concat(const T *in);
-		size_t concat(const T in);
+		size_t concat(const T *in, size_t inSize) override;
+		size_t concat(const Readable_String<T> &in) override;
+		size_t concat(const std::basic_string<T> &in) override;
+		size_t concat(const T *in) override;
+		size_t concat(const T &in) override;
 
 		/** Default Constructor */
 		CString_Type();
@@ -379,6 +402,27 @@ namespace Jupiter
 		* @return String containing a partial copy of the original string.
 		*/
 		static CString_Loose<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
+
+		/**
+		* @brief Tokenizes a string, based on an input token separator
+		*
+		* @param separator Separator to split tokens by
+		* @return TokenizeResult containing the results of the tokenization process.
+		*/
+		TokenizeResult<Jupiter::CString_Loose> tokenize(const T &separator);
+		TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &separator);
+		TokenizeResult<Jupiter::CString_Loose> tokenize(const T *separator, size_t separator_size);
+
+		/**
+		* @brief Tokenizes a string, based on an input token separator
+		*
+		* @param in String to split into tokens
+		* @param separator Separator to split tokens by
+		* @return TokenizeResult containing the results of the tokenization process.
+		*/
+		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Default constructor */
 		CString_Loose();

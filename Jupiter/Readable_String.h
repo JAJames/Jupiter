@@ -315,6 +315,65 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token);
 		template<template<typename> class R> static R<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
+		/**
+		* @brief Contains the results from a call to tokenize().
+		*/
+		template<template<typename> class R> struct TokenizeResult
+		{
+			/** Underlying type used to represent each token */
+			typedef R<T> token_type;
+
+			/** Array of tokens, with a length of 'token_count' */
+			R<T> *tokens;
+
+			/** Length of 'tokens' array */
+			size_t token_count;
+
+			/**
+			* @brief Default constructor for the TokenizeResult class.
+			* Note: 'tokens' assigned nullptr, and 'token_count' is assigned 0.
+			*/
+			TokenizeResult();
+
+			/**
+			* @brief Allocation constructor for the TokenizeResult class.
+			*/
+			TokenizeResult(size_t in_token_count);
+
+			/**
+			* @brief Capture constructor for the TokenizeResult class.
+			*/
+			TokenizeResult(R<T> *in_tokens, size_t in_token_count);
+
+			/**
+			* @brief Copy constructor for the TokenizeResult class.
+			*/
+			TokenizeResult(const TokenizeResult &source);
+
+			/**
+			* @brief Move constructor for the TokenizeResult class.
+			*/
+			TokenizeResult(const TokenizeResult &&source);
+
+			/**
+			* @brief Destructor for the TokenizeResult class.
+			*/
+			~TokenizeResult();
+		};
+
+		/**
+		* @brief Tokenizes a string, based on an input token separator
+		*
+		* @param R String type to use when constructing results
+		*
+		* @param in String to split into tokens
+		* @param separator Separator to split tokens by
+		* @return TokenizeResult containing the results of the tokenization process.
+		*/
+		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+
 		/** Access operator */
 		inline const T &operator[](size_t index) const { return this->get(index); };
 

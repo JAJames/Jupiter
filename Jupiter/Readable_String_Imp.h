@@ -1301,6 +1301,199 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 	return R<T>();
 }
 
+/** tokenization */
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::TokenizeResult()
+{
+	Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = nullptr;
+	Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = 0;
+}
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::TokenizeResult(size_t in_token_count)
+{
+	Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = in_token_count;
+	Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = new R<T>[Jupiter::Readable_String<T>::TokenizeResult<R>::token_count];
+}
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::TokenizeResult(R<T> *in_tokens, size_t in_token_count)
+{
+	Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = in_tokens;
+	Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = in_token_count;
+}
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::TokenizeResult(const TokenizeResult &source)
+{
+	Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = new R<T>[source.token_count];
+	Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = 0;
+	while (Jupiter::Readable_String<T>::TokenizeResult<R>::token_count != source.token_count)
+	{
+		Jupiter::Readable_String<T>::TokenizeResult<R>::tokens[Jupiter::Readable_String<T>::TokenizeResult<R>::token_count] = source.tokens[Jupiter::Readable_String<T>::TokenizeResult<R>::token_count];
+		++Jupiter::Readable_String<T>::TokenizeResult<R>::token_count;
+	}
+}
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::TokenizeResult(const TokenizeResult &&source)
+{
+	Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = source.tokens;
+	Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = source.token_count;
+	source.tokens = nullptr;
+	source.token_count = 0;
+}
+
+template<typename T> template<template<typename> class R> Jupiter::Readable_String<T>::TokenizeResult<R>::~TokenizeResult()
+{
+	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
+		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
+}
+
+// tokenize
+
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+{
+	// special case: no input
+	if (in.isEmpty())
+		return TokenizeResult<R>();
+
+	size_t length = in.tokenCount(token);
+	R<T> *tokens = new R<T>[length];
+
+	// special case: only 1 token
+	if (length == 1)
+	{
+		*tokens = in;
+		return TokenizeResult<R>(tokens, length);
+	}
+
+	R<T> *itr = tokens;
+
+	const T *in_itr = in.ptr();
+	const T *in_end = in.ptr() + in.size();
+	const T *token_start = in_itr;
+
+	while (in_itr != in_end)
+	{
+		loop_start:
+		if (*in_itr == token)
+		{
+			// push token to output
+			itr->set(token_start, in_itr - token_start);
+			++itr;
+
+			// increment over separator
+			++in_itr;
+
+			// iterator is at end of string
+			if (in_itr == in_end)
+				return TokenizeResult<R>(tokens, length);
+
+			// start reading new token
+			token_start = in_itr;
+			goto loop_start;
+		}
+		++in_itr;
+	}
+
+	itr->set(token_start, in_end - token_start);
+	return TokenizeResult<R>(tokens, length);
+}
+
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+{
+	return Jupiter::Readable_String<T>::tokenize<R>(in, separator.ptr(), separator.size());
+}
+
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+{
+	// special case: separator is a single element
+	if (separator_size == 1)
+		return Jupiter::Readable_String<T>::tokenize<R>(in, *separator);
+
+	// special case: no input
+	if (in.isEmpty())
+		return TokenizeResult<R>();
+
+	R<T> *tokens;
+
+	// special case: no separator
+	if (separator_size == 0)
+	{
+		tokens = new R<T>[1];
+		*tokens = in;
+		return TokenizeResult<R>(tokens, 1);
+	}
+
+	// special case: only enough space for 1 token, or 2 empty tokens
+	if (separator_size >= in.size())
+	{
+		if (in.equals(separator, separator_size))
+			return TokenizeResult<R>(2);
+
+		tokens = new R<T>[1];
+		*tokens = in;
+		return TokenizeResult<R>(tokens, 1);
+	}
+
+	size_t length = in.tokenCount(separator);
+	tokens = new R<T>[length];
+
+	// special case: only 1 token
+	if (length == 1)
+	{
+		*tokens = in;
+		return TokenizeResult<R>(tokens, length);
+	}
+
+	R<T> *itr = tokens;
+
+	const T *in_itr = in.ptr();
+	const T *in_end = in.ptr() + in.size();
+	const T *token_start = in_itr;
+
+	auto is_separator = [](const T *sep, size_t sep_size, const T *ptr)
+	{
+		while (*sep == *ptr)
+		{
+			if (--sep_size == 0)
+				return true;
+
+			++sep, ++ptr;
+		}
+		return false;
+	};
+
+	while (in_itr + separator_size - 1 != in_end)
+	{
+	loop_start:
+		if (is_separator(separator, separator_size, in_itr))
+		{
+			// push token to output
+			itr->set(token_start, in_itr - token_start);
+			++itr;
+
+			in_itr += separator_size;
+			token_start = in_itr;
+
+			// not enough room for another separator
+			if (in_itr + separator_size > in_end)
+				break;
+
+			// only enough room for 1 separator (empty token), or 1 token
+			if (in_itr + separator_size == in_end)
+			{
+				if (is_separator(separator, separator_size, in_itr))
+					return TokenizeResult<R>(tokens, length);
+				break;
+			}
+
+			goto loop_start;
+		}
+		++in_itr;
+	}
+
+	itr->set(token_start, in_end - token_start);
+	return TokenizeResult<R>(tokens, length);
+}
+
 // Jupiter::DataBuffer specialization
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>
