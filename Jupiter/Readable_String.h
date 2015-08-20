@@ -330,6 +330,14 @@ namespace Jupiter
 			size_t token_count;
 
 			/**
+			* @brief A safe accessor method, for fetching tokens.
+			*
+			* @param index Index of token to fetch
+			* @return The token at the specified index if it exists, an empty string otherwise.
+			*/
+			const R<T> &getToken(size_t index) const;
+
+			/**
 			* @brief Default constructor for the TokenizeResult class.
 			* Note: 'tokens' assigned nullptr, and 'token_count' is assigned 0.
 			*/

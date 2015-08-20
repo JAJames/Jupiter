@@ -1346,6 +1346,13 @@ template<typename T> template<template<typename> class R> Jupiter::Readable_Stri
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
 }
 
+template<typename T> template<template<typename> class R> const R<T> &Jupiter::Readable_String<T>::TokenizeResult<R>::getToken(size_t index) const
+{
+	if (index < Jupiter::Readable_String<T>::TokenizeResult<R>::token_count)
+		return Jupiter::Readable_String<T>::TokenizeResult<R>::tokens[index];
+	return R<T>::empty;
+}
+
 // tokenize
 
 template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
