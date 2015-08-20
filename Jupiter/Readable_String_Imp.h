@@ -1353,6 +1353,15 @@ template<typename T> template<template<typename> class R> const R<T> &Jupiter::R
 	return R<T>::empty;
 }
 
+template<typename T> template<template<typename> class R> void Jupiter::Readable_String<T>::TokenizeResult<R>::erase()
+{
+	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
+	{
+		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
+		Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = 0;
+	}
+}
+
 // TokenizeResult Operators
 
 template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename const Jupiter::Readable_String<T>::TokenizeResult<R> &right)

@@ -338,6 +338,11 @@ namespace Jupiter
 			const R<T> &getToken(size_t index) const;
 
 			/**
+			* @brief Restores the TokenizeResult to a default state, by deleting the stored tokens.
+			*/
+			void erase();
+
+			/**
 			* @brief Default constructor for the TokenizeResult class.
 			* Note: 'tokens' assigned nullptr, and 'token_count' is assigned 0.
 			*/
