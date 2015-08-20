@@ -50,6 +50,11 @@ template<typename T> size_t Jupiter::String_Type<T>::size() const
 	return Jupiter::String_Type<T>::length;
 }
 
+template<typename T> size_t Jupiter::String_Type<T>::capacity() const
+{
+	return this->size();
+}
+
 template<typename T> const T *Jupiter::String_Type<T>::ptr() const
 {
 	return Jupiter::String_Type<T>::str;

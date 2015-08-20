@@ -82,6 +82,24 @@ namespace Jupiter
 		virtual void erase();
 
 		/**
+		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSize(size_t len) override;
+
+		/**
+		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This still empties the string if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSizeNoCopy(size_t len) override;
+
+		/**
 		* @brief Default constructor for the Shift_String_Type class.
 		*/
 		Shift_String_Type() {}
@@ -97,25 +115,6 @@ namespace Jupiter
 		virtual ~Shift_String_Type();
 
 	protected:
-
-		/**
-		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSize(size_t len);
-
-		/**
-		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This still empties the string if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSizeNoCopy(size_t len);
-
 		T *base; /** Base pointer for the underlying String's memory allocation */
 	};
 }

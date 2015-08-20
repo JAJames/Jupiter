@@ -62,6 +62,15 @@ namespace Jupiter
 		size_t size() const;
 
 		/**
+		* @brief Returns the maximum number of elements the String can contain,
+		* without expanding the socket buffer. This is generally the size of the
+		* underlying memory buffer.
+		*
+		* @return Number of elements the string can contain without reallocation.
+		*/
+		virtual size_t capacity() const;
+
+		/**
 		* @brief Returns a pointer to the underlying string of elements.
 		*
 		* @return Pointer to the underlying string of elements.
@@ -230,6 +239,24 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len);
 		template<template<typename> class R> static R<T> substring(const T *in, size_t pos, size_t len);
 
+		/**
+		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSize(size_t len) = 0;
+
+		/**
+		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSizeNoCopy(size_t len) = 0;
+
 		/** Mutative operators */
 		inline String_Type<T> &operator+=(const Readable_String<T> &right) { this->concat(right); return *this; };
 		inline String_Type<T> &operator+=(const String_Type<T> &right) { this->concat(right); return *this; };
@@ -265,25 +292,6 @@ namespace Jupiter
 		*/
 
 	protected:
-
-		/**
-		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSize(size_t len) = 0;
-
-		/**
-		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSizeNoCopy(size_t len) = 0;
-
 		T *str; /** Pointer for the underlying string of elements */
 		size_t length; /** Number of representable elements in the string */
 	};

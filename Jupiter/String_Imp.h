@@ -536,6 +536,11 @@ template<> size_t inline Jupiter::String_Loose<wchar_t>::vformat(const wchar_t *
 	return Jupiter::String_Type<wchar_t>::length = minLen;
 }
 
+template<typename T> size_t Jupiter::String_Loose<T>::capacity() const
+{
+	return Jupiter::String_Loose<T>::strSize;
+}
+
 template<typename T> size_t Jupiter::String_Loose<T>::vformat(const T *format, va_list args)
 {
 	return 0;

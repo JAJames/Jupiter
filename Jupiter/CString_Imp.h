@@ -618,6 +618,11 @@ template<typename T> bool Jupiter::CString_Loose<T>::setBufferSizeNoCopy(size_t 
 	return false;
 }
 
+template<typename T> size_t Jupiter::CString_Loose<T>::capacity() const
+{
+	return Jupiter::CString_Loose<T>::strSize - 1;
+}
+
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::Format(const T *format, ...)
 {
 	CString_Loose<T> r;

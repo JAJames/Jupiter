@@ -284,6 +284,15 @@ namespace Jupiter
 	public:
 
 		/**
+		* @brief Returns the maximum number of elements the String can contain,
+		* without expanding the socket buffer. This is generally the size of the
+		* underlying memory buffer.
+		*
+		* @return Number of elements the string can contain without reallocation.
+		*/
+		virtual size_t capacity() const;
+
+		/**
 		* @brief Sets the String's contents based on the format string and input variables.
 		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
 		*
@@ -464,6 +473,24 @@ namespace Jupiter
 		static TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
 		static TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
+		/**
+		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSize(size_t len) override;
+
+		/**
+		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSizeNoCopy(size_t len) override;
+
 		/** Default constructor */
 		String_Loose();
 
@@ -503,25 +530,6 @@ namespace Jupiter
 		static const size_t start_size = 8; /** Starting size for loose Strings. */
 
 	protected:
-
-		/**
-		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSize(size_t len);
-
-		/**
-		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSizeNoCopy(size_t len);
-
 		/** Dummy constructor to prevent string initialization */
 		String_Loose(Jupiter::String_Constructor_Base &) {};
 
