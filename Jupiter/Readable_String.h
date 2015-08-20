@@ -361,12 +361,18 @@ namespace Jupiter
 			/**
 			* @brief Move constructor for the TokenizeResult class.
 			*/
-			TokenizeResult(const TokenizeResult &&source);
+			TokenizeResult(TokenizeResult &&source);
 
 			/**
 			* @brief Destructor for the TokenizeResult class.
 			*/
 			~TokenizeResult();
+
+			/** Assignment Operator */
+			inline TokenizeResult<R> &operator=(const TokenizeResult<R> &right);
+
+			/** Move Operator */
+			inline TokenizeResult<R> &operator=(TokenizeResult<R> &&right);
 		};
 
 		/**
