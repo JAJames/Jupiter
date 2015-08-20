@@ -28,41 +28,46 @@ typedef int SOCKET;
 #endif // _WIN32
 
 #include "Socket.h"
-#include "Functions.h" // makestr()
+#include "Functions.h"
 #include "CString.h"
+
+void Jupiter::Socket::Buffer::set_length(size_t in_length)
+{
+	this->length = in_length;
+}
+
+char *Jupiter::Socket::Buffer::get_str() const
+{
+	return this->str;
+}
 
 struct Jupiter::Socket::Data
 {
+	Jupiter::Socket::Buffer buffer;
 	SOCKET rawSock;
 	unsigned short port;
 	Jupiter::CStringS host;
-	char *buff;
-	size_t bufflen;
 	int sockType;
 	int sockProto;
 #if defined _WIN32
 	unsigned long blockMode = 0;
 #endif
-	Data(char *buffer, size_t bufferSize);
+	Data(size_t buffer_size);
 	Data(const Data &);
-	~Data();
 };
 
-Jupiter::Socket::Data::Data(char *buffer, size_t bufferSize)
+Jupiter::Socket::Data::Data(size_t buffer_size)
 {
-	Jupiter::Socket::Data::buff = buffer;
-	Jupiter::Socket::Data::bufflen = bufferSize;
+	Jupiter::Socket::Data::buffer.setBufferSizeNoCopy(buffer_size);
 	Jupiter::Socket::Data::port = 0;
 	Jupiter::Socket::Data::rawSock = 0;
 	Jupiter::Socket::Data::sockType = SOCK_RAW;
 	Jupiter::Socket::Data::sockProto = IPPROTO_RAW;
-	for (unsigned int i = 0; i < Jupiter::Socket::Data::bufflen; i++) Jupiter::Socket::Data::buff[i] = 0;
 }
 
 Jupiter::Socket::Data::Data(const Data &source)
 {
-	Jupiter::Socket::Data::bufflen = source.bufflen;
-	Jupiter::Socket::Data::buff = new char[Jupiter::Socket::Data::bufflen];
+	Jupiter::Socket::Data::buffer = source.buffer;
 	Jupiter::Socket::Data::port = source.port;
 	Jupiter::Socket::Data::rawSock = source.rawSock;
 	Jupiter::Socket::Data::sockType = source.sockType;
@@ -71,12 +76,6 @@ Jupiter::Socket::Data::Data(const Data &source)
 #if defined _WIN32
 	Jupiter::Socket::Data::blockMode = source.blockMode;
 #endif
-	for (unsigned int i = 0; i < Jupiter::Socket::Data::bufflen; i++) Jupiter::Socket::Data::buff[i] = 0;
-}
-
-Jupiter::Socket::Data::~Data()
-{
-	if (Jupiter::Socket::Data::buff != nullptr) delete[] Jupiter::Socket::Data::buff;
 }
 
 Jupiter::Socket &Jupiter::Socket::operator=(Jupiter::Socket &&source)
@@ -92,18 +91,13 @@ Jupiter::Socket::Socket() : Jupiter::Socket::Socket(4096)
 
 Jupiter::Socket::Socket(size_t bufferSize)
 {
-	Jupiter::Socket::data_ = new Jupiter::Socket::Data(new char[bufferSize], bufferSize);
+	Jupiter::Socket::data_ = new Jupiter::Socket::Data(bufferSize);
 }
 
 Jupiter::Socket::Socket(Jupiter::Socket &&source)
 {
 	Jupiter::Socket::data_ = source.data_;
 	source.data_ = nullptr;
-}
-
-Jupiter::Socket::Socket(char *buffer, size_t bufferSize)
-{
-	Jupiter::Socket::data_ = new Jupiter::Socket::Data(buffer, bufferSize);
 }
 
 Jupiter::Socket::~Socket()
@@ -116,16 +110,6 @@ Jupiter::Socket::~Socket()
 		}
 		delete Jupiter::Socket::data_;
 	}
-}
-
-int Jupiter::Socket::getDescriptor() const
-{
-	return Jupiter::Socket::data_->rawSock;
-}
-
-void Jupiter::Socket::setDescriptor(int descriptor)
-{
-	Jupiter::Socket::data_->rawSock = descriptor;
 }
 
 void Jupiter::Socket::setType(int type)
@@ -362,7 +346,7 @@ Jupiter::Socket *Jupiter::Socket::accept()
 		char resolved[NI_MAXHOST];
 		char resolved_port[NI_MAXSERV];
 		getnameinfo(&addr, size, resolved, sizeof(resolved), resolved_port, sizeof(resolved_port), NI_NUMERICHOST | NI_NUMERICSERV);
-		Socket *r = new Socket(Jupiter::Socket::data_->bufflen);
+		Socket *r = new Socket(Jupiter::Socket::data_->buffer.capacity());
 		r->data_->rawSock = tSock;
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
@@ -442,35 +426,27 @@ unsigned short Jupiter::Socket::getPort() const
 	return Jupiter::Socket::data_->port;
 }
 
-const char *Jupiter::Socket::getBuffer() const
+const Jupiter::ReadableString &Jupiter::Socket::getBuffer() const
 {
-	return Jupiter::Socket::data_->buff;
-}
-
-void Jupiter::Socket::setBuffer(char *buffer, size_t size)
-{
-	if (Jupiter::Socket::data_->buff != nullptr) delete[] Jupiter::Socket::data_->buff;
-	Jupiter::Socket::data_->bufflen = size;
-	Jupiter::Socket::data_->buff = buffer;
-}
-
-char *Jupiter::Socket::setBufferSize(size_t size)
-{
-	if (Jupiter::Socket::data_->buff != nullptr) delete[] Jupiter::Socket::data_->buff;
-	Jupiter::Socket::data_->bufflen = size;
-	Jupiter::Socket::data_->buff = new char[Jupiter::Socket::data_->bufflen];
-	return Jupiter::Socket::data_->buff;
+	return Jupiter::Socket::data_->buffer;
 }
 
 size_t Jupiter::Socket::getBufferSize() const
 {
-	return Jupiter::Socket::data_->bufflen;
+	return Jupiter::Socket::data_->buffer.capacity();
 }
 
-const char *Jupiter::Socket::getData()
+const Jupiter::ReadableString &Jupiter::Socket::setBufferSize(size_t size)
 {
-	if (this->recv() > 0) return this->getBuffer();
-	return nullptr;
+	Jupiter::Socket::data_->buffer.setBufferSize(size);
+	return Jupiter::Socket::data_->buffer;
+}
+
+const Jupiter::ReadableString &Jupiter::Socket::getData()
+{
+	if (this->recv() <= 0)
+		Jupiter::Socket::data_->buffer.erase();
+	return Jupiter::Socket::data_->buffer;
 }
 
 const char *Jupiter::Socket::getLocalHostname() // static
@@ -482,7 +458,7 @@ const char *Jupiter::Socket::getLocalHostname() // static
 
 void Jupiter::Socket::clearBuffer()
 {
-	for (unsigned int i = 0; i < Jupiter::Socket::data_->bufflen; i++) Jupiter::Socket::data_->buff[i] = 0;
+	Jupiter::Socket::data_->buffer.erase();
 }
 
 int Jupiter::Socket::send(const char *data, size_t datalen)
@@ -510,68 +486,66 @@ int Jupiter::Socket::sendTo(const addrinfo *info, const char *msg)
 	return sendto(Jupiter::Socket::data_->rawSock, msg, strlen(msg), 0, info->ai_addr, info->ai_addrlen);
 }
 
-int Jupiter::Socket::sendData(const char *data, size_t datalen)
-{
-	return this->send(data, datalen);
-}
-
-int Jupiter::Socket::sendData(const char *msg)
-{
-	return this->send(msg);
-}
-
 int Jupiter::Socket::peek()
 {
-	int r = ::recv(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen - 1, MSG_PEEK);
-	if (r >= 0) Jupiter::Socket::data_->buff[r] = 0;
+	Jupiter::Socket::data_->buffer.erase();
+	int r = ::recv(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), MSG_PEEK);
+	if (r > 0)
+		Jupiter::Socket::data_->buffer.set_length(r);
 	return r;
 }
 
 int Jupiter::Socket::peekFrom(addrinfo *info)
 {
-	if (info == nullptr) return recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen - 1, 0, nullptr, nullptr);
+	Jupiter::Socket::data_->buffer.erase();
+	if (info == nullptr)
+		return recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), MSG_PEEK, nullptr, nullptr);
+
 	socklen_t len = info->ai_addrlen;
 	if (len <= 0)
 	{
 		info->ai_addr = new sockaddr();
 		len = sizeof(sockaddr);
 	}
-	int r = recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen - 1, MSG_PEEK, info->ai_addr, &len);
+	int r = recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), MSG_PEEK, info->ai_addr, &len);
 	if (r >= 0)
 	{
-		Jupiter::Socket::data_->buff[r] = 0;
 		info->ai_addrlen = len;
-		info->ai_canonname = nullptr;
 		info->ai_family = info->ai_addr->sa_family;
-		info->ai_flags = 0;
-		info->ai_next = nullptr;
-		info->ai_protocol = this->getProtocol();
-		info->ai_socktype = this->getType();
+		info->ai_protocol = Jupiter::Socket::getProtocol();
+		info->ai_socktype = Jupiter::Socket::getType();
 	}
 	return r;
 }
 
 int Jupiter::Socket::recv()
 {
-	int r = ::recv(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen - 1, 0);
-	if (r >= 0) Jupiter::Socket::data_->buff[r] = 0;
+	Jupiter::Socket::data_->buffer.erase();
+	int r = ::recv(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), 0);
+	if (r > 0)
+		Jupiter::Socket::data_->buffer.set_length(r);
 	return r;
 }
 
 int Jupiter::Socket::recvFrom(addrinfo *info)
 {
-	if (info == nullptr) return recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen - 1, 0, nullptr, nullptr);
-	memset(info, 0, sizeof(addrinfo));
-	info->ai_addr = new sockaddr();
-	socklen_t len = sizeof(sockaddr);
-	int r = recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buff, Jupiter::Socket::data_->bufflen-1, 0, info->ai_addr, &len);
+	Jupiter::Socket::data_->buffer.erase();
+	if (info == nullptr)
+		return recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), 0, nullptr, nullptr);
+
+	socklen_t len = info->ai_addrlen;
+	if (len <= 0)
+	{
+		info->ai_addr = new sockaddr();
+		len = sizeof(sockaddr);
+	}
+	int r = recvfrom(Jupiter::Socket::data_->rawSock, Jupiter::Socket::data_->buffer.get_str(), Jupiter::Socket::data_->buffer.capacity(), 0, info->ai_addr, &len);
 	if (r >= 0)
 	{
-		Jupiter::Socket::data_->buff[r] = 0;
 		info->ai_addrlen = len;
 		info->ai_family = info->ai_addr->sa_family;
-		info->ai_protocol = this->getProtocol();
-		info->ai_socktype = this->getType();
+		info->ai_protocol = Jupiter::Socket::getProtocol();
+		info->ai_socktype = Jupiter::Socket::getType();
 	}
 	return r;
 }
@@ -612,4 +586,19 @@ bool Jupiter::Socket::cleanup() // static
 	WSACleanup();
 #endif // _WIN32
 	return true;
+}
+
+int Jupiter::Socket::getDescriptor() const
+{
+	return Jupiter::Socket::data_->rawSock;
+}
+
+void Jupiter::Socket::setDescriptor(int descriptor)
+{
+	Jupiter::Socket::data_->rawSock = descriptor;
+}
+
+Jupiter::Socket::Buffer &Jupiter::Socket::getInternalBuffer() const
+{
+	return Jupiter::Socket::data_->buffer;
 }

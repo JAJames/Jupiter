@@ -177,16 +177,25 @@ bool Jupiter::SecureSocket::connect(const char *hostname, unsigned short iPort, 
 
 int Jupiter::SecureSocket::peek()
 {
-	int r = SSL_peek(Jupiter::SecureSocket::SSLdata_->handle, (char *) this->getBuffer(), this->getBufferSize()-1);
-	if (r >= 0) ((char *) this->getBuffer())[r] = 0;
+	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr)
+		return -1;
+	Jupiter::Socket::Buffer &buffer = this->getInternalBuffer();
+	buffer.erase();
+	int r = SSL_peek(Jupiter::SecureSocket::SSLdata_->handle, buffer.get_str(), this->getBufferSize());
+	if (r > 0)
+		buffer.set_length(r);
 	return r;
 }
 
 int Jupiter::SecureSocket::recv()
 {
-	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr) return -1;
-	int r = SSL_read(Jupiter::SecureSocket::SSLdata_->handle, (char *) this->getBuffer(), this->getBufferSize()-1);
-	if (r >= 0) ((char *) this->getBuffer())[r] = 0;
+	if (Jupiter::SecureSocket::SSLdata_->handle == nullptr)
+		return -1;
+	Jupiter::Socket::Buffer &buffer = this->getInternalBuffer();
+	buffer.erase();
+	int r = SSL_read(Jupiter::SecureSocket::SSLdata_->handle, buffer.get_str(), this->getBufferSize());
+	if (r > 0)
+		buffer.set_length(r);
 	return r;
 }
 

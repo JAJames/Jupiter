@@ -125,7 +125,7 @@ Jupiter::IRC::Client::Client(const Jupiter::ReadableString &configSection)
 		Jupiter::IRC::Client::Config->readFile(CONFIG_INI);
 	}
 	Jupiter::IRC::Client::data_->configSectionName = configSection;
-	Jupiter::IRC::Client::data_->serverHostname = Jupiter::IRC::Client::readConfigValue("Hostname"_jrs, "irc.tibitek.com"_jrs);
+	Jupiter::IRC::Client::data_->serverHostname = Jupiter::IRC::Client::readConfigValue("Hostname"_jrs, "irc.cncirc.net"_jrs);
 	
 	Jupiter::IRC::Client::data_->logFileName = Jupiter::IRC::Client::readConfigValue("LogFile"_jrs);
 	Jupiter::IRC::Client::data_->nickname = Jupiter::IRC::Client::readConfigValue("Nick"_jrs, "Jupiter"_jrs);
@@ -924,8 +924,8 @@ int Jupiter::IRC::Client::primaryHandler()
 													if (command.equals("PING")) response += message;
 													else if (command.equals("VERSION")) response += Jupiter::version;
 													else if (command.equals("FINGER")) response += "Oh, yeah, a little to the left.";
-													else if (command.equals("SOURCE")) response += "irc.tibitek.com";
-													else if (command.equals("USERINFO")) response += "Hey, I'm Jupiter! If you have questions, ask Justin! (irc.tibitek.com)";
+													else if (command.equals("SOURCE")) response += "https://github.com/JAJames/Jupiter";
+													else if (command.equals("USERINFO")) response += "Hey, I'm Jupiter! If you have questions, ask Agent! (irc.cncirc.net)";
 													else if (command.equals("CLIENTINFO")) response += "I'll tell you what I don't know: This command!";
 													else if (command.equals("TIME")) response += getTime();
 													else if (command.equals("ERRMSG")) response += message;

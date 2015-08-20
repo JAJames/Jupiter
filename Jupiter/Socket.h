@@ -43,22 +43,6 @@ namespace Jupiter
 	*/
 	class JUPITER_API Socket
 	{
-	protected:
-
-		/**
-		* @brief Used by class extensions to get the socket descriptor.
-		*
-		* @return A raw socket descriptor.
-		*/
-		int getDescriptor() const;
-
-		/**
-		* @brief Used by class extensions to set the appropriate socket descriptor.
-		*
-		* @param descript Socket descriptor.
-		*/
-		void setDescriptor(int descript);
-
 	public:
 
 		/**
@@ -332,23 +316,7 @@ namespace Jupiter
 		*
 		* @return Buffer.
 		*/
-		const char *getBuffer() const;
-
-		/**
-		* @brief Assigns a new buffer.
-		*
-		* @param buffer The new buffer to use.
-		* @param size The size of the new buffer.
-		*/
-		void setBuffer(char *buffer, size_t size);
-
-		/**
-		* @brief Creates a new buffer.
-		*
-		* @param size The size of the buffer to be made.
-		* @return The newly created buffer.
-		*/
-		char *setBufferSize(size_t size);
+		const Jupiter::ReadableString &getBuffer() const;
 
 		/**
 		* @brief Returns the size of the socket buffer.
@@ -358,11 +326,19 @@ namespace Jupiter
 		size_t getBufferSize() const;
 
 		/**
+		* @brief Expands the buffer, if necessary.
+		*
+		* @param size The size of the buffer to be made.
+		* @return The newly created buffer.
+		*/
+		const Jupiter::ReadableString &setBufferSize(size_t size);
+
+		/**
 		* @brief Copies any new socket data to the buffer and returns it.
 		*
-		* @return Socket buffer if new data is successfully received, nullptr otherwise.
+		* @return Socket buffer if new data is successfully received, an empty buffer otherwise.
 		*/
-		const char *getData();
+		const Jupiter::ReadableString &getData();
 
 		/**
 		* @brief Returns the local hostname of the local machine.
@@ -470,9 +446,6 @@ namespace Jupiter
 		*/
 		virtual int sendTo(const addrinfo *info, const char *msg);
 
-		int sendData(const char *data, size_t datalen); /** @see send() */
-		int sendData(const char *msg); /** @see send() */
-
 		/**
 		* @brief Returns the last error.
 		* On Windows, this currently just calls and returns WSAGetLastError().
@@ -531,17 +504,43 @@ namespace Jupiter
 		Socket(Socket &&source);
 
 		/**
-		* @brief Constructor for the Socket class which allows for the use of a pre-existing buffer.
-		*
-		* @param buffer Buffer.
-		* @param bufferSize Size of the buffer.
-		*/
-		Socket(char *buffer, size_t bufferSize);
-
-		/**
 		* @brief Destructor for the Socket class.
 		*/
 		virtual ~Socket();
+
+	/** Protected functions and members*/
+	protected:
+
+		/**
+		* @brief An extended verison of the string class, which allows for low-level length and string modification.
+		*/
+		class Buffer : public Jupiter::StringL
+		{
+		public:
+			void set_length(size_t in_length);
+			char *get_str() const;
+		};
+
+		/**
+		* @brief Fetches the buffer where data is stored
+		*
+		* @return Buffer where data is stored
+		*/
+		Buffer &getInternalBuffer() const;
+
+		/**
+		* @brief Used by class extensions to get the socket descriptor.
+		*
+		* @return A raw socket descriptor.
+		*/
+		int getDescriptor() const;
+
+		/**
+		* @brief Used by class extensions to set the appropriate socket descriptor.
+		*
+		* @param descript Socket descriptor.
+		*/
+		void setDescriptor(int descript);
 
 	/** Private members */
 	private:
