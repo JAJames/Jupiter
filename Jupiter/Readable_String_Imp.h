@@ -1364,7 +1364,7 @@ template<typename T> template<template<typename> class R> void Jupiter::Readable
 
 // TokenizeResult Operators
 
-template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename const Jupiter::Readable_String<T>::TokenizeResult<R> &right)
+template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename const Jupiter::Readable_String<T>::TokenizeResult<R> &source)
 {
 	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
@@ -1379,7 +1379,7 @@ template<typename T> template<template<typename> class R> inline typename Jupite
 	return *this;
 }
 
-template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename Jupiter::Readable_String<T>::TokenizeResult<R> &&right)
+template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename Jupiter::Readable_String<T>::TokenizeResult<R> &&source)
 {
 	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
