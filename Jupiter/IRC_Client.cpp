@@ -1132,7 +1132,7 @@ int Jupiter::IRC::Client::primaryHandler()
 														Jupiter::ReferenceString tword;
 														unsigned char g = 0;
 														char symb = 0;
-														for (uint8_t z = 0; modes[z] != 0; z++)
+														for (uint8_t z = 0; z != modes.size(); z++)
 														{
 															if (modes[z] == '+' || modes[z] == '-')
 																symb = modes[z];
