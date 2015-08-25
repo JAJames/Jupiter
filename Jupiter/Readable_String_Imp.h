@@ -1358,6 +1358,7 @@ template<typename T> template<template<typename> class R> void Jupiter::Readable
 	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
 	{
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
+		Jupiter::Readable_String<T>::TokenizeResult<R>::tokens = nullptr;
 		Jupiter::Readable_String<T>::TokenizeResult<R>::token_count = 0;
 	}
 }
