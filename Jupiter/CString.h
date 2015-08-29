@@ -267,12 +267,19 @@ namespace Jupiter
 		CString_Type(const T *in, size_t len);
 		CString_Type(const T *in);
 
-		/** Concatenation Constructor */
+		/** Concatenation Constructors */
+		CString_Type(const Readable_String<T> &lhs, const T &rhs);
 		CString_Type(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+		CString_Type(const Readable_String<T> &lhs, const std::basic_string<T> &rhs);
+		CString_Type(const Readable_String<T> &lhs, const T *rhs);
+		CString_Type(const Readable_String<T> &lhs, const T *rhs, size_t rhs_size);
 
 		/** Addition Operators */
+		inline CString_Type<T> operator+(const T &rhs) const;
 		inline CString_Type<T> operator+(const CString_Type<T> &rhs) const;
 		inline CString_Type<T> operator+(const Readable_String<T> &rhs) const;
+		inline CString_Type<T> operator+(const std::basic_string<T> &rhs) const;
+		inline CString_Type<T> operator+(const T *rhs) const;
 
 		/** Assignment Operators */
 		inline CString_Type<T> &operator=(const CString_Type<T> &right) { this->set(right); return *this; };
@@ -470,12 +477,19 @@ namespace Jupiter
 		CString_Loose(const T *in, size_t len);
 		CString_Loose(const T *in);
 
-		/** Concatenation Constructor */
+		/** Concatenation Constructors */
+		CString_Loose(const Readable_String<T> &lhs, const T &rhs);
 		CString_Loose(const Readable_String<T> &lhs, const Readable_String<T> &rhs);
+		CString_Loose(const Readable_String<T> &lhs, const std::basic_string<T> &rhs);
+		CString_Loose(const Readable_String<T> &lhs, const T *rhs);
+		CString_Loose(const Readable_String<T> &lhs, const T *rhs, size_t rhs_size);
 
 		/** Addition Operators */
+		inline CString_Loose<T> operator+(const T &rhs) const;
 		inline CString_Loose<T> operator+(const CString_Loose<T> &rhs) const;
 		inline CString_Loose<T> operator+(const Readable_String<T> &rhs) const;
+		inline CString_Loose<T> operator+(const std::basic_string<T> &rhs) const;
+		inline CString_Loose<T> operator+(const T *rhs) const;
 
 		/** Assignment Operators */
 		inline CString_Loose<T> &operator=(const CString_Loose<T> &right) { this->set(right); return *this; };
