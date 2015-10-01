@@ -389,9 +389,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		template<template<typename> class R> static TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Access operator */
 		inline const T &operator[](size_t index) const { return this->get(index); };

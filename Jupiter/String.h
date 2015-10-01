@@ -81,7 +81,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Strict<T> substring(size_t pos) const;
+		typename Jupiter::template String_Strict<T> substring(size_t pos) const;
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -90,7 +90,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Strict<T> substring(size_t pos, size_t length) const;
+		typename Jupiter::template String_Strict<T> substring(size_t pos, size_t length) const;
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -99,8 +99,8 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
-		static String_Strict<T> substring(const T *in, size_t pos);
+		static typename Jupiter::template String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
+		static typename Jupiter::template String_Strict<T> substring(const T *in, size_t pos);
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -110,8 +110,8 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
-		static String_Strict<T> substring(const T *in, size_t pos, size_t length);
+		static typename Jupiter::template String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
+		static typename Jupiter::template String_Strict<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
@@ -209,9 +209,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		TokenizeResult<Jupiter::String_Strict> tokenize(const T &separator) const;
-		TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &separator) const;
-		TokenizeResult<Jupiter::String_Strict> tokenize(const T *separator, size_t separator_size) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const T &separator) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &separator) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const T *separator, size_t separator_size) const;
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -220,9 +220,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Strict> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Default Constructor */
 		String_Strict();
@@ -339,7 +339,7 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Loose<T> substring(size_t pos) const;
+		typename Jupiter::template String_Loose<T> substring(size_t pos) const;
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -348,7 +348,7 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Loose<T> substring(size_t pos, size_t length) const;
+		typename Jupiter::template String_Loose<T> substring(size_t pos, size_t length) const;
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -357,8 +357,8 @@ namespace Jupiter
 		* @param pos Position in the string to start copying from.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
-		static String_Loose<T> substring(const T *in, size_t pos);
+		static typename Jupiter::template String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
+		static typename Jupiter::template String_Loose<T> substring(const T *in, size_t pos);
 
 		/**
 		* @brief Creates a partial copy of the string.
@@ -368,8 +368,8 @@ namespace Jupiter
 		* @param length Number of characters to copy.
 		* @return String containing a partial copy of the original string.
 		*/
-		static String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
-		static String_Loose<T> substring(const T *in, size_t pos, size_t length);
+		static typename Jupiter::template String_Loose<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
+		static typename Jupiter::template String_Loose<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
 		* @brief Creates a partial copy of the string, based on a set of tokens.
@@ -409,8 +409,8 @@ namespace Jupiter
 		* @param token Token to scan for.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Loose<T> getToken(size_t pos, const T &token);
-		String_Loose<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token);
+		String_Loose<T> getToken(size_t pos, const T &token) const;
+		String_Loose<T> getToken(size_t pos, const Jupiter::Readable_String<T> &token) const;
 
 		/**
 		* @brief Creates a partial copy of an input string, based on a token.
@@ -449,8 +449,8 @@ namespace Jupiter
 		* @param token Token to scan for.
 		* @return String containing a partial copy of the original string.
 		*/
-		String_Loose<T> gotoToken(size_t pos, const T &token);
-		String_Loose<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token);
+		String_Loose<T> gotoToken(size_t pos, const T &token) const;
+		String_Loose<T> gotoToken(size_t pos, const Jupiter::Readable_String<T> &token) const;
 
 		/**
 		* @brief Creates a partial copy of the string, based on a token.
@@ -469,9 +469,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		TokenizeResult<Jupiter::String_Loose> tokenize(const T &separator);
-		TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &separator);
-		TokenizeResult<Jupiter::String_Loose> tokenize(const T *separator, size_t separator_size);
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const T &separator);
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &separator);
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const T *separator, size_t separator_size);
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -480,9 +480,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::String_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/**
 		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.

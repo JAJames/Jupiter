@@ -30,6 +30,7 @@
 #if defined __cplusplus
 
 #include <cstdint>
+#include <cstddef>
 
 namespace Jupiter
 {
@@ -89,6 +90,7 @@ extern "C"
 #else // __cplusplus
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 #endif // __cplusplus
 
 /**

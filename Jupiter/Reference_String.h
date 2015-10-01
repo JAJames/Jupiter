@@ -240,9 +240,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		TokenizeResult<Jupiter::Reference_String> tokenize(const T &separator) const;
-		TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &separator) const;
-		TokenizeResult<Jupiter::Reference_String> tokenize(const T *separator, size_t separator_size) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const T &separator) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &separator) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const T *separator, size_t separator_size) const;
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -251,9 +251,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Mutative operators */
 		inline Readable_String<T> &operator-=(size_t right) { this->truncate(right); return *this; };
@@ -319,13 +319,13 @@ namespace Jupiter
 	namespace literals
 	{
 		/** Reference_String literals */
-		inline Jupiter::ReferenceString operator""_jrs(const char *str, size_t len) { return Jupiter::ReferenceString(str, len); }
-		inline Jupiter::ReferenceWString operator""_jrws(const wchar_t *str, size_t len) { return Jupiter::ReferenceWString(str, len); }
+		inline Jupiter::ReferenceString operator"" _jrs(const char *str, size_t len) { return Jupiter::ReferenceString(str, len); }
+		inline Jupiter::ReferenceWString operator"" _jrws(const wchar_t *str, size_t len) { return Jupiter::ReferenceWString(str, len); }
 	}
 }
 
 /** DEPRECATED */
-#define STRING_LITERAL_AS_REFERENCE(str) Jupiter::literals::operator""_jrs(str, sizeof(str) - 1)
+#define STRING_LITERAL_AS_REFERENCE(str) Jupiter::literals::operator"" _jrs(str, sizeof(str) - 1)
 #define STRING_LITERAL_AS_NAMED_REFERENCE(name, str) Jupiter::ReferenceString name = STRING_LITERAL_AS_REFERENCE(str)
 
 #include "Reference_String_Imp.h"

@@ -189,9 +189,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		TokenizeResult<Jupiter::CString_Type> tokenize(const T &separator) const;
-		TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &separator) const;
-		TokenizeResult<Jupiter::CString_Type> tokenize(const T *separator, size_t separator_size) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const T &separator) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &separator) const;
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const T *separator, size_t separator_size) const;
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -200,9 +200,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/**
 		* @brief Copies the data from the input string to the CString.
@@ -424,9 +424,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		TokenizeResult<Jupiter::CString_Loose> tokenize(const T &separator);
-		TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &separator);
-		TokenizeResult<Jupiter::CString_Loose> tokenize(const T *separator, size_t separator_size);
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const T &separator);
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &separator);
+		Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const T *separator, size_t separator_size);
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -435,9 +435,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/**
 		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
@@ -541,20 +541,20 @@ namespace Jupiter
 	namespace literals
 	{
 		/** CString_Strict literals */
-		inline Jupiter::CStringType operator""_jcst(const char *str, size_t len) { return Jupiter::CStringType(str, len); }
-		inline Jupiter::WCStringType operator""_jwcst(const wchar_t *str, size_t len) { return Jupiter::WCStringType(str, len); }
+		inline Jupiter::CStringType operator"" _jcst(const char *str, size_t len) { return Jupiter::CStringType(str, len); }
+		inline Jupiter::WCStringType operator"" _jwcst(const wchar_t *str, size_t len) { return Jupiter::WCStringType(str, len); }
 
 		/** CString_Strict literals */
-		inline Jupiter::CStringS operator""_jcss(const char *str, size_t len) { return Jupiter::CStringS(str, len); }
-		inline Jupiter::WCStringS operator""_jwcss(const wchar_t *str, size_t len) { return Jupiter::WCStringS(str, len); }
+		inline Jupiter::CStringS operator"" _jcss(const char *str, size_t len) { return Jupiter::CStringS(str, len); }
+		inline Jupiter::WCStringS operator"" _jwcss(const wchar_t *str, size_t len) { return Jupiter::WCStringS(str, len); }
 
 		/** CString_Loose literals */
-		inline Jupiter::CStringL operator""_jcsl(const char *str, size_t len) { return Jupiter::CStringL(str, len); }
-		inline Jupiter::WCStringL operator""_jwcsl(const wchar_t *str, size_t len) { return Jupiter::WCStringL(str, len); }
+		inline Jupiter::CStringL operator"" _jcsl(const char *str, size_t len) { return Jupiter::CStringL(str, len); }
+		inline Jupiter::WCStringL operator"" _jwcsl(const wchar_t *str, size_t len) { return Jupiter::WCStringL(str, len); }
 
 		/** CString literals */
-		inline Jupiter::CStringS operator""_jcs(const char *str, size_t len) { return Jupiter::CString(str, len); }
-		inline Jupiter::WCStringS operator""_jwcs(const wchar_t *str, size_t len) { return Jupiter::WCString(str, len); }
+		inline Jupiter::CStringS operator"" _jcs(const char *str, size_t len) { return Jupiter::CString(str, len); }
+		inline Jupiter::WCStringS operator"" _jwcs(const wchar_t *str, size_t len) { return Jupiter::WCString(str, len); }
 	}
 }
 
