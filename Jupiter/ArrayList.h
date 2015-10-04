@@ -1,17 +1,18 @@
 /**
  * Copyright (C) 2013-2015 Justin James.
  *
- * This license must be preserved.
- * Any applications, libraries, or code which make any use of any
- * component of this program must not be commercial, unless explicit
- * permission is granted from the original author. The use of this
- * program for non-profit purposes is permitted.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
- * In the event that this license restricts you from making desired use of this program, contact the original author.
  * Written by Justin James <justin.aj@hotmail.com>
  */
 
@@ -92,6 +93,11 @@ namespace Jupiter
 		ArrayList(const ArrayList<T> &);
 
 		/**
+		* @brief Move constructor for the ArrayList class.
+		*/
+		ArrayList(ArrayList<T> &&);
+
+		/**
 		* @brief Destructor for the ArrayList class.
 		* Note: This does not delete data added to the list.
 		*/
@@ -139,8 +145,22 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList(const Jupiter::ArrayList<T
 {
 	Jupiter::ArrayList<T>::dataSize = source.dataSize;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
+	Jupiter::List<T>::length = 0;
+	while (Jupiter::List<T>::length != Jupiter::List<T>::length)
+	{
+		Jupiter::ArrayList<T>::data[Jupiter::List<T>::length] = source.data[Jupiter::List<T>::length];
+		++Jupiter::List<T>::length;
+	}
+}
+
+template<typename T> Jupiter::ArrayList<T>::ArrayList(ArrayList<T> &&source)
+{
+	Jupiter::ArrayList<T>::dataSize = source.dataSize;
+	Jupiter::ArrayList<T>::data = source.data;
 	Jupiter::List<T>::length = source.length;
-	for (size_t i = 0; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i] = source.data[i];
+	source.dataSize = Jupiter::ArrayList<T>::start_size;
+	source.data = new T*[source.dataSize];
+	source.length = 0;
 }
 
 template<typename T> Jupiter::ArrayList<T>::~ArrayList()
