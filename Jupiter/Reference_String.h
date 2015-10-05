@@ -71,6 +71,11 @@ namespace Jupiter
 		virtual size_t truncate(size_t n);
 
 		/**
+		* @brief Erases the string (sets the string's length to 0)
+		*/
+		void erase();
+
+		/**
 		* @brief Shifts the string pointer to the left.
 		*
 		* @param length Number of elements to shift

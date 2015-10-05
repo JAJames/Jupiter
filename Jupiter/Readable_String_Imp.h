@@ -167,14 +167,16 @@ template<typename T> size_t Jupiter::Readable_String<T>::findi(const Jupiter::Re
 template<typename T> size_t Jupiter::Readable_String<T>::span(const Jupiter::Readable_String<T> &in) const
 {
 	size_t index = 0;
-	while (in.contains(this->get(index))) index++;
+	while (index != this->size() && in.contains(this->get(index)))
+		++index;
 	return index;
 }
 
 template<typename T> size_t Jupiter::Readable_String<T>::span(const T *in) const
 {
 	size_t index = 0;
-	while (containsSymbol(in, this->get(index))) index++;
+	while (index != this->size() && containsSymbol(in, this->get(index)))
+		++index;
 	return index;
 }
 

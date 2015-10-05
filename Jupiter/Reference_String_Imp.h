@@ -93,6 +93,13 @@ template<typename T> size_t Jupiter::Reference_String<T>::truncate(size_t n)
 	return (Jupiter::Reference_String<T>::length -= n);
 }
 
+// erase
+
+template<typename T> void Jupiter::Reference_String<T>::erase()
+{
+	Jupiter::Reference_String<T>::length = 0;
+}
+
 // shift
 
 template<typename T> size_t Jupiter::Reference_String<T>::shiftLeft(size_t len)
