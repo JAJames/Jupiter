@@ -278,25 +278,34 @@ namespace Jupiter
 		virtual void closeSocket();
 
 		/**
-		* @brief Returns the hostname that the socket is connected to or listening to.
+		* @brief Returns the hostname that the socket is connected to.
 		*
 		* @return String containing the hostname.
 		*/
-		const Jupiter::ReadableString &getHostname() const;
+		const Jupiter::ReadableString &getRemoteHostname() const;
+		const char *getRemoteHostnameC() const;
 
 		/**
-		* @brief Returns the hostname of the server that the socket is connected to.
+		* @brief Returns the hostname that the socket is bound/listening to.
 		*
 		* @return String containing the hostname.
 		*/
-		const char *getHost() const;
+		const Jupiter::ReadableString &getBoundHostname() const;
+		const char *getBoundHostnameC() const;
 
 		/**
-		* @brief Returns the port which the Socket is connected to or listening to.
+		* @brief Returns the port which the Socket is connected to.
 		*
 		* @return Port number.
 		*/
-		unsigned short getPort() const;
+		unsigned short getRemotePort() const;
+
+		/**
+		* @brief Returns the port which the Socket is bound/listening to.
+		*
+		* @return Port number.
+		*/
+		unsigned short getBoundPort() const;
 
 		/**
 		* @brief Returns the type of the socket.

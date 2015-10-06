@@ -54,11 +54,13 @@ char *Jupiter::Socket::Buffer::get_str() const
 struct Jupiter::Socket::Data
 {
 	Jupiter::Socket::Buffer buffer;
-	SOCKET rawSock;
-	unsigned short port;
-	Jupiter::CStringS host;
-	int sockType;
-	int sockProto;
+	SOCKET rawSock = INVALID_SOCKET;
+	unsigned short remote_port = 0;
+	unsigned short bound_port = 0;
+	Jupiter::CStringS remote_host;
+	Jupiter::CStringS bound_host;
+	int sockType = SOCK_RAW;
+	int sockProto = IPPROTO_RAW;
 #if defined _WIN32
 	unsigned long blockMode = 0;
 #endif
@@ -69,20 +71,18 @@ struct Jupiter::Socket::Data
 Jupiter::Socket::Data::Data(size_t buffer_size)
 {
 	Jupiter::Socket::Data::buffer.setBufferSizeNoCopy(buffer_size);
-	Jupiter::Socket::Data::port = 0;
-	Jupiter::Socket::Data::rawSock = 0;
-	Jupiter::Socket::Data::sockType = SOCK_RAW;
-	Jupiter::Socket::Data::sockProto = IPPROTO_RAW;
 }
 
 Jupiter::Socket::Data::Data(const Data &source)
 {
 	Jupiter::Socket::Data::buffer = source.buffer;
-	Jupiter::Socket::Data::port = source.port;
+	Jupiter::Socket::Data::remote_port = source.remote_port;
+	Jupiter::Socket::Data::bound_port = source.bound_port;
 	Jupiter::Socket::Data::rawSock = source.rawSock;
 	Jupiter::Socket::Data::sockType = source.sockType;
 	Jupiter::Socket::Data::sockProto = source.sockProto;
-	Jupiter::Socket::Data::host = source.host;
+	Jupiter::Socket::Data::remote_host = source.remote_host;
+	Jupiter::Socket::Data::bound_host = source.bound_host;
 #if defined _WIN32
 	Jupiter::Socket::Data::blockMode = source.blockMode;
 #endif
@@ -158,28 +158,42 @@ bool Jupiter::Socket::connect(const char *hostname, unsigned short iPort, const 
 	if (!socketInit && !Jupiter::Socket::init())
 		return false;
 #endif // _WIN32
-	Jupiter::Socket::data_->host.set(hostname);
-	Jupiter::Socket::data_->port = iPort;
-	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->port).c_str());
+	Jupiter::Socket::data_->remote_host.set(hostname);
+	Jupiter::Socket::data_->remote_port = iPort;
+	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->remote_host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->remote_port).c_str());
 	if (info_head != nullptr)
 	{
 		addrinfo *info = info_head;
 		do
 		{
-			Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-			if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET)
+			if (clientAddress != nullptr)
 			{
+				// bind will initialize our socket
+				if (Jupiter::Socket::bind(clientAddress, clientPort, false) == false)
+					break;
+			}
+			else
+			{
+				Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
+				if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET)
+				{
+					info = info->ai_next;
+					continue;
+				}
+			}
+
+			if (::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
+			{
+#if defined _WIN32
+				closesocket(Jupiter::Socket::data_->rawSock);
+#else // _WIN32
+				close(Jupiter::Socket::data_->rawSock);
+#endif // WIN32
+				Jupiter::Socket::data_->rawSock = INVALID_SOCKET;
 				info = info->ai_next;
 				continue;
 			}
 
-			if (clientAddress != nullptr)
-				this->bind(clientAddress, clientPort, false);
-			if (::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
-			{
-				info = info->ai_next;
-				continue;
-			}
 			Jupiter::Socket::freeAddrInfo(info_head);
 			return true;
 		} while (info != nullptr);
@@ -194,20 +208,33 @@ bool Jupiter::Socket::bind(const char *hostname, unsigned short iPort, bool andL
 	if (!socketInit && !Jupiter::Socket::init())
 		return false;
 #endif // _WIN32
-	Jupiter::Socket::data_->host.set(hostname);
-	Jupiter::Socket::data_->port = iPort;
-	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->port).c_str());
+	Jupiter::Socket::data_->bound_host.set(hostname);
+	Jupiter::Socket::data_->bound_port = iPort;
+	addrinfo *info_head = Jupiter::Socket::getAddrInfo(Jupiter::Socket::data_->bound_host.c_str(), Jupiter::CStringS::Format("%hu", Jupiter::Socket::data_->bound_port).c_str());
 	if (info_head != nullptr)
 	{
 		addrinfo *info = info_head;
 		do
 		{
 			Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-			if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || ::bind(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
+			if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET)
 			{
 				info = info->ai_next;
 				continue;
 			}
+
+			if (::bind(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
+			{
+#if defined _WIN32
+				closesocket(Jupiter::Socket::data_->rawSock);
+#else // _WIN32
+				close(Jupiter::Socket::data_->rawSock);
+#endif // WIN32
+				Jupiter::Socket::data_->rawSock = INVALID_SOCKET;
+				info = info->ai_next;
+				continue;
+			}
+
 			Jupiter::Socket::freeAddrInfo(info_head);
 			if (andListen && Jupiter::Socket::data_->sockType == SOCK_STREAM && ::listen(Jupiter::Socket::data_->rawSock, SOMAXCONN) == SOCKET_ERROR)
 				return false;
@@ -360,8 +387,8 @@ Jupiter::Socket *Jupiter::Socket::accept()
 		r->data_->rawSock = tSock;
 		r->data_->sockType = Jupiter::Socket::data_->sockType;
 		r->data_->sockProto = Jupiter::Socket::data_->sockProto;
-		r->data_->host.set(resolved);
-		r->data_->port = static_cast<unsigned short>(Jupiter_strtoi(resolved_port, 10));
+		r->data_->remote_host.set(resolved);
+		r->data_->remote_port = static_cast<unsigned short>(Jupiter_strtoi(resolved_port, 10));
 		return r;
 	}
 	return nullptr;
@@ -421,19 +448,34 @@ bool Jupiter::Socket::getBlockingMode() const
 #endif
 }
 
-const Jupiter::ReadableString &Jupiter::Socket::getHostname() const
+const Jupiter::ReadableString &Jupiter::Socket::getRemoteHostname() const
 {
-	return Jupiter::Socket::data_->host;
+	return Jupiter::Socket::data_->remote_host;
 }
 
-const char *Jupiter::Socket::getHost() const
+const char *Jupiter::Socket::getRemoteHostnameC() const
 {
-	return Jupiter::Socket::data_->host.c_str();
+	return Jupiter::Socket::data_->remote_host.c_str();
 }
 
-unsigned short Jupiter::Socket::getPort() const
+const Jupiter::ReadableString &Jupiter::Socket::getBoundHostname() const
 {
-	return Jupiter::Socket::data_->port;
+	return Jupiter::Socket::data_->bound_host;
+}
+
+const char *Jupiter::Socket::getBoundHostnameC() const
+{
+	return Jupiter::Socket::data_->bound_host.c_str();
+}
+
+unsigned short Jupiter::Socket::getRemotePort() const
+{
+	return Jupiter::Socket::data_->remote_port;
+}
+
+unsigned short Jupiter::Socket::getBoundPort() const
+{
+	return Jupiter::Socket::data_->bound_port;
 }
 
 const Jupiter::ReadableString &Jupiter::Socket::getBuffer() const
