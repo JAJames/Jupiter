@@ -180,6 +180,14 @@ template<typename T> size_t Jupiter::Readable_String<T>::span(const T *in) const
 	return index;
 }
 
+template<typename T> size_t Jupiter::Readable_String<T>::span(const T &in) const
+{
+	size_t index = 0;
+	while (index != this->size() && this->get(index) == in)
+		++index;
+	return index;
+}
+
 // compare()
 
 template<typename T> int Jupiter::Readable_String<T>::compare(const Jupiter::Readable_String<T> &in) const

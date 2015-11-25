@@ -116,6 +116,7 @@ namespace Jupiter
 		*/
 		size_t span(const Readable_String<T> &in) const;
 		size_t span(const T *str) const;
+		size_t span(const T &in) const;
 
 		/**
 		* @brief Compares another string against the String.
