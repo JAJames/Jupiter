@@ -49,6 +49,12 @@
     <Filter Include="Header Files\DataBuffer">
       <UniqueIdentifier>{aef2e303-8a68-4cf9-8464-c4aef776d3f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\HTTP">
+      <UniqueIdentifier>{790badaf-80b5-40b0-8de1-a71f4c523074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HTTP">
+      <UniqueIdentifier>{7a4d818a-481e-467c-a3e3-d6d0e7dde244}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.c">
@@ -128,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="Database.cpp">
       <Filter>Source Files\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HTTP_Server.cpp">
+      <Filter>Source Files\HTTP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +262,12 @@
     </ClInclude>
     <ClInclude Include="DataBuffer.h">
       <Filter>Header Files\DataBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTP_Server.h">
+      <Filter>Header Files\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTP.h">
+      <Filter>Header Files\HTTP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

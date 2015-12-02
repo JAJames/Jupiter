@@ -185,6 +185,7 @@
     <ClCompile Include="File.cpp" />
     <ClCompile Include="Functions.c" />
     <ClCompile Include="Hash.c" />
+    <ClCompile Include="HTTP_Server.cpp" />
     <ClCompile Include="INIFile.cpp" />
     <ClCompile Include="IRC.cpp" />
     <ClCompile Include="IRC_Client.cpp" />
@@ -215,6 +216,8 @@
     <ClInclude Include="DLList.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="HTTP.h" />
+    <ClInclude Include="HTTP_Server.h" />
     <ClInclude Include="InvalidIndex.h" />
     <ClInclude Include="IRC.h" />
     <ClInclude Include="IRC_Numerics.h" />
