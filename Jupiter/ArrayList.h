@@ -146,7 +146,7 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList(const Jupiter::ArrayList<T
 	Jupiter::ArrayList<T>::dataSize = source.dataSize;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
 	Jupiter::List<T>::length = 0;
-	while (Jupiter::List<T>::length != Jupiter::List<T>::length)
+	while (Jupiter::List<T>::length != source.length)
 	{
 		Jupiter::ArrayList<T>::data[Jupiter::List<T>::length] = source.data[Jupiter::List<T>::length];
 		++Jupiter::List<T>::length;
