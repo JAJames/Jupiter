@@ -66,7 +66,7 @@ Jupiter::ReadableString *Jupiter::HTTP::Server::Content::execute(const Jupiter::
 
 Jupiter::HTTP::Server::Directory::Directory(const Jupiter::ReadableString &in_name) : name(in_name)
 {
-	name_checksum = Jupiter::HTTP::Server::Directory::name.calcChecksumi();
+	name_checksum = Jupiter::HTTP::Server::Directory::name.calcChecksum();
 }
 
 Jupiter::HTTP::Server::Directory::~Directory()
@@ -76,19 +76,24 @@ Jupiter::HTTP::Server::Directory::~Directory()
 }
 
 // host/dir/content
-// .hook(host, "dir/content")
+// .hook("dir/subdir/", content)
 
 void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_name, Content *in_content)
 {
 	Jupiter::ReferenceString in_name_ref = in_name;
 	in_name_ref.shiftRight(in_name_ref.span('/'));
 
-	size_t index = in_name_ref.find('/');
-	if (index == Jupiter::INVALID_INDEX) // Hook content
+	if (in_name_ref.isEmpty()) // Hook content
 		Jupiter::HTTP::Server::Directory::content.add(in_content);
 	else
 	{
-		Jupiter::ReferenceString dir_name(in_name_ref.ptr(), index);
+		size_t index = in_name_ref.find('/');
+		Jupiter::ReferenceString dir_name;
+		if (index == Jupiter::INVALID_INDEX)
+			dir_name = in_name_ref;
+		else
+			dir_name = in_name_ref.substring(0U, index);
+
 		in_name_ref.shiftRight(dir_name.size());
 		Jupiter::HTTP::Server::Directory *directory;
 		unsigned int dir_name_checksum = dir_name.calcChecksum();
@@ -97,7 +102,10 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 		{
 			directory = Jupiter::HTTP::Server::Directory::directories.get(--index);
 			if (directory->name_checksum == dir_name_checksum && directory->name.equals(dir_name))
-				return directory->hook(dir_name, in_content);
+			{
+				directory->hook(dir_name, in_content);
+				return;
+			}
 		}
 
 		// create directories
@@ -105,14 +113,22 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 		Jupiter::HTTP::Server::Directory::directories.add(directory);
 
 	directory_add_loop:
-		index = in_name_ref.find('/');
-		if (index != Jupiter::INVALID_INDEX)
+		in_name_ref.shiftRight(in_name_ref.span('/'));
+		if (in_name_ref.isNotEmpty())
 		{
 			// add directory
-			directory->directories.add(new Jupiter::HTTP::Server::Directory(in_name_ref.substring(0U, index)));
+			index = in_name_ref.find('/');
+			if (index != Jupiter::INVALID_INDEX)
+			{
+				directory->directories.add(new Jupiter::HTTP::Server::Directory(in_name_ref.substring(0U, index)));
+				directory = directory->directories.get(directories.size() - 1);
+				in_name_ref.shiftRight(index + 1);
+				goto directory_add_loop;
+			}
+			directory->directories.add(new Jupiter::HTTP::Server::Directory(in_name_ref));
 			directory = directory->directories.get(directories.size() - 1);
-			goto directory_add_loop;
 		}
+
 		// add content
 		directory->content.add(in_content);
 	}
@@ -125,7 +141,7 @@ bool Jupiter::HTTP::Server::Directory::remove(const Jupiter::ReadableString &in_
 
 bool Jupiter::HTTP::Server::Directory::has(const Jupiter::ReadableString &in_name)
 {
-	return false;
+	return this->find(in_name) != nullptr;
 }
 
 Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Directory::find(const Jupiter::ReadableString &in_name)
@@ -149,10 +165,11 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Directory::find(const Jup
 	}
 
 	Jupiter::ReferenceString dir_name(in_name_ref.ptr(), index);
-	in_name_ref.shiftRight(dir_name.size());
+	in_name_ref.shiftRight(dir_name.size() + 1);
 	Jupiter::HTTP::Server::Directory *directory;
 	unsigned int dir_name_checksum = dir_name.calcChecksum();
 	index = Jupiter::HTTP::Server::Directory::directories.size();
+
 	while (index != 0)
 	{
 		directory = Jupiter::HTTP::Server::Directory::directories.get(--index);
@@ -261,7 +278,6 @@ void Jupiter::HTTP::Server::Data::hook(const Jupiter::ReadableString &hostname, 
 	Jupiter::ReferenceString path = in_path;
 	Jupiter::ReferenceString dir_name;
 	Jupiter::HTTP::Server::Host *host = Jupiter::HTTP::Server::Data::find_host(hostname);
-	Jupiter::HTTP::Server::Directory *dir;
 
 	if (host == nullptr)
 	{
@@ -270,43 +286,11 @@ void Jupiter::HTTP::Server::Data::hook(const Jupiter::ReadableString &hostname, 
 		// OPTIMIZE: create directory tree and return.
 	}
 
-	dir = host;
-
 	path.shiftRight(path.span('/'));
 	if (path.isEmpty())
 		host->content.add(in_content);
-
-	if (path.isNotEmpty())
-	{
-		dir_name = path.getToken(0, '/');
-
-		size_t index = dir->directories.size();
-		Jupiter::HTTP::Server::Directory *t_dir;
-
-	dir_search_loop:
-		if (index != 0)
-		{
-			t_dir = dir->directories.get(--index);
-			if (t_dir->name.equalsi(dir_name) == false)
-				goto dir_search_loop;
-			dir = t_dir;
-		}
-		else // directory doesn't exist
-		{
-			t_dir = new Jupiter::HTTP::Server::Directory(dir_name);
-			dir->directories.add(t_dir);
-			dir = t_dir;
-			// OPTIMIZE: create directory tree and return.
-		}
-		// end dir_search_loop
-
-		path.shiftRight(dir_name.size());
-		path.shiftRight(path.span('/'));
-	}
-	dir->hook(path, in_content);
-	//dir->content.add(in_content);
-
-	// path is empty -- insert content into dir
+	else
+		host->hook(path, in_content);
 }
 
 bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname)
@@ -329,30 +313,10 @@ bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname
 // name: path/to/resource OR path/
 bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name)
 {
-	/*unsigned int name_checksum = hostname.calcChecksumi();
-	size_t index = Jupiter::HTTP::Server::Data::hosts.size();
-	Jupiter::HTTP::Server::Host *host;
-	while (index != 0)
-	{
-		host = Jupiter::HTTP::Server::Data::hosts.get(--index);
-		if (name_checksum == host->name_checksum && host->name.equalsi(hostname))
-		{
-			name_checksum = name.calcChecksum(); // switch to equalsi to make case-insensitive
-			index = host->functions.size();
-			Jupiter::HTTP::Server::Content *content;
-			while (index != 0)
-			{
-				content = host->functions.get(--index);
-				if (name_checksum == content->name_checksum && content->name.equals(name)) // switch to equalsi to make case-insensitive
-				{
-					delete host->functions.remove(index);
-					return true;
-				}
-			}
-			return false;
-		}
-	}*/
-	return false;
+	Jupiter::HTTP::Server::Host *host = Jupiter::HTTP::Server::Data::find_host(hostname);
+	if (host == nullptr)
+		return false;
+	return host->remove(name);
 }
 
 bool Jupiter::HTTP::Server::Data::has(const Jupiter::ReadableString &hostname)
@@ -482,17 +446,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 			case HTTPCommand::HEAD:
 				if (content != nullptr)
 				{
-					/*
-					HTTP/1.1 200 OK
-					Date: Mon, 05 Oct 2015 01:50:08 GMT
-					Server: Apache/2.4.7 (Ubuntu)
-					Last-Modified: Tue, 18 Aug 2015 03:53:28 GMT
-					ETag: "0-51d8ddc61160f"
-					Accept-Ranges: bytes
-					Content-Length: 0
-					Connection: close
-					Content-Type: text/html
-					*/
+					// 200 (success)
 					Jupiter::ReadableString *content_result = content->execute(content_parameters);
 
 					switch (session.version)
@@ -511,7 +465,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 					result += time_header;
 					delete[] time_header;
 
-					result += "Server: " JUPITER_VERSION ENDL;
+					result += "Server: "_jrs JUPITER_VERSION ENDL;
 
 					result += Jupiter::StringS::Format("Content-Length: %u" ENDL, content_result->size());
 
@@ -554,16 +508,41 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				}
 				else
 				{
-					// 404
-					/*
-					HTTP/1.1 404 Not Found
-					Date: Mon, 05 Oct 2015 01:46:01 GMT
-					Server: Apache/2.4.7 (Ubuntu)
-					Content-Length: 281
-					Connection: close
-					Content-Type: text/html; charset=iso-8859-1
-					*/
+					// 404 (not found)
 
+					switch (session.version)
+					{
+					default:
+					case HTTPVersion::HTTP_1_0:
+						result = "HTTP/1.0 404 Not Found"_jrs ENDL;
+						break;
+					case HTTPVersion::HTTP_1_1:
+						result = "HTTP/1.1 404 Not Found"_jrs ENDL;
+						break;
+					}
+
+					char *time_header = html_time();
+					result += "Date: "_jrs ENDL;
+					result += time_header;
+					delete[] time_header;
+
+					result += "Server: "_jrs JUPITER_VERSION ENDL;
+
+					result += "Content-Length: 0"_jrs ENDL;
+
+					switch (session.version)
+					{
+					default:
+					case HTTPVersion::HTTP_1_0:
+						result += "Connection: close"_jrs ENDL;
+						break;
+					case HTTPVersion::HTTP_1_1:
+						result += "Connection: keep-alive"_jrs ENDL;
+						break;
+					}
+
+					result += ENDL ENDL;
+					session.sock.send(result);
 				}
 				break;
 			default:
@@ -607,13 +586,19 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				span = content_parameters.find('?'); // repurposing 'span'
 				if (span == Jupiter::INVALID_INDEX)
 				{
-					content = Jupiter::HTTP::Server::Data::find(content_parameters);
+					if (session.host == nullptr)
+						content = Jupiter::HTTP::Server::Data::find(content_parameters);
+					else
+						content = session.host->find(content_parameters);
 					content_parameters.erase();
 				}
 				else
 				{
-					content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
-					content_parameters.shiftRight(span + 1);
+					if (session.host == nullptr)
+						content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
+					else
+						content = session.host->find(content_parameters.substring(0U, span));
+					content_parameters.shiftRight(span);
 					// decode content_parameters here
 				}
 
@@ -634,13 +619,20 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				span = content_parameters.find('?'); // repurposing 'span'
 				if (span == Jupiter::INVALID_INDEX)
 				{
-					content = Jupiter::HTTP::Server::Data::find(content_parameters);
+					if (session.host == nullptr)
+						content = Jupiter::HTTP::Server::Data::find(content_parameters);
+					else
+						content = session.host->find(content_parameters);
 					content_parameters.erase();
 				}
 				else
 				{
-					content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
-					content_parameters.shiftRight(span + 1);
+					if (session.host == nullptr)
+						content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
+					else
+						content = session.host->find(content_parameters.substring(0U, span));
+					content_parameters.shiftRight(span);
+					// decode content_parameters here
 				}
 
 				Jupiter::ReferenceString protocol_str = line.getWord(2, " ");
@@ -798,7 +790,7 @@ int Jupiter::HTTP::Server::think()
 		{
 			socket->setBlocking(false);
 			session = new HTTPSession(std::move(*socket));
-			if (session->sock.recv()) // data received
+			if (session->sock.recv() > 0) // data received
 			{
 				const Jupiter::ReadableString &sock_buffer = session->sock.getBuffer();
 				if (sock_buffer.size() < Jupiter::HTTP::Server::data_->max_request_size) // accept

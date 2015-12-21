@@ -29,6 +29,12 @@
 #include "Readable_String.h"
 #include "ArrayList.h"
 
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
+
 namespace Jupiter
 {
 	namespace HTTP
@@ -110,5 +116,10 @@ namespace Jupiter
 		}; // Jupiter::HTTP::Server class
 	} // Jupiter::HTTP namespace
 } // Jupiter namespace
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // _HTTP_SERVER_H_HEADER
