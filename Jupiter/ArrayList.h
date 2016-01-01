@@ -53,6 +53,13 @@ namespace Jupiter
 		T *remove(size_t index);
 
 		/**
+		* @brief Removes the last element in the list, and returns the data removed.
+		*
+		* @return Data removed.
+		*/
+		T *pop();
+
+		/**
 		* @brief Adds data to the list at a specified index.
 		*
 		* @param data Data to add to the list.
@@ -180,6 +187,11 @@ template<typename T> T *Jupiter::ArrayList<T>::remove(size_t index)
 	for (size_t i = index + 1; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i - 1] = Jupiter::ArrayList<T>::data[i];
 	Jupiter::List<T>::length--;
 	return r;
+}
+
+template<typename T> T *Jupiter::ArrayList<T>::pop()
+{
+	return Jupiter::ArrayList<T>::data[--Jupiter::List<T>::length];
 }
 
 template<typename T> void Jupiter::ArrayList<T>::add(T *ndata, size_t index)

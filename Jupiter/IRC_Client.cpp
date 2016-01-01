@@ -115,7 +115,14 @@ struct Jupiter::IRC::Client::Channel::User::Data
 {
 	Jupiter::IRC::Client::User *user;
 	Jupiter::StringS prefixes;
+
+	~Data();
 };
+
+Jupiter::IRC::Client::Channel::User::Data::~Data()
+{
+	--Jupiter::IRC::Client::Channel::User::Data::user->data_->channelCount;
+}
 
 struct Jupiter::IRC::Client::Channel::Data
 {
@@ -1054,7 +1061,7 @@ int Jupiter::IRC::Client::primaryHandler()
 													this->OnPart(chan, nick, reason);
 													for (i = Jupiter::plugins->size() - 1; i >= 0; i--) Jupiter::plugins->get(i)->OnPart(this, chan, nick, reason);
 													if (nick.equalsi(Jupiter::IRC::Client::data_->nickname)) Jupiter::IRC::Client::data_->delChannel(chan);
-													if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
+													if (user->getChannelCount() == 0) delete Jupiter::IRC::Client::data_->users.remove(userIndex);
 												}
 											}
 										}
@@ -1090,7 +1097,7 @@ int Jupiter::IRC::Client::primaryHandler()
 															Jupiter::IRC::Client::data_->delChannel(chan);
 															if (Jupiter::IRC::Client::data_->joinOnKick) Jupiter::IRC::Client::joinChannel(chan);
 														}
-														if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
+														if (user->getChannelCount() == 0) delete Jupiter::IRC::Client::data_->users.remove(userIndex);
 													}
 												}
 											}
@@ -1110,7 +1117,7 @@ int Jupiter::IRC::Client::primaryHandler()
 											Jupiter::IRC::Client::data_->channels.get(i)->delUser(nick);
 										this->OnQuit(nick, message);
 										for (i = 0; i < Jupiter::plugins->size(); i++) Jupiter::plugins->get(i)->OnQuit(this, nick, message);
-										if (user->getChannelCount() == 0) Jupiter::IRC::Client::data_->users.remove(userIndex);
+										if (user->getChannelCount() == 0) delete Jupiter::IRC::Client::data_->users.remove(userIndex);
 									}
 								}
 								else if (w2.equalsi("INVITE"))
@@ -1617,11 +1624,7 @@ void Jupiter::IRC::Client::Channel::delUser(const Jupiter::ReadableString &nickn
 void Jupiter::IRC::Client::Channel::delUser(size_t index)
 {
 	if (index < Jupiter::IRC::Client::Channel::data_->users.size())
-	{
-		Jupiter::IRC::Client::Channel::User *user = Jupiter::IRC::Client::Channel::data_->users.remove(index);
-		user->data_->user->data_->channelCount--;
-		delete user;
-	}
+		delete Jupiter::IRC::Client::Channel::data_->users.remove(index);
 }
 
 void Jupiter::IRC::Client::Channel::addUserPrefix(size_t index, char prefix)
