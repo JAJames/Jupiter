@@ -450,6 +450,24 @@ JUPITER_API unsigned long long Jupiter_strtoull_nospace_s(const char *str, size_
 */
 JUPITER_API double Jupiter_strtod_nospace_s(const char *str, size_t length);
 
+/**
+* @brief Converts an input prefix length into a bitmask
+* Note: Local byte order
+*
+* @param prefix_length Prefix length to convert
+* @return Bitmask represented by prefix_length
+*/
+JUPITER_API uint32_t Jupiter_prefix_length_to_bitmask(uint8_t prefix_length);
+
+/**
+* @brief Converts an input prefix length into a netmask
+* Note: Network byte order
+*
+* @param prefix_length Prefix length to convert
+* @return Netmask represented by prefix_length
+*/
+JUPITER_API uint32_t Jupiter_prefix_length_to_netmask(uint8_t prefix_length);
+
 #if defined __cplusplus
 }
 

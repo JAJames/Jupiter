@@ -1014,3 +1014,41 @@ double Jupiter_strtod_nospace_s(const char *str, size_t length)
 
 	return total;
 }
+
+/** Prefix length to bitmask conversion tables */
+
+const uint32_t bitmask_table[] =
+{
+	0x00000000U, 0x80000000U, 0xC0000000U, 0xE0000000U,
+	0xF0000000U, 0xF8000000U, 0xFC000000U, 0xFE000000U,
+	0xFF000000U, 0xFF800000U, 0xFFC00000U, 0xFFE00000U,
+	0xFFF00000U, 0xFFF80000U, 0xFFFC0000U, 0xFFFE0000U,
+	0xFFFF0000U, 0xFFFF8000U, 0xFFFFC000U, 0xFFFFE000U,
+	0xFFFFF000U, 0xFFFFF800U, 0xFFFFFC00U, 0xFFFFFE00U,
+	0xFFFFFF00U, 0xFFFFFF80U, 0xFFFFFFC0U, 0xFFFFFFE0U,
+	0xFFFFFFF0U, 0xFFFFFFF8U, 0xFFFFFFFCU, 0xFFFFFFFEU,
+	0xFFFFFFFFU
+};
+
+const unsigned char *netmask_table[] =
+{
+	"\x00\x00\x00\x00", "\x80\x00\x00\x00", "\xC0\x00\x00\x00", "\xE0\x00\x00\x00",
+	"\xF0\x00\x00\x00", "\xF8\x00\x00\x00", "\xFC\x00\x00\x00", "\xFE\x00\x00\x00",
+	"\xFF\x00\x00\x00", "\xFF\x80\x00\x00", "\xFF\xC0\x00\x00", "\xFF\xE0\x00\x00",
+	"\xFF\xF0\x00\x00", "\xFF\xF8\x00\x00", "\xFF\xFC\x00\x00", "\xFF\xFE\x00\x00",
+	"\xFF\xFF\x00\x00", "\xFF\xFF\x80\x00", "\xFF\xFF\xC0\x00", "\xFF\xFF\xE0\x00",
+	"\xFF\xFF\xF0\x00", "\xFF\xFF\xF8\x00", "\xFF\xFF\xFC\x00", "\xFF\xFF\xFE\x00",
+	"\xFF\xFF\xFF\x00", "\xFF\xFF\xFF\x80", "\xFF\xFF\xFF\xC0", "\xFF\xFF\xFF\xE0",
+	"\xFF\xFF\xFF\xF0", "\xFF\xFF\xFF\xF8", "\xFF\xFF\xFF\xFC", "\xFF\xFF\xFF\xFE",
+	"\xFF\xFF\xFF\xFF"
+};
+
+uint32_t Jupiter_prefix_length_to_bitmask(uint8_t prefix_length)
+{
+	return bitmask_table[prefix_length];
+}
+
+uint32_t Jupiter_prefix_length_to_netmask(uint8_t prefix_length)
+{
+	return *(uint32_t *)netmask_table[prefix_length];
+}
