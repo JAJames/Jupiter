@@ -64,6 +64,7 @@ bool Jupiter::Database::Data::process_file(Jupiter::Database *db)
 			if (file != nullptr)
 			{
 				db->create_header(file);
+				db->process_file_finish(file);
 				fclose(file);
 				return true;
 			}
