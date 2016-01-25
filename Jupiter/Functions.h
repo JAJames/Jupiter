@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -74,7 +74,7 @@ namespace Jupiter
 	* @return Pointer to the first instance of a character in str2 being in str1, or nullptr if there is none.
 	*/
 	template<typename T = char> inline const T *strpbrk(const T *str1, const T *str2);
-	template<typename T = char> inline const T *strpbrk(const T *str1, const T str2);
+	template<typename T = char> inline const T *strpbrk(const T *str, const T element);
 
 	/**
 	* @brief Checks if two strings are equal.
@@ -95,197 +95,12 @@ extern "C"
 #endif // __cplusplus
 
 /**
-* @brief Case insensitive version of strstr().
-*
-* @param str1 String to be scanned.
-* @param str2 String to be matched.
-* @return Pointer to the first occurance of str2 in str1 if it exists, NULL otherwise.
-*/
-JUPITER_API const char *stristr(const char *str1, const char *str2);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_strlen(const char *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_wstrlen(const wchar_t *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_strlen8(const uint8_t *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_strlen16(const uint16_t *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_strlen32(const uint32_t *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_strlen64(const uint64_t *str);
-
-/**
-* @brief Returns the length of a C-style string.
-*
-* @param str C-style string to get the length of.
-* @return Length of the C-style string.
-*/
-JUPITER_API size_t Jupiter_vstrlen(const void *str, size_t size);
-
-/**
-* @brief Checks if two strings are equal. This function is case-sensitive.
-*
-* @param str1 String to be compared.
-* @param str2 String to be compared.
-* @return True if the strings are equal, false otherwise.
-*/
-JUPITER_API bool streql(const char *str1, const char *str2);
-JUPITER_API bool wstreql(const wchar_t *str1, const wchar_t *str2);
-
-/**
-* @brief Checks if two strings are equal. This function is not case-sensitive.
-*
-* @param str1 String to be compared.
-* @param str2 String to be compared.
-* @return True if the strings are equal, false otherwise.
-*/
-JUPITER_API bool streqli(const char *str1, const char *str2);
-JUPITER_API bool wstreqli(const wchar_t *str1, const wchar_t *str2);
-
-/**
-* @brief Checks if a string matches a wildcard format.
-* Note: Case sensitive.
-*
-* @param format Sring containing the wildcard format information.
-* @param str2 String to be compared.
-* @return True if the string matches the wildcard format, false otherwise.
-*/
-JUPITER_API bool strmatch(const char *format, const char *str);
-JUPITER_API bool wstrmatch(const wchar_t *format, const wchar_t *str);
-
-/**
-* @brief Checks if a string matches a wildcard format.
-* Note: Case insensitive.
-*
-* @param format Sring containing the wildcard format information.
-* @param str2 String to be compared.
-* @return True if the string matches the wildcard format, false otherwise.
-*/
-JUPITER_API bool strmatchi(const char *format, const char *str);
-JUPITER_API bool wstrmatchi(const wchar_t *format, const wchar_t *str);
-
-/**
-* @brief Returns a copy of a substring.
-*
-* @param str String 
-* @param a String to be compared.
-* @param b String to be compared.
-* @return String containing the substring, or NULL on malloc failure.
-*/
-JUPITER_API char *charToChar(const char *str, int a, int b);
-JUPITER_API wchar_t *wcharToChar(const wchar_t *str, int a, int b);
-
-/**
-* @brief Removes any carriage-returns (\r) and new lines (\n) from a string.
-*
-* @param str String to be trimed.
-*/
-JUPITER_API void trim(char *str);
-
-/**
-* @brief Returns a copy of a "word" from a string.
-*
-* @param str String to be parsed.
-* @param w Position of the word, starting at 0.
-* @return String containing the word on success, or NULL otherwise.
-*/
-JUPITER_API char *getWord(const char *str, int w);
-
-/**
-* @brief Returns the number of occurances of a given character.
-*
-* @param str String to be scanned.
-* @param c Character to be counted.
-* @return Total number of occurances of a character in a string.
-*/
-JUPITER_API unsigned int countSymbol(const char *str, char c);
-
-/**
-* @brief Returns the number of space-deliminated words in a string.
-*
-* @param str String to be scanned.
-* @return Total number of space-deliminated words in a string.
-*/
-JUPITER_API unsigned int wordCount(const char *str);
-
-/**
-* @brief Returns the number of newlines in a string.
-*
-* @param str String to be scanned.
-* @return Total number of newlines in a string.
-*/
-JUPITER_API unsigned int countLines(const char *str);
-
-/**
-* @brief Returns a substring in the form of a new String,
-*
-* @param str String to be scanned.
-* @return String representing a single line of the input string on success, NULL otherwise.
-*/
-JUPITER_API char *getLine(const char *str, unsigned int l);
-
-/**
-* @brief Returns the position of the n'th occurance of a character in a string.
-*
-* @param str String to be scanned.
-* @param c Character to find.
-* @param n Position of the character to search for.
-* @return Position of the n'th occurance of a character if it exists, -1 otherwise.
-*/
-JUPITER_API int findSymbol(const char *str, char c, int n);
-
-/**
 * @brief Checks if a character exists in a string.
 *
 * @param str String to scan.
 * @return True if it contains a given character, false otherwise.
 */
 JUPITER_API bool containsSymbol(const char *str, char c);
-
-/**
-* @brief Creates a copy of a string.
-*
-* @param str String to copy.
-* @return String containing a copy of the input string on success, NULL otherwise.
-*/
-JUPITER_API char *makestr(const char *str);
 
 /**
 * @brief Returns the current time in a string format.
@@ -332,7 +147,7 @@ JUPITER_API uint64_t getPowerTwo64(uint64_t number);
 * @param c Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
-JUPITER_API bool Jupiter_isBase(unsigned char c, int base);
+JUPITER_API bool Jupiter_isBase(unsigned char chr, int base);
 
 /**
 * @brief Checks if a character is a hexadecimal digit character. (base 16)
@@ -340,7 +155,7 @@ JUPITER_API bool Jupiter_isBase(unsigned char c, int base);
 * @param c Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
-JUPITER_API bool Jupiter_isHex(unsigned char c);
+JUPITER_API bool Jupiter_isHex(unsigned char chr);
 
 /**
 * @brief Checks if a character is a decimal digit character. (base 10)
@@ -348,7 +163,15 @@ JUPITER_API bool Jupiter_isHex(unsigned char c);
 * @param c Character to check.
 * @return True if the character is a decimal digit, false otherwise.
 */
-JUPITER_API bool Jupiter_isDecimal(unsigned char c);
+JUPITER_API bool Jupiter_isDecimal(unsigned char chr);
+
+/**
+* @brief Checks if a character is an octal digit character. (base 10)
+*
+* @param c Character to check.
+* @return True if the character is a octal digit, false otherwise.
+*/
+JUPITER_API bool Jupiter_isOctal(unsigned char chr);
 
 /**
 * @brief Fetches a character's represented integral value.
@@ -358,7 +181,31 @@ JUPITER_API bool Jupiter_isDecimal(unsigned char c);
 * @param base Base of the representation.
 * @return A character's represented integral value on success, -1 otherwise.
 */
-JUPITER_API int Jupiter_getBase(unsigned char c, int base);
+JUPITER_API int Jupiter_getBase(unsigned char chr, int base);
+
+/**
+* @brief Fetches a hexadecimal character's represented integral value. (base 16)
+*
+* @param c Character to fetch value of.
+* @return A character's represented integral value on success, -1 otherwise.
+*/
+JUPITER_API int Jupiter_getHex(unsigned char chr);
+
+/**
+* @brief Fetches a decimal character's represented integral value. (base 10)
+*
+* @param c Character to fetch value of.
+* @return A character's represented integral value on success, -1 otherwise.
+*/
+JUPITER_API int Jupiter_getDecimal(unsigned char chr);
+
+/**
+* @brief Fetches a octal character's represented integral value. (base 8)
+*
+* @param c Character to fetch value of.
+* @return A character's represented integral value on success, -1 otherwise.
+*/
+JUPITER_API int Jupiter_getOctal(unsigned char chr);
 
 /**
 * @brief Interprets a string into an integer.
@@ -474,20 +321,20 @@ JUPITER_API uint32_t Jupiter_prefix_length_to_netmask(uint8_t prefix_length);
 /** strlen implementation */
 template<typename T> inline size_t Jupiter::strlen(const T *str)
 {
-	register const T *s = str;
-	while (*s != 0) s++;
+	const T *s = str;
+	while (*s != 0)
+		++s;
 	return s - str;
 }
 
 /** strcpy implementation */
 template<typename T> inline T *Jupiter::strcpy(T *dest, const T *source)
 {
-	register T *d = dest;
+	T *d = dest;
 	while (*source != 0)
 	{
 		*d = *source;
-		d++;
-		source++;
+		++d, ++source;
 	}
 	*d = *source;
 	return dest;
@@ -499,7 +346,7 @@ template<typename T> inline T *Jupiter::strcpy(T *dest, const T *source, size_t 
 	dest[length] = 0;
 	while (length > 0)
 	{
-		length--;
+		--length;
 		dest[length] = source[length];
 	}
 	return dest;
@@ -513,32 +360,32 @@ template<typename T> inline const T *Jupiter::strpbrk(const T *str1, const T *st
 		s = str2;
 		while (*s != 0)
 		{
-			if (*str1 == *s) return str1;
-			s++;
+			if (*str1 == *s)
+				return str1;
+			++s;
 		}
-		str1++;
+		++str1;
 	}
 	return nullptr;
 }
 
-template<typename T> inline const T *Jupiter::strpbrk(const T *str1, const T e)
+template<typename T> inline const T *Jupiter::strpbrk(const T *str, const T element)
 {
-	while (*str1 != 0)
+	while (*str != 0)
 	{
-		if (*str1 == e) return str1;
-		str1++;
+		if (*str == element)
+			return str;
+		++str;
 	}
 	return nullptr;
 }
 
 template<typename T> inline bool Jupiter::streql(const T *str1, const T *str2)
 {
-	if (str1 == str2) return true;
+	if (str1 == str2)
+		return true;
 	while (*str1 != 0 && *str1 == *str2)
-	{
-		str1++;
-		str2++;
-	}
+		++str1, ++str2;
 	return (*str1 == *str2);
 }
 

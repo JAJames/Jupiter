@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -187,24 +187,24 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 			case '1':
 			case '2':
 			case '3':
-				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isBase(this->get(index + 1), 8))
+				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 1)))
 				{
-					if (index + 2 != Jupiter::String_Type<char>::length && Jupiter_isBase(this->get(index + 2), 8))
-						this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getBase(this->get(index), 8)) << 6 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 8)) << 3 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 2), 8)));
+					if (index + 2 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 2)))
+						this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 6 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 2))));
 					else
-						this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getBase(this->get(index), 8)) << 3 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 8)));
+						this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))));
 				}
 				else
-					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getBase(this->get(index), 8)));
+					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))));
 				break;
 			case '4':
 			case '5':
 			case '6':
 			case '7':
-				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isBase(this->get(index + 1), 8))
-					this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getBase(this->get(index), 8)) << 3 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 8)));
+				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 1)))
+					this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))));
 				else
-					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getBase(this->get(index), 8)));
+					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))));
 				break;
 			case 'a':
 				this->replace(index - 1, 2, '\a');
@@ -241,20 +241,20 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 				break;
 			case 'x':
 				if (Jupiter::String_Type<char>::length >= index + 2
-					&& Jupiter_isBase(this->get(index + 1), 16) && Jupiter_isBase(this->get(index + 2), 16))
-					this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 2), 16)));
+					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)))
+					this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2))));
 				break;
 			case 'U':
 				if (Jupiter::String_Type<char>::length >= index + 8
-					&& Jupiter_isBase(this->get(index + 1), 16) && Jupiter_isBase(this->get(index + 2), 16) && Jupiter_isBase(this->get(index + 3), 16) && Jupiter_isBase(this->get(index + 4), 16) && Jupiter_isBase(this->get(index + 5), 16) && Jupiter_isBase(this->get(index + 6), 16) && Jupiter_isBase(this->get(index + 7), 16) && Jupiter_isBase(this->get(index + 8), 16))
+					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)) && Jupiter_isHex(this->get(index + 3)) && Jupiter_isHex(this->get(index + 4)) && Jupiter_isHex(this->get(index + 5)) && Jupiter_isHex(this->get(index + 6)) && Jupiter_isHex(this->get(index + 7)) && Jupiter_isHex(this->get(index + 8)))
 				{
-					uint32_t codepoint = static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 2), 16));
+					uint32_t codepoint = static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getBase(this->get(index + 3), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 4), 16));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 4)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getBase(this->get(index + 5), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 6), 16));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 5))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 6)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getBase(this->get(index + 7), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 8), 16));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 7))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 8)));
 					if (codepoint <= 0x007F)
 						this->replace(index - 1, 10, static_cast<uint8_t>(codepoint));
 					else if (codepoint <= 0x07FF)
@@ -288,11 +288,11 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 				break;
 			case 'u':
 				if (Jupiter::String_Type<char>::length >= index + 4
-					&& Jupiter_isBase(this->get(index + 1), 16) && Jupiter_isBase(this->get(index + 2), 16) && Jupiter_isBase(this->get(index + 3), 16) && Jupiter_isBase(this->get(index + 4), 16))
+					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)) && Jupiter_isHex(this->get(index + 3)) && Jupiter_isHex(this->get(index + 4)))
 				{
-					uint16_t codepoint = static_cast<uint8_t>(Jupiter_getBase(this->get(index + 1), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 2), 16));
+					uint16_t codepoint = static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getBase(this->get(index + 3), 16)) << 4 | static_cast<uint8_t>(Jupiter_getBase(this->get(index + 4), 16));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 4)));
 					if (codepoint <= 0x007F)
 						this->replace(index - 1, 6, static_cast<uint8_t>(codepoint));
 					else if (codepoint <= 0x07FF)

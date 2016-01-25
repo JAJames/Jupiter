@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Jessica James.
+ * Copyright (C) 2015-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -142,11 +142,6 @@ bool Jupiter::Database::append(const char *file, Jupiter::DataBuffer &data)
 	bool r = Jupiter::Database::append(f, data);
 	fclose(f);
 	return r;
-}
-
-template<typename T> T *get_ptr(T &in)
-{
-	return &in;
 }
 
 bool Jupiter::Database::append(FILE *file, Jupiter::DataBuffer &data)
