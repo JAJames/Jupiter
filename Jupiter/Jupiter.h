@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -36,7 +36,7 @@
 #define JUPITER_API
 #endif // _WIN32
 
-#define JUPITER_VERSION "Jupiter 0.17-dev" /** Version of this program at compile time. */
+#define JUPITER_VERSION "Jupiter 0.18" /** Version of this program at compile time. */
 
 #if defined __cplusplus
 extern "C"
