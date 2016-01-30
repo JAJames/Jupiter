@@ -114,6 +114,11 @@ void Jupiter::Database::process_file_finish(FILE *)
 {
 }
 
+const Jupiter::CStringType &Jupiter::Database::getFilename() const
+{
+	return Jupiter::Database::data_->file_name;
+}
+
 bool Jupiter::Database::append(Jupiter::DataBuffer &data)
 {
 	return Jupiter::Database::append(Jupiter::Database::data_->file_name, data);

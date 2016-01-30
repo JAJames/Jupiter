@@ -79,6 +79,13 @@ namespace Jupiter
 		virtual void process_file_finish(FILE *file);
 
 		/**
+		* @brief Returns the name of the file which was loaded in process_file.
+		*
+		* @return Name of the file on the file system.
+		*/
+		const Jupiter::CStringType &getFilename() const;
+
+		/**
 		* @brief Appends a DataBuffer to the end of the Database.
 		*
 		* @param data DataBuffer to append
