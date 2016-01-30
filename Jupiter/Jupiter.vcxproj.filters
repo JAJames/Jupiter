@@ -138,6 +138,9 @@
     <ClCompile Include="HTTP_Server.cpp">
       <Filter>Source Files\HTTP</Filter>
     </ClCompile>
+    <ClCompile Include="HTTP_QueryString.cpp">
+      <Filter>Header Files\HTTP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Functions.h">
@@ -267,6 +270,9 @@
       <Filter>Header Files\HTTP</Filter>
     </ClInclude>
     <ClInclude Include="HTTP.h">
+      <Filter>Header Files\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="HTTP_QueryString.h">
       <Filter>Header Files\HTTP</Filter>
     </ClInclude>
   </ItemGroup>
