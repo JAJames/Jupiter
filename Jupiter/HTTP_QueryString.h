@@ -52,7 +52,7 @@ namespace Jupiter
 			HTMLFormResponse() = delete;
 			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.ptr(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
-			Jupiter::INIFile table;
+			Jupiter::INIFile::Section table;
 		};
 	}
 }
@@ -132,9 +132,9 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 		}
 	}
 
-	const char *token_start = ptr;
 	const char *end = ptr + str_size - 2;
 	char *buf = str;
+	const char *token_start = buf;
 	int val;
 	Jupiter::ReferenceString key;
 
@@ -164,17 +164,17 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 		else if (*ptr == '&') // End of key/value, start of key
 		{
 			if (key.isNotEmpty()) // A key was already set; end of value
-				Jupiter::HTTP::HTMLFormResponse::table.set(Jupiter::ReferenceString::empty, key, Jupiter::ReferenceString(token_start, ptr - token_start));
+				Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(token_start, buf - token_start));
 
 			key.erase();
 			++buf, ++ptr;
-			token_start = ptr;
+			token_start = buf;
 		}
 		else if (*ptr == '=') // End of key, start of value
 		{
-			key.set(token_start, ptr - token_start);
+			key.set(token_start, buf - token_start);
 			++buf, ++ptr;
-			token_start = ptr;
+			token_start = buf;
 		}
 		else // Copy character
 		{
@@ -186,6 +186,10 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 	// copy last 2 characters
 	*buf = *ptr;
 	*++buf = *++ptr;
+
+	if (key.isNotEmpty()) // A key was already set; end of value
+		Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(token_start, buf - token_start + 1));
+
 	Jupiter::StringType::length = buf + 1 - str;
 }
 
