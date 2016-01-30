@@ -256,7 +256,7 @@ HTTPSession::HTTPSession(Jupiter::Socket &&in_sock) : sock(std::move(in_sock))
 
 HTTPSession::~HTTPSession()
 {
-	HTTPSession::sock.closeSocket();
+	HTTPSession::sock.setBlocking(true);
 }
 
 // Server::Data struct
@@ -267,10 +267,10 @@ struct Jupiter::HTTP::Server::Data
 	Jupiter::ArrayList<Jupiter::HTTP::Server::Host> hosts;
 	Jupiter::ArrayList<Socket> ports;
 	Jupiter::ArrayList<HTTPSession> sessions;
-	std::chrono::milliseconds session_timeout = std::chrono::milliseconds(30000); // TODO: Config variable
-	std::chrono::milliseconds keep_alive_session_timeout = std::chrono::milliseconds(30000); // TODO: Config variable
+	std::chrono::milliseconds session_timeout = std::chrono::milliseconds(2000); // TODO: Config variable
+	std::chrono::milliseconds keep_alive_session_timeout = std::chrono::milliseconds(5000); // TODO: Config variable
 	size_t max_request_size = 1024; // TODO: Config variable
-	bool permit_keept_alive = true; // TODO: Config variable
+	bool permit_keept_alive = false; // TODO: Config variable
 
 	/** Foward functions */
 	void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, Content *in_content);
@@ -511,16 +511,10 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 
 					result += Jupiter::StringS::Format("Content-Length: %u" ENDL, content_result->size());
 
-					switch (session.version)
-					{
-					default:
-					case HTTPVersion::HTTP_1_0:
-						result += "Connection: close"_jrs ENDL;
-						break;
-					case HTTPVersion::HTTP_1_1:
+					if (session.keep_alive)
 						result += "Connection: keep-alive"_jrs ENDL;
-						break;
-					}
+					else
+						result += "Connection: close"_jrs ENDL;
 
 					result += "Content-Type: "_jrs;
 					if (content->type == nullptr)
@@ -572,16 +566,10 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 
 					result += "Content-Length: 0"_jrs ENDL;
 
-					switch (session.version)
-					{
-					default:
-					case HTTPVersion::HTTP_1_0:
-						result += "Connection: close"_jrs ENDL;
-						break;
-					case HTTPVersion::HTTP_1_1:
+					if (session.keep_alive)
 						result += "Connection: keep-alive"_jrs ENDL;
-						break;
-					}
+					else
+						result += "Connection: close"_jrs ENDL;
 
 					result += ENDL ENDL;
 					session.sock.send(result);
@@ -615,7 +603,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 			{
 				Jupiter::ReferenceString connection_type = line.getWord(1, " ");
 				if (connection_type.equalsi("keep-alive"_jrs))
-					session.keep_alive = true;
+					session.keep_alive = Jupiter::HTTP::Server::Data::permit_keept_alive;
 			}
 		}
 		else // command
@@ -650,7 +638,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				else if (protocol_str.equalsi("http/1.1"_jrs))
 				{
 					session.version = HTTPVersion::HTTP_1_1;
-					session.keep_alive = true;
+					session.keep_alive = Jupiter::HTTP::Server::Data::permit_keept_alive;
 				}
 			}
 			else if (first_token.equals("HEAD"_jrs))
@@ -683,7 +671,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				else if (protocol_str.equalsi("http/1.1"_jrs))
 				{
 					session.version = HTTPVersion::HTTP_1_1;
-					session.keep_alive = true;
+					session.keep_alive = Jupiter::HTTP::Server::Data::permit_keept_alive;
 				}
 			}
 			else
@@ -801,9 +789,14 @@ int Jupiter::HTTP::Server::think()
 	{
 		session = Jupiter::HTTP::Server::data_->sessions.get(--index);
 		std::chrono::steady_clock::now();
-		if ((std::chrono::steady_clock::now() > session->last_active + Jupiter::HTTP::Server::data_->keep_alive_session_timeout)
+		if (session->sock.isShutdown())
+		{
+			if (session->sock.recv() == 0)
+				delete Jupiter::HTTP::Server::data_->sessions.remove(index);
+		}
+		else if ((std::chrono::steady_clock::now() > session->last_active + Jupiter::HTTP::Server::data_->keep_alive_session_timeout)
 			|| (session->keep_alive == false && std::chrono::steady_clock::now() > session->last_active + Jupiter::HTTP::Server::data_->session_timeout))
-			delete Jupiter::HTTP::Server::data_->sessions.remove(index);
+			session->sock.shutdown();
 		else if (session->sock.recv() > 0)
 		{
 			const Jupiter::ReadableString &sock_buffer = session->sock.getBuffer();
@@ -815,7 +808,7 @@ int Jupiter::HTTP::Server::think()
 					session->last_active = std::chrono::steady_clock::now();
 					Jupiter::HTTP::Server::data_->process_request(*session);
 					if (session->keep_alive == false) // remove completed session
-						delete Jupiter::HTTP::Server::data_->sessions.remove(index);
+						session->sock.shutdown();
 				}
 				else if (session->request.size() == Jupiter::HTTP::Server::data_->max_request_size) // reject (full buffer)
 					delete Jupiter::HTTP::Server::data_->sessions.remove(index);

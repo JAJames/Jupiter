@@ -96,18 +96,25 @@ bool Jupiter::SecureSocket::bind(const char *hostname, unsigned short iPort, boo
 	return Jupiter::Socket::bind(hostname, iPort, andListen);
 }
 
-void Jupiter::SecureSocket::closeSocket()
+void Jupiter::SecureSocket::shutdown()
 {
-	if (Jupiter::SecureSocket::SSLdata_ != nullptr)
+	Jupiter::Socket::shutdown();
+	if (Jupiter::SecureSocket::SSLdata_ != nullptr && Jupiter::SecureSocket::SSLdata_->handle != nullptr)
 	{
-		Jupiter::Socket::closeSocket();
-		if (Jupiter::SecureSocket::SSLdata_->handle != nullptr)
-		{
-			if (SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle) == 0)
-				SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle);
-			SSL_free(Jupiter::SecureSocket::SSLdata_->handle);
-			Jupiter::SecureSocket::SSLdata_->handle = nullptr;
-		}
+		if (SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle) == 0)
+			SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle);
+	}
+}
+
+void Jupiter::SecureSocket::close()
+{
+	Jupiter::Socket::close();
+	if (Jupiter::SecureSocket::SSLdata_ != nullptr && Jupiter::SecureSocket::SSLdata_->handle != nullptr)
+	{
+		if (SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle) == 0)
+			SSL_shutdown(Jupiter::SecureSocket::SSLdata_->handle);
+		SSL_free(Jupiter::SecureSocket::SSLdata_->handle);
+		Jupiter::SecureSocket::SSLdata_->handle = nullptr;
 	}
 }
 

@@ -61,6 +61,7 @@ struct Jupiter::Socket::Data
 	Jupiter::CStringS bound_host;
 	int sockType = SOCK_RAW;
 	int sockProto = IPPROTO_RAW;
+	bool is_shutdown = false;
 #if defined _WIN32
 	unsigned long blockMode = 0;
 #endif
@@ -116,7 +117,7 @@ Jupiter::Socket::~Socket()
 	{
 		if (Jupiter::Socket::data_->rawSock > 0)
 		{
-			Jupiter::Socket::closeSocket();
+			Jupiter::Socket::close();
 		}
 		delete Jupiter::Socket::data_;
 	}
@@ -185,9 +186,9 @@ bool Jupiter::Socket::connect(const char *hostname, unsigned short iPort, const 
 			if (::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
 			{
 #if defined _WIN32
-				closesocket(Jupiter::Socket::data_->rawSock);
+				::closesocket(Jupiter::Socket::data_->rawSock);
 #else // _WIN32
-				close(Jupiter::Socket::data_->rawSock);
+				::close(Jupiter::Socket::data_->rawSock);
 #endif // WIN32
 				Jupiter::Socket::data_->rawSock = INVALID_SOCKET;
 				info = info->ai_next;
@@ -226,9 +227,9 @@ bool Jupiter::Socket::bind(const char *hostname, unsigned short iPort, bool andL
 			if (::bind(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)
 			{
 #if defined _WIN32
-				closesocket(Jupiter::Socket::data_->rawSock);
+				::closesocket(Jupiter::Socket::data_->rawSock);
 #else // _WIN32
-				close(Jupiter::Socket::data_->rawSock);
+				::close(Jupiter::Socket::data_->rawSock);
 #endif // WIN32
 				Jupiter::Socket::data_->rawSock = INVALID_SOCKET;
 				info = info->ai_next;
@@ -245,18 +246,33 @@ bool Jupiter::Socket::bind(const char *hostname, unsigned short iPort, bool andL
 	return false;
 }
 
-void Jupiter::Socket::closeSocket()
+void Jupiter::Socket::shutdown()
 {
 	if (Jupiter::Socket::data_ != nullptr)
 	{
-		shutdown(Jupiter::Socket::data_->rawSock, 2);
+		::shutdown(Jupiter::Socket::data_->rawSock, 2);
+		Jupiter::Socket::data_->is_shutdown = true;
+	}
+}
+
+void Jupiter::Socket::close()
+{
+	if (Jupiter::Socket::data_ != nullptr)
+	{
+		if (Jupiter::Socket::data_->is_shutdown == false)
+			this->shutdown();
 #if defined _WIN32
-		closesocket(Jupiter::Socket::data_->rawSock);
+		::closesocket(Jupiter::Socket::data_->rawSock);
 #else // _WIN32
-		close(Jupiter::Socket::data_->rawSock);
+		::close(Jupiter::Socket::data_->rawSock);
 #endif // _WIN32
 		Jupiter::Socket::data_->rawSock = 0;
 	}
+}
+
+bool Jupiter::Socket::isShutdown() const
+{
+	return Jupiter::Socket::data_->is_shutdown;
 }
 
 addrinfo *Jupiter::Socket::getAddrInfo(const char *hostname, const char *port) // static

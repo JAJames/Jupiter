@@ -199,7 +199,7 @@ Jupiter::IRC::Client::Client(const Jupiter::ReadableString &configSection)
 
 Jupiter::IRC::Client::~Client()
 {
-	Jupiter::IRC::Client::data_->sock->closeSocket();
+	Jupiter::IRC::Client::data_->sock->close();
 
 	Jupiter::IRC::Client::data_->channels.emptyAndDelete();
 	Jupiter::IRC::Client::data_->users.emptyAndDelete();
@@ -687,7 +687,7 @@ int Jupiter::IRC::Client::primaryHandler()
 									else
 									{
 										// Something went wrong. Kill the socket.
-										t->closeSocket();
+										t->close();
 									}
 								}
 									break;
@@ -1302,7 +1302,7 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 {
 	Jupiter::IRC::Client::data_->channels.emptyAndDelete();
 	Jupiter::IRC::Client::data_->connectionStatus = 0;
-	Jupiter::IRC::Client::data_->sock->closeSocket();
+	Jupiter::IRC::Client::data_->sock->close();
 	Jupiter::IRC::Client::data_->reconnectTime = time(0) + Jupiter::IRC::Client::data_->reconnectDelay;
 	Jupiter::IRC::Client::data_->dead = stayDead;
 	this->OnDisconnect();

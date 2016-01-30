@@ -119,7 +119,8 @@ namespace Jupiter
 		/**
 		* @brief Closes the socket.
 		*/
-		virtual void closeSocket() override;
+		virtual void shutdown() override;
+		virtual void close() override;
 
 		/**
 		* @brief Writes new data from the socket to the buffer, without removing it from the socket queue.

@@ -275,7 +275,9 @@ namespace Jupiter
 		/**
 		* @brief Closes the socket.
 		*/
-		virtual void closeSocket();
+		virtual void shutdown();
+		virtual void close();
+		bool isShutdown() const;
 
 		/**
 		* @brief Returns the hostname that the socket is connected to.
