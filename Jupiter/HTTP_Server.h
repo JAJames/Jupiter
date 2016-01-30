@@ -72,7 +72,8 @@ namespace Jupiter
 				unsigned int name_checksum;
 
 				virtual void hook(const Jupiter::ReadableString &path, Content *in_content);
-				virtual bool remove(const Jupiter::ReadableString &name);
+				//virtual bool remove(const Jupiter::ReadableString &path);
+				virtual bool remove(const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
 				virtual bool has(const Jupiter::ReadableString &name);
 				virtual Jupiter::HTTP::Server::Content *find(const Jupiter::ReadableString &name);
 				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
@@ -95,7 +96,8 @@ namespace Jupiter
 
 			void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, Content *in_content);
 			bool remove(const Jupiter::ReadableString &host);
-			bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
+			//bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path);
+			bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
 			bool has(const Jupiter::ReadableString &host);
 			bool has(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
 			Content *find(const Jupiter::ReadableString &name);

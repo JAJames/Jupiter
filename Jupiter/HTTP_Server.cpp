@@ -103,7 +103,7 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 			directory = Jupiter::HTTP::Server::Directory::directories.get(--index);
 			if (directory->name_checksum == dir_name_checksum && directory->name.equals(dir_name))
 			{
-				directory->hook(dir_name, in_content);
+				directory->hook(in_name_ref, in_content);
 				return;
 			}
 		}
@@ -134,8 +134,49 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 	}
 }
 
-bool Jupiter::HTTP::Server::Directory::remove(const Jupiter::ReadableString &in_name)
+bool Jupiter::HTTP::Server::Directory::remove(const Jupiter::ReadableString &path, const Jupiter::ReadableString &content_name)
 {
+	size_t index;
+	Jupiter::ReferenceString in_name_ref = path;
+	in_name_ref.shiftRight(in_name_ref.span('/'));
+	unsigned int checksum;
+
+	if (in_name_ref.isEmpty()) // Remove content
+	{
+		Jupiter::HTTP::Server::Content *content_node;
+		index = Jupiter::HTTP::Server::Directory::content.size();
+		while (index != 0)
+		{
+			content_node = Jupiter::HTTP::Server::Directory::content.get(--index);
+			if (content_node->name_checksum == checksum && content_node->name.equals(content_name))
+			{
+				delete Jupiter::HTTP::Server::Directory::content.remove(index);
+				return true;
+			}
+		}
+
+		return false;
+	}
+	else // Call remove() on next directory in path
+	{
+		index = in_name_ref.find('/');
+		Jupiter::ReferenceString dir_name;
+		if (index == Jupiter::INVALID_INDEX)
+			dir_name = in_name_ref;
+		else
+			dir_name = in_name_ref.substring(0U, index);
+
+		in_name_ref.shiftRight(dir_name.size());
+		Jupiter::HTTP::Server::Directory *directory;
+		checksum = dir_name.calcChecksum();
+		index = Jupiter::HTTP::Server::Directory::directories.size();
+		while (index != 0)
+		{
+			directory = Jupiter::HTTP::Server::Directory::directories.get(--index);
+			if (directory->name_checksum == checksum && directory->name.equals(dir_name))
+				return directory->remove(in_name_ref, content_name);
+		}
+	}
 	return false;
 }
 
@@ -234,7 +275,8 @@ struct Jupiter::HTTP::Server::Data
 	/** Foward functions */
 	void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, Content *in_content);
 	bool remove(const Jupiter::ReadableString &hostname);
-	bool remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name);
+	//bool remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &path);
+	bool remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
 	bool has(const Jupiter::ReadableString &hostname);
 	bool has(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name);
 	Jupiter::HTTP::Server::Host *find_host(const Jupiter::ReadableString &name);
@@ -311,12 +353,12 @@ bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname
 }
 
 // name: path/to/resource OR path/
-bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name)
+bool Jupiter::HTTP::Server::Data::remove(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name)
 {
 	Jupiter::HTTP::Server::Host *host = Jupiter::HTTP::Server::Data::find_host(hostname);
 	if (host == nullptr)
 		return false;
-	return host->remove(name);
+	return host->remove(path, name);
 }
 
 bool Jupiter::HTTP::Server::Data::has(const Jupiter::ReadableString &hostname)
@@ -683,9 +725,14 @@ bool Jupiter::HTTP::Server::remove(const Jupiter::ReadableString &host)
 	return Jupiter::HTTP::Server::data_->remove(host);
 }
 
-bool Jupiter::HTTP::Server::remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name)
+/*bool Jupiter::HTTP::Server::remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path)
 {
-	return Jupiter::HTTP::Server::data_->remove(host, name);
+	return Jupiter::HTTP::Server::data_->remove(host, path);
+}*/
+
+bool Jupiter::HTTP::Server::remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name)
+{
+	return Jupiter::HTTP::Server::data_->remove(host, path, name);
 }
 
 bool Jupiter::HTTP::Server::has(const Jupiter::ReadableString &host)
