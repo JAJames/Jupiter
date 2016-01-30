@@ -33,14 +33,72 @@ namespace Jupiter
 		/**
 		* @brief Provides parsing for HTTP Query Strings.
 		*/
-		class JUPITER_API QueryString : public Jupiter::StringS
+		class QueryString : public Jupiter::StringS
 		{
 		public:
 			QueryString() = delete;
-			QueryString(const Jupiter::ReadableString &parameters);
-			QueryString(const char *ptr, size_t str_size);
+			inline QueryString(const Jupiter::ReadableString &parameters) : QueryString(parameters.ptr(), parameters.size()) {}
+			inline QueryString(const char *ptr, size_t str_size);
 		};
 	}
+}
+
+/** Implementation */
+inline Jupiter::HTTP::QueryString::QueryString(const char *ptr, size_t str_size) : Jupiter::StringS(str_size)
+{
+	if (str_size < 3) // not enough room for "%XX", therefore no parameters to parse
+	{
+		Jupiter::StringType::length = str_size;
+		switch (str_size)
+		{
+		case 2:
+			str[1] = ptr[1];
+		case 1:
+			*str = *ptr;
+		case 0:
+			// nothing to copy
+			return;
+		}
+	}
+
+	const char *end = ptr + str_size - 2;
+	char *buf = str;
+	int val;
+
+	while (ptr != end)
+	{
+		if (*ptr == '%')
+		{
+			if ((val = Jupiter_getHex(*++ptr)) != -1)
+			{
+				*buf = static_cast<uint8_t>(val) << 4;
+				if ((val = Jupiter_getHex(*++ptr)) != -1)
+					*buf |= val;
+
+				++buf, ++ptr;
+				if (ptr > end)
+				{
+					if (ptr == end + 1) // copy 1 remaining character
+					{
+						*buf = *ptr;
+						++buf;
+					}
+					Jupiter::StringType::length = buf - Jupiter::StringType::str;
+					return;
+				}
+			}
+		}
+		else // Copy character
+		{
+			*buf = *ptr;
+			++buf, ++ptr;
+		}
+	}
+
+	// copy last 2 characters
+	*buf = *ptr;
+	*++buf = *++ptr;
+	Jupiter::StringType::length = buf + 1 - str;
 }
 
 #endif // _HTTP_QUERYSTRING_H_HEADER
