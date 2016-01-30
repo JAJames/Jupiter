@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Jessica James.
+ * Copyright (C) 2015-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,7 +45,7 @@ namespace Jupiter
 			virtual int think();
 
 		public: // Server
-			typedef Jupiter::ReadableString *HTTPFunction(const Jupiter::ReadableString &parameters);
+			typedef Jupiter::ReadableString *HTTPFunction(const Jupiter::ReadableString &query_string);
 			static const Jupiter::ReadableString &global_namespace;
 			static const Jupiter::ReadableString &server_string;
 
@@ -58,7 +58,7 @@ namespace Jupiter
 				const Jupiter::ReadableString *type = nullptr; // Pointer to a constant (or otherwise managed) string
 				const Jupiter::ReadableString *charset = nullptr; // Pointer to a constant (or otherwise managed) string
 
-				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &parameters);
+				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &query_string);
 
 				Content(const Jupiter::ReadableString &in_name, Jupiter::HTTP::Server::HTTPFunction in_function);
 			};
@@ -75,7 +75,7 @@ namespace Jupiter
 				virtual bool remove(const Jupiter::ReadableString &name);
 				virtual bool has(const Jupiter::ReadableString &name);
 				virtual Jupiter::HTTP::Server::Content *find(const Jupiter::ReadableString &name);
-				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);
+				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
 
 				Directory(const Jupiter::ReadableString &in_name);
 				virtual ~Directory();
@@ -100,8 +100,8 @@ namespace Jupiter
 			bool has(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
 			Content *find(const Jupiter::ReadableString &name);
 			Content *find(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
-			Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);
-			Jupiter::ReadableString *execute(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);
+			Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
+			Jupiter::ReadableString *execute(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
 
 			bool bind(const Jupiter::ReadableString &hostname, uint16_t port = 80);
 			bool tls_bind(const Jupiter::ReadableString &hostname, uint16_t port = 443);

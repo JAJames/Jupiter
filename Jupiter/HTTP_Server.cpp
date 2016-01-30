@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Jessica James.
+ * Copyright (C) 2015-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -57,9 +57,9 @@ Jupiter::HTTP::Server::Content::Content(const Jupiter::ReadableString &in_name, 
 	Jupiter::HTTP::Server::Content::name_checksum = Jupiter::HTTP::Server::Content::name.calcChecksum(); // switch to calcChecksumi to make case-insensitive
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Content::execute(const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::Content::execute(const Jupiter::ReadableString &query_string)
 {
-	return Jupiter::HTTP::Server::Content::function(parameters);
+	return Jupiter::HTTP::Server::Content::function(query_string);
 }
 
 // HTTP::Server::Directory
@@ -180,12 +180,12 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Directory::find(const Jup
 	return nullptr; // No such directory
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Directory::execute(const Jupiter::ReadableString &in_name, const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::Directory::execute(const Jupiter::ReadableString &in_name, const Jupiter::ReadableString &query_string)
 {
-	Jupiter::HTTP::Server::Content *content = Jupiter::HTTP::Server::Directory::find(in_name);
-	if (content == nullptr)
+	Jupiter::HTTP::Server::Content *content_ptr = Jupiter::HTTP::Server::Directory::find(in_name);
+	if (content_ptr == nullptr)
 		return nullptr;
-	return content->execute(parameters);
+	return content_ptr->execute(query_string);
 }
 
 // HTTP::Server::Host
@@ -240,8 +240,8 @@ struct Jupiter::HTTP::Server::Data
 	Jupiter::HTTP::Server::Host *find_host(const Jupiter::ReadableString &name);
 	Content *find(const Jupiter::ReadableString &name);
 	Content *find(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name);
-	Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);
-	Jupiter::ReadableString *execute(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);
+	Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
+	Jupiter::ReadableString *execute(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
 
 	int process_request(HTTPSession &session);
 
@@ -386,20 +386,20 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Data::find(const Jupiter:
 	return host->find(name);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string)
 {
 	Jupiter::HTTP::Server::Content *content = Jupiter::HTTP::Server::Data::find(name);
 	if (content == nullptr)
 		return nullptr;
-	return content->execute(parameters);
+	return content->execute(query_string);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(const Jupiter::ReadableString &hostname, const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string)
 {
 	Jupiter::HTTP::Server::Content *content = Jupiter::HTTP::Server::Data::find(hostname, name);
 	if (content == nullptr)
 		return nullptr;
-	return content->execute(parameters);
+	return content->execute(query_string);
 }
 
 char *html_time()
@@ -415,7 +415,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 	Jupiter::ReadableString::TokenizeResult<Jupiter::Reference_String> lines = Jupiter::ReferenceString::tokenize(session.request, STRING_LITERAL_AS_REFERENCE(ENDL));
 	HTTPCommand command = HTTPCommand::NONE_SPECIFIED;
 	Content *content = nullptr;
-	Jupiter::ReferenceString content_parameters;
+	Jupiter::ReferenceString query_string;
 	Jupiter::ReferenceString first_token;
 	size_t index = 0;
 	size_t span;
@@ -447,7 +447,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				if (content != nullptr)
 				{
 					// 200 (success)
-					Jupiter::ReadableString *content_result = content->execute(content_parameters);
+					Jupiter::ReadableString *content_result = content->execute(query_string);
 
 					switch (session.version)
 					{
@@ -582,24 +582,24 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 			{
 				command = HTTPCommand::GET;
 				
-				content_parameters = line.getWord(1, " ");
-				span = content_parameters.find('?'); // repurposing 'span'
+				query_string = line.getWord(1, " ");
+				span = query_string.find('?'); // repurposing 'span'
 				if (span == Jupiter::INVALID_INDEX)
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(content_parameters);
+						content = Jupiter::HTTP::Server::Data::find(query_string);
 					else
-						content = session.host->find(content_parameters);
-					content_parameters.erase();
+						content = session.host->find(query_string);
+					query_string.erase();
 				}
 				else
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
+						content = Jupiter::HTTP::Server::Data::find(query_string.substring(0U, span));
 					else
-						content = session.host->find(content_parameters.substring(0U, span));
-					content_parameters.shiftRight(span);
-					// decode content_parameters here
+						content = session.host->find(query_string.substring(0U, span));
+					query_string.shiftRight(span + 1);
+					// decode query_string here
 				}
 
 				Jupiter::ReferenceString protocol_str = line.getWord(2, " ");
@@ -615,24 +615,24 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 			{
 				command = HTTPCommand::HEAD;
 				
-				content_parameters = line.getWord(1, " ");
-				span = content_parameters.find('?'); // repurposing 'span'
+				query_string = line.getWord(1, " ");
+				span = query_string.find('?'); // repurposing 'span'
 				if (span == Jupiter::INVALID_INDEX)
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(content_parameters);
+						content = Jupiter::HTTP::Server::Data::find(query_string);
 					else
-						content = session.host->find(content_parameters);
-					content_parameters.erase();
+						content = session.host->find(query_string);
+					query_string.erase();
 				}
 				else
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(content_parameters.substring(0U, span));
+						content = Jupiter::HTTP::Server::Data::find(query_string.substring(0U, span));
 					else
-						content = session.host->find(content_parameters.substring(0U, span));
-					content_parameters.shiftRight(span);
-					// decode content_parameters here
+						content = session.host->find(query_string.substring(0U, span));
+					query_string.shiftRight(span + 1);
+					// decode query_string here
 				}
 
 				Jupiter::ReferenceString protocol_str = line.getWord(2, " ");
@@ -708,14 +708,14 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::find(const Jupiter::Reada
 	return Jupiter::HTTP::Server::data_->find(host, name);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string)
 {
-	return Jupiter::HTTP::Server::data_->execute(name, parameters);
+	return Jupiter::HTTP::Server::data_->execute(name, query_string);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::execute(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters)
+Jupiter::ReadableString *Jupiter::HTTP::Server::execute(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string)
 {
-	return Jupiter::HTTP::Server::data_->execute(host, name, parameters);
+	return Jupiter::HTTP::Server::data_->execute(host, name, query_string);
 }
 
 bool Jupiter::HTTP::Server::bind(const Jupiter::ReadableString &hostname, uint16_t port)
