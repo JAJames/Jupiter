@@ -256,7 +256,6 @@ HTTPSession::HTTPSession(Jupiter::Socket &&in_sock) : sock(std::move(in_sock))
 
 HTTPSession::~HTTPSession()
 {
-	HTTPSession::sock.setBlocking(true);
 }
 
 // Server::Data struct
@@ -864,6 +863,8 @@ int Jupiter::HTTP::Server::think()
 				else // reject (too large)
 					delete session;
 			}
+			else if (session->sock.getLastError() == 10035) // store for more processing
+				Jupiter::HTTP::Server::data_->sessions.add(session);
 		}
 	}
 	return 0;
