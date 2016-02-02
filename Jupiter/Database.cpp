@@ -35,13 +35,13 @@ void Jupiter::Database::create_header(FILE *)
 {
 }
 
-bool Jupiter::Database::process_file(Jupiter::ReadableString &file)
+bool Jupiter::Database::process_file(const Jupiter::ReadableString &file)
 {
 	Jupiter::Database::data_->file_name = file;
 	return Jupiter::Database::Data::process_file(this);
 }
 
-bool Jupiter::Database::process_file(Jupiter::CStringType &file)
+bool Jupiter::Database::process_file(const Jupiter::CStringType &file)
 {
 	Jupiter::Database::data_->file_name = file;
 	return Jupiter::Database::Data::process_file(this);

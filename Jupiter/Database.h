@@ -66,8 +66,8 @@ namespace Jupiter
 		* @param file File being processed
 		* @return True on success, false otherwise
 		*/
-		bool process_file(Jupiter::ReadableString &file);
-		bool process_file(Jupiter::CStringType &file);
+		bool process_file(const Jupiter::ReadableString &file);
+		bool process_file(const Jupiter::CStringType &file);
 		bool process_file(const char *file);
 		bool process_file(FILE *file);
 
