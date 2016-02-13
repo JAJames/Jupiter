@@ -834,7 +834,6 @@ int Jupiter::HTTP::Server::think()
 		{
 			socket->setBlocking(false);
 			session = new HTTPSession(std::move(*socket));
-			printf("Incoming session; %u other sessions already stored." ENDL, this->data_->sessions.size());
 			if (session->sock.recv() > 0) // data received
 			{
 				const Jupiter::ReadableString &sock_buffer = session->sock.getBuffer();
