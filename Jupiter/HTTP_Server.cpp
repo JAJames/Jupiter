@@ -501,10 +501,11 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 						break;
 					}
 
+					result += "Date: "_jrs;
 					char *time_header = html_time();
-					result += "Date: "_jrs ENDL;
 					result += time_header;
 					delete[] time_header;
+					result += ENDL;
 
 					result += "Server: "_jrs JUPITER_VERSION ENDL;
 
@@ -529,11 +530,12 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 
 					if (content->language != nullptr)
 					{
-						result += "Content-Language"_jrs;
+						result += "Content-Language: "_jrs;
 						result += *content->language;
+						result += ENDL;
 					}
 
-					result += ENDL ENDL;
+					result += ENDL;
 					if (command == HTTPCommand::GET)
 						result += *content_result;
 

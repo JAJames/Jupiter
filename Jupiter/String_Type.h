@@ -292,6 +292,11 @@ namespace Jupiter
 		* A conversion constructor for Jupiter::DataBuffer
 		*/
 
+		/**
+		* @brief Destructor for the String_Type class.
+		*/
+		virtual ~String_Type() = default;
+
 	protected:
 		T *str; /** Pointer for the underlying string of elements */
 		size_t length; /** Number of representable elements in the string */

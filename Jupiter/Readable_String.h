@@ -395,6 +395,11 @@ namespace Jupiter
 		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
 		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
+		/**
+		* @brief Destructor for the Readable_String class.
+		*/
+		virtual ~Readable_String() = default;
+
 		/** Access operator */
 		inline const T &operator[](size_t index) const { return this->get(index); };
 
