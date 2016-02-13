@@ -144,6 +144,7 @@ bool Jupiter::HTTP::Server::Directory::remove(const Jupiter::ReadableString &pat
 	if (in_name_ref.isEmpty()) // Remove content
 	{
 		Jupiter::HTTP::Server::Content *content_node;
+		checksum = content_name.calcChecksum();
 		index = Jupiter::HTTP::Server::Directory::content.size();
 		while (index != 0)
 		{
@@ -797,7 +798,8 @@ int Jupiter::HTTP::Server::think()
 		}
 		else if ((std::chrono::steady_clock::now() > session->last_active + Jupiter::HTTP::Server::data_->keep_alive_session_timeout)
 			|| (session->keep_alive == false && std::chrono::steady_clock::now() > session->last_active + Jupiter::HTTP::Server::data_->session_timeout))
-			session->sock.shutdown();
+			delete Jupiter::HTTP::Server::data_->sessions.remove(index);
+			//session->sock.shutdown();
 		else if (session->sock.recv() > 0)
 		{
 			const Jupiter::ReadableString &sock_buffer = session->sock.getBuffer();
@@ -809,7 +811,8 @@ int Jupiter::HTTP::Server::think()
 					session->last_active = std::chrono::steady_clock::now();
 					Jupiter::HTTP::Server::data_->process_request(*session);
 					if (session->keep_alive == false) // remove completed session
-						session->sock.shutdown();
+						delete Jupiter::HTTP::Server::data_->sessions.remove(index);
+						//session->sock.shutdown();
 				}
 				else if (session->request.size() == Jupiter::HTTP::Server::data_->max_request_size) // reject (full buffer)
 					delete Jupiter::HTTP::Server::data_->sessions.remove(index);
@@ -831,6 +834,7 @@ int Jupiter::HTTP::Server::think()
 		{
 			socket->setBlocking(false);
 			session = new HTTPSession(std::move(*socket));
+			printf("Incoming session; %u other sessions already stored." ENDL, this->data_->sessions.size());
 			if (session->sock.recv() > 0) // data received
 			{
 				const Jupiter::ReadableString &sock_buffer = session->sock.getBuffer();

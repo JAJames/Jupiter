@@ -96,7 +96,7 @@ Jupiter::Socket &Jupiter::Socket::operator=(Jupiter::Socket &&source)
 	return *this;
 }
 
-Jupiter::Socket::Socket() : Jupiter::Socket::Socket(4096)
+Jupiter::Socket::Socket() : Jupiter::Socket::Socket(512)
 {
 }
 
@@ -116,9 +116,7 @@ Jupiter::Socket::~Socket()
 	if (Jupiter::Socket::data_ != nullptr)
 	{
 		if (Jupiter::Socket::data_->rawSock > 0)
-		{
 			Jupiter::Socket::close();
-		}
 		delete Jupiter::Socket::data_;
 	}
 }

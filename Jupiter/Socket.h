@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -492,7 +492,7 @@ namespace Jupiter
 
 		/**
 		* @brief Default constructor for the Socket class.
-		* This constructor will set the buffer size to 4096 chars.
+		* This constructor will set the buffer size to 512 chars.
 		*/
 		Socket();
 
