@@ -185,7 +185,15 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 
 	// copy last 2 characters
 	*buf = *ptr;
-	*++buf = *++ptr;
+
+	if (*buf == '=') // End of key, start of value
+	{
+		key.set(token_start, ++buf - token_start);
+		*buf = *++ptr;
+		Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(ptr, 1));
+	}
+	else
+		*++buf = *++ptr;
 
 	if (key.isNotEmpty()) // A key was already set; end of value
 		Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(token_start, buf - token_start + 1));
