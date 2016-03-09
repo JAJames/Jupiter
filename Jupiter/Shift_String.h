@@ -83,6 +83,15 @@ namespace Jupiter
 		virtual void erase();
 
 		/**
+		* @brief Captures an input string of elements and uses it as the internal string.
+		* Note: Do NOT externally delete[] or free() 'in'.
+		*
+		* @param in Pointer to the start of the string to capture
+		* @param in_length Number of elements in the string
+		*/
+		virtual void capture(T *in, size_t in_length);
+
+		/**
 		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
 		* Note: This does nothing if len is less than the string's current length.
 		*

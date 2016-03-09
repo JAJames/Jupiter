@@ -79,6 +79,16 @@ template<typename T> void Jupiter::Shift_String_Type<T>::erase()
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 }
 
+// capture
+
+template<typename T> void Jupiter::Shift_String_Type<T>::capture(T *in, size_t in_size)
+{
+	delete[] Jupiter::Shift_String_Type<T>::base;
+
+	Jupiter::Shift_String_Type<T>::base = in;
+	Jupiter::String_Type<T>::length = in_size;
+}
+
 template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSize(size_t len)
 {
 	if (len > Jupiter::String_Type<T>::length)

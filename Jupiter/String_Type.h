@@ -138,6 +138,15 @@ namespace Jupiter
 		virtual void processEscapeSequences();
 
 		/**
+		* @brief Captures an input string of elements and uses it as the internal string.
+		* Note: Do NOT externally delete[] or free() 'in'.
+		*
+		* @param in Pointer to the start of the string to capture
+		* @param in_length Number of elements in the string
+		*/
+		virtual void capture(T *in, size_t in_length) = 0;
+
+		/**
 		* @brief Sets the value of an element at the specified index.
 		* Note: If the index is not in the string, it will be added.
 		*
