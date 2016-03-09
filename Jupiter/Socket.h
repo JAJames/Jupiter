@@ -126,11 +126,13 @@ namespace Jupiter
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
+		* Note: the '_alloc' version of this does NOT use a static buffer.
 		*
 		* @param addr Address info containing IP address.
 		* @return String containing the hostname of the stored address on success, nullptr otherwise.
 		*/
 		static char *resolveHostname(addrinfo *addr);
+		static char *resolveHostname_alloc(addrinfo *addr);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -140,6 +142,7 @@ namespace Jupiter
 		* @return String containing the hostname of the stored address on success, nullptr otherwise.
 		*/
 		static char *resolveHostname(addrinfo *addr, unsigned int result);
+		static char *resolveHostname_alloc(addrinfo *addr, unsigned int result);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -149,6 +152,7 @@ namespace Jupiter
 		* @return String containing the hostname of the resolved address on success, nullptr otherwise.
 		*/
 		static char *resolveHostname(const char *hostname, unsigned int result);
+		static char *resolveHostname_alloc(const char *hostname, unsigned int result);
 
 		/**
 		* @brief Reinterprets an IPv4 address as a 32-bit integer in network byte order.

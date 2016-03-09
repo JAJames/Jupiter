@@ -324,6 +324,13 @@ char *Jupiter::Socket::resolveAddress(const char *hostname, unsigned int result)
 char *Jupiter::Socket::resolveHostname(addrinfo *addr) // static
 {
 	static char resolved[NI_MAXHOST];
+	getnameinfo(addr->ai_addr, addr->ai_addrlen, resolved, sizeof(resolved), 0, 0, 0);
+	return resolved;
+}
+
+char *Jupiter::Socket::resolveHostname_alloc(addrinfo *addr) // static
+{
+	char *resolved = new char[NI_MAXHOST];
 	getnameinfo(addr->ai_addr, addr->ai_addrlen, resolved, NI_MAXHOST, 0, 0, 0);
 	return resolved;
 }
@@ -335,11 +342,25 @@ char *Jupiter::Socket::resolveHostname(addrinfo *addr, unsigned int result) // s
 	return Jupiter::Socket::resolveHostname(ptr);
 }
 
+char *Jupiter::Socket::resolveHostname_alloc(addrinfo *addr, unsigned int result) // static
+{
+	addrinfo *ptr = Jupiter::Socket::getAddrInfo(addr, result);
+	if (ptr == nullptr) return nullptr;
+	return Jupiter::Socket::resolveHostname_alloc(ptr);
+}
+
 char *Jupiter::Socket::resolveHostname(const char *hostname, unsigned int result) // static
 {
 	addrinfo *info = Jupiter::Socket::getAddrInfo(hostname, 0);
 	if (info == nullptr) return nullptr;
 	return Jupiter::Socket::resolveHostname(info, result);
+}
+
+char *Jupiter::Socket::resolveHostname_alloc(const char *hostname, unsigned int result) // static
+{
+	addrinfo *info = Jupiter::Socket::getAddrInfo(hostname, 0);
+	if (info == nullptr) return nullptr;
+	return Jupiter::Socket::resolveHostname_alloc(info, result);
 }
 
 uint32_t Jupiter::Socket::pton4(const char *str)
