@@ -86,6 +86,7 @@ template<typename T> void Jupiter::Shift_String_Type<T>::capture(T *in, size_t i
 	delete[] Jupiter::Shift_String_Type<T>::base;
 
 	Jupiter::Shift_String_Type<T>::base = in;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 	Jupiter::String_Type<T>::length = in_size;
 }
 
