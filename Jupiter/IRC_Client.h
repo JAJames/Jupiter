@@ -762,12 +762,11 @@ namespace Jupiter
 			void send(const Jupiter::ReadableString &rawMessage);
 
 			/**
-			* @brief Method that is called by think() to handle all of the IRC protocol.
-			* Note: This command should not be used unless you wish to bypass auto-reconnect abilities. Use think() instead.
+			* @brief Processes an input line of IRC protocol data.
 			*
 			* @return 0 upon success, an error code otherwise.
 			*/
-			int primaryHandler();
+			int process_line(const Jupiter::ReadableString &line);
 
 			/**
 			* @brief Returns a key's value.
