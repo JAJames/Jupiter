@@ -51,6 +51,7 @@ namespace Jupiter
 
 			struct JUPITER_API Content
 			{
+				bool free_result = true;
 				Jupiter::HTTP::Server::HTTPFunction *function; // function to generate content data
 				Jupiter::StringS name; // name of the content
 				unsigned int name_checksum; // name.calcChecksum()

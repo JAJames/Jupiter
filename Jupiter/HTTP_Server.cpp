@@ -540,7 +540,8 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 					if (command == HTTPCommand::GET)
 						result += *content_result;
 
-					delete content_result;
+					if (content->free_result)
+						delete content_result;
 
 					session.sock.send(result);
 				}
