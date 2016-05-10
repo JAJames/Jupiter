@@ -144,7 +144,7 @@ JUPITER_API uint64_t getPowerTwo64(uint64_t number);
 * @brief Checks if a character is a digit character of a specified radix.
 * Note: The maximum base is 36 (0-9 and a-z)
 *
-* @param c Character to check.
+* @param chr Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
 JUPITER_API bool Jupiter_isBase(unsigned char chr, int base);
@@ -152,7 +152,7 @@ JUPITER_API bool Jupiter_isBase(unsigned char chr, int base);
 /**
 * @brief Checks if a character is a hexadecimal digit character. (base 16)
 *
-* @param c Character to check.
+* @param chr Character to check.
 * @return True if the character is a hexadecimal digit, false otherwise.
 */
 JUPITER_API bool Jupiter_isHex(unsigned char chr);
@@ -160,7 +160,7 @@ JUPITER_API bool Jupiter_isHex(unsigned char chr);
 /**
 * @brief Checks if a character is a decimal digit character. (base 10)
 *
-* @param c Character to check.
+* @param chr Character to check.
 * @return True if the character is a decimal digit, false otherwise.
 */
 JUPITER_API bool Jupiter_isDecimal(unsigned char chr);
@@ -168,7 +168,7 @@ JUPITER_API bool Jupiter_isDecimal(unsigned char chr);
 /**
 * @brief Checks if a character is an octal digit character. (base 10)
 *
-* @param c Character to check.
+* @param chr Character to check.
 * @return True if the character is a octal digit, false otherwise.
 */
 JUPITER_API bool Jupiter_isOctal(unsigned char chr);
@@ -177,7 +177,7 @@ JUPITER_API bool Jupiter_isOctal(unsigned char chr);
 * @brief Fetches a character's represented integral value.
 * Note: The maximum base is 36 (0-9 and a-z)
 *
-* @param c Character to fetch value of.
+* @param chr Character to fetch value of.
 * @param base Base of the representation.
 * @return A character's represented integral value on success, -1 otherwise.
 */
@@ -186,7 +186,7 @@ JUPITER_API int Jupiter_getBase(unsigned char chr, int base);
 /**
 * @brief Fetches a hexadecimal character's represented integral value. (base 16)
 *
-* @param c Character to fetch value of.
+* @param chr Character to fetch value of.
 * @return A character's represented integral value on success, -1 otherwise.
 */
 JUPITER_API int Jupiter_getHex(unsigned char chr);
@@ -194,7 +194,7 @@ JUPITER_API int Jupiter_getHex(unsigned char chr);
 /**
 * @brief Fetches a decimal character's represented integral value. (base 10)
 *
-* @param c Character to fetch value of.
+* @param chr Character to fetch value of.
 * @return A character's represented integral value on success, -1 otherwise.
 */
 JUPITER_API int Jupiter_getDecimal(unsigned char chr);
@@ -202,10 +202,28 @@ JUPITER_API int Jupiter_getDecimal(unsigned char chr);
 /**
 * @brief Fetches a octal character's represented integral value. (base 8)
 *
-* @param c Character to fetch value of.
+* @param chr Character to fetch value of.
 * @return A character's represented integral value on success, -1 otherwise.
 */
 JUPITER_API int Jupiter_getOctal(unsigned char chr);
+
+/**
+* @brief Fetches the string hexadecimal representation of an octet.
+* Note: This function returns the upper-case hexadecimal notation
+*
+* @param oct Octet to fetch hexadecimal representation of
+* @return The octet's hexadecimal representation as a string
+*/
+JUPITER_API const char *Jupiter_asHex_upper(uint8_t oct);
+
+/**
+* @brief Fetches the string hexadecimal representation of an octet.
+* Note: This function returns the lower-case hexadecimal notation
+*
+* @param oct Octet to fetch hexadecimal representation of
+* @return The octet's hexadecimal representation as a string
+*/
+JUPITER_API const char *Jupiter_asHex_lower(uint8_t oct);
 
 /**
 * @brief Interprets a string into an integer.
