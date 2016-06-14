@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,12 +21,8 @@
 
 #if defined _WIN32
 #include <Windows.h>
-#define DIR_CHR '\\'
-#define DEFAULT_PLUGINS_DIRECTORY "Plugins\\"
 #else // _WIN32
 #include <dlfcn.h>
-#define DIR_CHR '/'
-#define DEFAULT_PLUGINS_DIRECTORY "Plugins/"
 #endif // _WIN32
 
 #include "Plugin.h"
@@ -35,24 +31,13 @@
 #include "CString.h"
 #include "String.h"
 
-Jupiter::StringS pluginDir = DEFAULT_PLUGINS_DIRECTORY;
+using namespace Jupiter::literals;
 
-Jupiter::ArrayList<Jupiter::Plugin> _plugins;
-Jupiter::ArrayList<Jupiter::Plugin> *Jupiter::plugins = &_plugins;
-struct dlib;
-Jupiter::ArrayList<dlib> _libList;
-
-Jupiter::Plugin::~Plugin()
-{
-	for (size_t i = 0; i != _plugins.size(); i++)
-	{
-		if (_plugins.get(i) == this)
-		{
-			_plugins.remove(i);
-			break;
-		}
-	}
-}
+#if defined _WIN32
+constexpr char directory_character = '\\';
+#else
+constexpr char directory_character = '/';
+#endif // _WIN32
 
 struct dlib
 {
@@ -77,40 +62,100 @@ dlib::~dlib()
 	}
 }
 
-void Jupiter::setPluginDirectory(const Jupiter::ReadableString &dir)
-{
-	if (pluginDir.set(dir) != 0 && pluginDir.get(pluginDir.size() - 1) != DIR_CHR) pluginDir += DIR_CHR;
-}
-
-const Jupiter::ReadableString &Jupiter::getPluginDirectory()
-{
-	return pluginDir;
-}
-
 #if defined _WIN32
-#define MODULE_FILE_EXTENSION ".dll"
+const Jupiter::ReferenceString module_file_extension = ".dll"_jrs;
 #else // _WIN32
-#define MODULE_FILE_EXTENSION ".so"
+const Jupiter::ReferenceString module_file_extension = ".so"_jrs;
 #endif // _WIN32
 
-Jupiter::Plugin *Jupiter::loadPlugin(const Jupiter::ReadableString &pluginName)
+const Jupiter::ReferenceString config_file_extension = ".ini"_jrs;
+
+Jupiter::StringS plugins_directory = "Plugins"_jrs + directory_character;
+Jupiter::StringS plugin_configs_directory = "Configs"_jrs + directory_character;
+
+Jupiter::ArrayList<Jupiter::Plugin> _plugins;
+Jupiter::ArrayList<Jupiter::Plugin> *Jupiter::plugins = &_plugins;
+Jupiter::ArrayList<dlib> _libList;
+
+/** Jupiter::Plugin Implementation */
+
+Jupiter::Plugin::Plugin()
 {
-	return Jupiter::loadPluginFile(Jupiter::CStringS::Format("%.*s%.*s" MODULE_FILE_EXTENSION, pluginDir.size(), pluginDir.ptr(), pluginName.size(), pluginName.ptr()).c_str());
+	Jupiter::Plugin::config.readFile(Jupiter::Plugin::name);
 }
 
-Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
+Jupiter::Plugin::~Plugin()
 {
+	for (size_t index = 0; index != _plugins.size(); ++index)
+	{
+		if (_plugins.get(index) == this)
+		{
+			_plugins.remove(index);
+			break;
+		}
+	}
+}
+
+// Instance Functions
+
+bool Jupiter::Plugin::shouldRemove() const
+{
+	return Jupiter::Plugin::_shouldRemove;
+}
+
+const Jupiter::ReadableString &Jupiter::Plugin::getName() const
+{
+	return Jupiter::Plugin::name;
+}
+
+const Jupiter::INIFile &Jupiter::Plugin::getConfig() const
+{
+	return Jupiter::Plugin::config;
+}
+
+bool Jupiter::Plugin::initialize()
+{
+	return true;
+}
+
+// Static Functions
+
+void Jupiter::Plugin::setDirectory(const Jupiter::ReadableString &dir)
+{
+	if (plugins_directory.set(dir) != 0 && plugins_directory.get(plugins_directory.size() - 1) != directory_character)
+		plugins_directory += directory_character;
+}
+
+const Jupiter::ReadableString &Jupiter::Plugin::getDirectory()
+{
+	return plugins_directory;
+}
+
+void Jupiter::Plugin::setConfigDirectory(const Jupiter::ReadableString &dir)
+{
+	if (plugin_configs_directory.set(dir) != 0 && plugin_configs_directory.get(plugin_configs_directory.size() - 1) != directory_character)
+		plugin_configs_directory += directory_character;
+}
+
+const Jupiter::ReadableString &Jupiter::Plugin::getConfigDirectory()
+{
+	return plugin_configs_directory;
+}
+
+Jupiter::Plugin *Jupiter::Plugin::load(const Jupiter::ReadableString &pluginName)
+{
+	Jupiter::CStringS file = plugins_directory + pluginName + module_file_extension;
 	dlib *dPlug = new dlib();
 
 	// Load the library
 #if defined _WIN32
-	dPlug->lib = LoadLibraryA(file);
+	dPlug->lib = LoadLibraryA(file.c_str());
 #else // _WIN32
-	dPlug->lib = dlopen(file, RTLD_LAZY);
+	dPlug->lib = dlopen(file.c_str(), RTLD_LAZY);
 #endif // _WIN32
 	if (dPlug->lib == nullptr)
 	{
-		fprintf(stderr, "Error: Unable to load plugin file \"%s\" (File failed to load)" ENDL, file);
+		fprintf(stderr, "Error: Unable to load plugin file \"%s\" (File failed to load)" ENDL, file.c_str());
 		goto fail;
 	}
 
@@ -124,16 +169,22 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #endif // _WIN32
 		if (func == nullptr)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Invalid plugin)" ENDL, file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Invalid plugin)" ENDL, file.c_str());
 			goto fail;
 		}
 
+		// Get the plugin
 		dPlug->plugin = func();
 		if (dPlug->plugin == nullptr)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to initialize)" ENDL, file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to initialize)" ENDL, file.c_str());
 			goto fail;
 		}
+
+		// Initialize the plugin
+		dPlug->plugin->name.set(pluginName);
+		dPlug->plugin->config.readFile(plugin_configs_directory + pluginName + config_file_extension);
+		dPlug->plugin->initialize();
 	}
 	{
 		// Get and execute the "load" function if it exists
@@ -145,7 +196,7 @@ Jupiter::Plugin *Jupiter::loadPluginFile(const char *file)
 #endif // _WIN32
 		if (func != nullptr && func() == false)
 		{
-			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to load)" ENDL, file);
+			fprintf(stderr, "Error: Unable to load plugin file \"%s\" (Plugin failed to load)" ENDL, file.c_str());
 			goto fail;
 		}
 	}
@@ -160,7 +211,7 @@ fail:
 	return nullptr;
 }
 
-bool Jupiter::freePlugin(size_t index)
+bool Jupiter::Plugin::free(size_t index)
 {
 	if (index < _plugins.size())
 	{
@@ -168,7 +219,7 @@ bool Jupiter::freePlugin(size_t index)
 		_plugins.remove(index);
 		dlib *dPlug = _libList.remove(index);
 
-		typedef void (*func_type)(void);
+		typedef void(*func_type)(void);
 #if defined _WIN32
 		func_type func = (func_type)GetProcAddress(dPlug->lib, "unload");
 #else // _WIN32
@@ -182,38 +233,52 @@ bool Jupiter::freePlugin(size_t index)
 	return false;
 }
 
-bool Jupiter::freePlugin(Jupiter::Plugin *plugin)
+bool Jupiter::Plugin::free(Jupiter::Plugin *plugin)
 {
-	if (plugin == nullptr) return false;
-	for (size_t i = 0; i != _plugins.size(); i++) if (_plugins.get(i) == plugin) return Jupiter::freePlugin(i);
+	if (plugin == nullptr)
+		return false;
+
+	for (size_t index = 0; index != _plugins.size(); ++index)
+		if (_plugins.get(index) == plugin)
+			return Jupiter::Plugin::free(index);
+
 	return false;
 }
 
-bool Jupiter::freePlugin(const Jupiter::ReadableString &pluginName)
+bool Jupiter::Plugin::free(const Jupiter::ReadableString &pluginName)
 {
-	if (pluginName == nullptr) return false;
-	for (size_t i = 0; i != _plugins.size(); i++) if (pluginName.matchi(_plugins.get(i)->getName())) return Jupiter::freePlugin(i);
+	if (pluginName == nullptr)
+		return false;
+
+	for (size_t index = 0; index != _plugins.size(); ++index)
+		if (pluginName.matchi(_plugins.get(index)->getName()))
+			return Jupiter::Plugin::free(index);
+
 	return false;
 }
 
-Jupiter::Plugin *Jupiter::getPlugin(size_t index)
+Jupiter::Plugin *Jupiter::Plugin::get(size_t index)
 {
-	if (index < _plugins.size()) return _plugins.get(index);
+	if (index < _plugins.size())
+		return _plugins.get(index);
+
 	return nullptr;
 }
 
-Jupiter::Plugin *Jupiter::getPlugin(const Jupiter::ReadableString &pluginName)
+Jupiter::Plugin *Jupiter::Plugin::get(const Jupiter::ReadableString &pluginName)
 {
-	Jupiter::Plugin *p;
-	for (size_t i = 0; i != _plugins.size(); i++)
+	Jupiter::Plugin *plugin;
+	for (size_t index = 0; index != _plugins.size(); ++index)
 	{
-		p = _plugins.get(i);
-		if (pluginName.matchi(p->getName())) return p;
+		plugin = _plugins.get(index);
+		if (pluginName.matchi(plugin->getName()))
+			return plugin;
 	}
+
 	return nullptr;
 }
 
-// Event Placeholders
+// Event Implementations
 
 int Jupiter::Plugin::think()
 {
@@ -231,10 +296,7 @@ bool Jupiter::Plugin::OnBadRehash(bool removed)
 	return false;
 }
 
-bool Jupiter::Plugin::shouldRemove()
-{
-	return Jupiter::Plugin::_shouldRemove;
-}
+// Event Placeholders
 
 void Jupiter::Plugin::OnConnect(Jupiter::IRC::Client *)
 {

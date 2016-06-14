@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,8 +26,15 @@
 
 #include "ArrayList.h"
 #include "Thinker.h"
-#include "Readable_String.h"
 #include "Rehash.h"
+#include "INIFile.h"
+#include "String.h"
+
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif // _MSC_VER
 
 namespace Jupiter
 {
@@ -74,7 +81,29 @@ namespace Jupiter
 		*
 		* @returns True if this plugin should be unloaded, false otherwise.
 		*/
-		bool shouldRemove();
+		bool shouldRemove() const;
+
+		/**
+		* @brief Returns the name of the plugin.
+		*
+		* @return String containing the name of the plugin.
+		*/
+		const Jupiter::ReadableString &getName() const;
+
+		/**
+		* @brief Returns the plugin's configuration file.
+		*
+		* @return Plugin's configuration file.
+		*/
+		const Jupiter::INIFile &getConfig() const;
+
+		/**
+		* @brief Initializes the plugin.
+		* Note: This function is executed immediately AFTER 'name' is assigned and 'config' is loaded.
+		*
+		* @return True on success, false otherwise.
+		*/
+		virtual bool initialize();
 
 		/**
 		* @brief This is called when a connection has been successfully established.
@@ -234,96 +263,106 @@ namespace Jupiter
 		virtual void OnThink(Jupiter::IRC::Client *server);
 
 		/**
-		* @brief Returns the name of the plugin.
-		*
-		* @return String containing the name of the plugin.
+		* @brief Constructor for the Plugin class.
 		*/
-		virtual const Jupiter::ReadableString &getName() = 0;
+		Plugin();
 
 		/**
 		* @brief Destructor for Plugin class.
 		*/
 		virtual ~Plugin();
 
+	public: // Plugin management functions
+		/**
+		* @brief Sets the directory to look in for plugins.
+		*
+		* @param dir Directory to look for plugins in.
+		*/
+		static void setDirectory(const Jupiter::ReadableString &dir);
+
+		/**
+		* @brief Returns the current plugin directory.
+		*
+		* @return String containing the directory which is prepended to module load attempts.
+		*/
+		static const Jupiter::ReadableString &getDirectory();
+
+		/**
+		* @brief Sets the directory to look in for plugin configuration files.
+		*
+		* @param dir Directory to look for configuration files in.
+		*/
+		static void setConfigDirectory(const Jupiter::ReadableString &dir);
+
+		/**
+		* @brief Returns the current plugin configuration directory
+		*
+		* @return String containing the directory which is prepended to configuration load attempts.
+		*/
+		static const Jupiter::ReadableString &getConfigDirectory();
+
+		/**
+		* @brief Loads a module, appending .so or .dll as appropriate for the operating system.
+		*
+		* @param pluginName The name of the plugin to load.
+		* @return A pointer to the plugin that was loaded on success, nullptr otherwise.
+		*/
+		static Jupiter::Plugin *load(const Jupiter::ReadableString &pluginName);
+
+		/**
+		* @brief Unloads a module and removes it from the module list, based on its index.
+		*
+		* @param index Index of the module.
+		* @return True if a module was unloaded, false otherwise.
+		*/
+		static bool free(size_t index);
+
+		/**
+		* @brief Unloads a module and removes it from the module list, based on its data.
+		*
+		* @param plugin Pointer to the plugin to unload.
+		* @return True if a module was unloaded, false otherwise.
+		*/
+		static bool free(Jupiter::Plugin *plugin);
+
+		/**
+		* @brief Unloads a module and removes it from the module list, based on its name.
+		* Note: This function accepts wildcard strings.
+		*
+		* @param pluginName Name of the module to unload.
+		* @return True if a module was unloaded, false otherwise.
+		*/
+		static bool free(const Jupiter::ReadableString &pluginName);
+
+		/**
+		* @brief Fetches a plugin from the list and returns it, based on its index.
+		*
+		* @param index Index of the module to return.
+		* @return A module on success, nullptr otherwise.
+		*/
+		static Jupiter::Plugin *get(size_t index);
+
+		/**
+		* @brief Fetches a plugin from the list and returns it, based on its name.
+		*
+		* @param pluginName String containing the name of the plugin.
+		* @return A module on success, nullptr otherwise.
+		*/
+		static Jupiter::Plugin *get(const Jupiter::ReadableString &pluginName);
+
 	protected:
 		bool _shouldRemove = false;
+		Jupiter::StringS name;
+		Jupiter::INIFile config;
 	};
-
-	/** Plugin management functions */
 
 	/** The list containing pointers to plugins */
 	JUPITER_API extern Jupiter::ArrayList<Jupiter::Plugin> *plugins;
-
-	/**
-	* @brief Sets the directory to look in for plugins.
-	*
-	* @param dir Directory to look for plugins in.
-	*/
-	JUPITER_API void setPluginDirectory(const Jupiter::ReadableString &dir);
-
-	/**
-	* @brief Returns the current plugin directory.
-	*
-	* @return String containing the directory which is prepended to module load attempts.
-	*/
-	JUPITER_API const Jupiter::ReadableString &getPluginDirectory();
-
-	/**
-	* @brief Loads a module, appending .so or .dll as appropriate for the operating system.
-	*
-	* @param pluginName The name of the plugin to load.
-	* @return A pointer to the plugin that was loaded on success, nullptr otherwise.
-	*/
-	JUPITER_API Jupiter::Plugin *loadPlugin(const Jupiter::ReadableString &pluginName);
-
-	/**
-	* @brief Loads a module based on a true file name.
-	*
-	* @param file File to attempt to load as a plugin.
-	* @return A pointer to the plugin that was loaded on success, nullptr otherwise.
-	*/
-	JUPITER_API Jupiter::Plugin *loadPluginFile(const char *file);
-
-	/**
-	* @brief Unloads a module and removes it from the module list, based on its index.
-	*
-	* @param index Index of the module.
-	* @return True if a module was unloaded, false otherwise.
-	*/
-	JUPITER_API bool freePlugin(size_t index);
-
-	/**
-	* @brief Unloads a module and removes it from the module list, based on its data.
-	*
-	* @param plugin Pointer to the plugin to unload.
-	* @return True if a module was unloaded, false otherwise.
-	*/
-	JUPITER_API bool freePlugin(Jupiter::Plugin *plugin);
-
-	/**
-	* @brief Unloads a module and removes it from the module list, based on its name.
-	* Note: This function accepts wildcard strings.
-	*
-	* @param pluginName Name of the module to unload.
-	* @return True if a module was unloaded, false otherwise.
-	*/
-	JUPITER_API bool freePlugin(const Jupiter::ReadableString &pluginName);
-
-	/**
-	* @brief Fetches a plugin from the list and returns it, based on its index.
-	*
-	* @param index Index of the module to return.
-	* @return A module on success, nullptr otherwise.
-	*/
-	JUPITER_API Jupiter::Plugin *getPlugin(size_t index);
-
-	/**
-	* @brief Fetches a plugin from the list and returns it, based on its name.
-	*
-	* @param pluginName String containing the name of the plugin.
-	* @return A module on success, nullptr otherwise.
-	*/
-	JUPITER_API Jupiter::Plugin *getPlugin(const Jupiter::ReadableString &pluginName);
 }
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 #endif // _PLUGIN_H_HEADER
