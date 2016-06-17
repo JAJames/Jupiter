@@ -287,6 +287,7 @@ int Jupiter::Plugin::think()
 
 int Jupiter::Plugin::OnRehash()
 {
+	Jupiter::Plugin::config.reload();
 	return 0;
 }
 
