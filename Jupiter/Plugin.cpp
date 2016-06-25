@@ -393,3 +393,11 @@ void Jupiter::Plugin::OnThink(Jupiter::IRC::Client *)
 {
 	return;
 }
+
+void Jupiter::Plugin::OnGenericCommandAdd(Jupiter::GenericCommand &)
+{
+}
+
+void Jupiter::Plugin::OnGenericCommandRemove(Jupiter::GenericCommand &)
+{
+}

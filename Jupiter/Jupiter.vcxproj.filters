@@ -111,19 +111,7 @@
     <ClCompile Include="IRC_Client.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
-    <ClCompile Include="XML.cpp">
-      <Filter>Source Files\Files</Filter>
-    </ClCompile>
     <ClCompile Include="Config.cpp">
-      <Filter>Source Files\Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JSON.cpp">
-      <Filter>Source Files\Files</Filter>
-    </ClCompile>
-    <ClCompile Include="YAML.cpp">
-      <Filter>Source Files\Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XINI.cpp">
       <Filter>Source Files\Files</Filter>
     </ClCompile>
     <ClCompile Include="Hash.c">
@@ -137,6 +125,9 @@
     </ClCompile>
     <ClCompile Include="HTTP_Server.cpp">
       <Filter>Source Files\HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="GenericCommand.cpp">
+      <Filter>Source Files\Object Extensions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="HTTP_QueryString.h">
       <Filter>Header Files\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericCommand.h">
+      <Filter>Header Files\Object Extensions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

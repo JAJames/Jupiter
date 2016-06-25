@@ -40,6 +40,7 @@ namespace Jupiter
 {
 	/** Forward declaration */
 	namespace IRC { class Client; }
+	class GenericCommand;
 
 	/**
 	* @brief Provides the basis for plugin interfacing.
@@ -104,6 +105,8 @@ namespace Jupiter
 		* @return True on success, false otherwise.
 		*/
 		virtual bool initialize();
+
+		/** IRC Listeners */
 
 		/**
 		* @brief This is called when a connection has been successfully established.
@@ -261,6 +264,16 @@ namespace Jupiter
 		* @param server Server that's thinking.
 		*/
 		virtual void OnThink(Jupiter::IRC::Client *server);
+
+		/**
+		* @brief This is called when a GenericCommand is instantiated.
+		*/
+		virtual void OnGenericCommandAdd(Jupiter::GenericCommand &command);
+
+		/**
+		* @brief This is called when a GenericCommand is deleted.
+		*/
+		virtual void OnGenericCommandRemove(Jupiter::GenericCommand &command);
 
 		/**
 		* @brief Constructor for the Plugin class.
