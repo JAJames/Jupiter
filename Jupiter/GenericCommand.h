@@ -105,13 +105,13 @@ namespace Jupiter
 #define BASE_GENERIC_COMMAND(CLASS) \
 	public: \
 	CLASS(); \
-	GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters); \
+	Jupiter::GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters); \
 	const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters); \
 	static CLASS instance;
 
 /** Expands to become the entire declaration for a generic command. In most cases, this will be sufficient. */
 #define GENERIC_GENERIC_COMMAND(CLASS) \
-class CLASS : public GenericCommand { \
+class CLASS : public Jupiter::GenericCommand { \
 	BASE_GENERIC_COMMAND(CLASS) \
 };
 
