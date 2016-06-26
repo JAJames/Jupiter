@@ -31,10 +31,13 @@ Jupiter::GenericCommandNamespace &Jupiter::g_generic_commands = o_generic_comman
 
 Jupiter::GenericCommand::GenericCommand()
 {
-	Jupiter::GenericCommand::setNamespace(o_generic_commands);
+	if (&o_generic_commands != this)
+	{
+		Jupiter::GenericCommand::setNamespace(o_generic_commands);
 
-	for (size_t index = 0; index != Jupiter::plugins->size(); ++index)
-		Jupiter::plugins->get(index)->OnGenericCommandAdd(*this);
+		for (size_t index = 0; index != Jupiter::plugins->size(); ++index)
+			Jupiter::plugins->get(index)->OnGenericCommandAdd(*this);
+	}
 }
 
 Jupiter::GenericCommand::~GenericCommand()
@@ -124,7 +127,12 @@ const Jupiter::ReadableString &Jupiter::GenericCommandNamespace::getHelp(const J
 	static Jupiter::ReferenceString not_found = "Error: Command not found"_jrs;
 
 	if (parameters.wordCount(GENERIC_COMMAND_WORD_DELIMITER_CS) == 0) // No parameters; list commands
+	{
+		if (Jupiter::GenericCommandNamespace::m_should_update_help)
+			Jupiter::GenericCommandNamespace::updateHelp();
+
 		return Jupiter::GenericCommandNamespace::m_help;
+	}
 
 	Jupiter::ReferenceString input(parameters);
 	GenericCommand *command;
@@ -223,7 +231,7 @@ void Jupiter::GenericCommandNamespace::addCommand(Jupiter::GenericCommand &in_co
 	else
 	{
 		Jupiter::GenericCommandNamespace::m_commands.add(&in_command);
-		Jupiter::GenericCommandNamespace::updateHelp();
+		Jupiter::GenericCommandNamespace::m_should_update_help = true;
 	}
 }
 
@@ -233,7 +241,7 @@ void Jupiter::GenericCommandNamespace::removeCommand(Jupiter::GenericCommand &in
 		if (Jupiter::GenericCommandNamespace::m_commands.get(index) == &in_command)
 		{
 			Jupiter::GenericCommandNamespace::m_commands.remove(index);
-			Jupiter::GenericCommandNamespace::updateHelp();
+			Jupiter::GenericCommandNamespace::m_should_update_help = true;
 			return;
 		}
 }
@@ -244,13 +252,15 @@ void Jupiter::GenericCommandNamespace::removeCommand(const Jupiter::ReadableStri
 		if (Jupiter::GenericCommandNamespace::m_commands.get(index)->matches(in_command))
 		{
 			Jupiter::GenericCommandNamespace::m_commands.remove(index);
-			Jupiter::GenericCommandNamespace::updateHelp();
+			Jupiter::GenericCommandNamespace::m_should_update_help = true;
 			return;
 		}
 }
 
 void Jupiter::GenericCommandNamespace::updateHelp()
 {
+	Jupiter::GenericCommandNamespace::m_should_update_help = false;
+
 	Jupiter::ArrayList<Jupiter::GenericCommand> commands = Jupiter::GenericCommandNamespace::getCommands();
 	Jupiter::StringL tmp_help(commands.size() * 8);
 

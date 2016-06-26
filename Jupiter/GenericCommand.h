@@ -157,6 +157,7 @@ namespace Jupiter
 		Jupiter::ArrayList<GenericCommand> m_commands;
 
 	private:
+		bool m_should_update_help = true;
 		Jupiter::StringS m_help;
 	};
 
