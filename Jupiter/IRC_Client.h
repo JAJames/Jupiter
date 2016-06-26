@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -30,21 +30,17 @@
 #include "Thinker.h"
 #include "IRC.h"
 #include "Reference_String.h"
-
-#define CONFIG_INI "Config.ini" /** Default location of the Config file. */
+#include "INIFile.h"
 
 namespace Jupiter
 {
-
-	class INIFile; /** Forward declaration for Jupiter::INIFile. See Jupiter::INIFile in INIFile.h. */
-
 	namespace IRC
 	{
 
 		/**
 		* @brief Provides connectivity to IRC servers.
 		*/
-		class JUPITER_API Client : public Thinker
+		class JUPITER_API Client : public Jupiter::Thinker
 		{
 		protected:
 
@@ -198,8 +194,6 @@ namespace Jupiter
 			*/
 			virtual void OnMode(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &modeString);
 		public:
-
-			static INIFile *Config; /** IRC client config file. This is automatically instantiated upon library initialization. */
 			class Channel;
 
 			/**
@@ -474,11 +468,41 @@ namespace Jupiter
 			}; // Jupiter::IRC::Client::Channel class
 
 			/**
-			* @brief Returns the config section this refers to.
+			* @brief Returns the name of the primary config section this client reads from.
 			*
-			* @return String containing a config section.
+			* @return String containing a config section's name.
 			*/
 			const Jupiter::ReadableString &getConfigSection() const;
+
+			/**
+			* @brief Fetches the primary config section
+			*
+			* @return The primary config section if it exists, nullptr otherwise.
+			*/
+			const Jupiter::INIFile::Section *getPrimaryConfigSection() const;
+
+			/**
+			* @brief Fetches the primary config section
+			*
+			* @return The primary config section if it exists, nullptr otherwise.
+			*/
+			const Jupiter::INIFile::Section *getSecondaryConfigSection() const;
+
+			/**
+			* @brief Sets the primary config section
+			* Note: This is useful when the higher config file is reloaded
+			*
+			* @param in_primary_section Primary config section to begin using
+			*/
+			virtual void setPrimaryConfigSection(const Jupiter::INIFile::Section *in_primary_section);
+
+			/**
+			* @brief Sets the secondary config section
+			* Note: This is useful when the higher config file is reloaded
+			*
+			* @param in_secondary_section Secondary config section to begin using
+			*/
+			virtual void setSecondaryConfigSection(const Jupiter::INIFile::Section *in_secondary_section);
 
 			/**
 			* @brief Returns the name of the file this logs to.
@@ -855,14 +879,15 @@ namespace Jupiter
 			*
 			* @return 0 if the client should still exist, error code otherwise.
 			*/
-			virtual int think();
+			virtual int think() override;
 
 			/**
 			* @brief Constructor for a client.
 			*
-			* @param configSection String containing the config section for the client to read from, before defaulting to "Default".
+			* @param in_primary_section INIFile section to search first for a configuration option
+			* @param in_secondary_section INIFile section to search second for a configuration, before using a pre-defined default value
 			*/
-			Client(const Jupiter::ReadableString &configSection);
+			Client(const Jupiter::INIFile::Section *in_primary_section, const Jupiter::INIFile::Section *in_secondary_section);
 
 			/**
 			* @brief Destructor for a client.

@@ -40,9 +40,6 @@
 
 using namespace Jupiter::literals;
 
-Jupiter::INIFile _Config;
-Jupiter::INIFile *Jupiter::IRC::Client::Config = &_Config;
-
 template class JUPITER_API Jupiter::Reference_String<char>;
 template class JUPITER_API Jupiter::String_Strict<char>;
 template class JUPITER_API Jupiter::CString_Type<char>;
@@ -59,7 +56,9 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	Jupiter::StringS saslAccount;
 	Jupiter::StringS saslPass;
 	int connectionStatus;
-	Jupiter::StringS configSectionName;
+	Jupiter::StringS primary_section_name;
+	const Jupiter::INIFile::Section *primary_section;
+	const Jupiter::INIFile::Section *secondary_section;
 	Jupiter::CStringS logFileName;
 	Jupiter::StringS last_line;
 	unsigned short serverPort;
@@ -133,15 +132,16 @@ struct Jupiter::IRC::Client::Channel::Data
 	bool isAddingNames;
 };
 
-Jupiter::IRC::Client::Client(const Jupiter::ReadableString &configSection)
+Jupiter::IRC::Client::Client(const Jupiter::INIFile::Section *in_primary_section, const Jupiter::INIFile::Section *in_secondary_section)
 {
 	Jupiter::IRC::Client::data_ = new Jupiter::IRC::Client::Data(this);
-	if (Jupiter::IRC::Client::Config == nullptr)
-	{
-		Jupiter::IRC::Client::Config = new INIFile();
-		Jupiter::IRC::Client::Config->readFile(CONFIG_INI);
-	}
-	Jupiter::IRC::Client::data_->configSectionName = configSection;
+
+	Jupiter::IRC::Client::data_->primary_section = in_primary_section;
+	Jupiter::IRC::Client::data_->secondary_section = in_secondary_section;
+
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+		Jupiter::IRC::Client::data_->primary_section_name = Jupiter::IRC::Client::data_->primary_section->getName();
+
 	Jupiter::IRC::Client::data_->serverHostname = Jupiter::IRC::Client::readConfigValue("Hostname"_jrs, "irc.cncirc.net"_jrs);
 	
 	Jupiter::IRC::Client::data_->logFileName = Jupiter::IRC::Client::readConfigValue("LogFile"_jrs);
@@ -302,7 +302,35 @@ void Jupiter::IRC::Client::OnMode(const Jupiter::ReadableString &, const Jupiter
 
 const Jupiter::ReadableString &Jupiter::IRC::Client::getConfigSection() const
 {
-	return Jupiter::IRC::Client::data_->configSectionName;
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+		return Jupiter::IRC::Client::data_->primary_section_name;
+
+	return Jupiter::ReferenceString::empty;
+}
+
+const Jupiter::INIFile::Section *Jupiter::IRC::Client::getPrimaryConfigSection() const
+{
+	return Jupiter::IRC::Client::data_->primary_section;
+}
+
+const Jupiter::INIFile::Section *Jupiter::IRC::Client::getSecondaryConfigSection() const
+{
+	return Jupiter::IRC::Client::data_->primary_section;
+}
+
+void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::INIFile::Section *in_primary_section)
+{
+	Jupiter::IRC::Client::data_->primary_section = in_primary_section;
+
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+		Jupiter::IRC::Client::data_->primary_section_name = Jupiter::IRC::Client::data_->primary_section->getName();
+	else
+		Jupiter::IRC::Client::data_->primary_section_name.erase();
+}
+
+void Jupiter::IRC::Client::setSecondaryConfigSection(const Jupiter::INIFile::Section *in_secondary_section)
+{
+	Jupiter::IRC::Client::data_->secondary_section = in_secondary_section;
 }
 
 const Jupiter::ReadableString &Jupiter::IRC::Client::getLogFile() const
@@ -1387,42 +1415,82 @@ int Jupiter::IRC::Client::think()
 
 const Jupiter::ReadableString &Jupiter::IRC::Client::readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue) const
 {
-	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
-	if (val.isNotEmpty())
-		return val;
-	return Jupiter::IRC::Client::Config->get("Default"_jrs, key, defaultValue);
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+	{
+		const Jupiter::ReadableString &val = Jupiter::IRC::Client::data_->primary_section->get(key);
+
+		if (val.isNotEmpty())
+			return val;
+	}
+
+	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
+		return Jupiter::IRC::Client::data_->secondary_section->get(key, defaultValue);
+
+	return defaultValue;
 }
 
 bool Jupiter::IRC::Client::readConfigBool(const Jupiter::ReadableString &key, bool defaultValue) const
 {
-	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
-	if (val.isNotEmpty())
-		return val.asBool();
-	return Jupiter::IRC::Client::Config->getBool("Default"_jrs, key, defaultValue);
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+	{
+		const Jupiter::ReadableString &val = Jupiter::IRC::Client::data_->primary_section->get(key);
+
+		if (val.isNotEmpty())
+			return val.asBool();
+	}
+
+	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
+		return Jupiter::IRC::Client::data_->secondary_section->getBool(key, defaultValue);
+
+	return defaultValue;
 }
 
 int Jupiter::IRC::Client::readConfigInt(const Jupiter::ReadableString &key, int defaultValue) const
 {
-	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
-	if (val.isNotEmpty())
-		return val.asInt();
-	return Jupiter::IRC::Client::Config->getInt("Default"_jrs, key, defaultValue);
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+	{
+		const Jupiter::ReadableString &val = Jupiter::IRC::Client::data_->primary_section->get(key);
+
+		if (val.isNotEmpty())
+			return val.asInt();
+	}
+
+	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
+		return Jupiter::IRC::Client::data_->secondary_section->getInt(key, defaultValue);
+
+	return defaultValue;
 }
 
 long Jupiter::IRC::Client::readConfigLong(const Jupiter::ReadableString &key, long defaultValue) const
 {
-	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
-	if (val.isNotEmpty())
-		return val.asInt();
-	return Jupiter::IRC::Client::Config->getInt("Default"_jrs, key, defaultValue);
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+	{
+		const Jupiter::ReadableString &val = Jupiter::IRC::Client::data_->primary_section->get(key);
+
+		if (val.isNotEmpty())
+			return val.asInt();
+	}
+
+	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
+		return Jupiter::IRC::Client::data_->secondary_section->getLong(key, defaultValue);
+
+	return defaultValue;
 }
 
 double Jupiter::IRC::Client::readConfigDouble(const Jupiter::ReadableString &key, double defaultValue) const
 {
-	const Jupiter::ReadableString &val = Jupiter::IRC::Client::Config->get(Jupiter::IRC::Client::data_->configSectionName, key);
-	if (val.isNotEmpty())
-		return val.asDouble();
-	return Jupiter::IRC::Client::Config->getDouble("Default"_jrs, key, defaultValue);
+	if (Jupiter::IRC::Client::data_->primary_section != nullptr)
+	{
+		const Jupiter::ReadableString &val = Jupiter::IRC::Client::data_->primary_section->get(key);
+
+		if (val.isNotEmpty())
+			return val.asDouble();
+	}
+
+	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
+		return Jupiter::IRC::Client::data_->secondary_section->getDouble(key, defaultValue);
+
+	return defaultValue;
 }
 
 void Jupiter::IRC::Client::writeToLogs(const Jupiter::ReadableString &message)
@@ -1519,7 +1587,7 @@ bool Jupiter::IRC::Client::Data::startCAP()
 	Jupiter::IRC::Client::Data::connectionStatus = 2;
 	return Jupiter::IRC::Client::Data::sock->send("CAP LS" ENDL, 8) > 0;
 }
-//Jupiter::ReferenceString &
+
 bool Jupiter::IRC::Client::Data::registerClient()
 {
 	bool r = true;
