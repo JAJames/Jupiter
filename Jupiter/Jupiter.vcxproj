@@ -186,7 +186,6 @@
     <ClCompile Include="Hash.c" />
     <ClCompile Include="HTTP_Server.cpp" />
     <ClCompile Include="INIFile.cpp" />
-    <ClCompile Include="IRC.cpp" />
     <ClCompile Include="IRC_Client.cpp" />
     <ClCompile Include="IRC_Server.cpp" />
     <ClCompile Include="Jupiter.cpp" />

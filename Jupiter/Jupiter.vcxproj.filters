@@ -63,9 +63,6 @@
     <ClCompile Include="Jupiter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IRC.cpp">
-      <Filter>Source Files\IRC</Filter>
-    </ClCompile>
     <ClCompile Include="IRC_Server.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
@@ -86,9 +83,6 @@
     </ClCompile>
     <ClCompile Include="INIFile.cpp">
       <Filter>Source Files\Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Command.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="File.cpp">
       <Filter>Source Files\Files</Filter>
@@ -127,6 +121,9 @@
       <Filter>Source Files\HTTP</Filter>
     </ClCompile>
     <ClCompile Include="GenericCommand.cpp">
+      <Filter>Source Files\Object Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
       <Filter>Source Files\Object Extensions</Filter>
     </ClCompile>
   </ItemGroup>
@@ -187,9 +184,6 @@
     </ClInclude>
     <ClInclude Include="INIFile.h">
       <Filter>Header Files\Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Command.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="File.h">
       <Filter>Header Files\Files</Filter>
@@ -264,6 +258,9 @@
       <Filter>Header Files\HTTP</Filter>
     </ClInclude>
     <ClInclude Include="GenericCommand.h">
+      <Filter>Header Files\Object Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
       <Filter>Header Files\Object Extensions</Filter>
     </ClInclude>
   </ItemGroup>

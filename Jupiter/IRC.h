@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -42,13 +42,19 @@ namespace Jupiter
 {
 	namespace IRC
 	{
-		JUPITER_API extern const char CTCP; /** IRC CTCP character */
-		JUPITER_API extern const char bold; /** IRC bold character */
-		JUPITER_API extern const char color; /** IRC color character */
-		JUPITER_API extern const char normal; /** IRC normal character */
-		JUPITER_API extern const char reverse; /** IRC reverse character */
-		JUPITER_API extern const char italicize; /** IRC italicize character */
-		JUPITER_API extern const char underline; /** IRC underline character */
+		constexpr const char CTCP = 0x01; /** IRC CTCP character */
+		constexpr const char bold = 0x02; /** IRC bold character */
+		constexpr const char BOLD = Jupiter::IRC::bold;
+		constexpr const char color = 0x03; /** IRC color character */
+		constexpr const char COLOR = Jupiter::IRC::color;
+		constexpr const char normal = 0x0F; /** IRC normal character */
+		constexpr const char NORMAL = Jupiter::IRC::normal;
+		constexpr const char reverse = 0x16; /** IRC reverse character */
+		constexpr const char REVERSE = Jupiter::IRC::reverse;
+		constexpr const char italicize = 0x1D; /** IRC italicize character */
+		constexpr const char ITALICIZE = Jupiter::IRC::italicize;
+		constexpr const char underline = 0x1F; /** IRC underline character */
+		constexpr const char UNDERLINE = Jupiter::IRC::underline;
 	}
 }
 

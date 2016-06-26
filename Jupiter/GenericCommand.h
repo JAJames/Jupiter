@@ -26,6 +26,7 @@
 
 #include "Command.h"
 #include "String.h"
+#include "ArrayList.h"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -35,6 +36,8 @@
 
 namespace Jupiter
 {
+	class GenericCommandNamespace;
+
 	/**
 	* @brief Provides the base for generic commands.
 	*/
@@ -55,6 +58,7 @@ namespace Jupiter
 		{
 			Jupiter::StringS response;
 			GenericCommand::DisplayType type;
+			uint8_t error = 0; // 0 = no error; 1 = command not found
 			ResponseLine *next = nullptr;
 
 			/**
@@ -65,8 +69,10 @@ namespace Jupiter
 			* @return This.
 			*/
 			ResponseLine *set(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
+			ResponseLine *set(uint8_t in_error);
 			ResponseLine() = default;
 			ResponseLine(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
+			ResponseLine(uint8_t in_error);
 		};
 
 		/**
@@ -77,6 +83,35 @@ namespace Jupiter
 		virtual ResponseLine *trigger(const Jupiter::ReadableString &input) = 0;
 
 		/**
+		* @brief Checks if this command is a namespace
+		*
+		* @return True if the command is a namespace, false otherwise
+		*/
+		virtual bool isNamespace() const;
+
+		/**
+		* @brief Places this command in a namespace, creating new namespaces as necessary
+		* Note: This moves the command into a namespace relative to its current namespace
+		*
+		* @param in_namespace Name of the namespace to move the command into
+		*/
+		void setNamespace(const Jupiter::ReadableString &in_namespace);
+
+		/**
+		* @brief Places this command in a namespace
+		*
+		* @param in_namespace Namespace to move the command into
+		*/
+		void setNamespace(GenericCommandNamespace &in_namespace);
+
+		/**
+		* @brief Fetches the namespace this command is in
+		*
+		* @return Namespace this command is in, or nullptr if there is none.
+		*/
+		GenericCommandNamespace *getNamespace() const;
+
+		/**
 		* @brief Default constructor for the generic command class.
 		*/
 		GenericCommand();
@@ -85,18 +120,48 @@ namespace Jupiter
 		* @brief Destructor for the generic command class.
 		*/
 		virtual ~GenericCommand();
+
+	protected:
+		GenericCommandNamespace *m_parent = nullptr;
 	};
 
 	/**
-	* @brief Fetches a generic command based on its trigger.
-	*
-	* @param trigger Trigger of the command to fetch.
-	* @return A generic command if it exists, nullptr otherwise.
+	* @brief Provides the base for generic command namespaces
 	*/
-	JUPITER_API extern GenericCommand *getGenericCommand(const Jupiter::ReadableString &trigger);
+	class JUPITER_API GenericCommandNamespace : public Jupiter::GenericCommand
+	{
+	public: // Jupiter::Command
+		ResponseLine *trigger(const Jupiter::ReadableString &input) override;
+		const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters) override;
+
+	public: // Jupiter::GenericCommand
+		bool isNamespace() const override;
+
+	public: // Jupiter::GenericCommandNamespace
+		bool isUsing() const;
+		void setUsing(bool in_value);
+
+		Jupiter::ArrayList<GenericCommand> getCommands() const; // differs from m_commands in that it checks if it's using a namespace
+		GenericCommand *getCommand(const Jupiter::ReadableString &in_command) const;
+
+		void addCommand(GenericCommand &in_command);
+		void removeCommand(GenericCommand &in_command);
+		void removeCommand(const Jupiter::ReadableString &in_command);
+
+		void updateHelp();
+
+		virtual ~GenericCommandNamespace();
+
+	protected:
+		bool m_using;
+		Jupiter::ArrayList<GenericCommand> m_commands;
+
+	private:
+		Jupiter::StringS m_help;
+	};
 
 	/** Generic command list */
-	JUPITER_API extern Jupiter::ArrayList<GenericCommand> *g_generic_commands;
+	JUPITER_API extern GenericCommandNamespace &g_generic_commands;
 }
 
 /** Generic Command Macros */
@@ -105,8 +170,8 @@ namespace Jupiter
 #define BASE_GENERIC_COMMAND(CLASS) \
 	public: \
 	CLASS(); \
-	Jupiter::GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters); \
-	const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters); \
+	Jupiter::GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters) override; \
+	const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters) override; \
 	static CLASS instance;
 
 /** Expands to become the entire declaration for a generic command. In most cases, this will be sufficient. */
