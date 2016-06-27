@@ -58,7 +58,6 @@ namespace Jupiter
 		{
 			Jupiter::StringS response;
 			GenericCommand::DisplayType type;
-			uint8_t error = 0; // 0 = no error; 1 = command not found
 			ResponseLine *next = nullptr;
 
 			/**
@@ -69,10 +68,8 @@ namespace Jupiter
 			* @return This.
 			*/
 			ResponseLine *set(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
-			ResponseLine *set(uint8_t in_error);
 			ResponseLine() = default;
 			ResponseLine(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
-			ResponseLine(uint8_t in_error);
 		};
 
 		/**
