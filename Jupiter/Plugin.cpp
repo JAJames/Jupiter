@@ -81,7 +81,6 @@ Jupiter::ArrayList<dlib> _libList;
 
 Jupiter::Plugin::Plugin()
 {
-	Jupiter::Plugin::config.readFile(Jupiter::Plugin::name);
 }
 
 Jupiter::Plugin::~Plugin()

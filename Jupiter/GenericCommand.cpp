@@ -43,7 +43,7 @@ Jupiter::GenericCommand::GenericCommand()
 Jupiter::GenericCommand::~GenericCommand()
 {
 	// Inform the parent
-	if (GenericCommand::m_parent == nullptr)
+	if (GenericCommand::m_parent != nullptr)
 		GenericCommand::m_parent->removeCommand(*this);
 
 	// Notify plugins
