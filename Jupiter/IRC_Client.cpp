@@ -315,7 +315,7 @@ const Jupiter::INIFile::Section *Jupiter::IRC::Client::getPrimaryConfigSection()
 
 const Jupiter::INIFile::Section *Jupiter::IRC::Client::getSecondaryConfigSection() const
 {
-	return Jupiter::IRC::Client::data_->primary_section;
+	return Jupiter::IRC::Client::data_->secondary_section;
 }
 
 void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::INIFile::Section *in_primary_section)
