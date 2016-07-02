@@ -170,7 +170,7 @@ namespace Jupiter
 	CLASS(); \
 	Jupiter::GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters) override; \
 	const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters) override; \
-	static CLASS instance;
+	static CLASS &instance;
 
 /** Expands to become the entire declaration for a generic command. In most cases, this will be sufficient. */
 #define GENERIC_GENERIC_COMMAND(CLASS) \
