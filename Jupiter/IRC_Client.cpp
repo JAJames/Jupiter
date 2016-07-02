@@ -776,7 +776,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 
 					case 3: // Registration sent, but not verified.
 					{
-						bool completelyBadNick = false;
+						bool erroneous_nickname = false;
 						switch (numeric)
 						{
 							// We'll take any of these 4, just in-case any of them are missing. In general, this will trigger on 001.
@@ -791,37 +791,45 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 							// You have a bad nickname! Try the alt.
 							//case IRC_ERR_NONICKNAMEGIVEN: // 431 -- Not consistently usable due to lack of command field.
 						case IRC_ERR_ERRONEOUSNICKNAME: // 432
-							completelyBadNick = true;
+							erroneous_nickname = true;
 						case IRC_ERR_NICKNAMEINUSE: // 433
 						case IRC_ERR_NICKCOLLISION: // 436
 						case IRC_ERR_BANNICKCHANGE: // 437 -- Note: This conflicts with another token.
-							const Jupiter::ReadableString &altNick = Jupiter::IRC::Client::readConfigValue("AltNick"_jrs, "Jupiter"_jrs);
+							const Jupiter::ReadableString &altNick = Jupiter::IRC::Client::readConfigValue("AltNick"_jrs);
 							const Jupiter::ReadableString &configNick = Jupiter::IRC::Client::readConfigValue("Nick"_jrs, "Jupiter"_jrs);
-							/*
-							* Possible Issues:
-							*	altNick != nickname after first nick change -- loop initiated?
-							*	completelyBadNick will apply to altNick if it was tried, not the actual nick.
-							*/
-							if (Jupiter::IRC::Client::data_->nickname.equalsi(altNick)) // The alternate nick failed.
+
+							if (altNick.isNotEmpty() && Jupiter::IRC::Client::data_->nickname.equalsi(altNick)) // The alternate nick failed.
 							{
 								Jupiter::IRC::Client::data_->nickname = configNick;
 								Jupiter::IRC::Client::data_->nickname += "1";
+								
+								Jupiter::IRC::Client::data_->sock->send("NICK "_jrs + Jupiter::IRC::Client::data_->nickname + ENDL);
 							}
-							else if (Jupiter::IRC::Client::data_->nickname.equalsi(configNick))
+							else if (Jupiter::IRC::Client::data_->nickname.equalsi(configNick)) // The config nick failed
 							{
-								Jupiter::IRC::Client::data_->nickname = altNick;
-								if (Jupiter::IRC::Client::data_->nickname.isNotEmpty())
-									Jupiter::IRC::Client::data_->sock->send(Jupiter::StringS::Format("NICK %.*s" ENDL, Jupiter::IRC::Client::data_->nickname.size(), Jupiter::IRC::Client::data_->nickname.ptr()));
+								if (altNick.isEmpty())
+								{
+									if (erroneous_nickname)
+										break; // If this nick is invalid, adding numbers won't help.
+
+									Jupiter::IRC::Client::data_->nickname += '1';
+								}
+								else
+									Jupiter::IRC::Client::data_->nickname = altNick;
+
+								Jupiter::IRC::Client::data_->sock->send("NICK "_jrs + Jupiter::IRC::Client::data_->nickname + ENDL);
 							}
 							// Note: Add a series of contains() functions to String_Type.
 							else
 							{
-								if (completelyBadNick == false) // If this nick is invalid, adding numbers won't help.
+								if (erroneous_nickname == false) // If this nick is invalid, adding numbers won't help.
 								{
 									if (Jupiter::IRC::Client::data_->nickname.size() > configNick.size())
 									{
 										int n = Jupiter_strtoi_nospace_s(Jupiter::IRC::Client::data_->nickname.ptr() + configNick.size(), Jupiter::IRC::Client::data_->nickname.size() - configNick.size(), 10);
-										Jupiter::IRC::Client::data_->nickname.format("%.*s%d", configNick.size(), configNick.ptr(), n);
+										Jupiter::IRC::Client::data_->nickname.format("%.*s%d", configNick.size(), configNick.ptr(), n + 1);
+
+										Jupiter::IRC::Client::data_->sock->send("NICK "_jrs + Jupiter::IRC::Client::data_->nickname + ENDL);
 									}
 									else
 									{
@@ -829,6 +837,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 										// This can be somewhat edgy -- this will only trigger if someone rehashes AND the new nickname is shorter.
 										// However, it won't be fatal even if the new nickname's length is >= the old.
 										Jupiter::IRC::Client::data_->nickname = configNick;
+										Jupiter::IRC::Client::data_->sock->send("NICK "_jrs + Jupiter::IRC::Client::data_->nickname + ENDL);
 									}
 								}
 								else
