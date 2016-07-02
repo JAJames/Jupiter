@@ -180,8 +180,14 @@ class CLASS : public Jupiter::GenericCommand { \
 
 /** Instantiates a generic command. */
 #define GENERIC_COMMAND_INIT(CLASS) \
-	CLASS CLASS :: instance = CLASS (); \
-	CLASS & CLASS ## _instance = CLASS :: instance;
+class CLASS ## _Init : public CLASS { \
+public: \
+	CLASS ## _Init() { \
+		for (size_t index = 0; index != Jupiter::plugins->size(); ++index) \
+			Jupiter::plugins->get(index)->OnGenericCommandAdd(*this); \
+	} }; \
+	CLASS ## _Init CLASS ## _instance = CLASS ## _Init (); \
+	CLASS & CLASS :: instance = CLASS ## _instance;
 
 /** Re-enable warnings */
 #if defined _MSC_VER

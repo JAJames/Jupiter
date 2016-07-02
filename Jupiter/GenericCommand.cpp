@@ -32,12 +32,7 @@ Jupiter::GenericCommandNamespace &Jupiter::g_generic_commands = o_generic_comman
 Jupiter::GenericCommand::GenericCommand()
 {
 	if (&o_generic_commands != this)
-	{
 		Jupiter::GenericCommand::setNamespace(o_generic_commands);
-
-		for (size_t index = 0; index != Jupiter::plugins->size(); ++index)
-			Jupiter::plugins->get(index)->OnGenericCommandAdd(*this);
-	}
 }
 
 Jupiter::GenericCommand::~GenericCommand()
