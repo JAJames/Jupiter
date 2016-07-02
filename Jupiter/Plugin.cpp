@@ -117,6 +117,10 @@ bool Jupiter::Plugin::initialize()
 	return true;
 }
 
+void Jupiter::Plugin::OnPostInitialize()
+{
+}
+
 // Static Functions
 
 void Jupiter::Plugin::setDirectory(const Jupiter::ReadableString &dir)

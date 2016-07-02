@@ -106,6 +106,12 @@ namespace Jupiter
 		*/
 		virtual bool initialize();
 
+		/**
+		* @brief This is called after all plugins have been initialized during application startup
+		* Note: There is no guarantee that this will be called, AND there is no guarantee that more plugins will not be loaded later
+		*/
+		virtual void OnPostInitialize();
+
 		/** IRC Listeners */
 
 		/**
