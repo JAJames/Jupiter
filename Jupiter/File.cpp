@@ -142,42 +142,84 @@ bool Jupiter::File::load(const Jupiter::ReadableString &file)
 bool Jupiter::File::load(FILE *file)
 {
 	Jupiter::String buffer(defaultBufferSize);
-	int c = fgetc(file);
 
-	if (c == EOF)
-		return false;
-	if (containsSymbol(ENDL, static_cast<char>(c)))
-	{
-		Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
-		c = fgetc(file);
-		if (c == EOF)
-			return true;
-		if (containsSymbol(ENDL, static_cast<char>(c)) == false)
-			buffer.concat(static_cast<char>(c));
-	}
-	else
-		buffer.concat(static_cast<char>(c));
+	int chr;
 
-	for (;;)
+	while (true)
 	{
-		c = fgetc(file);
-		if (c == EOF)
-			return true;
-		if (containsSymbol(ENDL, static_cast<char>(c)))
+		chr = fgetc(file);
+
+		if (chr == EOF)
 		{
-			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
-			buffer.truncate(buffer.size());
-			c = fgetc(file);
-			if (c == EOF)
+			if (buffer.isNotEmpty())
+			{
+				Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
 				return true;
-			if (containsSymbol(ENDL, static_cast<char>(c)) == false)
-				buffer.concat(static_cast<char>(c));
-		}
-		else
-			buffer.concat(static_cast<char>(c));
-	}
+			}
 
-	return true;
+			return Jupiter::File::data_->lines.size() != 0;
+		}
+
+		if (static_cast<char>(chr) == '\r') // new line
+		{
+		new_line_r:
+
+			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			buffer.erase();
+
+			// check for optional trailing \n
+
+			chr = fgetc(file);
+
+			switch (chr)
+			{
+			case EOF:
+				return true;
+
+			case '\r':
+				goto new_line_r;
+
+			case '\n':
+				continue;
+
+			default:
+				buffer += static_cast<char>(chr);
+			}
+
+			continue;
+		}
+
+		if (static_cast<char>(chr) == '\n') // new line
+		{
+		new_line_n:
+
+			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			buffer.erase();
+
+			// check for optional trailing \r
+
+			chr = fgetc(file);
+
+			switch (chr)
+			{
+			case EOF:
+				return true;
+
+			case '\n':
+				goto new_line_n;
+
+			case '\r':
+				continue;
+
+			default:
+				buffer += static_cast<char>(chr);
+			}
+
+			continue;
+		}
+
+		buffer += static_cast<char>(chr);
+	}
 }
 
 void Jupiter::File::unload()
