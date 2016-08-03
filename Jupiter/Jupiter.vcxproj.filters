@@ -105,9 +105,6 @@
     <ClCompile Include="IRC_Client.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>Source Files\Files</Filter>
-    </ClCompile>
     <ClCompile Include="Hash.c">
       <Filter>Source Files</Filter>
     </ClCompile>

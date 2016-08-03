@@ -177,7 +177,6 @@
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64C.c" />
     <ClCompile Include="Command.cpp" />
-    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DataBuffer.cpp" />
     <ClCompile Include="File.cpp" />
