@@ -22,7 +22,6 @@
 /**
 * @file String_Imp.h
 * @brief Provides the implementations for String_Strict and String_Loose.
-* Note: Modification of this file is not supported in any way.
 */
 
 #include "String.h"

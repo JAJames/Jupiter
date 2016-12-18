@@ -46,13 +46,27 @@ namespace Jupiter
 			T *data;
 		};
 
-		/**
-		* @brief Returns the n'th Node in the list.
+		/*
+		* @brief Returns the head of the list
 		*
-		* @param n Index of the node to return.
-		* @return n'th Node in the list.
+		* @return Head of the list
 		*/
-		Node *getNode(size_t n) const;
+		Node *getHead() const;
+
+		/*
+		* @brief Returns the tail of the list
+		*
+		* @return Tail of the list
+		*/
+		Node *getTail() const;
+
+		/**
+		* @brief Returns the Node at the specified index in the list.
+		*
+		* @param index Index of the node to return.
+		* @return Node at specified index in the list.
+		*/
+		Node *getNode(size_t index) const;
 
 		/**
 		* @brief Gets the data at a specified index.
@@ -87,7 +101,7 @@ namespace Jupiter
 		void add(T *data, size_t index);
 
 		/**
-		* @brief Adds data to the end of the list.
+		* @brief Adds data to the tail of the list.
 		*
 		* @param data Data to add to the list.
 		*/
@@ -96,7 +110,7 @@ namespace Jupiter
 		/**
 		* @brief Default constructor for the DLList class.
 		*/
-		DLList();
+		DLList() = default;
 
 		/**
 		* @brief Copy constructor for the DLList class.
@@ -111,42 +125,35 @@ namespace Jupiter
 
 	/** Private members */
 	private:
-		Node *head;
-		Node *end;
+		Node *m_head = nullptr;
+		Node *m_tail = nullptr;
 	};
 
 }
 
 // Implementation
 
-template<typename T> Jupiter::DLList<T>::DLList()
-{
-	Jupiter::DLList<T>::head = nullptr;
-	Jupiter::DLList<T>::end = nullptr;
-	Jupiter::List<T>::length = 0;
-}
-
 template<typename T> Jupiter::DLList<T>::DLList(const Jupiter::DLList<T> &source)
 {
 	Jupiter::List<T>::length = source.length;
 	if (Jupiter::List<T>::length == 0)
 	{
-		Jupiter::DLList<T>::head = nullptr;
-		Jupiter::DLList<T>::end = nullptr;
+		m_head = nullptr;
+		m_tail = nullptr;
 	}
 	else if (Jupiter::List<T>::length == 1)
 	{
 		Jupiter::DLList<T>::Node *n = new Jupiter::DLList<T>::Node;
 		n->data = source.getNode(0)->data;
-		Jupiter::DLList<T>::head = n;
-		Jupiter::DLList<T>::end = n;
+		m_head = n;
+		m_tail = n;
 	}
 	else
 	{
 		Jupiter::DLList<T>::Node *sourceNode = source.getNode(0);
 		Jupiter::DLList<T>::Node *n = new Jupiter::DLList<T>::Node;
 		n->data = sourceNode->data;
-		Jupiter::DLList<T>::head = n;
+		m_head = n;
 		sourceNode = sourceNode->next;
 
 		while (sourceNode->next != nullptr)
@@ -161,14 +168,14 @@ template<typename T> Jupiter::DLList<T>::DLList(const Jupiter::DLList<T> &source
 		n = n->next;
 		n->data = sourceNode->data;
 
-		Jupiter::DLList<T>::end = n;
+		m_tail = n;
 	}
 }
 
 template<typename T> Jupiter::DLList<T>::~DLList()
 {
 	Jupiter::DLList<T>::Node *p;
-	Jupiter::DLList<T>::Node *c = Jupiter::DLList<T>::head;
+	Jupiter::DLList<T>::Node *c = m_head;
 	while (c != nullptr)
 	{
 		p = c;
@@ -177,16 +184,26 @@ template<typename T> Jupiter::DLList<T>::~DLList()
 	}
 }
 
+template<typename T> typename Jupiter::DLList<T>::Node *Jupiter::DLList<T>::getHead() const
+{
+	return m_head;
+}
+
+template<typename T> typename Jupiter::DLList<T>::Node *Jupiter::DLList<T>::getTail() const
+{
+	return m_tail;
+}
+
 template<typename T> typename Jupiter::DLList<T>::Node *Jupiter::DLList<T>::getNode(size_t index) const
 {
 	Jupiter::DLList<T>::Node *r;
 	if (index * 2 < Jupiter::List<T>::length)
 	{
-		r = Jupiter::DLList<T>::head;
+		r = m_head;
 		for (size_t i = 0; i < index; i++) r = r->next;
 		return r;
 	}
-	r = Jupiter::DLList<T>::end;
+	r = m_tail;
 	for (size_t i = Jupiter::List<T>::length - 1; i > index; i--) r = r->previous;
 	return r;
 }
@@ -203,16 +220,16 @@ template<typename T> T *Jupiter::DLList<T>::remove(size_t index)
 
 template<typename T> T *Jupiter::DLList<T>::remove(Node *data)
 {
-	if (Jupiter::DLList<T>::head == data)
+	if (m_head == data)
 	{
-		Jupiter::DLList<T>::head = data->next;
+		m_head = data->next;
 		if (data->next != nullptr) data->next->previous = data->previous;
-		else Jupiter::DLList<T>::end = nullptr;
+		else m_tail = nullptr;
 	}
-	else if (Jupiter::DLList<T>::end == data)
+	else if (m_tail == data)
 	{
-		Jupiter::DLList<T>::end = data->previous;
-		Jupiter::DLList<T>::end->next = nullptr;
+		m_tail = data->previous;
+		m_tail->next = nullptr;
 	}
 	else
 	{
@@ -231,16 +248,16 @@ template<typename T> void Jupiter::DLList<T>::add(T *data, size_t index)
 	node->data = data;
 	if (index == 0)
 	{
-		node->next = Jupiter::DLList<T>::head;
-		Jupiter::DLList<T>::head->previous = node;
-		Jupiter::DLList<T>::head = node;
+		node->next = m_head;
+		m_head->previous = node;
+		m_head = node;
 		node->previous = nullptr;
 	}
 	else if (index == Jupiter::List<T>::length)
 	{
-		node->previous = Jupiter::DLList<T>::end;
-		Jupiter::DLList<T>::end->next = node;
-		Jupiter::DLList<T>::end = node;
+		node->previous = m_tail;
+		m_tail->next = node;
+		m_tail = node;
 		node->next = nullptr;
 	}
 	else
@@ -261,15 +278,15 @@ template<typename T> void Jupiter::DLList<T>::add(T *data)
 	n->next = nullptr;
 	if (Jupiter::List<T>::length == 0)
 	{
-		Jupiter::DLList<T>::head = n;
-		Jupiter::DLList<T>::end = n;
+		m_head = n;
+		m_tail = n;
 		n->previous = nullptr;
 	}
 	else
 	{
-		n->previous = Jupiter::DLList<T>::end;
-		Jupiter::DLList<T>::end->next = n;
-		Jupiter::DLList<T>::end = n;
+		n->previous = m_tail;
+		m_tail->next = n;
+		m_tail = n;
 	}
 	Jupiter::List<T>::length++;
 }

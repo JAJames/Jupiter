@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,13 +45,27 @@ namespace Jupiter
 			T *data = nullptr;
 		};
 
-		/**
-		* @brief Returns the n'th Node in the list.
+		/*
+		* @brief Returns the head of the list
 		*
-		* @param n Index of the node to return.
-		* @return n'th Node in the list.
+		* @return Head of the list
 		*/
-		Node *getNode(size_t n) const;
+		Node *getHead() const;
+
+		/*
+		* @brief Returns the tail of the list
+		*
+		* @return Tail of the list
+		*/
+		Node *getTail() const;
+
+		/**
+		* @brief Returns the Node at the specified index in the list.
+		*
+		* @param index Index of the node to return.
+		* @return Node at specified index in the list.
+		*/
+		Node *getNode(size_t index) const;
 
 		/**
 		* @brief Gets the data at a specified index.
@@ -60,6 +74,13 @@ namespace Jupiter
 		* @return Data stored at the specified index.
 		*/
 		T *get(size_t index) const;
+
+		/**
+		* @brief Removes the head of the list
+		*
+		* @return Value that was stored in the head of the list
+		*/
+		T *removeHead();
 
 		/**
 		* @brief Removes the n'th Node in the list, and returns its contents.
@@ -78,29 +99,58 @@ namespace Jupiter
 		T *removeNext(Node *data);
 
 		/**
-		* @brief Adds data to the list at a specified index.
-		*
-		* @param data Data to add to the list.
-		* @param index Position in the list to add the data to.
-		*/
-		void add(T *data, size_t index);
-
-		/**
-		* @brief Adds data to the front of the list.
+		* @brief Adds data to the end of the list.
 		*
 		* @param data Data to add to the list.
 		*/
 		void add(T *data);
 
 		/**
+		* @brief Inserts data to the specified index in the list.
+		*
+		* @param data Data to insert into the list.
+		* @param index Position in the list to insert data to.
+		*/
+		void add(T *data, size_t index);
+
+		/**
+		* @brief Inserts data to the head of the list.
+		*
+		* @param data Data to insert into the list.
+		*/
+		void addHead(T *data);
+
+		/**
+		* @breif Erases all entries in the list
+		*/
+		void erase();
+
+		/**
+		* @breif Erases and deletes all entries in the list
+		*/
+		void eraseAndDelete();
+
+		SLList &operator=(const SLList &in_list);
+		SLList &operator=(SLList &&in_list);
+
+		/**
 		* @brief Default constructor for the SLList class.
 		*/
-		SLList();
+		SLList() = default;
 
 		/**
 		* @brief Copy constructor for the SLList class.
+		*
+		* @param in_list List to copy data from
 		*/
-		SLList(const SLList<T> &);
+		SLList(const SLList<T> &in_list);
+
+		/**
+		* @brief Move constructor for the SLList class
+		*
+		* @param in_list List to move data from
+		*/
+		SLList(SLList<T> &&in_list);
 
 		/**
 		* @brief Destructor for the SLList class.
@@ -110,105 +160,200 @@ namespace Jupiter
 
 	/** Private members */
 	private:
-		Node *head;
+		void copy_from_internal(const SLList<T> &in_list);
+
+		Node *m_head = nullptr;
+		Node *m_tail = nullptr;
 	};
 
 }
 
 // Implementation
 
-template<typename T> Jupiter::SLList<T>::SLList()
+template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getHead() const
 {
-	Jupiter::SLList<T>::head = new Jupiter::SLList<T>::Node();
-	Jupiter::List<T>::length = 0;
+	return m_head;
 }
 
-template<typename T> Jupiter::SLList<T>::SLList(const Jupiter::SLList<T> &source)
+template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getTail() const
 {
-	Jupiter::SLList<T>::head = new Jupiter::SLList<T>::Node();
-	Jupiter::SLList<T>::Node *sourceNode = source.head;
-	
-	head->data = sourceNode->data;
-	sourceNode = sourceNode->next;
+	return m_tail;
+}
 
-	Jupiter::SLList<T>::Node *n = Jupiter::SLList<T>::head;
+template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getNode(size_t in_index) const
+{
+	if (in_index == Jupiter::SLList<T>::length)
+		return m_tail;
 
-	while (sourceNode != nullptr)
+	Jupiter::SLList<T>::Node *node = m_head;
+
+	while (in_index != 0)
 	{
-		n->next = new Jupiter::SLList<T>::Node();
-		n = n->next;
-		n->data = sourceNode->data;
-		sourceNode = sourceNode->next;
+		node = node->next;
+		--in_index;
 	}
-	Jupiter::List<T>::length = source.length;
+
+	return node;
 }
 
-template<typename T> Jupiter::SLList<T>::~SLList()
+template<typename T> T *Jupiter::SLList<T>::get(size_t in_index) const
 {
-	Jupiter::SLList<T>::Node *p;
-	Jupiter::SLList<T>::Node *c = head;
-	do
-	{
-		p = c;
-		c = c->next;
-		delete p;
-	} while (c != nullptr);
+	return Jupiter::SLList<T>::getNode(in_index)->data;
 }
 
-template<typename T> typename Jupiter::SLList<T>::Node *Jupiter::SLList<T>::getNode(size_t index) const
+template<typename T> T *Jupiter::SLList<T>::removeHead()
 {
-	Jupiter::SLList<T>::Node *t = head->next;
-	for (size_t i = 0; i != index; i++) t = t->next;
-	return t;
-}
+	if (m_head == nullptr)
+		return nullptr;
 
-template<typename T> T *Jupiter::SLList<T>::get(size_t index) const
-{
-	return Jupiter::SLList<T>::getNode(index)->data;
-}
+	T *result = m_head->data;
 
-template<typename T> T *Jupiter::SLList<T>::remove(size_t index)
-{
-	Jupiter::SLList<T>::Node *t = head;
-	for (size_t i = 0; i != index; i++)
-		t = t->next;
-	Jupiter::SLList<T>::Node *t2 = t->next;
-	t->next = t2->next;
-	T *r = t2->data;
-	delete t2;
+	Jupiter::SLList<T>::Node *node = m_head;
+	m_head = m_head->next;
+	delete node;
 	--Jupiter::List<T>::length;
-	return r;
+
+	return result;
 }
 
-template<typename T> T *Jupiter::SLList<T>::removeNext(Node *data)
+template<typename T> T *Jupiter::SLList<T>::remove(size_t in_index)
 {
-	Jupiter::SLList<T>::Node *t = data->next;
-	if (t == nullptr) return nullptr;
-	T *r = t->data;
-	data->next = t->next;
-	delete t;
-	Jupiter::List<T>::length--;
-	return r;
+	if (in_index == 0)
+		return Jupiter::SLList<T>::removeHead();
+
+	Jupiter::SLList<T>::Node *node = m_head;
+
+	while (in_index != 1)
+	{
+		node = node->next;
+		--in_index;
+	}
+
+	Jupiter::SLList<T>::Node *tmp = node->next;
+	T *result = tmp->data;
+
+	node->next = tmp->next;
+	delete tmp;
+	--Jupiter::List<T>::length;
+
+	return result;
 }
 
-template<typename T> void Jupiter::SLList<T>::add(T *data, size_t index)
+template<typename T> T *Jupiter::SLList<T>::removeNext(Node *in_data)
 {
-	Jupiter::SLList<T>::Node *n = new Jupiter::SLList<T>::Node();
-	n->data = data;
-	Jupiter::SLList<T>::Node *t = Jupiter::SLList<T>::head;
-	for (size_t i = 0; i < index; i++) t = t->next;
-	n->next = t->next;
-	t->next = n;
-	Jupiter::List<T>::length++;
+	Jupiter::SLList<T>::Node *node = in_data->next;
+
+	if (node == nullptr)
+		return nullptr;
+
+	T *result = node->data;
+
+	in_data->next = node->next;
+	delete node;
+	--Jupiter::List<T>::length;
+
+	return result;
 }
 
 template<typename T> void Jupiter::SLList<T>::add(T *data)
 {
-	Jupiter::SLList<T>::Node *n = new Jupiter::SLList<T>::Node();
-	n->data = data;
-	n->next = Jupiter::SLList<T>::head->next;
-	Jupiter::SLList<T>::head->next = n;
-	Jupiter::List<T>::length++;
+	Jupiter::SLList<T>::Node *node = new Jupiter::SLList<T>::Node();
+	node->data = data;
+
+	if (m_head == nullptr)
+		m_head = node;
+	else
+		m_tail->next = node;
+
+	m_tail = node;
+	++Jupiter::List<T>::length;
+}
+
+template<typename T> void Jupiter::SLList<T>::add(T *in_data, size_t in_index)
+{
+	if (in_index == 0)
+	{
+		Jupiter::SLList<T>::addHead(in_data);
+		return;
+	}
+
+	if (in_index >= Jupiter::List<T>::length)
+	{
+		Jupiter::SLList<T>::add(in_data);
+		return;
+	}
+
+	Jupiter::SLList<T>::Node *node = new Jupiter::SLList<T>::Node();
+	node->data = in_data;
+
+	Jupiter::SLList<T>::Node *itr = m_head;
+
+	while (in_index != 1)
+	{
+		itr = itr->next;
+		--in_index;
+	}
+
+	node->next = itr->next;
+	itr->next = node;
+
+	++Jupiter::List<T>::length;
+}
+
+template<typename T> void Jupiter::SLList<T>::addHead(T *data)
+{
+	Jupiter::SLList<T>::Node *node = new Jupiter::SLList<T>::Node();
+	node->data = data;
+	node->next = m_head;
+	m_head = node;
+
+	if (m_tail == nullptr)
+		m_tail = node;
+
+	++Jupiter::List<T>::length;
+}
+
+template<typename T> void Jupiter::SLList<T>::erase()
+{
+	Jupiter::SLList<T>::Node *node = m_head;
+
+	if (node == nullptr)
+		return;
+
+	Jupiter::SLList<T>::Node *tmp;
+
+	do
+	{
+		tmp = node;
+		node = node->next;
+		delete tmp;
+	} while (node != nullptr);
+
+	m_head = nullptr;
+	m_tail = nullptr;
+	Jupiter::List<T>::length = 0;
+}
+
+template<typename T> void Jupiter::SLList<T>::eraseAndDelete()
+{
+	Jupiter::SLList<T>::Node *node = m_head;
+
+	if (node == nullptr)
+		return;
+
+	Jupiter::SLList<T>::Node *tmp;
+
+	do
+	{
+		tmp = node;
+		node = node->next;
+		delete tmp->data;
+		delete tmp;
+	} while (node != nullptr);
+
+	m_head = nullptr;
+	m_tail = nullptr;
+	Jupiter::List<T>::length = 0;
 }
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::SLList>
@@ -216,7 +361,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::SLLis
 	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::SLList<Y> *data)
 	{
 		buffer->push<size_t>(data->size());
-		Jupiter::SLList<Y>::Node *head = data->getNode(0);
+		Jupiter::SLList<Y>::Node *head = data->getHead();
 		while (head != nullptr)
 			buffer->push<Y>(*head++->data);
 	};
@@ -231,5 +376,66 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::SLLis
 		return r;
 	}
 };
+
+template<typename T> Jupiter::SLList<T> &Jupiter::SLList<T>::operator=(const SLList &in_list)
+{
+	Jupiter::SLList<T>::erase();
+
+	Jupiter::SLList<T>::copy_from_internal(in_list);
+
+	return *this;
+}
+
+template<typename T> Jupiter::SLList<T> &Jupiter::SLList<T>::operator=(SLList &&in_list)
+{
+	m_head = in_list.m_head;
+	m_tail = in_list.m_tail;
+
+	return *this;
+}
+
+template<typename T> Jupiter::SLList<T>::SLList(const Jupiter::SLList<T> &in_list)
+{
+	Jupiter::SLList<T>::copy_from_internal(in_list);
+}
+
+template<typename T> Jupiter::SLList<T>::SLList(Jupiter::SLList<T> &&in_list)
+{
+	m_head = in_list.m_head;
+	m_tail = in_list.m_tail;
+
+	in_list.m_head = nullptr;
+	in_list.m_tail = nullptr;
+}
+
+template<typename T> Jupiter::SLList<T>::~SLList()
+{
+	Jupiter::SLList<T>::erase();
+}
+
+/** Internal */
+
+template<typename T> void Jupiter::SLList<T>::copy_from_internal(const SLList<T> &in_list)
+{
+	Jupiter::SLList<T>::Node *source_node = in_list.m_head;
+
+	if (source_node == nullptr)
+		return;
+
+	Jupiter::SLList<T>::Node *node = new Jupiter::SLList<T>::Node();
+	node->data = source_node->data;
+	source_node = source_node->next;
+
+	while (source_node != nullptr)
+	{
+		node->next = new Jupiter::SLList<T>::Node();
+		node = node->next;
+		node->data = source_node->data;
+		source_node = source_node->next;
+	}
+
+	m_tail = node;
+	Jupiter::List<T>::length = in_list.length;
+}
 
 #endif // _SLLIST_H_HEADER

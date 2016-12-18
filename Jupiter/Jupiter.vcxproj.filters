@@ -55,6 +55,9 @@
     <Filter Include="Source Files\HTTP">
       <UniqueIdentifier>{7a4d818a-481e-467c-a3e3-d6d0e7dde244}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Hash">
+      <UniqueIdentifier>{7db21243-8b23-4dd2-9888-0bdd3c5a1edd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.c">
@@ -105,9 +108,6 @@
     <ClCompile Include="IRC_Client.cpp">
       <Filter>Source Files\IRC</Filter>
     </ClCompile>
-    <ClCompile Include="Hash.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DataBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -122,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Source Files\Object Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="Hash.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,9 +236,6 @@
     <ClInclude Include="Reference_String_Imp.h">
       <Filter>Header Files\Strings</Filter>
     </ClInclude>
-    <ClInclude Include="Hash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Database.h">
       <Filter>Header Files\Files</Filter>
     </ClInclude>
@@ -259,6 +259,15 @@
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Header Files\Object Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>Header Files\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash_Table.h">
+      <Filter>Header Files\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash_Table_Imp.h">
+      <Filter>Header Files\Hash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
