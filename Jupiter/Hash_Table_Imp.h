@@ -115,6 +115,15 @@ ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::remo
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+size_t Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::erase()
+{
+	size_t length = m_pairs.size();
+	m_pairs.eraseAndDelete();
+
+	return length;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::operator=(const Bucket &in_bucket)
 {
 	m_pairs.eraseAndDelete();
@@ -209,15 +218,49 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::shrink()
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::operator=(const Hash_Table &in_table)
 {
-	// TODO: Optimize; can overwrite data instead of deleting and allocationg again if m_buckets_size > in.m_buckets_size
-	delete[] m_buckets;
+	if (m_buckets_size >= in_table.m_buckets_size && m_buckets_size <= in_table.m_buckets_size * 2)
+	{
+		// We're larger than what we're copying, but not drastically (2x) larger. Just erase our current data and copy their entries.
+
+		if (m_length == 0) // we don't need to erase any data
+			in_table.copy_to_buckets(m_buckets, m_buckets_size);
+		else
+		{
+			// we need to erase data; slightly modified version of copy_to_buckets()
+			Jupiter::SLList<Bucket::Entry>::Node *node;
+
+			size_t index = 0;
+			while (index != in_table.m_buckets_size)
+			{
+				in_table.m_buckets[index].m_pairs.eraseAndDelete();
+
+				for (node = in_table.m_buckets[index].m_pairs.getHead(); node != nullptr; node = node->next)
+					m_buckets[HashF(node->data->key) % m_buckets_size].set(node->data->key, node->data->value);
+
+				++index;
+			}
+
+			while (index != m_buckets_size)
+			{
+				in_table.m_buckets[index].m_pairs.eraseAndDelete();
+				++index;
+			}
+		}
+	}
+	else
+	{
+		// m_buckets is either too small to copy the data, or it'd be too wasteful
+
+		delete[] m_buckets;
+
+		m_buckets_size = in_table.m_buckets_size;
+		m_buckets = new Bucket[m_buckets_size];
+
+		for (size_t index = 0; index != m_buckets_size; ++index)
+			m_buckets[index] = in_table.m_buckets[index];
+	}
 
 	m_length = in_table.m_length;
-	m_buckets_size = in_table.m_buckets_size;
-	m_buckets = new Bucket[m_buckets_size];
-
-	for (size_t index = 0; index != m_buckets_size; ++index)
-		m_buckets[index] = in_table.m_buckets[index];
 
 	return *this;
 }
@@ -225,16 +268,32 @@ typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Ha
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::operator=(Hash_Table &&in_table)
 {
-	// TODO: Optimize; can swap empty array instead of always deleting
-	delete[] m_buckets;
+	if (m_length == 0)
+	{
+		Bucket *old_buckets = m_buckets;
+		size_t old_buckets_size = m_buckets_size;
 
-	m_buckets = in_table.m_buckets;
-	m_buckets_size = in_table.m_buckets_size;
-	m_length = in_table.m_length;
+		m_buckets = in_table.m_buckets;
+		m_buckets_size = in_table.m_buckets_size;
+		m_length = in_table.m_length;
 
-	in_table.m_buckets = new Bucket[1];
-	in_table.m_buckets_size = 1;
+		in_table.m_buckets = old_buckets;
+		in_table.m_buckets_size = old_buckets_size;
+	}
+	else
+	{
+		delete[] m_buckets;
+
+		m_buckets = in_table.m_buckets;
+		m_buckets_size = in_table.m_buckets_size;
+		m_length = in_table.m_length;
+
+		in_table.m_buckets = new Bucket[1];
+		in_table.m_buckets_size = 1;
+	}
+
 	in_table.m_length = 0;
+
 	return *this;
 }
 
@@ -299,19 +358,13 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::expand()
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::copy_to_buckets(Bucket *in_buckets, size_t in_buckets_size)
+void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::copy_to_buckets(Bucket *in_buckets, size_t in_buckets_size) const
 {
 	Jupiter::SLList<Bucket::Entry>::Node *node;
+
 	for (size_t index = 0; index != m_buckets_size; ++index)
-	{
 		for (node = m_buckets[index].m_pairs.getHead(); node != nullptr; node = node->next)
 			in_buckets[HashF(node->data->key) % in_buckets_size].set(node->data->key, node->data->value);
-	}
 }
-
-/*
-template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>
-*/
 
 #endif // _HASH_TABLE_IMP_H_HEADER

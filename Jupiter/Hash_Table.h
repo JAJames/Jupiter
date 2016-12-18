@@ -88,6 +88,13 @@ namespace Jupiter
 			ValueT *remove(const InKeyT &in_key);
 
 			/**
+			* @brief Erases all entries from the bucket
+			*
+			* @return Number of entries erased
+			*/
+			size_t erase();
+
+			/**
 			* @brief Copy assignment operator
 			*
 			* @param in_bucket Bucket to copy entries from
@@ -227,7 +234,7 @@ namespace Jupiter
 		* @param in_buckets Array of buckets to copy entries into
 		* @param in_buckets_size Number of buckets in in_buckets
 		*/
-		void copy_to_buckets(Bucket *in_buckets, size_t in_buckets_size);
+		void copy_to_buckets(Bucket *in_buckets, size_t in_buckets_size) const;
 
 		Bucket *m_buckets;		/** Array of Buckets */
 		size_t m_buckets_size;	/** Number of buckets */
