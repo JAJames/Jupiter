@@ -121,7 +121,7 @@ bool Jupiter::removeOnRehash(int(*function)(void))
 unsigned int Jupiter::removeAllOnRehash()
 {
 	unsigned int r = rehashFunctions.size();
-	while (rehashFunctions.size() != 0) delete rehashFunctions.remove(unsigned int(0));
+	while (rehashFunctions.size() != 0) delete rehashFunctions.remove(size_t{ 0 });
 	return r;
 }
 

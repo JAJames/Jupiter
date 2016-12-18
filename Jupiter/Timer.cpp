@@ -154,6 +154,6 @@ extern "C" unsigned int Jupiter_killTimers()
 {
 	unsigned int r = timers.size();
 	while (timers.size() != 0)
-		delete timers.remove(0U);
+		delete timers.remove(size_t{ 0 });
 	return r;
 }

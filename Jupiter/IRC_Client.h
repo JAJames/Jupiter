@@ -231,7 +231,7 @@ namespace Jupiter
 				*
 				* @return Number of channels.
 				*/
-				unsigned int getChannelCount() const;
+				size_t getChannelCount() const;
 
 				User();
 				~User();

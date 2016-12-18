@@ -76,14 +76,14 @@
     <LinkIncremental>false</LinkIncremental>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <IncludePath>C:\dev\OpenSSL\Win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\dev\OpenSSL\Win32\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\dev\OpenSSL\Win32\lib\VC;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <IncludePath>C:\dev\OpenSSL\Win32\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\dev\OpenSSL\Win32\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\dev\OpenSSL\Win64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\dev\OpenSSL\Win64\lib\VC;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -133,6 +133,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <Version>0.0</Version>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libeay32MD.lib;ssleay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>
@@ -164,6 +165,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ShowProgress>NotSet</ShowProgress>
       <Version>0.0</Version>
+      <AdditionalDependencies>libeay32MD.lib;ssleay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>
@@ -248,10 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Jupiter.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\libeay32MD.lib" />
-    <Library Include="..\..\..\OpenSSL\Win32\lib\VC\ssleay32MD.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
