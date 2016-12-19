@@ -32,6 +32,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <type_traits>
 
 namespace Jupiter
 {
@@ -84,6 +85,14 @@ namespace Jupiter
 	* @return True if the strings are equal, false otherwise.
 	*/
 	template<typename T = char> bool streql(const T *str1, const T *str2);
+
+	/**
+	* @brief Gets the first power of two from in_value
+	*
+	* @param in_value Integer to get power of two from
+	* @return First power of two at least as large as in_value
+	*/
+	template<typename T> T getPowerTwo(T in_value);
 }
 
 extern "C"
@@ -406,6 +415,41 @@ template<typename T> inline bool Jupiter::streql(const T *str1, const T *str2)
 		++str1, ++str2;
 	return (*str1 == *str2);
 }
+
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4127) /** Conditional is constant; can probably be removed when 'if constexpr' support is added to MSVC */
+#pragma warning(disable: 4293) /** shift count negative or too big, undefined behavior */
+#endif
+
+template<typename T> T Jupiter::getPowerTwo(T in_value)
+{
+	static_assert(std::is_integral<T>::value, "Integer type required");
+
+	--in_value;
+	in_value |= in_value >> 1;
+	in_value |= in_value >> 2;
+	in_value |= in_value >> 4;
+
+	if (sizeof(T) >= 2)
+		in_value |= in_value >> 8;
+
+	if (sizeof(T) >= 4)
+		in_value |= in_value >> 16;
+
+	if (sizeof(T) >= 8)
+		in_value |= in_value >> 32;
+
+	if (sizeof(T) >= 16)
+		in_value |= in_value >> 64;
+
+	return ++in_value;
+}
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // __cplusplus
 

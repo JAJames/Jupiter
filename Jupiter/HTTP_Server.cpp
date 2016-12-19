@@ -92,7 +92,7 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 		if (index == Jupiter::INVALID_INDEX)
 			dir_name = in_name_ref;
 		else
-			dir_name = in_name_ref.substring(0U, index);
+			dir_name = in_name_ref.substring(size_t{ 0 }, index);
 
 		in_name_ref.shiftRight(dir_name.size());
 		Jupiter::HTTP::Server::Directory *directory;
@@ -120,7 +120,7 @@ void Jupiter::HTTP::Server::Directory::hook(const Jupiter::ReadableString &in_na
 			index = in_name_ref.find('/');
 			if (index != Jupiter::INVALID_INDEX)
 			{
-				directory->directories.add(new Jupiter::HTTP::Server::Directory(in_name_ref.substring(0U, index)));
+				directory->directories.add(new Jupiter::HTTP::Server::Directory(in_name_ref.substring(size_t{ 0 }, index)));
 				directory = directory->directories.get(directories.size() - 1);
 				in_name_ref.shiftRight(index + 1);
 				goto directory_add_loop;
@@ -165,7 +165,7 @@ bool Jupiter::HTTP::Server::Directory::remove(const Jupiter::ReadableString &pat
 		if (index == Jupiter::INVALID_INDEX)
 			dir_name = in_name_ref;
 		else
-			dir_name = in_name_ref.substring(0U, index);
+			dir_name = in_name_ref.substring(size_t{ 0 }, index);
 
 		in_name_ref.shiftRight(dir_name.size());
 		Jupiter::HTTP::Server::Directory *directory;
@@ -628,9 +628,9 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				else
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(query_string.substring(0U, span));
+						content = Jupiter::HTTP::Server::Data::find(query_string.substring(size_t{ 0 }, span));
 					else
-						content = session.host->find(query_string.substring(0U, span));
+						content = session.host->find(query_string.substring(size_t{ 0 }, span));
 					query_string.shiftRight(span + 1);
 					// decode query_string here
 				}
@@ -661,9 +661,9 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session)
 				else
 				{
 					if (session.host == nullptr)
-						content = Jupiter::HTTP::Server::Data::find(query_string.substring(0U, span));
+						content = Jupiter::HTTP::Server::Data::find(query_string.substring(size_t{ 0 }, span));
 					else
-						content = session.host->find(query_string.substring(0U, span));
+						content = session.host->find(query_string.substring(size_t{ 0 }, span));
 					query_string.shiftRight(span + 1);
 					// decode query_string here
 				}

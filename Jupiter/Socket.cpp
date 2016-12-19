@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -144,10 +144,16 @@ int Jupiter::Socket::getProtocol() const
 bool Jupiter::Socket::connect(addrinfo *info)
 {
 #if defined _WIN32
-	if (!socketInit && !Jupiter::Socket::init()) return false;
+	if (!socketInit && !Jupiter::Socket::init())
+		return false;
 #endif // _WIN32
+
 	Jupiter::Socket::data_->rawSock = socket(info->ai_family, Jupiter::Socket::data_->sockType, Jupiter::Socket::data_->sockProto);
-	if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET || (Jupiter::Socket::data_->sockType != SOCK_RAW && Jupiter::Socket::data_->sockProto != IPPROTO_RAW && ::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR)) return false;
+	
+	if (Jupiter::Socket::data_->rawSock == INVALID_SOCKET
+		|| (Jupiter::Socket::data_->sockType != SOCK_RAW && Jupiter::Socket::data_->sockProto != IPPROTO_RAW && ::connect(Jupiter::Socket::data_->rawSock, info->ai_addr, info->ai_addrlen) == SOCKET_ERROR))
+		return false;
+
 	return true;
 }
 

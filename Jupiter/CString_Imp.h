@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -564,7 +564,7 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(Jupiter::CString_L
 template<typename T> Jupiter::CString_Loose<T>::CString_Loose(size_t len) : Jupiter::CString_Type<T>::CString_Type(Jupiter::stringConstructorBase)
 {
 	if (len < Jupiter::CString_Loose<T>::start_size) Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
-	else Jupiter::CString_Loose<T>::strSize = getPowerTwo32(len + 1);
+	else Jupiter::CString_Loose<T>::strSize = getPowerTwo(len + 1);
 	Jupiter::Shift_String_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 	*Jupiter::String_Type<T>::str = 0;
@@ -611,7 +611,7 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const T *in) : Jup
 	else
 	{
 		Jupiter::String_Type<T>::length = Jupiter::strlen<T>(in);
-		Jupiter::CString_Loose<T>::strSize = getPowerTwo32(Jupiter::String_Type<T>::length + 1);
+		Jupiter::CString_Loose<T>::strSize = getPowerTwo(Jupiter::String_Type<T>::length + 1);
 		if (Jupiter::CString_Loose<T>::strSize < Jupiter::CString_Loose<T>::start_size) Jupiter::CString_Loose<T>::strSize = Jupiter::CString_Loose<T>::start_size;
 		Jupiter::Shift_String_Type<T>::base = new T[Jupiter::CString_Loose<T>::strSize];
 		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
@@ -685,23 +685,50 @@ template<typename T> Jupiter::CString_Loose<T>::CString_Loose(const Jupiter::Rea
 
 template<typename T> bool Jupiter::CString_Loose<T>::setBufferSize(size_t len)
 {
-	len = getPowerTwo32(len + 1);
-	if (len > Jupiter::CString_Loose<T>::strSize)
+	size_t offset = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+
+	++len; // null term
+	if (len + offset > Jupiter::CString_Loose<T>::strSize)
 	{
-		T *ptr = new T[len];
-		for (unsigned int i = 0; i < Jupiter::String_Type<T>::length; i++) ptr[i] = Jupiter::Shift_String_Type<T>::str[i];
-		ptr[Jupiter::String_Type<T>::length] = 0;
-		delete[] Jupiter::Shift_String_Type<T>::base;
-		Jupiter::Shift_String_Type<T>::base = ptr;
+		if (len > Jupiter::CString_Loose<T>::strSize)
+		{
+			// Buffer is not large enough; reallocate
+			Jupiter::CString_Loose<T>::strSize = getPowerTwo(len);
+
+			T *ptr = new T[Jupiter::CString_Loose<T>::strSize];
+			for (size_t i = 0; i < Jupiter::String_Type<T>::length; i++)
+				ptr[i] = Jupiter::String_Type<T>::str[i];
+			ptr[Jupiter::String_Type<T>::length] = 0;
+
+			delete[] Jupiter::Shift_String_Type<T>::base;
+			Jupiter::Shift_String_Type<T>::base = ptr;
+			Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+
+			return true;
+		}
+
+		// Buffer has enough space to accomodate; shift data to the left
+		T *read_itr = Jupiter::String_Type<T>::str;
+		T *read_end = read_itr + Jupiter::String_Type<T>::length;
+		T *write_itr = Jupiter::Shift_String_Type<T>::base;
+
+		while (read_itr != read_end)
+		{
+			*write_itr = *read_itr;
+
+			++read_itr;
+			++write_itr;
+		}
+
 		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
-		return true;
 	}
+
 	return false;
 }
 
 template<typename T> bool Jupiter::CString_Loose<T>::setBufferSizeNoCopy(size_t len)
 {
-	len = getPowerTwo32(len + 1);
+	len = getPowerTwo(len + 1);
 	if (len > Jupiter::CString_Loose<T>::strSize)
 	{
 		Jupiter::String_Type<T>::length = 0;

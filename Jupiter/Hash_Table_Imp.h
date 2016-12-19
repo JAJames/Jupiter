@@ -32,6 +32,12 @@
 *	Hash_Table
 */
 
+/** Conditional is constant; can probably be removed when 'if constexpr' support is added to MSVC */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4127)
+#endif
+
 template<typename T> inline size_t Jupiter::default_hash_function(const T &in)
 {
 	if (sizeof(size_t) >= sizeof(uint64_t))
@@ -39,6 +45,11 @@ template<typename T> inline size_t Jupiter::default_hash_function(const T &in)
 
 	return static_cast<size_t>(Jupiter::fnv1a_32(in));
 }
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 /** Hash_Table::Bucket::Entry */
 
@@ -168,11 +179,17 @@ ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::get(const In
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::set(const InKeyT &in_key, const InValueT &in_value)
+bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::set(const InKeyT &in_key, const InValueT &in_value)
 {
 	if (m_buckets[HashF(in_key) % m_buckets_size].set(in_key, in_value))
+	{
 		if (++m_length == m_buckets_size)
 			expand();
+
+		return true;
+	}
+
+	return false;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>

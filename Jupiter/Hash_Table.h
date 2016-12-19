@@ -37,7 +37,7 @@ namespace Jupiter
 	* @param KeyT Type the table will use for keys; must implement following: operator==, move constructor
 	* @param ValueT Type the table will use for values
 	* @param InKeyT Type the table will accept for keys (Default: KeyT)
-	* @param InValueT Type the table will accept for values (Default: KeyT)
+	* @param InValueT Type the table will accept for values (Default: ValueT)
 	* @param HashF Function to be used for generating hashes (Default: Fowler-Noll-Vo 1a)
 	*/
 	template<typename KeyT, typename ValueT, typename InKeyT = KeyT, typename InValueT = ValueT, size_t(*HashF)(const InKeyT &) = Jupiter::default_hash_function<InKeyT>> class Hash_Table
@@ -147,8 +147,9 @@ namespace Jupiter
 		*
 		* @param in_key Key of the entry to set
 		* @param in_value Value of the entry to set
+		* @return True if a new entry was added, false if an entry was overwritten
 		*/
-		void set(const InKeyT &in_key, const InValueT &in_value);
+		bool set(const InKeyT &in_key, const InValueT &in_value);
 
 		/**
 		* @brief Removes an entry from the table and returns its value

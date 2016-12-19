@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -514,7 +514,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const T *in)
 	{
 		Jupiter::String_Type<T>::length = Jupiter::strlen<T>(in);
 
-		Jupiter::String_Loose<T>::strSize = getPowerTwo32(Jupiter::String_Type<T>::length);
+		Jupiter::String_Loose<T>::strSize = getPowerTwo(Jupiter::String_Type<T>::length);
 		if (Jupiter::String_Loose<T>::strSize < Jupiter::String_Loose<T>::start_size) Jupiter::String_Loose<T>::strSize = Jupiter::String_Loose<T>::start_size;
 
 		Jupiter::Shift_String_Type<T>::base = new T[Jupiter::String_Loose<T>::strSize];
@@ -591,12 +591,61 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 
 template<typename T> bool Jupiter::String_Loose<T>::setBufferSize(size_t len)
 {
-	return Jupiter::Shift_String_Type<T>::setBufferSize(Jupiter::String_Loose<T>::strSize = getPowerTwo32(len));
+	size_t offset = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
+
+	if (len + offset > Jupiter::String_Loose<T>::strSize)
+	{
+		if (len > Jupiter::String_Loose<T>::strSize)
+		{
+			// Buffer is not large enough; reallocate
+			Jupiter::String_Loose<T>::strSize = getPowerTwo(len);
+
+			T *ptr = new T[Jupiter::String_Loose<T>::strSize];
+			for (size_t i = 0; i < Jupiter::String_Type<T>::length; i++)
+				ptr[i] = Jupiter::String_Type<T>::str[i];
+
+			delete[] Jupiter::Shift_String_Type<T>::base;
+			Jupiter::Shift_String_Type<T>::base = ptr;
+			Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+
+			return true;
+		}
+
+		// Buffer has enough space to accomodate; shift data to the left
+		T *read_itr = Jupiter::String_Type<T>::str;
+		T *read_end = read_itr + Jupiter::String_Type<T>::length;
+		T *write_itr = Jupiter::Shift_String_Type<T>::base;
+
+		while (read_itr != read_end)
+		{
+			*write_itr = *read_itr;
+
+			++read_itr;
+			++write_itr;
+		}
+
+		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+	}
+
+	return false;
 }
 
 template<typename T> bool Jupiter::String_Loose<T>::setBufferSizeNoCopy(size_t len)
 {
-	return Jupiter::Shift_String_Type<T>::setBufferSizeNoCopy(Jupiter::String_Loose<T>::strSize = getPowerTwo32(len));
+	len = getPowerTwo(len);
+	if (len > Jupiter::String_Loose<T>::strSize)
+	{
+		Jupiter::String_Type<T>::length = 0;
+		delete[] Jupiter::Shift_String_Type<T>::base;
+		Jupiter::Shift_String_Type<T>::base = new T[len];
+		Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+		return true;
+	}
+
+	Jupiter::String_Type<T>::length = 0;
+	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
+
+	return false;
 }
 
 // vformat()
