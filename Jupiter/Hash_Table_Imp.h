@@ -65,7 +65,7 @@ Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Entry::Entry
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::get(const InKeyT &in_key) const
 {
-	for (Jupiter::SLList<Entry>::Node *node = m_pairs.getHead(); node != nullptr; node = node->next)
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
 		if (node->data->key == in_key)
 			return &node->data->value;
 
@@ -75,36 +75,31 @@ ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::get(
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::set(const InKeyT &in_key, const InValueT &in_value)
 {
-	for (Jupiter::SLList<Entry>::Node *node = m_pairs.getHead(); node != nullptr; node = node->next)
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
 		if (node->data->key == in_key)
 		{
 			node->data->value = in_value;
 			return false;
 		}
 
-	m_pairs.add(new Entry(in_key, in_value));
+	m_entries.add(new Entry(in_key, in_value));
 	return true;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::remove(const InKeyT &in_key)
+bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::remove(const InKeyT &in_key)
 {
-	Jupiter::SLList<Entry>::Node *node = m_pairs.getHead();
-	Entry *pair;
-	ValueT *result;
+	Jupiter::SLList<Entry>::Node *node = m_entries.getHead();
 
 	// No nodes in the bucket
 	if (node == nullptr)
-		return nullptr;
+		return false;
 
 	// Check if the head is the desired node
 	if (node->data->key == in_key)
 	{
-		pair = m_pairs.removeHead();
-		result = new ValueT(std::move(pair->value));
-		delete pair;
-
-		return result;
+		delete m_entries.removeHead();
+		return true;
 	}
 
 	// iterate through list
@@ -113,23 +108,20 @@ ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::remo
 		if (node->next->data->key == in_key)
 		{
 			// The next node is the desired node
-			pair = m_pairs.removeNext(node);
-			result = new ValueT(std::move(pair->value));
-			delete pair;
-
-			return result;
+			delete m_entries.removeNext(node);
+			return true;
 		}
 		node = node->next;
 	}
 
-	return nullptr;
+	return false;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 size_t Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::erase()
 {
-	size_t length = m_pairs.size();
-	m_pairs.eraseAndDelete();
+	size_t length = m_entries.size();
+	m_entries.eraseAndDelete();
 
 	return length;
 }
@@ -137,9 +129,9 @@ size_t Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::erase
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::operator=(const Bucket &in_bucket)
 {
-	m_pairs.eraseAndDelete();
-	for (Jupiter::SLList<Entry>::Node *node = in_bucket.m_pairs.getHead(); node != nullptr; node = node->next)
-		m_pairs.add(new Entry(node->data->key, node->data->value));
+	m_entries.eraseAndDelete();
+	for (Jupiter::SLList<Entry>::Node *node = in_bucket.m_entries.getHead(); node != nullptr; node = node->next)
+		m_entries.add(new Entry(node->data->key, node->data->value));
 
 	return *this;
 }
@@ -147,30 +139,42 @@ typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket &Jup
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::operator=(Bucket &&in_bucket)
 {
-	m_pairs = std::move(in_bucket.m_pairs);
+	m_entries = std::move(in_bucket.m_entries);
 	return *this;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Bucket(const Bucket &in_bucket)
 {
-	for (Jupiter::SLList<Entry>::Node *node = in_bucket.m_pairs.getHead(); node != nullptr; node = node->next)
-		m_pairs.add(new Entry(node->data->key, node->data->value));
+	for (Jupiter::SLList<Entry>::Node *node = in_bucket.m_entries.getHead(); node != nullptr; node = node->next)
+		m_entries.add(new Entry(node->data->key, node->data->value));
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Bucket(Bucket &&in_bucket)
 {
-	m_pairs = std::move(in_bucket.m_pairs);
+	m_entries = std::move(in_bucket.m_entries);
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::~Bucket()
 {
-	m_pairs.eraseAndDelete();
+	m_entries.eraseAndDelete();
 }
 
 /** Hash_Table */
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::begin() const
+{
+	return m_buckets;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::end() const
+{
+	return m_buckets + m_buckets_size;
+}
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::get(const InKeyT &in_key) const
@@ -193,14 +197,15 @@ bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::set(const InKey
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::remove(const InKeyT &in_key)
+bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::remove(const InKeyT &in_key)
 {
-	ValueT *value = m_buckets[HashF(in_key) % m_buckets_size].remove(in_key);
-
-	if (value != nullptr)
+	if (m_buckets[HashF(in_key) % m_buckets_size].remove(in_key))
+	{
 		--m_length;
+		return true;
+	}
 
-	return value;
+	return false;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
@@ -249,9 +254,9 @@ typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Ha
 			size_t index = 0;
 			while (index != in_table.m_buckets_size)
 			{
-				in_table.m_buckets[index].m_pairs.eraseAndDelete();
+				in_table.m_buckets[index].m_entries.eraseAndDelete();
 
-				for (node = in_table.m_buckets[index].m_pairs.getHead(); node != nullptr; node = node->next)
+				for (node = in_table.m_buckets[index].m_entries.getHead(); node != nullptr; node = node->next)
 					m_buckets[HashF(node->data->key) % m_buckets_size].set(node->data->key, node->data->value);
 
 				++index;
@@ -259,7 +264,7 @@ typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Ha
 
 			while (index != m_buckets_size)
 			{
-				in_table.m_buckets[index].m_pairs.eraseAndDelete();
+				in_table.m_buckets[index].m_entries.eraseAndDelete();
 				++index;
 			}
 		}
@@ -380,7 +385,7 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::copy_to_buckets
 	Jupiter::SLList<Bucket::Entry>::Node *node;
 
 	for (size_t index = 0; index != m_buckets_size; ++index)
-		for (node = m_buckets[index].m_pairs.getHead(); node != nullptr; node = node->next)
+		for (node = m_buckets[index].m_entries.getHead(); node != nullptr; node = node->next)
 			in_buckets[HashF(node->data->key) % in_buckets_size].set(node->data->key, node->data->value);
 }
 

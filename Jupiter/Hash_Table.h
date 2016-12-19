@@ -85,7 +85,7 @@ namespace Jupiter
 			* @param in_key Key of the entry to search for
 			* @return Value of the entry which was removed on success, nullptr otherwise
 			*/
-			ValueT *remove(const InKeyT &in_key);
+			bool remove(const InKeyT &in_key);
 
 			/**
 			* @brief Erases all entries from the bucket
@@ -131,8 +131,22 @@ namespace Jupiter
 			~Bucket();
 
 			/** List of entries in the bucket */
-			Jupiter::SLList<Entry> m_pairs;
+			Jupiter::SLList<Entry> m_entries;
 		};
+
+		/**
+		* @brief Returns an iterator positioned at the beginning of the table
+		*
+		* @brief Iterator at beginning of m_buckets
+		*/
+		Bucket *begin() const;
+
+		/**
+		* @brief Returns an iterator positioned at the end of the table
+		*
+		* @return Iterator at end of m_buckets
+		*/
+		Bucket *end() const;
 
 		/**
 		* @brief Fetches the value of an entry based on its key
@@ -157,7 +171,7 @@ namespace Jupiter
 		* @param in_key Key of the entry to remove
 		* @return Value of the entry that was removed if it exists, nullptr otherwise
 		*/
-		ValueT *remove(const InKeyT &in_key);
+		bool remove(const InKeyT &in_key);
 
 		/**
 		* @brief Returns the number of entries in the table
