@@ -93,9 +93,9 @@ bool Jupiter::Config::write()
 	return this->write(m_name.c_str());
 }
 
-bool Jupiter::Config::write(const char *)
+bool Jupiter::Config::write(const char *in_filename)
 {
-	return false;
+	return this->write_internal(in_filename);
 }
 
 bool Jupiter::Config::write(const Jupiter::ReadableString &in_filename)
@@ -130,6 +130,11 @@ Jupiter::Config &Jupiter::Config::operator[](const Jupiter::ReadableString &in_k
 /** Private functions */
 
 bool Jupiter::Config::read_internal(const char *)
+{
+	return false;
+}
+
+bool Jupiter::Config::write_internal(const char *)
 {
 	return false;
 }

@@ -96,7 +96,7 @@ namespace Jupiter
 		*
 		* @return Plugin's configuration file.
 		*/
-		Jupiter::Config &getConfig() const;
+		Jupiter::Config &getConfig();
 
 		/**
 		* @brief Initializes the plugin.

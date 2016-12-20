@@ -107,7 +107,7 @@ const Jupiter::ReadableString &Jupiter::Plugin::getName() const
 	return Jupiter::Plugin::name;
 }
 
-const Jupiter::Config &Jupiter::Plugin::getConfig() const
+Jupiter::Config &Jupiter::Plugin::getConfig()
 {
 	return Jupiter::Plugin::config;
 }

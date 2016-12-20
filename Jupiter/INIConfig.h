@@ -36,20 +36,13 @@ namespace Jupiter
 {
 	/**
 	* @brief INI-based Config class
+	* @see Jupiter::Config
 	*/
 	class JUPITER_API INIConfig : public Jupiter::Config
 	{
-	public:
-		/**
-		* @brief Writes config data to a file
-		*
-		* @param in_filename Name of the file to write to
-		* @return True on success, false otherwise
-		*/
-		bool write(const char *in_filename);
-
 	private:
-		bool read_internal(const char *in_filename);
+		bool read_internal(const char *in_filename) override;
+		bool write_internal(const char *in_filename) override;
 		void write_helper(FILE *in_file, const Jupiter::Config *in_section, size_t in_depth);
 	};
 }

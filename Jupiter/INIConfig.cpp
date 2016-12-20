@@ -85,7 +85,7 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 	}
 }
 
-bool Jupiter::INIConfig::write(const char *in_filename)
+bool Jupiter::INIConfig::write_internal(const char *in_filename)
 {
 	// Open file
 	FILE *file = fopen(in_filename, "wb");

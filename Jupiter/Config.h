@@ -150,7 +150,7 @@ namespace Jupiter
 		* @param in_filename Name of the file to write to
 		* @return True on success, false otherwise
 		*/
-		virtual bool write(const char *in_filename);
+		bool write(const char *in_filename);
 
 		/**
 		* @brief Writes config data to a file
@@ -221,6 +221,7 @@ namespace Jupiter
 
 	protected:
 		virtual bool read_internal(const char *in_filename);
+		virtual bool write_internal(const char *in_filename);
 
 		/** Name of this Config section. This is empty or the filename at the root level. */
 		Jupiter::CStringS m_name;
