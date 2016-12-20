@@ -27,7 +27,7 @@
 #include "ArrayList.h"
 #include "Thinker.h"
 #include "Rehash.h"
-#include "INIFile.h"
+#include "INIConfig.h"
 #include "String.h"
 
 /** DLL Linkage Nagging */
@@ -96,7 +96,7 @@ namespace Jupiter
 		*
 		* @return Plugin's configuration file.
 		*/
-		const Jupiter::INIFile &getConfig() const;
+		const Jupiter::Config &getConfig() const;
 
 		/**
 		* @brief Initializes the plugin.
@@ -372,7 +372,7 @@ namespace Jupiter
 	protected:
 		bool _shouldRemove = false;
 		Jupiter::StringS name;
-		Jupiter::INIFile config;
+		Jupiter::INIConfig config;
 	};
 
 	/** The list containing pointers to plugins */

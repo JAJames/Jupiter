@@ -22,7 +22,6 @@
 #include "Jupiter.h"
 #include "Functions.h"
 #include "IRC_Client.h"
-#include "INIFile.h"
 #include "TCPSocket.h"
 #include "CString.h"
 #include "String.h"
@@ -57,8 +56,8 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	Jupiter::StringS saslPass;
 	int connectionStatus;
 	Jupiter::StringS primary_section_name;
-	const Jupiter::INIFile::Section *primary_section;
-	const Jupiter::INIFile::Section *secondary_section;
+	const Jupiter::Config *primary_section;
+	const Jupiter::Config *secondary_section;
 	Jupiter::CStringS logFileName;
 	Jupiter::StringS last_line;
 	unsigned short serverPort;
@@ -132,7 +131,7 @@ struct Jupiter::IRC::Client::Channel::Data
 	bool isAddingNames;
 };
 
-Jupiter::IRC::Client::Client(const Jupiter::INIFile::Section *in_primary_section, const Jupiter::INIFile::Section *in_secondary_section)
+Jupiter::IRC::Client::Client(const Jupiter::Config *in_primary_section, const Jupiter::Config *in_secondary_section)
 {
 	Jupiter::IRC::Client::data_ = new Jupiter::IRC::Client::Data(this);
 
@@ -308,17 +307,17 @@ const Jupiter::ReadableString &Jupiter::IRC::Client::getConfigSection() const
 	return Jupiter::ReferenceString::empty;
 }
 
-const Jupiter::INIFile::Section *Jupiter::IRC::Client::getPrimaryConfigSection() const
+const Jupiter::Config *Jupiter::IRC::Client::getPrimaryConfigSection() const
 {
 	return Jupiter::IRC::Client::data_->primary_section;
 }
 
-const Jupiter::INIFile::Section *Jupiter::IRC::Client::getSecondaryConfigSection() const
+const Jupiter::Config *Jupiter::IRC::Client::getSecondaryConfigSection() const
 {
 	return Jupiter::IRC::Client::data_->secondary_section;
 }
 
-void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::INIFile::Section *in_primary_section)
+void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::Config *in_primary_section)
 {
 	Jupiter::IRC::Client::data_->primary_section = in_primary_section;
 
@@ -328,7 +327,7 @@ void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::INIFile::Secti
 		Jupiter::IRC::Client::data_->primary_section_name.erase();
 }
 
-void Jupiter::IRC::Client::setSecondaryConfigSection(const Jupiter::INIFile::Section *in_secondary_section)
+void Jupiter::IRC::Client::setSecondaryConfigSection(const Jupiter::Config *in_secondary_section)
 {
 	Jupiter::IRC::Client::data_->secondary_section = in_secondary_section;
 }
@@ -1449,7 +1448,7 @@ bool Jupiter::IRC::Client::readConfigBool(const Jupiter::ReadableString &key, bo
 	}
 
 	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
-		return Jupiter::IRC::Client::data_->secondary_section->getBool(key, defaultValue);
+		return Jupiter::IRC::Client::data_->secondary_section->get<bool>(key, defaultValue);
 
 	return defaultValue;
 }
@@ -1465,7 +1464,7 @@ int Jupiter::IRC::Client::readConfigInt(const Jupiter::ReadableString &key, int 
 	}
 
 	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
-		return Jupiter::IRC::Client::data_->secondary_section->getInt(key, defaultValue);
+		return Jupiter::IRC::Client::data_->secondary_section->get<int>(key, defaultValue);
 
 	return defaultValue;
 }
@@ -1481,7 +1480,7 @@ long Jupiter::IRC::Client::readConfigLong(const Jupiter::ReadableString &key, lo
 	}
 
 	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
-		return Jupiter::IRC::Client::data_->secondary_section->getLong(key, defaultValue);
+		return Jupiter::IRC::Client::data_->secondary_section->get<long>(key, defaultValue);
 
 	return defaultValue;
 }
@@ -1497,7 +1496,7 @@ double Jupiter::IRC::Client::readConfigDouble(const Jupiter::ReadableString &key
 	}
 
 	if (Jupiter::IRC::Client::data_->secondary_section != nullptr)
-		return Jupiter::IRC::Client::data_->secondary_section->getDouble(key, defaultValue);
+		return Jupiter::IRC::Client::data_->secondary_section->get<double>(key, defaultValue);
 
 	return defaultValue;
 }

@@ -72,9 +72,6 @@
     <ClCompile Include="Jupiter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IRC_Server.cpp">
-      <Filter>Source Files\IRC</Filter>
-    </ClCompile>
     <ClCompile Include="Queue.cpp">
       <Filter>Source Files\Lists</Filter>
     </ClCompile>
@@ -89,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="SecureSocket.cpp">
       <Filter>Source Files\Sockets</Filter>
-    </ClCompile>
-    <ClCompile Include="INIFile.cpp">
-      <Filter>Source Files\Files</Filter>
     </ClCompile>
     <ClCompile Include="File.cpp">
       <Filter>Source Files\Files</Filter>
@@ -179,9 +173,6 @@
     <ClInclude Include="IRC_Client.h">
       <Filter>Header Files\IRC</Filter>
     </ClInclude>
-    <ClInclude Include="IRC_Server.h">
-      <Filter>Header Files\IRC</Filter>
-    </ClInclude>
     <ClInclude Include="ArrayList.h">
       <Filter>Header Files\Lists</Filter>
     </ClInclude>
@@ -193,9 +184,6 @@
     </ClInclude>
     <ClInclude Include="CString_Imp.h">
       <Filter>Header Files\Strings</Filter>
-    </ClInclude>
-    <ClInclude Include="INIFile.h">
-      <Filter>Header Files\Files</Filter>
     </ClInclude>
     <ClInclude Include="File.h">
       <Filter>Header Files\Files</Filter>

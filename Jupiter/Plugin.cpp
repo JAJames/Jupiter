@@ -107,7 +107,7 @@ const Jupiter::ReadableString &Jupiter::Plugin::getName() const
 	return Jupiter::Plugin::name;
 }
 
-const Jupiter::INIFile &Jupiter::Plugin::getConfig() const
+const Jupiter::Config &Jupiter::Plugin::getConfig() const
 {
 	return Jupiter::Plugin::config;
 }
@@ -186,7 +186,7 @@ Jupiter::Plugin *Jupiter::Plugin::load(const Jupiter::ReadableString &pluginName
 
 		// Initialize the plugin
 		dPlug->plugin->name.set(pluginName);
-		dPlug->plugin->config.readFile(plugin_configs_directory + pluginName + config_file_extension);
+		dPlug->plugin->config.read(plugin_configs_directory + pluginName + config_file_extension);
 		dPlug->plugin->initialize();
 	}
 	{

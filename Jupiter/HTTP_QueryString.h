@@ -20,7 +20,7 @@
 #define _HTTP_QUERYSTRING_H_HEADER
 
 #include "String.h"
-#include "INIFile.h"
+#include "INIConfig.h"
 
 /**
  * @file HTTP_QueryString.h
@@ -52,7 +52,7 @@ namespace Jupiter
 			HTMLFormResponse() = delete;
 			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.ptr(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
-			Jupiter::INIFile::Section table;
+			Jupiter::HashTable table;
 		};
 	}
 }

@@ -187,9 +187,7 @@
     <ClCompile Include="GenericCommand.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="HTTP_Server.cpp" />
-    <ClCompile Include="INIFile.cpp" />
     <ClCompile Include="IRC_Client.cpp" />
-    <ClCompile Include="IRC_Server.cpp" />
     <ClCompile Include="Jupiter.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Queue.cpp" />
@@ -223,10 +221,8 @@
     <ClInclude Include="InvalidIndex.h" />
     <ClInclude Include="IRC.h" />
     <ClInclude Include="IRC_Numerics.h" />
-    <ClInclude Include="IRC_Server.h" />
     <ClInclude Include="Jupiter.h" />
     <ClInclude Include="Functions.h" />
-    <ClInclude Include="INIFile.h" />
     <ClInclude Include="IRC_Client.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Plugin.h" />

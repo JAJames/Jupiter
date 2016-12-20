@@ -430,19 +430,19 @@ namespace Jupiter
 		inline bool operator>=(const T right)const{ return !operator<(right); }
 
 		/** Conversion operators */
-		explicit inline operator bool() { return this->asBool(); }
-		explicit inline operator short() { return static_cast<short>(this->asInt()); }
-		explicit inline operator unsigned short() { return static_cast<unsigned short>(this->asUnsignedInt()); }
-		explicit inline operator int() { return this->asInt(); }
-		explicit inline operator unsigned int() { return this->asUnsignedInt(); }
-		explicit inline operator long() { return static_cast<long>(this->asLongLong()); }
-		explicit inline operator unsigned long() { return static_cast<unsigned long>(this->asLongLong()); }
-		explicit inline operator long long() { return this->asLongLong(); }
-		explicit inline operator unsigned long long() { return this->asUnsignedLongLong(); }
-		explicit inline operator float() { return static_cast<float>(this->asDouble()); }
-		explicit inline operator double() { return this->asDouble(); }
-		explicit inline operator long double() { return this->asDouble(); } // NEEDS TO NOT CAST FROM DOUBLE
-		explicit inline operator std::basic_string<T>() { return std::basic_string<T>(this->ptr(), this->size()); }
+		explicit inline operator bool() const { return this->asBool(); }
+		explicit inline operator short() const { return static_cast<short>(this->asInt()); }
+		explicit inline operator unsigned short() const { return static_cast<unsigned short>(this->asUnsignedInt()); }
+		explicit inline operator int() const { return this->asInt(); }
+		explicit inline operator unsigned int() const { return this->asUnsignedInt(); }
+		explicit inline operator long() const { return static_cast<long>(this->asLongLong()); }
+		explicit inline operator unsigned long() const { return static_cast<unsigned long>(this->asLongLong()); }
+		explicit inline operator long long() const { return this->asLongLong(); }
+		explicit inline operator unsigned long long() const { return this->asUnsignedLongLong(); }
+		explicit inline operator float() const { return static_cast<float>(this->asDouble()); }
+		explicit inline operator double() const { return this->asDouble(); }
+		explicit inline operator long double() const { return this->asDouble(); } // NEEDS TO NOT CAST FROM DOUBLE
+		explicit inline operator std::basic_string<T>() const { return std::basic_string<T>(this->ptr(), this->size()); }
 
 	private:
 		template<typename R> R calcChecksumiHelper() const;

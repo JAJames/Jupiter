@@ -17,7 +17,6 @@
  */
 
 #include <stack>
-#include <functional>
 #include "INIConfig.h"
 #include "Socket.h"
 

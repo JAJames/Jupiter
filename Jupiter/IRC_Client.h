@@ -30,7 +30,7 @@
 #include "Thinker.h"
 #include "IRC.h"
 #include "Reference_String.h"
-#include "INIFile.h"
+#include "Config.h"
 
 namespace Jupiter
 {
@@ -479,14 +479,14 @@ namespace Jupiter
 			*
 			* @return The primary config section if it exists, nullptr otherwise.
 			*/
-			const Jupiter::INIFile::Section *getPrimaryConfigSection() const;
+			const Jupiter::Config *getPrimaryConfigSection() const;
 
 			/**
 			* @brief Fetches the primary config section
 			*
 			* @return The primary config section if it exists, nullptr otherwise.
 			*/
-			const Jupiter::INIFile::Section *getSecondaryConfigSection() const;
+			const Jupiter::Config *getSecondaryConfigSection() const;
 
 			/**
 			* @brief Sets the primary config section
@@ -494,7 +494,7 @@ namespace Jupiter
 			*
 			* @param in_primary_section Primary config section to begin using
 			*/
-			virtual void setPrimaryConfigSection(const Jupiter::INIFile::Section *in_primary_section);
+			virtual void setPrimaryConfigSection(const Jupiter::Config *in_primary_section);
 
 			/**
 			* @brief Sets the secondary config section
@@ -502,7 +502,7 @@ namespace Jupiter
 			*
 			* @param in_secondary_section Secondary config section to begin using
 			*/
-			virtual void setSecondaryConfigSection(const Jupiter::INIFile::Section *in_secondary_section);
+			virtual void setSecondaryConfigSection(const Jupiter::Config *in_secondary_section);
 
 			/**
 			* @brief Returns the name of the file this logs to.
@@ -887,7 +887,7 @@ namespace Jupiter
 			* @param in_primary_section INIFile section to search first for a configuration option
 			* @param in_secondary_section INIFile section to search second for a configuration, before using a pre-defined default value
 			*/
-			Client(const Jupiter::INIFile::Section *in_primary_section, const Jupiter::INIFile::Section *in_secondary_section);
+			Client(const Jupiter::Config *in_primary_section, const Jupiter::Config *in_secondary_section);
 
 			/**
 			* @brief Destructor for a client.

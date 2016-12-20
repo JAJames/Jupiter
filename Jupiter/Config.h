@@ -72,7 +72,7 @@ namespace Jupiter
 		* @param in_default_value Value to return if no such entry exists
 		* @return Value of the entry if it exists, 0 otherwise.
 		*/
-		template<typename T> T get(const Jupiter::ReadableString &in_key, T in_default_value = 0);
+		template<typename T> T get(const Jupiter::ReadableString &in_key, T in_default_value = 0) const;
 
 		/**
 		* @brief Fetches a section based on its name
@@ -235,7 +235,7 @@ namespace Jupiter
 
 /** Template function implementations */
 
-template<typename T> inline T Jupiter::Config::get(const Jupiter::ReadableString &in_key, T in_default_value)
+template<typename T> inline T Jupiter::Config::get(const Jupiter::ReadableString &in_key, T in_default_value) const
 {
 	const Jupiter::ReadableString *result = m_table.get(in_key);
 
