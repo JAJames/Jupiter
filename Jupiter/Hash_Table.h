@@ -91,6 +91,15 @@ namespace Jupiter
 			bool remove(const InKeyT &in_key);
 
 			/**
+			* @brief Calls a function for each Entry in the table, passing each Entry as a parameter
+			*
+			* @param CallT Function type to call
+			*
+			* @param in_callback Function to callback
+			*/
+			template<typename CallT> void callback(CallT &in_callback) const;
+
+			/**
 			* @brief Erases all entries from the bucket
 			*
 			* @return Number of entries erased
@@ -177,6 +186,15 @@ namespace Jupiter
 		* @return True if an entry was removed, false otherwise
 		*/
 		bool remove(const InKeyT &in_key);
+
+		/**
+		* @brief Calls a function for each Entry in the table, passing each Entry as a parameter
+		*
+		* @param CallT Function type to call
+		*
+		* @param in_callback Function to callback
+		*/
+		template<typename CallT> void callback(CallT &in_callback) const;
 
 		/**
 		* @brief Returns the number of entries in the table

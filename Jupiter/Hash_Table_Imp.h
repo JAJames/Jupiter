@@ -145,6 +145,14 @@ bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::remove(
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+template<typename CallT>
+void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::callback(CallT &in_callback) const
+{
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
+		in_callback(*node->data);
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 size_t Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::erase()
 {
 	size_t length = m_entries.size();
@@ -253,6 +261,20 @@ bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::remove(const In
 	}
 
 	return false;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+template<typename CallT>
+void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::callback(CallT &in_callback) const
+{
+	Bucket *itr = m_buckets;
+	Bucket *end = m_buckets + m_buckets_size;
+
+	while (itr != end)
+	{
+		itr->callback<CallT>(in_callback);
+		++itr;
+	}
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
