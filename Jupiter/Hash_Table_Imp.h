@@ -89,6 +89,17 @@ const InValueT &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Buck
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+template<typename CastT>
+CastT Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::getCast(const InKeyT &in_key, const CastT &in_value) const
+{
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
+		if (node->data->key == in_key)
+			return static_cast<CastT>(node->data->value);
+
+	return in_value;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::set(const InKeyT &in_key, const InValueT &in_value)
 {
 	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
@@ -221,6 +232,13 @@ template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, siz
 const InValueT &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::get(const InKeyT &in_key, const InValueT &in_value) const
 {
 	return m_buckets[HashF(in_key) % m_buckets_size].get(in_key, in_value);
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+template<typename CastT>
+CastT Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::getCast(const InKeyT &in_key, const CastT &in_value) const
+{
+	return m_buckets[HashF(in_key) % m_buckets_size].getCast(in_key, in_value);
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>

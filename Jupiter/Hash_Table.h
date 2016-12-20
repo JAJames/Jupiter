@@ -71,6 +71,7 @@ namespace Jupiter
 			*/
 			ValueT *get(const InKeyT &in_key) const;
 			const InValueT &get(const InKeyT &in_key, const InValueT &in_value) const;
+			template<typename CastT> CastT getCast(const InKeyT &in_key, const CastT &in_value) const;
 
 			/**
 			* @brief Sets the value for an entry in the bucket
@@ -168,6 +169,7 @@ namespace Jupiter
 		*/
 		ValueT *get(const InKeyT &in_key) const;
 		const InValueT &get(const InKeyT &in_key, const InValueT &in_value) const;
+		template<typename CastT> CastT getCast(const InKeyT &in_key, const CastT &in_value) const;
 
 		/**
 		* @brief Sets the value for an entry in the table
