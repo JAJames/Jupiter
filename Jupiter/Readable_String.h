@@ -431,6 +431,8 @@ namespace Jupiter
 
 		/** Conversion operators */
 		explicit inline operator bool() const { return this->asBool(); }
+		explicit inline operator signed char() const { return static_cast<signed char>(this->asInt()); }
+		explicit inline operator unsigned char() const { return static_cast<unsigned char>(this->asUnsignedInt()); }
 		explicit inline operator short() const { return static_cast<short>(this->asInt()); }
 		explicit inline operator unsigned short() const { return static_cast<unsigned short>(this->asUnsignedInt()); }
 		explicit inline operator int() const { return this->asInt(); }
