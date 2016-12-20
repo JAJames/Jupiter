@@ -884,8 +884,8 @@ namespace Jupiter
 			/**
 			* @brief Constructor for a client.
 			*
-			* @param in_primary_section INIFile section to search first for a configuration option
-			* @param in_secondary_section INIFile section to search second for a configuration, before using a pre-defined default value
+			* @param in_primary_section Config section to search first for a configuration option
+			* @param in_secondary_section Config section to search second for a configuration, before using a pre-defined default value
 			*/
 			Client(const Jupiter::Config *in_primary_section, const Jupiter::Config *in_secondary_section);
 

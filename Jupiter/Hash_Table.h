@@ -70,6 +70,7 @@ namespace Jupiter
 			* @return Pointer to the value of the entry if it exists, nullptr otherwise
 			*/
 			ValueT *get(const InKeyT &in_key) const;
+			const InValueT &get(const InKeyT &in_key, const InValueT &in_value) const;
 
 			/**
 			* @brief Sets the value for an entry in the bucket
@@ -157,6 +158,7 @@ namespace Jupiter
 		* @return Value of the entry if it exists, nullptr otherwise
 		*/
 		ValueT *get(const InKeyT &in_key) const;
+		const InValueT &get(const InKeyT &in_key, const InValueT &in_value) const;
 
 		/**
 		* @brief Sets the value for an entry in the table

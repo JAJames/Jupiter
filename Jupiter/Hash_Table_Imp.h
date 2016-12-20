@@ -79,6 +79,16 @@ ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::get(
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+const InValueT &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::get(const InKeyT &in_key, const InValueT &in_value) const
+{
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
+		if (node->data->key == in_key)
+			return node->data->value;
+
+	return in_value;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::set(const InKeyT &in_key, const InValueT &in_value)
 {
 	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
@@ -197,6 +207,12 @@ template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, siz
 ValueT *Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::get(const InKeyT &in_key) const
 {
 	return m_buckets[HashF(in_key) % m_buckets_size].get(in_key);
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+const InValueT &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::get(const InKeyT &in_key, const InValueT &in_value) const
+{
+	return m_buckets[HashF(in_key) % m_buckets_size].get(in_key, in_value);
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
