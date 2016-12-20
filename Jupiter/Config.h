@@ -195,7 +195,7 @@ namespace Jupiter
 		*
 		* @return Reference to m_sections
 		*/
-		inline const SectionHashTable getSections() const { return m_sections; }
+		inline const SectionHashTable &getSections() const { return m_sections; }
 
 		/** Subscript operator */
 		Config &operator[](const Jupiter::ReadableString &in_key);
