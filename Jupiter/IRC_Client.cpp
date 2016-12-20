@@ -146,7 +146,7 @@ Jupiter::IRC::Client::Client(const Jupiter::Config *in_primary_section, const Ju
 	Jupiter::IRC::Client::data_->logFileName = Jupiter::IRC::Client::readConfigValue("LogFile"_jrs);
 	Jupiter::IRC::Client::data_->nickname = Jupiter::IRC::Client::readConfigValue("Nick"_jrs, "Jupiter"_jrs);
 
-	Jupiter::IRC::Client::data_->realName = Jupiter::IRC::Client::readConfigValue("Realname"_jrs, "Jupiter IRC Client"_jrs);
+	Jupiter::IRC::Client::data_->realName = Jupiter::IRC::Client::readConfigValue("RealName"_jrs, "Jupiter IRC Client"_jrs);
 
 	Jupiter::IRC::Client::data_->saslPass = Jupiter::IRC::Client::readConfigValue("SASL.Password"_jrs);
 	if (Jupiter::IRC::Client::data_->saslPass.isEmpty())
@@ -740,7 +740,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 										{
 											if (Jupiter::IRC::Client::data_->saslPass.isNotEmpty())
 											{
-												req += "sasl ";
+												req += "sasl "_jrs;
 												sasl = true;
 											}
 										}
@@ -752,11 +752,11 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 										req += ENDL;
 										Jupiter::IRC::Client::data_->sock->send(req);
 										if (sasl)
-											Jupiter::IRC::Client::data_->sock->send("AUTHENTICATE PLAIN" ENDL);
+											Jupiter::IRC::Client::data_->sock->send("AUTHENTICATE PLAIN"_jrs ENDL);
 									}
 									if (!sasl)
 									{
-										Jupiter::IRC::Client::data_->sock->send(STRING_LITERAL_AS_REFERENCE("CAP END" ENDL));
+										Jupiter::IRC::Client::data_->sock->send("CAP END"_jrs ENDL);
 										Jupiter::IRC::Client::data_->registerClient();
 									}
 								}
@@ -1393,7 +1393,24 @@ int Jupiter::IRC::Client::think()
 		Jupiter::ReadableString::TokenizeResult<Jupiter::Reference_String> result = Jupiter::ReferenceString::tokenize(Jupiter::IRC::Client::data_->sock->getBuffer(), "\r\n"_jrs);
 		if (result.token_count != 0)
 		{
-			Jupiter::IRC::Client::data_->last_line += result.tokens[0];
+			if (result.tokens[0].size() > 0)
+			{
+				// Ensure there's not a token getting split over separate buffers
+				if (Jupiter::IRC::Client::data_->last_line.size() > 0)
+				{
+					if (result.tokens[0][0] == '\n' && Jupiter::IRC::Client::data_->last_line[Jupiter::IRC::Client::data_->last_line.size() - 1] == '\r')
+					{
+						Jupiter::IRC::Client::data_->last_line += '\n';
+						Jupiter::IRC::Client::process_line(Jupiter::IRC::Client::data_->last_line);
+
+						Jupiter::IRC::Client::data_->last_line.erase();
+						result.tokens[0].shiftRight(1);
+					}
+				}
+
+				Jupiter::IRC::Client::data_->last_line += result.tokens[0];
+			}
+
 			if (result.token_count != 1)
 			{
 				Jupiter::IRC::Client::process_line(Jupiter::IRC::Client::data_->last_line);
@@ -1593,7 +1610,7 @@ size_t Jupiter::IRC::Client::Data::addChannel(const Jupiter::ReadableString &cha
 bool Jupiter::IRC::Client::Data::startCAP()
 {
 	Jupiter::IRC::Client::Data::connectionStatus = 2;
-	return Jupiter::IRC::Client::Data::sock->send("CAP LS" ENDL, 8) > 0;
+	return Jupiter::IRC::Client::Data::sock->send("CAP LS"_jrs ENDL) > 0;
 }
 
 bool Jupiter::IRC::Client::Data::registerClient()
