@@ -58,6 +58,12 @@
     <Filter Include="Header Files\Hash">
       <UniqueIdentifier>{7db21243-8b23-4dd2-9888-0bdd3c5a1edd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Files\Configs">
+      <UniqueIdentifier>{da033f3a-f5fd-4592-900f-f17bb3520547}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Files\Configs">
+      <UniqueIdentifier>{b5b148d5-c636-41eb-838a-7555114e1589}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.c">
@@ -125,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="Hash.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files\Files\Configs</Filter>
+    </ClCompile>
+    <ClCompile Include="INIConfig.cpp">
+      <Filter>Source Files\Files\Configs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="Hash_Table_Imp.h">
       <Filter>Header Files\Hash</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files\Files\Configs</Filter>
+    </ClInclude>
+    <ClInclude Include="INIConfig.h">
+      <Filter>Header Files\Files\Configs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

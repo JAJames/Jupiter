@@ -54,6 +54,12 @@ template<typename T> inline size_t Jupiter::default_hash_function(const T &in)
 /** Hash_Table::Bucket::Entry */
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Entry::Entry(const InKeyT &in_key)
+{
+	key = in_key;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Entry::Entry(const InKeyT &in_key, const InValueT &in_value)
 {
 	key = in_key;
@@ -83,6 +89,17 @@ bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::set(con
 		}
 
 	m_entries.add(new Entry(in_key, in_value));
+	return true;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::set(const InKeyT &in_key)
+{
+	for (Jupiter::SLList<Entry>::Node *node = m_entries.getHead(); node != nullptr; node = node->next)
+		if (node->data->key == in_key)
+			return false;
+
+	m_entries.add(new Entry(in_key));
 	return true;
 }
 
@@ -186,6 +203,20 @@ template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, siz
 bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::set(const InKeyT &in_key, const InValueT &in_value)
 {
 	if (m_buckets[HashF(in_key) % m_buckets_size].set(in_key, in_value))
+	{
+		if (++m_length == m_buckets_size)
+			expand();
+
+		return true;
+	}
+
+	return false;
+}
+
+template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
+bool Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::set(const InKeyT &in_key)
+{
+	if (m_buckets[HashF(in_key) % m_buckets_size].set(in_key))
 	{
 		if (++m_length == m_buckets_size)
 			expand();

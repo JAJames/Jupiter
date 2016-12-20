@@ -179,6 +179,7 @@
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64C.c" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DataBuffer.cpp" />
     <ClCompile Include="File.cpp" />
@@ -198,11 +199,13 @@
     <ClCompile Include="TCPSocket.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="UDPSocket.cpp" />
+    <ClCompile Include="INIConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Command.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="CString.h" />
     <ClInclude Include="CString_Imp.h" />
     <ClInclude Include="Database.h" />
@@ -247,6 +250,7 @@
     <ClInclude Include="Thinker.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UDPSocket.h" />
+    <ClInclude Include="INIConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Jupiter.rc" />

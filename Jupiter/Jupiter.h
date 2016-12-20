@@ -36,7 +36,7 @@
 #define JUPITER_API
 #endif // _WIN32
 
-#define JUPITER_VERSION "Jupiter 0.18.1" /** Version of this program at compile time. */
+#define JUPITER_VERSION "Jupiter 0.19-dev" /** Version of this program at compile time. */
 
 #if defined __cplusplus
 extern "C"

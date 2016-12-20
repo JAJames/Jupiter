@@ -59,6 +59,7 @@ namespace Jupiter
 				KeyT key;
 				ValueT value;
 
+				Entry(const InKeyT &in_key);
 				Entry(const InKeyT &in_key, const InValueT &in_value);
 			};
 
@@ -78,6 +79,7 @@ namespace Jupiter
 			* @return True if a new entry was added, false if an entry was overwritten
 			*/
 			bool set(const InKeyT &in_key, const InValueT &in_value);
+			bool set(const InKeyT &in_key);
 
 			/**
 			* @brief Removes an entry from the bucket
@@ -164,12 +166,13 @@ namespace Jupiter
 		* @return True if a new entry was added, false if an entry was overwritten
 		*/
 		bool set(const InKeyT &in_key, const InValueT &in_value);
+		bool set(const InKeyT &in_key);
 
 		/**
-		* @brief Removes an entry from the table and returns its value
+		* @brief Removes an entry from the table
 		*
 		* @param in_key Key of the entry to remove
-		* @return Value of the entry that was removed if it exists, nullptr otherwise
+		* @return True if an entry was removed, false otherwise
 		*/
 		bool remove(const InKeyT &in_key);
 
