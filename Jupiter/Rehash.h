@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,11 +26,8 @@
 
 #include "Jupiter.h"
 
-#if defined __cplusplus
-
 namespace Jupiter
 {
-
 	class JUPITER_API Rehashable
 	{
 	public:
@@ -72,21 +69,23 @@ namespace Jupiter
 	*
 	* @return Number of objects which returned an error.
 	*/
-	JUPITER_API unsigned int rehash();
+	JUPITER_API size_t rehash();
 
 	/**
 	* @brief Fetches the number of rehashable objects.
 	*
 	* @return Number of rehashable objects.
 	*/
-	JUPITER_API unsigned int getRehashableCount();
+	JUPITER_API size_t getRehashableCount();
+
+	typedef int(*OnRehashFunctionType)(void);
 
 	/**
 	* @brief Adds a function to be called during the rehash process.
 	*
 	* @param function Function to call (@see Jupiter::Rehashable::OnRehash()).
 	*/
-	JUPITER_API void addOnRehash(int(*function)(void));
+	JUPITER_API void addOnRehash(OnRehashFunctionType in_function);
 
 	/**
 	* @brief Removes a function from the rehash list.
@@ -94,7 +93,7 @@ namespace Jupiter
 	* @param function Function to remove.
 	* @return True if a function was removed, false otherwise.
 	*/
-	JUPITER_API bool removeOnRehash(int(*function)(void));
+	JUPITER_API bool removeOnRehash(OnRehashFunctionType in_function);
 
 	/**
 	* @brief Removes all functions from the rehash list.
@@ -102,55 +101,8 @@ namespace Jupiter
 	*
 	* @return Number of functions removed.
 	*/
-	JUPITER_API unsigned int removeAllOnRehash();
+	JUPITER_API size_t removeAllOnRehash();
 
 } // Jupiter namespace
-
-extern "C"
-{
-#else
-#include <stdbool.h> // bool type
-#endif // __cplusplus
-
-/**
-* @brief Calls OnRehash() on every rehashable object.
-*
-* @return Number of objects which returned an error.
-*/
-JUPITER_API unsigned int Jupiter_rehash();
-
-/**
-* @brief Fetches the number of rehashable objects.
-*
-* @return Number of rehashable objects.
-*/
-JUPITER_API unsigned int Jupiter_getRehashableCount();
-
-/**
-* @brief Adds a function to be called during the rehash process.
-*
-* @param function Function to call (@see Jupiter::Rehashable::OnRehash()).
-*/
-JUPITER_API void Jupiter_addOnRehash(int(*function)(void));
-
-/**
-* @brief Removes a function from the rehash list.
-*
-* @param function Function to remove.
-* @return True if a function was removed, false otherwise.
-*/
-JUPITER_API bool Jupiter_removeOnRehash(int(*function)(void));
-
-/**
-* @brief Removes all functions from the rehash list.
-* Note: This should be called during application clean-up.
-*
-* @return Number of functions removed.
-*/
-JUPITER_API unsigned int Jupiter_removeAllOnRehash();
-
-#if defined __cplusplus
-} // extern "C"
-#endif // __cplusplus
 
 #endif // _REHASH_H_HEADER

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -28,126 +28,117 @@
 class RehashFunction : public Jupiter::Rehashable
 {
 public:
-	int(*function)(void);
-	int OnRehash() { return function(); };
-	bool OnBadRehash(bool removed) { return removed; };
-	RehashFunction(int(*func)(void)) { RehashFunction::function = func; };
+	Jupiter::OnRehashFunctionType m_function;
+	
+	int OnRehash()
+	{
+		return m_function();
+	}
+
+	bool OnBadRehash(bool in_removed)
+	{
+		return in_removed;
+	}
+
+	RehashFunction(Jupiter::OnRehashFunctionType in_function)
+	{
+		m_function = in_function;
+	}
 };
 
 /** List of Rehashable objects */
-Jupiter::DLList<Jupiter::Rehashable> rehashables;
+Jupiter::DLList<Jupiter::Rehashable> o_rehashables;
 
 /** List of RehashFunction objects */
-Jupiter::DLList<RehashFunction> rehashFunctions;
+Jupiter::DLList<RehashFunction> o_rehash_functions;
 
 Jupiter::Rehashable::Rehashable()
 {
-	rehashables.add(this);
+	o_rehashables.add(this);
 }
 
 Jupiter::Rehashable::Rehashable(const Jupiter::Rehashable &)
 {
-	rehashables.add(this);
+	o_rehashables.add(this);
 }
 
 Jupiter::Rehashable::~Rehashable()
 {
-	if (rehashables.size() != 0)
+	for (Jupiter::DLList<Jupiter::Rehashable>::Node *node = o_rehashables.getHead(); node != nullptr; node = node->next)
 	{
-		for (Jupiter::DLList<Jupiter::Rehashable>::Node *n = rehashables.getNode(0); n != nullptr; n = n->next)
+		if (node->data == this)
 		{
-			if (n->data == this)
-			{
-				rehashables.remove(n);
-				break;
-			}
+			o_rehashables.remove(node);
+			break;
 		}
 	}
 }
 
-unsigned int Jupiter::rehash()
+size_t Jupiter::rehash()
 {
-	if (rehashables.size() == 0) return 0;
-	unsigned int total = 0;
-	int r;
-	Jupiter::DLList<Jupiter::Rehashable>::Node *n = rehashables.getNode(0);
-	Jupiter::DLList<Jupiter::Rehashable>::Node *d;
-	while (n != nullptr)
+	size_t total_errors = 0;
+	int rehash_result;
+	Jupiter::DLList<Jupiter::Rehashable>::Node *node = o_rehashables.getHead();
+	Jupiter::DLList<Jupiter::Rehashable>::Node *dead_node;
+
+	while (node != nullptr)
 	{
-		r = n->data->OnRehash();
-		if (r != 0)
+		rehash_result = node->data->OnRehash();
+		if (rehash_result != 0)
 		{
-			total++;
-			if (r < 0)
+			++total_errors;
+			if (rehash_result < 0)
 			{
-				d = n;
-				n = n->next;
-				if (d->data->OnBadRehash(true))
-					delete rehashables.remove(d);
-				else rehashables.remove(d);
+				dead_node = node;
+				node = node->next;
+
+				if (dead_node->data->OnBadRehash(true))
+					delete o_rehashables.remove(dead_node);
+				else
+					o_rehashables.remove(dead_node);
+
 				continue;
 			}
-			rehashables.remove(n)->OnBadRehash(false);
+
+			o_rehashables.remove(node)->OnBadRehash(false);
 		}
-		n = n->next;
+
+		node = node->next;
 	}
-	return total;
+
+	return total_errors;
 }
 
-unsigned int Jupiter::getRehashableCount()
+size_t Jupiter::getRehashableCount()
 {
-	return rehashables.size();
+	return o_rehashables.size();
 }
 
-void Jupiter::addOnRehash(int(*function)(void))
+void Jupiter::addOnRehash(OnRehashFunctionType in_function)
 {
-	rehashFunctions.add(new RehashFunction(function));
+	o_rehash_functions.add(new RehashFunction(in_function));
 }
 
-bool Jupiter::removeOnRehash(int(*function)(void))
+bool Jupiter::removeOnRehash(OnRehashFunctionType in_function)
 {
-	if (rehashFunctions.size() == 0) return false;
-	for (Jupiter::DLList<RehashFunction>::Node *n = rehashFunctions.getNode(0); n != nullptr; n = n->next)
+	for (Jupiter::DLList<RehashFunction>::Node *node = o_rehash_functions.getHead(); node != nullptr; node = node->next)
 	{
-		if (n->data->function == function)
+		if (node->data->m_function == in_function)
 		{
-			delete rehashFunctions.remove(n);
+			delete o_rehash_functions.remove(node);
 			return true;
 		}
 	}
+
 	return false;
 }
 
-unsigned int Jupiter::removeAllOnRehash()
+size_t Jupiter::removeAllOnRehash()
 {
-	unsigned int r = rehashFunctions.size();
-	while (rehashFunctions.size() != 0) delete rehashFunctions.remove(size_t{ 0 });
-	return r;
-}
+	size_t result = o_rehash_functions.size();
 
-// C forward interfaces
+	while (o_rehash_functions.size() != 0)
+		delete o_rehash_functions.remove(size_t{ 0 });
 
-extern "C" unsigned int Jupiter_rehash()
-{
-	return Jupiter::rehash();
-}
-
-extern "C" unsigned int Jupiter_getRehashableCount()
-{
-	return Jupiter::getRehashableCount();
-}
-
-extern "C" void Jupiter_addOnRehash(int(*function)(void))
-{
-	return Jupiter::addOnRehash(function);
-}
-
-extern "C" bool Jupiter_removeOnRehash(int(*function)(void))
-{
-	return Jupiter::removeOnRehash(function);
-}
-
-extern "C" unsigned int Jupiter_removeAllOnRehash()
-{
-	return Jupiter::removeAllOnRehash();
+	return result;
 }
