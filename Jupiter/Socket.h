@@ -527,6 +527,12 @@ namespace Jupiter
 	/** Protected functions and members*/
 	protected:
 
+#if defined _WIN32
+		typedef uintptr_t SocketType;
+#else if
+		typedef int SocketType;
+#endif
+
 		/**
 		* @brief An extended verison of the string class, which allows for low-level length and string modification.
 		*/
@@ -549,14 +555,14 @@ namespace Jupiter
 		*
 		* @return A raw socket descriptor.
 		*/
-		int getDescriptor() const;
+		SocketType getDescriptor() const;
 
 		/**
 		* @brief Used by class extensions to set the appropriate socket descriptor.
 		*
 		* @param descript Socket descriptor.
 		*/
-		void setDescriptor(int descript);
+		void setDescriptor(SocketType descript);
 
 	/** Private members */
 	private:

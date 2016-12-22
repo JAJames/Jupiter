@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -79,7 +79,7 @@ Jupiter::SecureSocket::~SecureSocket()
 
 Jupiter::SecureSocket *Jupiter::SecureSocket::accept()
 {
-	int tSock = SSL_accept(Jupiter::SecureSocket::SSLdata_->handle);
+	SocketType tSock = SSL_accept(Jupiter::SecureSocket::SSLdata_->handle);
 	if (tSock > 0)
 	{
 		SecureSocket *r = new SecureSocket(Jupiter::SecureSocket::getBufferSize());

@@ -32,9 +32,8 @@ bool socketInit = false;
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
-typedef int SOCKET;
-#define INVALID_SOCKET  (SOCKET)(~0)
-#define SOCKET_ERROR            (-1)
+#define INVALID_SOCKET (Jupiter::Socket::SocketType)(~0)
+#define SOCKET_ERROR (-1)
 #endif // _WIN32
 
 #include "Socket.h"
@@ -54,7 +53,7 @@ char *Jupiter::Socket::Buffer::get_str() const
 struct Jupiter::Socket::Data
 {
 	Jupiter::Socket::Buffer buffer;
-	SOCKET rawSock = INVALID_SOCKET;
+	SocketType rawSock = INVALID_SOCKET;
 	unsigned short remote_port = 0;
 	unsigned short bound_port = 0;
 	Jupiter::CStringS remote_host;
@@ -418,7 +417,7 @@ Jupiter::Socket *Jupiter::Socket::accept()
 {
 	sockaddr addr;
 	int size = sizeof(addr);
-	SOCKET tSock = ::accept(Socket::data_->rawSock, &addr, &size);
+	SocketType tSock = ::accept(Socket::data_->rawSock, &addr, &size);
 	if (tSock != INVALID_SOCKET)
 	{
 		char resolved[NI_MAXHOST];
@@ -438,7 +437,7 @@ Jupiter::Socket *Jupiter::Socket::accept()
 bool Jupiter::Socket::setReadTimeout(unsigned long milliseconds)
 {
 #if defined _WIN32
-	return setsockopt(Jupiter::Socket::data_->rawSock, SOL_SOCKET, SO_RCVTIMEO, (const char *)milliseconds, sizeof(milliseconds)) == 0;
+	return setsockopt(Jupiter::Socket::data_->rawSock, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&milliseconds), sizeof(milliseconds)) == 0;
 #else // _WIN32
 	timeval time;
 	time.tv_sec = milliseconds / 1000;
@@ -450,7 +449,7 @@ bool Jupiter::Socket::setReadTimeout(unsigned long milliseconds)
 bool Jupiter::Socket::setSendTimeout(unsigned long milliseconds)
 {
 #if defined _WIN32
-	return setsockopt(Jupiter::Socket::data_->rawSock, SOL_SOCKET, SO_SNDTIMEO, (const char *)milliseconds, sizeof(milliseconds)) == 0;
+	return setsockopt(Jupiter::Socket::data_->rawSock, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&milliseconds), sizeof(milliseconds)) == 0;
 #else // _WIN32
 	timeval time;
 	time.tv_sec = milliseconds / 1000;
@@ -681,12 +680,12 @@ bool Jupiter::Socket::cleanup() // static
 	return true;
 }
 
-int Jupiter::Socket::getDescriptor() const
+Jupiter::Socket::SocketType Jupiter::Socket::getDescriptor() const
 {
 	return Jupiter::Socket::data_->rawSock;
 }
 
-void Jupiter::Socket::setDescriptor(int descriptor)
+void Jupiter::Socket::setDescriptor(SocketType descriptor)
 {
 	Jupiter::Socket::data_->rawSock = descriptor;
 }
