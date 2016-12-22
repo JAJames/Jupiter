@@ -84,10 +84,10 @@ namespace Jupiter
 			bool set(const InKeyT &in_key);
 
 			/**
-			* @brief Removes an entry from the bucket
+			* @brief Removes an entry from the table
 			*
-			* @param in_key Key of the entry to search for
-			* @return Value of the entry which was removed on success, nullptr otherwise
+			* @param in_key Key of the entry to remove
+			* @return True if an entry was removed, false otherwise
 			*/
 			bool remove(const InKeyT &in_key);
 
