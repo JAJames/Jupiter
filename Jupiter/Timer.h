@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,25 +21,29 @@
 
 /**
  * @file Timer.h
- * @brief Provides an timed event system.
+ * @brief Provides a timed event system.
  */
 
+#include <chrono>
 #include "Jupiter.h"
-
-#if defined __cplusplus
-
-#include <ctime>
 #include "Thinker.h"
+
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 namespace Jupiter
 {
-
 	/**
 	* @brief Provides an interface for adding timed events.
 	*/
 	class JUPITER_API Timer : public Thinker
 	{
 	public:
+		typedef void(*FunctionType)(unsigned int, void *);
+
 		/**
 		* @brief Checks if the timed function should be called, and calls it if neccessary.
 		* Note: This is primarily used internally by checkTimers().
@@ -64,6 +68,27 @@ namespace Jupiter
 		bool kill();
 
 		/**
+		* @brief Fetches the number of active timers.
+		*
+		* @return Total number of timers active.
+		*/
+		static size_t total();
+
+		/**
+		* @brief Calls think() for every timer, and removes them if neccessary.
+		*
+		* @return Total number of timers removed.
+		*/
+		static size_t check();
+
+		/**
+		* @brief Immediately destroys all timers.
+		*
+		* @return Total number of timers removed.
+		*/
+		static size_t killAll();
+
+		/**
 		* @brief Constructs a timer and adds itself to the timer list.
 		* Note: This assumes infinite iterations, with as little time delay as possible.
 		*
@@ -71,7 +96,7 @@ namespace Jupiter
 		* @param parameters Parameters to pass to the function.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(void(*function)(unsigned int, void *), void *parameters, bool immediate = false) : Timer(unsigned int(0), time_t(0), function, parameters, immediate) {}
+		Timer(FunctionType in_function, void *in_parameters, bool in_immediate = false) : Timer(0U, std::chrono::milliseconds(0), in_function, in_parameters, in_immediate) {}
 
 		/**
 		* @brief Constructs a timer and adds itself to the timer list.
@@ -80,7 +105,7 @@ namespace Jupiter
 		* @param function Function for the timer to call.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(void(*function)(unsigned int), bool immediate = false) : Timer(unsigned int(0), time_t(0), function, immediate) {}
+		Timer(FunctionType in_function, bool in_immediate = false) : Timer(0U, std::chrono::milliseconds(0), in_function, in_immediate) {}
 
 		/**
 		* @brief Constructs a timer and adds itself to the timer list.
@@ -91,8 +116,8 @@ namespace Jupiter
 		* @param parameters Parameters to pass to the function.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(time_t timeDelay, void(*function)(unsigned int, void *), void *parameters, bool immediate = false) : Timer(unsigned int(0), timeDelay, function, parameters, immediate) {}
-		
+		Timer(std::chrono::milliseconds in_delay, FunctionType in_function, void *in_parameters, bool in_immediate = false) : Timer(0U, in_delay, in_function, in_parameters, in_immediate) {}
+
 		/**
 		* @brief Constructs a timer and adds itself to the timer list.
 		* Note: This assumes infinite iterations.
@@ -101,7 +126,7 @@ namespace Jupiter
 		* @param function Function for the timer to call.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(time_t timeDelay, void(*function)(unsigned int), bool immediate = false) : Timer(unsigned int(0), timeDelay, function, immediate) {}
+		Timer(std::chrono::milliseconds in_delay, FunctionType in_function, bool in_immediate = false) : Timer(0U, in_delay, in_function, in_immediate) {}
 
 		/**
 		* @brief Constructs a timer and adds itself to the timer list.
@@ -112,7 +137,7 @@ namespace Jupiter
 		* @param parameters Parameters to pass to the function.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(unsigned int iterations, time_t timeDelay, void(*function)(unsigned int, void *), void *parameters, bool immediate = false);
+		Timer(unsigned int in_iterations, std::chrono::milliseconds in_delay, FunctionType in_function, void *in_parameters, bool in_immediate = false);
 
 		/**
 		* @brief Constructs a timer and adds itself to the timer list.
@@ -122,71 +147,22 @@ namespace Jupiter
 		* @param function Function for the timer to call.
 		* @param immediate (optional) True if the function should be execute on the next check.
 		*/
-		Timer(unsigned int iterations, time_t timeDelay, void(*function)(unsigned int), bool immediate = false);
+		Timer(unsigned int in_iterations, std::chrono::milliseconds in_delay, FunctionType in_function, bool in_immediate = false);
 
-		/**
-		* @brief Destructor for the Timer class.
-		*/
-		~Timer();
-
-	/** Private data members */
 	private:
-		struct Data;
-		Data *data_;
+		/** Private data members */
+		std::chrono::steady_clock::time_point m_next_call;
+		std::chrono::milliseconds m_delay;
+		unsigned int m_iterations;
+
+		FunctionType m_function;
+		void *m_parameters;
 	};
 }
 
-extern "C"
-{
-#else
-#include <stdbool.h>
-#include <time.h>
-#endif // _cplusplus
-
-/**
-* @brief Creates a timer.
-*
-* @param iterations Number of iterations for the timer to execute. 0 if the timer is indefinite.
-* @param timeDelay Delay in seconds between executions of the timed function.
-* @param immediate True if the function should be execute on the next check.
-* @param function Function for the timer to call.
-* @param parameters Parameters to pass to the function.
-*/
-JUPITER_API void Jupiter_addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters);
-
-/**
-* @brief Creates a timer.
-*
-* @param iterations Number of iterations for the timer to execute. 0 if the timer is indefinite.
-* @param timeDelay Delay in seconds between executions of the timed function.
-* @param immediate True if the function should be execute on the next check.
-* @param function Function for the timer to call.
-*/
-JUPITER_API void Jupiter_addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int));
-
-/**
-* @brief Fetches the number of active timers.
-*
-* @return Total number of timers active.
-*/
-JUPITER_API unsigned int Jupiter_totalTimers();
-
-/**
-* @brief Calls think() for every timer, and removes them if neccessary.
-*
-* @return Total number of timers removed.
-*/
-JUPITER_API unsigned int Jupiter_checkTimers();
-
-/**
-* @brief Immediately destroys all timers.
-*
-* @return Total number of timers removed.
-*/
-JUPITER_API unsigned int Jupiter_killTimers();
-
-#if defined __cplusplus
-}
-#endif // __cplusplus
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 #endif // _TIMER_H_HEADER

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,7 +19,7 @@
 #include "Timer.h"
 #include "DLList.h"
 
-Jupiter::DLList<Jupiter::Timer> timers;
+Jupiter::DLList<Jupiter::Timer> o_timers;
 
 /** Deallocates timers when the library is unloaded. */
 struct TimerKiller
@@ -29,59 +29,47 @@ struct TimerKiller
 
 TimerKiller::~TimerKiller()
 {
-	Jupiter_killTimers();
+	Jupiter::Timer::killAll();
 }
 
-struct Jupiter::Timer::Data
+Jupiter::Timer::Timer(unsigned int in_iterations, std::chrono::milliseconds in_delay, FunctionType in_function, void *in_parameters, bool in_immediate)
 {
-	void (*function)(unsigned int, void *);
-	void (*functionNoParams)(unsigned int);
-	void *parameters;
-	time_t nextCall;
-	time_t delay;
-	int iterations;
-};
+	m_function = in_function;
+	m_parameters = in_parameters;
+	m_iterations = in_iterations;
+	m_delay = in_delay;
+	m_next_call = std::chrono::steady_clock::now();
 
-Jupiter::Timer::Timer(unsigned int iterations, time_t timeDelay, void(*function)(unsigned int, void *), void *parameters, bool immediate)
-{
-	Jupiter::Timer::data_ = new Jupiter::Timer::Data();
-	Jupiter::Timer::data_->function = function;
-	Jupiter::Timer::data_->functionNoParams = nullptr;
-	Jupiter::Timer::data_->parameters = parameters;
-	Jupiter::Timer::data_->iterations = iterations;
-	Jupiter::Timer::data_->delay = timeDelay;
-	Jupiter::Timer::data_->nextCall = immediate ? time(0) : time(0) + timeDelay;
-	timers.add(this);
+	if (in_immediate == false)
+		m_next_call += m_delay;
+
+	o_timers.add(this);
 }
 
-Jupiter::Timer::Timer(unsigned int iterations, time_t timeDelay, void(*function)(unsigned int), bool immediate)
+Jupiter::Timer::Timer(unsigned int in_iterations, std::chrono::milliseconds in_delay, FunctionType in_function, bool in_immediate)
 {
-	Jupiter::Timer::data_ = new Jupiter::Timer::Data();
-	Jupiter::Timer::data_->function = nullptr;
-	Jupiter::Timer::data_->functionNoParams = function;
-	Jupiter::Timer::data_->parameters = nullptr;
-	Jupiter::Timer::data_->iterations = iterations;
-	Jupiter::Timer::data_->delay = timeDelay;
-	Jupiter::Timer::data_->nextCall = immediate ? time(0) : time(0) + timeDelay;
-	timers.add(this);
-}
+	m_function = in_function;
+	m_parameters = nullptr;
+	m_iterations = in_iterations;
+	m_delay = in_delay;
+	
+	if (in_immediate == false)
+		m_next_call += m_delay;
 
-Jupiter::Timer::~Timer()
-{
-	delete Jupiter::Timer::data_;
+	o_timers.add(this);
 }
 
 int Jupiter::Timer::think()
 {
-	if (Jupiter::Timer::data_->nextCall <= time(0))
+	if (m_next_call <= std::chrono::steady_clock::now())
 	{
 		int killMe = 0;
 
-		if (Jupiter::Timer::data_->iterations != 0 && --Jupiter::Timer::data_->iterations == 0) killMe = 1;
-		if (Jupiter::Timer::data_->function != nullptr) Jupiter::Timer::data_->function(Jupiter::Timer::data_->iterations, Jupiter::Timer::data_->parameters);
-		else Jupiter::Timer::data_->functionNoParams(Jupiter::Timer::data_->iterations);
+		if (m_iterations != 0 && --m_iterations == 0)
+			killMe = 1;
 
-		Jupiter::Timer::data_->nextCall = Jupiter::Timer::data_->delay + time(0);
+		m_function(m_iterations, m_parameters);
+		m_next_call = m_delay + std::chrono::steady_clock::now();
 
 		return killMe;
 	}
@@ -91,69 +79,65 @@ int Jupiter::Timer::think()
 
 bool Jupiter::Timer::removeFromList()
 {
-	if (timers.size() == 0) return false;
-	for (Jupiter::DLList<Jupiter::Timer>::Node *n = timers.getNode(0); n != nullptr; n = n->next)
+	for (Jupiter::DLList<Jupiter::Timer>::Node *node = o_timers.getHead(); node != nullptr; node = node->next)
 	{
-		if (n->data == this)
+		if (node->data == this)
 		{
-			timers.remove(n);
+			o_timers.remove(node);
 			return true;
 		}
 	}
+
 	return false;
 }
 
 bool Jupiter::Timer::kill()
 {
-	if (Jupiter::Timer::removeFromList())
+	if (this->removeFromList())
 	{
 		delete this;
 		return true;
 	}
+
 	delete this;
 	return false;
 }
 
-extern "C" void Jupiter_addTimer(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int, void *), void *parameters)
+size_t Jupiter::Timer::total()
 {
-	new Jupiter::Timer(iterations, timeDelay, function, parameters, immediate);
+	return o_timers.size();
 }
 
-extern "C" void Jupiter_addTimerNoParams(unsigned int iterations, time_t timeDelay, bool immediate, void(*function)(unsigned int))
+size_t Jupiter::Timer::check()
 {
-	new Jupiter::Timer(iterations, timeDelay, function, immediate);
-}
+	size_t result = 0;
+	Jupiter::Timer *timer;
+	Jupiter::DLList<Jupiter::Timer>::Node *dead_node;
+	Jupiter::DLList<Jupiter::Timer>::Node *node = o_timers.getHead();
 
-extern "C" unsigned int Jupiter_totalTimers()
-{
-	return timers.size();
-}
-
-extern "C" unsigned int Jupiter_checkTimers()
-{
-	unsigned int r = 0;
-	Jupiter::Timer *t;
-	Jupiter::DLList<Jupiter::Timer>::Node *o;
-	Jupiter::DLList<Jupiter::Timer>::Node *n = timers.size() == 0 ? nullptr : timers.getNode(0);
-	while (n != nullptr)
+	while (node != nullptr)
 	{
-		t = n->data;
-		if (t->think() != 0)
+		timer = node->data;
+		if (timer->think() != 0)
 		{
-			o = n;
-			n = n->next;
-			delete timers.remove(o);
-			r++;
+			dead_node = node;
+			node = node->next;
+			delete o_timers.remove(dead_node);
+			++result;
 		}
-		else n = n->next;
+		else
+			node = node->next;
 	}
-	return r;
+
+	return result;
 }
 
-extern "C" unsigned int Jupiter_killTimers()
+size_t Jupiter::Timer::killAll()
 {
-	unsigned int r = timers.size();
-	while (timers.size() != 0)
-		delete timers.remove(size_t{ 0 });
-	return r;
+	size_t result = o_timers.size();
+
+	while (o_timers.size() != 0)
+		delete o_timers.remove(size_t{ 0 });
+
+	return result;
 }
