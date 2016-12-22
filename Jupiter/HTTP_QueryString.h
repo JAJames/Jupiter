@@ -20,7 +20,7 @@
 #define _HTTP_QUERYSTRING_H_HEADER
 
 #include "String.h"
-#include "INIConfig.h"
+#include "Hash_Table.h"
 
 /**
  * @file HTTP_QueryString.h
