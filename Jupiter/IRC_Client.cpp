@@ -1267,20 +1267,11 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 				{
 					if (Jupiter::IRC::Client::data_->saslPass.isNotEmpty())
 					{
-						size_t authStringLen = Jupiter::IRC::Client::data_->nickname.size() + Jupiter::IRC::Client::data_->saslAccount.size() + Jupiter::IRC::Client::data_->saslPass.size() + 2;
-						char *authString = new char[authStringLen + 1];
-						int offset = sprintf(authString, "%.*s", Jupiter::IRC::Client::data_->nickname.size(), Jupiter::IRC::Client::data_->nickname.ptr()) + 1;
-						offset += sprintf(authString + offset, "%.*s", Jupiter::IRC::Client::data_->saslAccount.size(), Jupiter::IRC::Client::data_->saslAccount.ptr()) + 1;
-						offset += sprintf(authString + offset, "%.*s", Jupiter::IRC::Client::data_->saslPass.size(), Jupiter::IRC::Client::data_->saslPass.ptr());
+						Jupiter::StringS auth_str = Jupiter::IRC::Client::data_->nickname + '\0' + Jupiter::IRC::Client::data_->saslAccount + '\0' + Jupiter::IRC::Client::data_->saslPass;
 
-						char *enc = Jupiter::base64encode(authString, authStringLen);
-						delete[] authString;
-
-						char *out = new char[strlen(enc) + 16];
-						int len = sprintf(out, "AUTHENTICATE %s" ENDL, enc);
+						char *enc = Jupiter::base64encode(auth_str.ptr(), auth_str.size());
+						Jupiter::IRC::Client::data_->sock->send("AUTHENTICATE "_jrs + enc);
 						delete[] enc;
-						Jupiter::IRC::Client::data_->sock->send(out, len);
-						delete[] out;
 					}
 					Jupiter::IRC::Client::data_->sock->send("CAP END" ENDL);
 					Jupiter::IRC::Client::data_->registerClient();

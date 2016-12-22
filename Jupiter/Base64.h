@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2016 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,12 +24,10 @@
  * @brief Provides C and C++ functions to encode/decode using base64.
  */
 
-#include "Jupiter.h"
-
-#if defined __cplusplus
-
 #include <cstdint>
 #include <cstddef>
+#include "Jupiter.h"
+#include "String.h"
 
 namespace Jupiter
 {
@@ -41,7 +39,7 @@ namespace Jupiter
 	* @param result Character buffer for output.
 	* @return Number of bytes written to the output buffer.
 	*/
-	JUPITER_API unsigned int base64encode(const void *data, size_t dataLength, char *result);
+	JUPITER_API size_t base64encode(const void *data, size_t dataLength, char *result);
 
 	/**
 	* @brief Checks if a buffer is large enough, and if so, encodes an input buffer into a base64 C-String.
@@ -52,7 +50,7 @@ namespace Jupiter
 	* @param outputSize Size of the "result" buffer.
 	* @return Number of bytes written to the output buffer.
 	*/
-	JUPITER_API unsigned int base64encode(const void *data, size_t dataLength, char *result, size_t outputSize);
+	JUPITER_API size_t base64encode(const void *data, size_t dataLength, char *result, size_t outputSize);
 
 	/**
 	* @brief Encodes an input C-String into a base64 C-String.
@@ -78,7 +76,7 @@ namespace Jupiter
 	* @param result Data buffer for output.
 	* @return Number of bytes written to the output buffer.
 	*/
-	JUPITER_API unsigned int base64decode(const char *data, size_t dataLength, unsigned char *result, size_t resultSize);
+	JUPITER_API size_t base64decode(const char *data, size_t dataLength, unsigned char *result, size_t resultSize);
 
 	/**
 	* @brief Decodes an input base64 character string into a C-String buffer.
@@ -87,7 +85,7 @@ namespace Jupiter
 	* @param dataLength Length of the data to decode.
 	* @return Number of bytes written to the output buffer.
 	*/
-	JUPITER_API unsigned int base64decode(const char *data, size_t dataLength, unsigned char *result);
+	JUPITER_API size_t base64decode(const char *data, size_t dataLength, unsigned char *result);
 
 	/**
 	* @brief Decodes an input base64 character string into a C-String buffer.
@@ -107,14 +105,6 @@ namespace Jupiter
 	JUPITER_API char *base64decode(const char *str);
 }
 
-extern "C"
-{
-#else
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
-#endif // __cplusplus
-
 /**
 * @brief Encodes an input buffer into a base64 C-String.
 *
@@ -123,7 +113,7 @@ extern "C"
 * @param result Character buffer for output.
 * @return Number of bytes written to the output buffer.
 */
-JUPITER_API unsigned int Jupiter_base64encode(const void *data, size_t dataLength, char *result);
+JUPITER_API size_t Jupiter_base64encode(const void *data, size_t dataLength, char *result);
 
 /**
 * @brief Calculates the minimum buffer size to decode a specified base64 string.
@@ -133,7 +123,7 @@ JUPITER_API unsigned int Jupiter_base64encode(const void *data, size_t dataLengt
 * @param inLen Length of the input string.
 * @return Minimum number of bytes to fit the decoded buffer.
 */
-JUPITER_API unsigned int Jupiter_minBase64DecodeLength(const char *data, size_t inLen);
+JUPITER_API size_t Jupiter_minBase64DecodeLength(const char *data, size_t inLen);
 
 /**
 * @brief Checks if a buffer is a valid base64 string.
@@ -159,7 +149,7 @@ JUPITER_API bool Jupiter_isBase64_s(const char *data, size_t dataLength);
 * @param result Data buffer for output.
 * @return Number of bytes written to the output buffer.
 */
-JUPITER_API unsigned int Jupiter_base64decode(const char *str, unsigned char *result);
+JUPITER_API size_t Jupiter_base64decode(const char *str, unsigned char *result);
 
 /**
 * @brief Decodes an input base64 string into a data buffer.
@@ -169,10 +159,6 @@ JUPITER_API unsigned int Jupiter_base64decode(const char *str, unsigned char *re
 * @param result Data buffer for output.
 * @return Number of bytes written to the output buffer.
 */
-JUPITER_API unsigned int Jupiter_base64decode_s(const char *data, size_t dataLength, unsigned char *result);
-
-#if defined __cplusplus
-}
-#endif // __cplusplus
+JUPITER_API size_t Jupiter_base64decode_s(const char *data, size_t dataLength, unsigned char *result);
 
 #endif // _BASE64_H_HEADER
