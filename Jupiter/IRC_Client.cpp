@@ -307,12 +307,12 @@ const Jupiter::ReadableString &Jupiter::IRC::Client::getConfigSection() const
 	return Jupiter::ReferenceString::empty;
 }
 
-const Jupiter::Config *Jupiter::IRC::Client::getPrimaryConfigSection() const
+Jupiter::Config *Jupiter::IRC::Client::getPrimaryConfigSection() const
 {
 	return Jupiter::IRC::Client::data_->primary_section;
 }
 
-const Jupiter::Config *Jupiter::IRC::Client::getSecondaryConfigSection() const
+Jupiter::Config *Jupiter::IRC::Client::getSecondaryConfigSection() const
 {
 	return Jupiter::IRC::Client::data_->secondary_section;
 }

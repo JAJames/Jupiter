@@ -479,14 +479,14 @@ namespace Jupiter
 			*
 			* @return The primary config section if it exists, nullptr otherwise.
 			*/
-			const Jupiter::Config *getPrimaryConfigSection() const;
+			Jupiter::Config *getPrimaryConfigSection() const;
 
 			/**
 			* @brief Fetches the primary config section
 			*
 			* @return The primary config section if it exists, nullptr otherwise.
 			*/
-			const Jupiter::Config *getSecondaryConfigSection() const;
+			Jupiter::Config *getSecondaryConfigSection() const;
 
 			/**
 			* @brief Sets the primary config section
