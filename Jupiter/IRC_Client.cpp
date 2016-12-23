@@ -56,8 +56,8 @@ struct JUPITER_API Jupiter::IRC::Client::Data
 	Jupiter::StringS saslPass;
 	int connectionStatus;
 	Jupiter::StringS primary_section_name;
-	const Jupiter::Config *primary_section;
-	const Jupiter::Config *secondary_section;
+	Jupiter::Config *primary_section;
+	Jupiter::Config *secondary_section;
 	Jupiter::CStringS logFileName;
 	Jupiter::StringS last_line;
 	unsigned short serverPort;
@@ -131,7 +131,7 @@ struct Jupiter::IRC::Client::Channel::Data
 	bool isAddingNames;
 };
 
-Jupiter::IRC::Client::Client(const Jupiter::Config *in_primary_section, const Jupiter::Config *in_secondary_section)
+Jupiter::IRC::Client::Client(Jupiter::Config *in_primary_section, Jupiter::Config *in_secondary_section)
 {
 	Jupiter::IRC::Client::data_ = new Jupiter::IRC::Client::Data(this);
 
@@ -317,7 +317,7 @@ const Jupiter::Config *Jupiter::IRC::Client::getSecondaryConfigSection() const
 	return Jupiter::IRC::Client::data_->secondary_section;
 }
 
-void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::Config *in_primary_section)
+void Jupiter::IRC::Client::setPrimaryConfigSection(Jupiter::Config *in_primary_section)
 {
 	Jupiter::IRC::Client::data_->primary_section = in_primary_section;
 
@@ -327,7 +327,7 @@ void Jupiter::IRC::Client::setPrimaryConfigSection(const Jupiter::Config *in_pri
 		Jupiter::IRC::Client::data_->primary_section_name.erase();
 }
 
-void Jupiter::IRC::Client::setSecondaryConfigSection(const Jupiter::Config *in_secondary_section)
+void Jupiter::IRC::Client::setSecondaryConfigSection(Jupiter::Config *in_secondary_section)
 {
 	Jupiter::IRC::Client::data_->secondary_section = in_secondary_section;
 }

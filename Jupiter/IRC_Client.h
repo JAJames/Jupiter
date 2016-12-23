@@ -494,7 +494,7 @@ namespace Jupiter
 			*
 			* @param in_primary_section Primary config section to begin using
 			*/
-			virtual void setPrimaryConfigSection(const Jupiter::Config *in_primary_section);
+			virtual void setPrimaryConfigSection(Jupiter::Config *in_primary_section);
 
 			/**
 			* @brief Sets the secondary config section
@@ -502,7 +502,7 @@ namespace Jupiter
 			*
 			* @param in_secondary_section Secondary config section to begin using
 			*/
-			virtual void setSecondaryConfigSection(const Jupiter::Config *in_secondary_section);
+			virtual void setSecondaryConfigSection(Jupiter::Config *in_secondary_section);
 
 			/**
 			* @brief Returns the name of the file this logs to.
@@ -887,7 +887,7 @@ namespace Jupiter
 			* @param in_primary_section Config section to search first for a configuration option
 			* @param in_secondary_section Config section to search second for a configuration, before using a pre-defined default value
 			*/
-			Client(const Jupiter::Config *in_primary_section, const Jupiter::Config *in_secondary_section);
+			Client(Jupiter::Config *in_primary_section, Jupiter::Config *in_secondary_section);
 
 			/**
 			* @brief Destructor for a client.
