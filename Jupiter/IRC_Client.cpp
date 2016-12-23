@@ -1391,11 +1391,12 @@ int Jupiter::IRC::Client::think()
 				{
 					if (result.tokens[0][0] == '\n' && Jupiter::IRC::Client::data_->last_line[Jupiter::IRC::Client::data_->last_line.size() - 1] == '\r')
 					{
-						Jupiter::IRC::Client::data_->last_line += '\n';
-						Jupiter::IRC::Client::process_line(Jupiter::IRC::Client::data_->last_line);
+						Jupiter::IRC::Client::data_->last_line.truncate(1); // Remove \r
 
+						Jupiter::IRC::Client::process_line(Jupiter::IRC::Client::data_->last_line);
 						Jupiter::IRC::Client::data_->last_line.erase();
-						result.tokens[0].shiftRight(1);
+
+						result.tokens[0].shiftRight(1); // Remove \n
 					}
 				}
 
