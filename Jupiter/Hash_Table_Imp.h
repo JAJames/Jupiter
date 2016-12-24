@@ -164,15 +164,6 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::callbac
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
-size_t Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::erase()
-{
-	size_t length = m_entries.size();
-	m_entries.eraseAndDelete();
-
-	return length;
-}
-
-template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket &Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::operator=(const Bucket &in_bucket)
 {
 	m_entries.eraseAndDelete();

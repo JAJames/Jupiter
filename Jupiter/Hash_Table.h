@@ -101,13 +101,6 @@ namespace Jupiter
 			template<typename CallT> void callback(CallT &in_callback) const;
 
 			/**
-			* @brief Erases all entries from the bucket
-			*
-			* @return Number of entries erased
-			*/
-			size_t erase();
-
-			/**
 			* @brief Copy assignment operator
 			*
 			* @param in_bucket Bucket to copy entries from
