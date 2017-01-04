@@ -314,6 +314,8 @@ namespace Jupiter
 					Jupiter::StringS m_prefixes;
 				};
 
+				typedef Jupiter::Hash_Table<Jupiter::StringS, Channel::User, Jupiter::ReadableString> UserTableType;
+
 				/**
 				* @brief Returns the name of the channel.
 				*
@@ -378,6 +380,13 @@ namespace Jupiter
 				char getUserPrefix(const Jupiter::ReadableString &in_nickname) const;
 
 				/**
+				* @brief Fetches the channel's user table
+				*
+				* @return Reference to the channel's user table
+				*/
+				const UserTableType &getUsers() const;
+
+				/**
 				* @brief Returns the number of users in this channel.
 				*
 				* @return Number of users.
@@ -413,7 +422,7 @@ namespace Jupiter
 				Jupiter::StringS m_name;
 				Client *m_parent;
 				int m_type;
-				Jupiter::Hash_Table<Jupiter::StringS, Channel::User, Jupiter::ReadableString> m_users;
+				UserTableType m_users;
 
 				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class

@@ -1638,6 +1638,11 @@ char Jupiter::IRC::Client::Channel::getUserPrefix(const Jupiter::ReadableString 
 	return 0;
 }
 
+const Jupiter::IRC::Client::Channel::UserTableType &Jupiter::IRC::Client::Channel::getUsers() const
+{
+	return m_users;
+}
+
 size_t Jupiter::IRC::Client::Channel::getUserCount() const
 {
 	return m_users.size();
