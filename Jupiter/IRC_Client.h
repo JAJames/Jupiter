@@ -43,7 +43,6 @@ namespace Jupiter
 {
 	namespace IRC
 	{
-
 		/**
 		* @brief Provides connectivity to IRC servers.
 		*/
@@ -66,25 +65,26 @@ namespace Jupiter
 			/**
 			* @brief This is called when at the end of reconnect().
 			*
-			* @param successConnect Used to determine if a connection was successfully established.
+			* @param in_success Used to determine if a connection was successfully established.
 			* @see connect().
 			*/
-			virtual void OnReconnectAttempt(bool successConnect);
+			virtual void OnReconnectAttempt(bool in_success);
 
 			/**
 			* @brief This is called after a message has been normally processed.
 			* This always happens last. All other hooks will be called before this.
 			*
-			* @param raw The raw message.
+			* @param in_message The raw message.
 			*/
-			virtual void OnRaw(const Jupiter::ReadableString &raw);
+			virtual void OnRaw(const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called after an IRC numeric has been processed.
 			*
-			* @param raw The raw message.
+			* @param in_numerouic The numeroic of the message
+			* @param in_message The raw message.
 			*/
-			virtual void OnNumeric(long int numeric, const Jupiter::ReadableString &raw);
+			virtual void OnNumeric(long int in_numeric, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when an ERROR is received.
@@ -92,7 +92,7 @@ namespace Jupiter
 			*
 			* @param message Message sent by the server.
 			*/
-			virtual void OnError(const Jupiter::ReadableString &message);
+			virtual void OnError(const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when a chat message is received.
@@ -101,7 +101,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnChat(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
+			virtual void OnChat(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when a notice is received.
@@ -110,7 +110,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnNotice(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &sender, const Jupiter::ReadableString &message);
+			virtual void OnNotice(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_sender, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when a server notice is received.
@@ -119,7 +119,7 @@ namespace Jupiter
 			* @param nick String containing the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnServerNotice(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &sender, const Jupiter::ReadableString &message);
+			virtual void OnServerNotice(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_sender, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when a CTCP message is received.
@@ -128,7 +128,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnCTCP(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &command, const Jupiter::ReadableString &message);
+			virtual void OnCTCP(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_command, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when an action message is received.
@@ -137,7 +137,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnAction(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
+			virtual void OnAction(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when an invite is received.
@@ -146,7 +146,7 @@ namespace Jupiter
 			* @param inviter String containing the nickname of the inviter.
 			* @param invited String containing the nickname of the user invited.
 			*/
-			virtual void OnInvite(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &inviter, const Jupiter::ReadableString &invited);
+			virtual void OnInvite(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_inviter, const Jupiter::ReadableString &in_invited);
 
 			/**
 			* @brief This is called when a chat message is received.
@@ -155,7 +155,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the sender.
 			* @param message String containing the message sent.
 			*/
-			virtual void OnJoin(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick);
+			virtual void OnJoin(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname);
 
 			/**
 			* @brief This is called when a user parts a channel.
@@ -164,7 +164,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the user.
 			* @param reason String containing the reason for parting, or nullptr if none is specified.
 			*/
-			virtual void OnPart(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &reason);
+			virtual void OnPart(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_reason);
 
 			/**
 			* @brief This is called when a user changes their nickname.
@@ -172,7 +172,7 @@ namespace Jupiter
 			* @param oldnick String containing the old nickname of the user.
 			* @param newnick String containing the new nickname of the user.
 			*/
-			virtual void OnNick(const Jupiter::ReadableString &oldnick, const Jupiter::ReadableString &newnick);
+			virtual void OnNick(const Jupiter::ReadableString &in_old_nick, const Jupiter::ReadableString &in_new_nick);
 
 			/**
 			* @brief This is called when a user is kicked from a channel.
@@ -182,7 +182,7 @@ namespace Jupiter
 			* @param kicked String containing the nickname of the user kicked.
 			* @param reason String containing the reason for the kick, or nullptr if none is specified.
 			*/
-			virtual void OnKick(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &kicker, const Jupiter::ReadableString &kicked, const Jupiter::ReadableString &reason);
+			virtual void OnKick(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_kicker, const Jupiter::ReadableString &in_kicked, const Jupiter::ReadableString &in_reason);
 
 			/**
 			* @brief This is called when a user quits the server.
@@ -190,7 +190,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the user.
 			* @param message String containing the reason for quiting.
 			*/
-			virtual void OnQuit(const Jupiter::ReadableString &nick, const Jupiter::ReadableString &message);
+			virtual void OnQuit(const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief This is called when a channel mode is changed.
@@ -199,7 +199,7 @@ namespace Jupiter
 			* @param nick String containing the nickname of the user.
 			* @param modeString String containing the modes changed.
 			*/
-			virtual void OnMode(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick, const Jupiter::ReadableString &modeString);
+			virtual void OnMode(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname, const Jupiter::ReadableString &in_mode_string);
 		public:
 			class Channel;
 
@@ -327,7 +327,7 @@ namespace Jupiter
 				* @param nickname String containing the nickname of the user to find.
 				* @return A user if a match is found, nullptr otherwise.
 				*/
-				Jupiter::IRC::Client::Channel::User *getUser(const Jupiter::ReadableString &nickname) const;
+				Jupiter::IRC::Client::Channel::User *getUser(const Jupiter::ReadableString &in_nickname) const;
 
 				/**
 				* @brief Adds a user to the channel
@@ -335,7 +335,7 @@ namespace Jupiter
 				* @param nickname Nickname of the user.
 				* @return Index of the new user.
 				*/
-				Channel::User *addUser(Jupiter::IRC::Client::User *user);
+				Channel::User *addUser(Jupiter::IRC::Client::User *in_user);
 
 				/**
 				* @brief Adds a user to the channel
@@ -344,14 +344,14 @@ namespace Jupiter
 				* @param prefix The user's prefix.
 				* @return Index of the new user.
 				*/
-				Channel::User *addUser(Jupiter::IRC::Client::User *user, const char prefix);
+				Channel::User *addUser(Jupiter::IRC::Client::User *in_user, const char in_prefix);
 
 				/**
 				* @brief Removes a user from the channel.
 				*
 				* @param nickname String containing the nickname of the user.
 				*/
-				void delUser(const Jupiter::ReadableString &nickname);
+				void delUser(const Jupiter::ReadableString &in_nickname);
 
 				/**
 				* @brief Adds a prefix to a user.
@@ -359,7 +359,7 @@ namespace Jupiter
 				* @param user String containing the nickname of the user.
 				* @param prefix Prefix to add to the user.
 				*/
-				void addUserPrefix(const Jupiter::ReadableString &user, char prefix);
+				void addUserPrefix(const Jupiter::ReadableString &in_nickname, char in_prefix);
 
 				/**
 				* @brief Removes a prefix from a user.
@@ -367,7 +367,7 @@ namespace Jupiter
 				* @param user String containing the nickname of a user.
 				* @param prefix Prefix to remove from the user.
 				*/
-				void delUserPrefix(const Jupiter::ReadableString &user, char prefix);
+				void delUserPrefix(const Jupiter::ReadableString &in_nickname, char in_prefix);
 
 				/**
 				* @brief Returns a user's most significant prefix.
@@ -375,7 +375,7 @@ namespace Jupiter
 				* @param user String containing the nickname of a user.
 				* @return User's most significant prefix.
 				*/
-				char getUserPrefix(const Jupiter::ReadableString &user) const;
+				char getUserPrefix(const Jupiter::ReadableString &in_nickname) const;
 
 				/**
 				* @brief Returns the number of users in this channel.
@@ -570,7 +570,7 @@ namespace Jupiter
 			* @param nickname String containing the nickname of the user to fetch.
 			* @return A User if a match is found, nullptr otherwise.
 			*/
-			Jupiter::IRC::Client::User *getUser(const Jupiter::ReadableString &nickname) const;
+			Jupiter::IRC::Client::User *getUser(const Jupiter::ReadableString &in_nickname) const;
 
 			/**
 			* @brief Fetches the size of the user list.
@@ -592,14 +592,14 @@ namespace Jupiter
 			* @param chanName String containing the name of a channel.
 			* @return A channel with the specified name if it exists, nullptr otherwise.
 			*/
-			Channel *getChannel(const Jupiter::ReadableString &chanName) const;
+			Channel *getChannel(const Jupiter::ReadableString &in_channel) const;
 
 			/**
 			* @brief Sends a join request.
 			*
 			* @param channel Channel to join.
 			*/
-			void joinChannel(const Jupiter::ReadableString &channel);
+			void joinChannel(const Jupiter::ReadableString &in_channel);
 
 			/**
 			* @brief Sends a join request with a password.
@@ -607,14 +607,14 @@ namespace Jupiter
 			* @param channel Channel to join.
 			* @param password Password to use.
 			*/
-			void joinChannel(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &password);
+			void joinChannel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_password);
 
 			/**
 			* @brief Parts a channel.
 			*
 			* @param channel Channel to part.
 			*/
-			void partChannel(const Jupiter::ReadableString &channel);
+			void partChannel(const Jupiter::ReadableString &in_channel);
 
 			/**
 			* @brief Parts a channel.
@@ -622,7 +622,7 @@ namespace Jupiter
 			* @param channel Channel to part.
 			* @param message Reason for parting.
 			*/
-			void partChannel(const Jupiter::ReadableString &channel, const Jupiter::ReadableString &message);
+			void partChannel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Gets the access level of a user.
@@ -631,7 +631,8 @@ namespace Jupiter
 			* @param nick String containing the nickname of the user.
 			* @return Access level of the user.
 			*/
-			int getAccessLevel(const Jupiter::ReadableString &chan, const Jupiter::ReadableString &nick) const;
+			int getAccessLevel(const Channel &in_channel, const Jupiter::ReadableString &in_nickname) const;
+			int getAccessLevel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname) const;
 
 			/**
 			* @brief Sends a message.
@@ -639,7 +640,7 @@ namespace Jupiter
 			* @param dest String containing the destination of the message (nickname or channel).
 			* @param message String containing the message to send.
 			*/
-			void sendMessage(const Jupiter::ReadableString &dest, const Jupiter::ReadableString &message);
+			void sendMessage(const Jupiter::ReadableString &in_destination, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Sends a notice.
@@ -647,7 +648,7 @@ namespace Jupiter
 			* @param dest String containing the destination of the message (nickname or channel).
 			* @param message String containing the message to send.
 			*/
-			void sendNotice(const Jupiter::ReadableString &dest, const Jupiter::ReadableString &message);
+			void sendNotice(const Jupiter::ReadableString &in_destination, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Sends a message to all channels of a given type.
@@ -656,7 +657,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			size_t messageChannels(int type, const Jupiter::ReadableString &message);
+			size_t messageChannels(int type, const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Sends a message to all channels with a type of at least 0.
@@ -664,7 +665,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			size_t messageChannels(const Jupiter::ReadableString &message);
+			size_t messageChannels(const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Returns if the client will automatically reconnect upon failure.
@@ -678,7 +679,7 @@ namespace Jupiter
 			*
 			* @param autoReconnect Maximum number of reconnect attempts. A negative value indicates infinity.
 			*/
-			void setAutoReconnect(int autoReconnect);
+			void setAutoReconnect(int in_auto_reconnect);
 
 			/**
 			* @brief Sends data to the server.
@@ -686,67 +687,67 @@ namespace Jupiter
 			*
 			* @param rawMessage String containing the data to send.
 			*/
-			void send(const Jupiter::ReadableString &rawMessage);
+			void send(const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Processes an input line of IRC protocol data.
 			*
 			* @return 0 upon success, an error code otherwise.
 			*/
-			int process_line(const Jupiter::ReadableString &line);
+			int process_line(const Jupiter::ReadableString &in_line);
 
 			/**
 			* @brief Returns a key's value.
 			* This reads from the client's config section first, then default if it doesn't exist.
 			*
 			* @param key String containing the key name.
-			* @param defaultValue Optional parameter specifying the default value to return if none is found.
-			* @return String containing the key value if it exists, defaultValue otherwise.
+			* @param in_default_value Optional parameter specifying the default value to return if none is found.
+			* @return String containing the key value if it exists, in_default_value otherwise.
 			*/
-			const Jupiter::ReadableString &readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &defaultValue = Jupiter::ReferenceString::empty) const;
+			const Jupiter::ReadableString &readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &in_default_value = Jupiter::ReferenceString::empty) const;
 
 			/**
 			* @brief Returns a key's value as a boolean.
 			* This reads from the client's config section first, then default if it doesn't exist.
 			*
 			* @param key String containing the key name.
-			* @return Boolean value of the key value if it exists, defaultValue otherwise.
+			* @return Boolean value of the key value if it exists, in_default_value otherwise.
 			*/
-			bool readConfigBool(const Jupiter::ReadableString &key, bool defaultValue = false) const;
+			bool readConfigBool(const Jupiter::ReadableString &key, bool in_default_value = false) const;
 
 			/**
 			* @brief Returns a key's value as an integer.
 			* This reads from the client's config section first, then default if it doesn't exist.
 			*
 			* @param key String containing the key name.
-			* @return Integer value of the key value if it exists, defaultValue otherwise.
+			* @return Integer value of the key value if it exists, in_default_value otherwise.
 			*/
-			int readConfigInt(const Jupiter::ReadableString &key, int defaultValue = 0) const;
+			int readConfigInt(const Jupiter::ReadableString &key, int in_default_value = 0) const;
 
 			/**
 			* @brief Returns a key's value as a long integer.
 			* This reads from the client's config section first, then default if it doesn't exist.
 			*
 			* @param key String containing the key name.
-			* @return Long integer value of the key value if it exists, defaultValue otherwise.
+			* @return Long integer value of the key value if it exists, in_default_value otherwise.
 			*/
-			long readConfigLong(const Jupiter::ReadableString &key, long defaultValue = 0) const;
+			long readConfigLong(const Jupiter::ReadableString &key, long in_default_value = 0) const;
 
 			/**
 			* @brief Returns a key's value as a double.
 			* This reads from the client's config section first, then default if it doesn't exist.
 			*
 			* @param key String containing the key name.
-			* @return Double value of the key value if it exists, defaultValue otherwise.
+			* @return Double value of the key value if it exists, in_default_value otherwise.
 			*/
-			double readConfigDouble(const Jupiter::ReadableString &key, double defaultValue = 0) const;
+			double readConfigDouble(const Jupiter::ReadableString &key, double in_default_value = 0) const;
 
 			/**
 			* @brief Writes to the server's log file.
 			*
 			* @param message String containing the text to write to the file.
 			*/
-			void writeToLogs(const Jupiter::ReadableString &message);
+			void writeToLogs(const Jupiter::ReadableString &in_message);
 
 			/**
 			* @brief Connects the client to its server.
@@ -761,14 +762,14 @@ namespace Jupiter
 			* @brief Completely disconnects the client from a server.
 			* Note: This does not send any type of QUIT message.
 			*/
-			void disconnect(bool stayDead = false);
+			void disconnect(bool in_stay_dead = false);
 
 			/**
 			* @brief Completely disconnects the client from a server.
 			*
 			* @param message String containing the QUIT message to send prior to disconnecting.
 			*/
-			void disconnect(const Jupiter::ReadableString &message, bool stayDead = false);
+			void disconnect(const Jupiter::ReadableString &in_message, bool in_stay_dead = false);
 
 			/**
 			* @brief Calls disconnect() if the client has not already, then calls connect().
@@ -851,8 +852,8 @@ namespace Jupiter
 
 			bool startCAP();
 			bool registerClient();
-			Jupiter::IRC::Client::User *findUser(const Jupiter::ReadableString &nick) const;
-			Jupiter::IRC::Client::User *findUserOrAdd(const Jupiter::ReadableString &nick);
+			Jupiter::IRC::Client::User *findUser(const Jupiter::ReadableString &in_nickname) const;
+			Jupiter::IRC::Client::User *findUserOrAdd(const Jupiter::ReadableString &in_nickname);
 		}; // Jupiter::IRC::Client class
 
 	} // Jupiter::IRC namespace

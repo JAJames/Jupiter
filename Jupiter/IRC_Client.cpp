@@ -316,16 +316,19 @@ inline Jupiter::ReferenceString getSender(const Jupiter::ReadableString &line)
 	return Jupiter::ReferenceString::getWord(line, 0, ":! ");
 }
 
+int Jupiter::IRC::Client::getAccessLevel(const Channel &in_channel, const Jupiter::ReadableString &in_nickname) const
+{
+	char prefix = in_channel.getUserPrefix(in_nickname);
+	if (prefix != 0)
+		return static_cast<int>(m_prefixes.size() - m_prefixes.find(prefix));
+}
+
 int Jupiter::IRC::Client::getAccessLevel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname) const
 {
 	Jupiter::IRC::Client::Channel *channel = m_channels.get(in_channel);
 
 	if (channel != nullptr)
-	{
-		char prefix = channel->getUserPrefix(in_nickname);
-		if (prefix != 0)
-			return static_cast<int>(m_prefixes.size() - m_prefixes.find(prefix));
-	}
+		return this->getAccessLevel(*channel, in_nickname);
 
 	return 0;
 }
