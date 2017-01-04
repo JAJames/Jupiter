@@ -1622,18 +1622,23 @@ Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::getUser(cons
 	return m_users.get(in_nickname);
 }
 
+char Jupiter::IRC::Client::Channel::getUserPrefix(const Channel::User &in_user) const
+{
+	const Jupiter::ReadableString &prefixes = m_parent->getPrefixes();
+
+	for (size_t index = 0; index != prefixes.size(); ++index)
+		if (in_user.m_prefixes.contains(prefixes[index]))
+			return prefixes[index];
+
+	return 0;
+}
+
 char Jupiter::IRC::Client::Channel::getUserPrefix(const Jupiter::ReadableString &in_nickname) const
 {
 	Channel::User *user = m_users.get(in_nickname);
 
 	if (user != nullptr)
-	{
-		const Jupiter::ReadableString &prefixes = m_parent->getPrefixes();
-		
-		for (size_t index = 0; index != prefixes.size(); ++index)
-			if (user->m_prefixes.contains(prefixes[index]))
-				return prefixes[index];
-	}
+		return this->getUserPrefix(*user);
 
 	return 0;
 }

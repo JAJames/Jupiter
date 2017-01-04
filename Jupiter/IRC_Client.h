@@ -377,6 +377,7 @@ namespace Jupiter
 				* @param user String containing the nickname of a user.
 				* @return User's most significant prefix.
 				*/
+				char getUserPrefix(const Channel::User &in_user) const;
 				char getUserPrefix(const Jupiter::ReadableString &in_nickname) const;
 
 				/**
