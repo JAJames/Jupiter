@@ -782,14 +782,22 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 								Jupiter::IRC::Client::send(value);
 								i++;
 							}
-							key = "Channel.";
-							i = 1;
-							while (config_loop_condition())
+
+							auto auto_join_channels_callback = [this](Jupiter::Config::SectionHashTable::Bucket::Entry &in_entry)
 							{
-								key.truncate(offset);
-								Jupiter::IRC::Client::joinChannel(value);
-								i++;
-							}
+								if (in_entry.value.get<bool>("AutoJoin"_jrs, false))
+									this->joinChannel(in_entry.value.getName());
+							};
+
+							Jupiter::Config *config = m_primary_section->getSection("Channels"_jrs);
+
+							if (config != nullptr)
+								config->getSections().callback(auto_join_channels_callback);
+
+							config = m_secondary_section->getSection("Channels"_jrs);
+
+							if (config != nullptr)
+								config->getSections().callback(auto_join_channels_callback);
 
 							m_connection_status = 5;
 							m_reconnect_attempts = 0;
