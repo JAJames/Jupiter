@@ -31,6 +31,13 @@
 #include "IRC.h"
 #include "Reference_String.h"
 #include "Config.h"
+#include "Socket.h"
+
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 namespace Jupiter
 {
@@ -233,13 +240,12 @@ namespace Jupiter
 				*/
 				size_t getChannelCount() const;
 
-				User();
-				~User();
-
 				/** Private members */
 			private:
-				struct Data;
-				Data *data_;
+				unsigned int m_channel_count = 0;
+				Jupiter::StringS m_nickname;
+				Jupiter::StringS m_username;
+				Jupiter::StringS m_hostname;
 			};
 
 			/**
@@ -298,15 +304,14 @@ namespace Jupiter
 					*
 					* @return Number of channels.
 					*/
-					unsigned int getChannelCount() const;
+					size_t getChannelCount() const;
 
-					User();
 					~User();
 
 				/** Private members */
 				private:
-					struct Data;
-					Data *data_;
+					Jupiter::IRC::Client::User *m_user = nullptr;
+					Jupiter::StringS m_prefixes;
 				};
 
 				/**
@@ -315,14 +320,6 @@ namespace Jupiter
 				* @return String containing the name of the channel.
 				*/
 				const Jupiter::ReadableString &getName() const;
-
-				/**
-				* @brief Returns a user at an index.
-				*
-				* @param index The index of the user.
-				* @return A user if within range, nullptr otherwise.
-				*/
-				Jupiter::IRC::Client::Channel::User *getUser(unsigned int index) const;
 
 				/**
 				* @brief Searches for a user based on their nickname.
@@ -338,7 +335,7 @@ namespace Jupiter
 				* @param nickname Nickname of the user.
 				* @return Index of the new user.
 				*/
-				unsigned int addUser(Jupiter::IRC::Client::User *user);
+				Channel::User *addUser(Jupiter::IRC::Client::User *user);
 
 				/**
 				* @brief Adds a user to the channel
@@ -347,7 +344,7 @@ namespace Jupiter
 				* @param prefix The user's prefix.
 				* @return Index of the new user.
 				*/
-				unsigned int addUser(Jupiter::IRC::Client::User *user, const char prefix);
+				Channel::User *addUser(Jupiter::IRC::Client::User *user, const char prefix);
 
 				/**
 				* @brief Removes a user from the channel.
@@ -355,21 +352,6 @@ namespace Jupiter
 				* @param nickname String containing the nickname of the user.
 				*/
 				void delUser(const Jupiter::ReadableString &nickname);
-
-				/**
-				* @brief Removes a user from the channel.
-				*
-				* @param index Index of a user.
-				*/
-				void delUser(size_t index);
-
-				/**
-				* @brief Adds a prefix to a user.
-				*
-				* @param index Index of a user.
-				* @param prefix Prefix to add to the user.
-				*/
-				void addUserPrefix(size_t index, char prefix);
 
 				/**
 				* @brief Adds a prefix to a user.
@@ -382,42 +364,10 @@ namespace Jupiter
 				/**
 				* @brief Removes a prefix from a user.
 				*
-				* @param index Index of a user.
-				* @param prefix Prefix to remove from the user.
-				*/
-				void delUserPrefix(unsigned int index, char prefix);
-
-				/**
-				* @brief Removes a prefix from a user.
-				*
 				* @param user String containing the nickname of a user.
 				* @param prefix Prefix to remove from the user.
 				*/
 				void delUserPrefix(const Jupiter::ReadableString &user, char prefix);
-
-				/**
-				* @brief Returns the index of a user.
-				*
-				* @param user String containing the nickname of a user.
-				* @return Index of a user if they're found, -1 otherwise.
-				*/
-				int getUserIndex(const Jupiter::ReadableString &user) const;
-
-				/**
-				* @brief Returns the index of a user.
-				*
-				* @param user String containing part of the nickname of a user.
-				* @return Index of a user if they're found, -1 otherwise.
-				*/
-				int getUserIndexByPartName(const Jupiter::ReadableString &user) const;
-
-				/**
-				* @brief Returns a user's most significant prefix.
-				*
-				* @param index Index of a user.
-				* @return User's most significant prefix.
-				*/
-				char getUserPrefix(unsigned int index) const;
 
 				/**
 				* @brief Returns a user's most significant prefix.
@@ -432,7 +382,7 @@ namespace Jupiter
 				*
 				* @return Number of users.
 				*/
-				unsigned int getUserCount() const;
+				size_t getUserCount() const;
 
 				/**
 				* @brief Returns the type of this channel.
@@ -448,23 +398,24 @@ namespace Jupiter
 				*/
 				void setType(int iType);
 
+				Channel() = default;
+
 				/**
 				* @brief Constructor for Channel
 				*
 				* @param channelName String containing the name of a channel.
 				* @param iFace Server in which this channel is located.
 				*/
-				Channel(const Jupiter::ReadableString &channelName, Client *iFace);
-
-				/**
-				* @brief Destructor for Channel
-				*/
-				~Channel();
+				Channel(const Jupiter::ReadableString &in_name, Client *in_parent);
 
 			/** Private members */
 			private:
-				struct Data;
-				Data *data_;
+				Jupiter::StringS m_name;
+				Client *m_parent;
+				int m_type;
+				Jupiter::Hash_Table<Jupiter::StringS, Channel::User, Jupiter::ReadableString> m_users;
+
+				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class
 
 			/**
@@ -616,56 +567,24 @@ namespace Jupiter
 			/**
 			* @brief Fetches a user from the user list.
 			*
-			* @param index Index of the user to fetch.
-			* @return User located at the specified index.
-			*/
-			Jupiter::IRC::Client::User *getUser(unsigned int index) const;
-
-			/**
-			* @brief Fetches a user from the user list.
-			*
 			* @param nickname String containing the nickname of the user to fetch.
 			* @return A User if a match is found, nullptr otherwise.
 			*/
 			Jupiter::IRC::Client::User *getUser(const Jupiter::ReadableString &nickname) const;
 
 			/**
-			* @brief Fetches a user's index from the user list.
-			*
-			* @param nickname String containing the nickname of the user to fetch.
-			* @return The index of a user if a match is found, -1 otherwise.
-			*/
-			int getUserIndex(const Jupiter::ReadableString &nickname) const;
-
-			/**
-			* @brief Fetches a user's index from the user list.
-			*
-			* @param user Pointer to a user's data.
-			* @return The index of a user if a match is found, -1 otherwise.
-			*/
-			int getUserIndex(Jupiter::IRC::Client::User *user) const;
-
-			/**
 			* @brief Fetches the size of the user list.
 			*
 			* @return Size of the user list.
 			*/
-			unsigned int getUserCount() const;
+			size_t getUserCount() const;
 
 			/**
 			* @brief Returns the number of channels.
 			*
 			* @return Number of channels.
 			*/
-			unsigned int getChannelCount() const;
-
-			/**
-			* @brief Returns a channel.
-			*
-			* @param index Index of the chanel to return.
-			* @return The channel at the specified index.
-			*/
-			Channel *getChannel(unsigned int index) const;
+			size_t getChannelCount() const;
 
 			/**
 			* @brief Returns a channel.
@@ -674,22 +593,6 @@ namespace Jupiter
 			* @return A channel with the specified name if it exists, nullptr otherwise.
 			*/
 			Channel *getChannel(const Jupiter::ReadableString &chanName) const;
-
-			/**
-			* @brief Returns a channel's name at index.
-			*
-			* @param index Index of the channel.
-			* @return Channel's name.
-			*/
-			const Jupiter::ReadableString &getChannelName(unsigned int index) const;
-
-			/**
-			* @brief Returns the index of the channel with a given name.
-			*
-			* @param chanName String containing the name of a channel.
-			* @return Index of a channel if a match is found, -1 otherwise.
-			*/
-			int getChannelIndex(const Jupiter::ReadableString &chanName) const;
 
 			/**
 			* @brief Sends a join request.
@@ -753,7 +656,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			unsigned int messageChannels(int type, const Jupiter::ReadableString &message);
+			size_t messageChannels(int type, const Jupiter::ReadableString &message);
 
 			/**
 			* @brief Sends a message to all channels with a type of at least 0.
@@ -761,7 +664,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			unsigned int messageChannels(const Jupiter::ReadableString &message);
+			size_t messageChannels(const Jupiter::ReadableString &message);
 
 			/**
 			* @brief Returns if the client will automatically reconnect upon failure.
@@ -896,12 +799,69 @@ namespace Jupiter
 
 		/** Private members */
 		private:
-			struct Data;
-			Data *data_;
+			Jupiter::Socket *m_socket;
+			uint16_t m_server_port;
+			Jupiter::CStringS m_server_hostname;
+
+			bool m_ssl;
+			Jupiter::StringS m_ssl_certificate;
+			Jupiter::StringS m_ssl_key;
+
+			Jupiter::StringS m_sasl_account;
+			Jupiter::StringS m_sasl_password;
+
+			int m_connection_status;
+			Jupiter::StringS m_primary_section_name;
+			Jupiter::Config *m_primary_section;
+			Jupiter::Config *m_secondary_section;
+			Jupiter::CStringS m_log_file_name;
+			Jupiter::StringS m_last_line;
+			Jupiter::StringS m_server_name;
+			Jupiter::StringS m_nickname;
+			Jupiter::StringS m_realname;
+
+			Jupiter::StringS m_prefix_modes = "ov";
+			Jupiter::StringS m_prefixes = "@+";
+			Jupiter::StringS m_chan_types = "#";
+			Jupiter::StringS m_modeA = "b";
+			Jupiter::StringS m_modeB = "k";
+			Jupiter::StringS m_modeC = "l";
+			Jupiter::StringS m_modeD = "psitnm";
+
+			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::Channel, Jupiter::ReadableString> ChannelTableType;
+			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::User, Jupiter::ReadableString> UserTableType;
+
+			UserTableType m_users;
+			ChannelTableType m_channels;
+
+			bool m_join_on_kick;
+			Jupiter::StringS m_auto_part_message;
+			time_t m_reconnect_delay;
+			time_t m_reconnect_time;
+			int m_max_reconnect_attempts;
+			int m_reconnect_attempts;
+			FILE *m_output;
+			FILE *m_log_file;
+			int m_default_chan_type;
+			bool m_dead = false;
+
+			void delChannel(const Jupiter::ReadableString &in_channel);
+			void addNamesToChannel(Channel &in_channel, Jupiter::ReadableString &in_names);
+			void addChannel(const Jupiter::ReadableString &in_channel);
+
+			bool startCAP();
+			bool registerClient();
+			Jupiter::IRC::Client::User *findUser(const Jupiter::ReadableString &nick) const;
+			Jupiter::IRC::Client::User *findUserOrAdd(const Jupiter::ReadableString &nick);
 		}; // Jupiter::IRC::Client class
 
 	} // Jupiter::IRC namespace
 
 } // Jupiter namespace
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // _IRC_CLIENT_H_HEADER
