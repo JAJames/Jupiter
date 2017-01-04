@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2016 Jessica James.
+ * Copyright (C) 2013-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -341,14 +341,24 @@ void Jupiter::IRC::Client::send(const Jupiter::ReadableString &rawMessage)
 	m_socket->send(out);
 }
 
-Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(const Jupiter::ReadableString &in_nickname) const
+const Jupiter::IRC::Client::UserTableType &Jupiter::IRC::Client::getUsers() const
 {
-	return m_users.get(in_nickname);
+	return m_users;
 }
 
 size_t Jupiter::IRC::Client::getUserCount() const
 {
 	return m_users.size();
+}
+
+Jupiter::IRC::Client::User *Jupiter::IRC::Client::getUser(const Jupiter::ReadableString &in_nickname) const
+{
+	return m_users.get(in_nickname);
+}
+
+const Jupiter::IRC::Client::ChannelTableType &Jupiter::IRC::Client::getChannels() const
+{
+	return m_channels;
 }
 
 size_t Jupiter::IRC::Client::getChannelCount() const

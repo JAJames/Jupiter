@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2016 Jessica James.
+ * Copyright (C) 2013-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -418,6 +418,9 @@ namespace Jupiter
 				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class
 
+			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::Channel, Jupiter::ReadableString> ChannelTableType;
+			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::User, Jupiter::ReadableString> UserTableType;
+
 			/**
 			* @brief Returns the name of the primary config section this client reads from.
 			*
@@ -565,6 +568,20 @@ namespace Jupiter
 			void setPrintOutput(FILE *outf);
 
 			/**
+			* @brief Fetches the channel table
+			*
+			* @return Channel table
+			*/
+			const UserTableType &getUsers() const;
+
+			/**
+			* @brief Fetches the size of the user list.
+			*
+			* @return Size of the user list.
+			*/
+			size_t getUserCount() const;
+
+			/**
 			* @brief Fetches a user from the user list.
 			*
 			* @param nickname String containing the nickname of the user to fetch.
@@ -573,11 +590,11 @@ namespace Jupiter
 			Jupiter::IRC::Client::User *getUser(const Jupiter::ReadableString &in_nickname) const;
 
 			/**
-			* @brief Fetches the size of the user list.
+			* @brief Fetches the channel table
 			*
-			* @return Size of the user list.
+			* @return Channel table
 			*/
-			size_t getUserCount() const;
+			const ChannelTableType &getChannels() const;
 
 			/**
 			* @brief Returns the number of channels.
@@ -828,9 +845,6 @@ namespace Jupiter
 			Jupiter::StringS m_modeB = "k";
 			Jupiter::StringS m_modeC = "l";
 			Jupiter::StringS m_modeD = "psitnm";
-
-			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::Channel, Jupiter::ReadableString> ChannelTableType;
-			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::User, Jupiter::ReadableString> UserTableType;
 
 			UserTableType m_users;
 			ChannelTableType m_channels;
