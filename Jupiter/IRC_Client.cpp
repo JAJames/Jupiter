@@ -459,7 +459,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 				{
 					switch (numeric) // Numerics that don't rely on a specific connectionStatus.
 					{
-					case IRC_RPL_BOUNCE: // 010
+					case Reply::BOUNCE: // 010
 					{
 						Jupiter::ReferenceString portToken = Jupiter::ReferenceString::getWord(line, 4, " ");
 						unsigned short port;
@@ -499,7 +499,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 					case 1: // Socket established -- attempting STARTTLS
 						switch (numeric)
 						{
-						case IRC_RPL_BOUNCEOLD: // 005
+						case Reply::BOUNCEOLD: // 005
 							if (line.matchi("*:Try server *, port *"))
 							{
 								Jupiter::ReferenceString portToken = Jupiter::ReferenceString::getWord(line, 6, " ");
@@ -537,7 +537,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 							}
 							break;
 
-						case IRC_ERR_UNKNOWNCOMMAND: // 421
+						case Error::UNKNOWNCOMMAND: // 421
 						{
 							Jupiter::ReferenceString command = Jupiter::ReferenceString::getWord(line, 2, " ");
 							if (command.equalsi("STARTTLS")) // Server doesn't support STARTTLS
@@ -545,7 +545,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						}
 						break;
 
-						case IRC_RPL_STARTTLS: // 670
+						case Reply::STARTTLS: // 670
 						{
 							Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket(std::move(*m_socket));
 							delete m_socket;
@@ -574,7 +574,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						}
 						break;
 
-						case IRC_ERR_STARTTLS: // 691
+						case Error::STARTTLS: // 691
 							Client::startCAP();
 							break;
 
@@ -629,7 +629,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 								}
 							}
 							break;
-						case IRC_ERR_UNKNOWNCOMMAND: // 421
+						case Error::UNKNOWNCOMMAND: // 421
 							if (w2.equalsi("CAP")) // Server doesn't support CAP
 							{
 								Client::registerClient();
@@ -646,21 +646,21 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						switch (numeric)
 						{
 							// We'll take any of these 4, just in-case any of them are missing. In general, this will trigger on 001.
-						case IRC_RPL_MYINFO: // 004
+						case Reply::MYINFO: // 004
 							m_server_name = Jupiter::ReferenceString::getWord(line, 3, " ");
-						case IRC_RPL_WELCOME: // 001
-						case IRC_RPL_YOURHOST: // 002
-						case IRC_RPL_CREATED: // 003
+						case Reply::WELCOME: // 001
+						case Reply::YOURHOST: // 002
+						case Reply::CREATED: // 003
 							m_connection_status = 4;
 							break;
 
 							// You have a bad nickname! Try the alt.
-							//case IRC_ERR_NONICKNAMEGIVEN: // 431 -- Not consistently usable due to lack of command field.
-						case IRC_ERR_ERRONEOUSNICKNAME: // 432
+							//case Error::NONICKNAMEGIVEN: // 431 -- Not consistently usable due to lack of command field.
+						case Error::ERRONEOUSNICKNAME: // 432
 							erroneous_nickname = true;
-						case IRC_ERR_NICKNAMEINUSE: // 433
-						case IRC_ERR_NICKCOLLISION: // 436
-						case IRC_ERR_BANNICKCHANGE: // 437 -- Note: This conflicts with another token.
+						case Error::NICKNAMEINUSE: // 433
+						case Error::NICKCOLLISION: // 436
+						case Error::BANNICKCHANGE: // 437 -- Note: This conflicts with another token.
 							const Jupiter::ReadableString &altNick = Jupiter::IRC::Client::readConfigValue("AltNick"_jrs);
 							const Jupiter::ReadableString &configNick = Jupiter::IRC::Client::readConfigValue("Nick"_jrs, "Jupiter"_jrs);
 
@@ -720,7 +720,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 					case 4: // Registration verified, but connection process in progress.
 						switch (numeric)
 						{
-						case IRC_RPL_ISUPPORT: // 005
+						case Reply::ISUPPORT: // 005
 						{
 							size_t pos = line.find("PREFIX=("_jrs);
 							if (pos != Jupiter::INVALID_INDEX)
@@ -763,7 +763,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 							}
 						}
 						break;
-						case IRC_RPL_LUSERCLIENT: // 251
+						case Reply::LUSERCLIENT: // 251
 						{
 							Jupiter::StringL key = "RawData.";
 							size_t offset;
@@ -1123,7 +1123,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						}
 						// else if ACCOUNT
 						// else if CHGHOST
-						else if (numeric == IRC_RPL_NAMREPLY) // Some names.
+						else if (numeric == Reply::NAMREPLY) // Some names.
 						{
 							Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(line, 4, " ");
 							Jupiter::ReferenceString names = Jupiter::ReferenceString::substring(line, line.find(':', 1) + 1);
@@ -1143,7 +1143,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 								Client::addNamesToChannel(*channel, names);
 							}
 						}
-						else if (numeric == IRC_RPL_ENDOFNAMES) // We're done here.
+						else if (numeric == Reply::ENDOFNAMES) // We're done here.
 						{
 							Jupiter::ReferenceString chan = Jupiter::ReferenceString::getWord(line, 3, " ");
 							Channel *channel = m_channels.get(chan);
