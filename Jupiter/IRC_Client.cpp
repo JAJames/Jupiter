@@ -1181,7 +1181,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						Jupiter::StringS auth_str = m_nickname + '\0' + m_sasl_account + '\0' + m_sasl_password;
 
 						char *enc = Jupiter::base64encode(auth_str.ptr(), auth_str.size());
-						m_socket->send("AUTHENTICATE "_jrs + enc);
+						m_socket->send("AUTHENTICATE "_jrs + enc + ENDL);
 						delete[] enc;
 					}
 					m_socket->send("CAP END" ENDL);

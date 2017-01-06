@@ -254,6 +254,10 @@ namespace Jupiter
 			constexpr NumericType XINFOSTART = 773; /** I have no idea what this does. */
 			constexpr NumericType XINFOEND = 774; /** I have no idea what this does. */
 
+			constexpr NumericType LOGGEDIN = 901; /** You have logged in */
+			constexpr NumericType LOGGEDOUT = 902; /** You have logged out */
+			constexpr NumericType SASLSUCCESS = 903; /** SASL authentication successful */
+			constexpr NumericType SASLMECHS = 908; /** Available SASL mechanisms */
 			constexpr NumericType CANNOTDOCOMMAND = 972; /** I have no idea what this does. */
 			constexpr NumericType CANNOTCHANGEUMODE = 973; /** I have no idea what this does. */
 			constexpr NumericType CANNOTCHANGECHANMODE = 974; /** I have no idea what this does. */
@@ -372,6 +376,11 @@ namespace Jupiter
 			constexpr NumericType USINGSLINE = 552; /** I have no idea what this does. */
 
 			constexpr NumericType STARTTLS = 691; /** An error occured setting up SSL/TLS server-side */
+
+			constexpr NumericType SASLFAIL = 904; /** SASL authentication failed (invalid credentials) */
+			constexpr NumericType SASLTOOLONG = 905; /** SASL message too long */
+			constexpr NumericType SASLABORT = 906; /** SASL authentication aborted */
+			constexpr NumericType SASLALREADY = 907; /** Already SASL authenticated */
 		}
 	}
 }
