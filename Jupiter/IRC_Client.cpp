@@ -1553,27 +1553,37 @@ size_t Jupiter::IRC::Client::User::getChannelCount() const
 
 Jupiter::IRC::Client::Channel::Channel(const Jupiter::ReadableString &in_name, Jupiter::IRC::Client *in_parent)
 {
+	auto to_lower = [&in_name]()
+	{
+		Jupiter::String result(in_name.size());
+		const char *itr = in_name.ptr();
+		const char *end = itr + in_name.size();
+
+		while (itr != end)
+		{
+			result += tolower(*itr);
+			++itr;
+		}
+
+		return result;
+	};
+
 	m_name = in_name;
 	m_parent = in_parent;
 	m_type = m_parent->getDefaultChanType();
 
-	auto read_type = [&in_name](Jupiter::Config &in_config, int default_type)
+	Jupiter::String name = to_lower();
+
+	auto read_type = [&name](Jupiter::Config &in_config, int default_type)
 	{
-		return in_config["Channels"_jrs][in_name].get<int>("Type"_jrs, default_type);
+		return in_config["Channels"_jrs][name].get<int>("Type"_jrs, default_type);
 	};
 
-	if (m_parent->getPrimaryConfigSection() == nullptr)
-	{
-		if (m_parent->getSecondaryConfigSection() != nullptr)
-			m_type = read_type(*m_parent->getSecondaryConfigSection(), m_type);
-	}
-	else if (m_parent->getSecondaryConfigSection() == nullptr)
+	if (m_parent->getSecondaryConfigSection() != nullptr)
+		m_type = read_type(*m_parent->getSecondaryConfigSection(), m_type);
+
+	if (m_parent->getPrimaryConfigSection() != nullptr)
 		m_type = read_type(*m_parent->getPrimaryConfigSection(), m_type);
-	else
-	{
-		m_type = read_type(*m_parent->getPrimaryConfigSection(),
-			read_type(*m_parent->getSecondaryConfigSection(), m_type));
-	}
 }
 
 Jupiter::IRC::Client::Channel::User *Jupiter::IRC::Client::Channel::addUser(Jupiter::IRC::Client::User *user)

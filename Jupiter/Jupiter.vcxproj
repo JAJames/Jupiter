@@ -202,6 +202,7 @@
     <ClCompile Include="INIConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithm.h" />
     <ClInclude Include="ArrayList.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Command.h" />

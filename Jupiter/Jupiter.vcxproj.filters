@@ -272,6 +272,9 @@
     <ClInclude Include="INIConfig.h">
       <Filter>Header Files\Files\Configs</Filter>
     </ClInclude>
+    <ClInclude Include="Algorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Jupiter.rc">
