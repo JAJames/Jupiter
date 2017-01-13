@@ -29,22 +29,12 @@ namespace Jupiter
 	namespace Algorithm
 	{
 		/**
-		* @brief Sorts an array of data in-place using merge sort
-		*
-		* @param in_data Data to sort
-		* @param in_data_length Length of the array of data to sort
-		*/
-		template<typename T> void merge_sort_serial(T *in_data, size_t in_data_length);
-
-		/**
 		* @brief Sorts an array of data in-place using merge sort across multiple threads
 		*
 		* @param in_data Data to sort
 		* @param in_data_length Length of the array of data to sort
-		* @param in_max_threads Maximum number of threads to use
-		* @param in_use_max_threads True to force the number of threads to in_max_threads
 		*/
-		template<typename T> void merge_sort_parallel(T *in_data, size_t in_data_length, unsigned int in_max_threads, bool in_force_max_threads = false);
+		template<typename T> void merge_sort(T *in_data, size_t in_data_length);
 
 		/**
 		* @brief Sorts an array of data in-place using merge sort across multiple threads
@@ -59,8 +49,18 @@ namespace Jupiter
 		*
 		* @param in_data Data to sort
 		* @param in_data_length Length of the array of data to sort
+		* @param in_max_threads Maximum number of threads to use
+		* @param in_use_max_threads True to force the number of threads to in_max_threads
 		*/
-		template<typename T> void merge_sort(T *in_data, size_t in_data_length);
+		template<typename T> void merge_sort_parallel(T *in_data, size_t in_data_length, unsigned int in_max_threads, bool in_force_max_threads = false);
+
+		/**
+		* @brief Sorts an array of data in-place using merge sort
+		*
+		* @param in_data Data to sort
+		* @param in_data_length Length of the array of data to sort
+		*/
+		template<typename T> void merge_sort_serial(T *in_data, size_t in_data_length);
 
 		/** Internal helper templates */
 		namespace Internal
