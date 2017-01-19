@@ -149,9 +149,6 @@
     <ClInclude Include="DLList.h">
       <Filter>Header Files\Lists</Filter>
     </ClInclude>
-    <ClInclude Include="SLList.h">
-      <Filter>Header Files\Lists</Filter>
-    </ClInclude>
     <ClInclude Include="UDPSocket.h">
       <Filter>Header Files\Sockets</Filter>
     </ClInclude>

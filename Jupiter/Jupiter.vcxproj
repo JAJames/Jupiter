@@ -239,7 +239,6 @@
     <ClInclude Include="SecureSocket.h" />
     <ClInclude Include="Shift_String.h" />
     <ClInclude Include="Shift_String_Imp.h" />
-    <ClInclude Include="SLList.h" />
     <ClInclude Include="Socket.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="String_Imp.h" />
