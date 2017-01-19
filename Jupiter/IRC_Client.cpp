@@ -319,8 +319,11 @@ inline Jupiter::ReferenceString getSender(const Jupiter::ReadableString &line)
 int Jupiter::IRC::Client::getAccessLevel(const Channel &in_channel, const Jupiter::ReadableString &in_nickname) const
 {
 	char prefix = in_channel.getUserPrefix(in_nickname);
+
 	if (prefix != 0)
 		return static_cast<int>(m_prefixes.size() - m_prefixes.find(prefix));
+
+	return 0;
 }
 
 int Jupiter::IRC::Client::getAccessLevel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_nickname) const
