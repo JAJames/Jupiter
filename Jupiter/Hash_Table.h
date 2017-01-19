@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Jessica James.
+ * Copyright (C) 2016-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,8 +24,8 @@
  * @brief Defines a generic hash table structure
  */
 
+#include <forward_list>
 #include "String.h"
-#include "SLList.h"
 
 namespace Jupiter
 {
@@ -69,7 +69,8 @@ namespace Jupiter
 			* @param in_key Key of the entry to search for
 			* @return Pointer to the value of the entry if it exists, nullptr otherwise
 			*/
-			ValueT *get(const InKeyT &in_key) const;
+			const ValueT *get(const InKeyT &in_key) const;
+			ValueT *get(const InKeyT &in_key);
 			const InValueT &get(const InKeyT &in_key, const InValueT &in_value) const;
 			template<typename CastT> CastT getCast(const InKeyT &in_key, const CastT &in_value) const;
 
@@ -99,6 +100,7 @@ namespace Jupiter
 			* @param in_callback Function to callback
 			*/
 			template<typename CallT> void callback(CallT &in_callback) const;
+			template<typename CallT> void callback(CallT &in_callback);
 
 			/**
 			* @brief Copy assignment operator
@@ -137,7 +139,7 @@ namespace Jupiter
 			~Bucket();
 
 			/** List of entries in the bucket */
-			Jupiter::SLList<Entry> m_entries;
+			std::forward_list<Entry> m_entries;
 		};
 
 		/**
@@ -190,6 +192,7 @@ namespace Jupiter
 		* @param in_callback Function to callback
 		*/
 		template<typename CallT> void callback(CallT &in_callback) const;
+		template<typename CallT> void callback(CallT &in_callback);
 
 		/**
 		* @brief Returns the number of entries in the table

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 Jessica James.
+ * Copyright (C) 2016-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -49,20 +49,20 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 	{
 		auto bucket_itr = in_section->getTable().begin();
 		auto bucket_end = in_section->getTable().end();
-		Jupiter::SLList<HashTable::Bucket::Entry>::Node *entry_itr;
+		std::forward_list<HashTable::Bucket::Entry>::iterator entry_itr;
 
 		while (bucket_itr != bucket_end)
 		{
-			for (entry_itr = bucket_itr->m_entries.getHead(); entry_itr != nullptr; entry_itr = entry_itr->next)
+			for (entry_itr = bucket_itr->m_entries.begin(); entry_itr != bucket_itr->m_entries.end(); ++entry_itr)
 			{
 				// Tabs
 				for (index = 1; index < in_depth; ++index)
 					fputc('\t', in_file);
 
 				// Write entry
-				entry_itr->data->key.print(in_file);
+				entry_itr->key.print(in_file);
 				fputs(" = ", in_file);
-				entry_itr->data->value.println(in_file);
+				entry_itr->value.println(in_file);
 			}
 
 			++bucket_itr;
@@ -73,12 +73,12 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 	{
 		auto bucket_itr = in_section->getSections().begin();
 		auto bucket_end = in_section->getSections().end();
-		Jupiter::SLList<SectionHashTable::Bucket::Entry>::Node *entry_itr;
+		std::forward_list<SectionHashTable::Bucket::Entry>::iterator entry_itr;
 
 		while (bucket_itr != bucket_end)
 		{
-			for (entry_itr = bucket_itr->m_entries.getHead(); entry_itr != nullptr; entry_itr = entry_itr->next)
-				write_helper(in_file, &entry_itr->data->value, in_depth + 1);
+			for (entry_itr = bucket_itr->m_entries.begin(); entry_itr != bucket_itr->m_entries.end(); ++entry_itr)
+				write_helper(in_file, &entry_itr->value, in_depth + 1);
 
 			++bucket_itr;
 		}
