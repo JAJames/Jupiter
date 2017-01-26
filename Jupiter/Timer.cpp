@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2016 Jessica James.
+ * Copyright (C) 2014-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,10 +16,10 @@
  * Written by Jessica James <jessica.aj@outlook.com>
  */
 
+#include <list>
 #include "Timer.h"
-#include "DLList.h"
 
-Jupiter::DLList<Jupiter::Timer> o_timers;
+std::list<Jupiter::Timer *> o_timers;
 
 /** Deallocates timers when the library is unloaded. */
 struct TimerKiller
@@ -43,7 +43,7 @@ Jupiter::Timer::Timer(unsigned int in_iterations, std::chrono::milliseconds in_d
 	if (in_immediate == false)
 		m_next_call += m_delay;
 
-	o_timers.add(this);
+	o_timers.push_back(this);
 }
 
 Jupiter::Timer::Timer(unsigned int in_iterations, std::chrono::milliseconds in_delay, FunctionType in_function, bool in_immediate)
@@ -56,7 +56,7 @@ Jupiter::Timer::Timer(unsigned int in_iterations, std::chrono::milliseconds in_d
 	if (in_immediate == false)
 		m_next_call += m_delay;
 
-	o_timers.add(this);
+	o_timers.push_back(this);
 }
 
 int Jupiter::Timer::think()
@@ -79,11 +79,11 @@ int Jupiter::Timer::think()
 
 bool Jupiter::Timer::removeFromList()
 {
-	for (Jupiter::DLList<Jupiter::Timer>::Node *node = o_timers.getHead(); node != nullptr; node = node->next)
+	for (auto node = o_timers.begin(); node != o_timers.end(); ++node)
 	{
-		if (node->data == this)
+		if (*node == this)
 		{
-			o_timers.remove(node);
+			o_timers.erase(node);
 			return true;
 		}
 	}
@@ -111,22 +111,22 @@ size_t Jupiter::Timer::total()
 size_t Jupiter::Timer::check()
 {
 	size_t result = 0;
-	Jupiter::Timer *timer;
-	Jupiter::DLList<Jupiter::Timer>::Node *dead_node;
-	Jupiter::DLList<Jupiter::Timer>::Node *node = o_timers.getHead();
+	auto node = o_timers.begin();
 
-	while (node != nullptr)
+	while (node != o_timers.end())
 	{
-		timer = node->data;
-		if (timer->think() != 0)
+		if ((*node)->think() != 0)
 		{
-			dead_node = node;
-			node = node->next;
-			delete o_timers.remove(dead_node);
+			auto dead_node = node;
+			++node;
+
+			delete *dead_node;
+			o_timers.erase(dead_node);
+
 			++result;
 		}
 		else
-			node = node->next;
+			++node;
 	}
 
 	return result;
@@ -137,7 +137,10 @@ size_t Jupiter::Timer::killAll()
 	size_t result = o_timers.size();
 
 	while (o_timers.size() != 0)
-		delete o_timers.remove(size_t{ 0 });
+	{
+		delete o_timers.front();
+		o_timers.pop_front();
+	}
 
 	return result;
 }

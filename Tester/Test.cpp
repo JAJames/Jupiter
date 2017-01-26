@@ -15,44 +15,45 @@
 #include "Jupiter/HTTP_QueryString.h"
 #include "Jupiter/Hash.h"
 #include "Jupiter/Hash_Table.h"
+#include "Jupiter/Algorithm.h"
 
 using namespace Jupiter;
 using namespace Jupiter::literals;
 
-unsigned int goodTests = 0;
-unsigned int totalTests = 0;
+unsigned int good_tests = 0;
+unsigned int total_tests = 0;
 
 void test(bool expr)
 {
-	++totalTests;
+	++total_tests;
 	if (expr)
-		++goodTests;
+		++good_tests;
 	else
-		printf("Test number %u failed!" ENDL, totalTests);
+		std::cout << "Test number " << total_tests << " failed!" << std::endl;
 }
 
-Jupiter::StringS randstr(size_t length)
+template<typename T> void test(T result, T expected_result)
 {
-	StringS str;
+	++total_tests;
 
-	while (length != 0)
+	if (result == expected_result)
+		++good_tests;
+	else
 	{
-		str += ' ' + rand() % ('z' - ' ');
-		--length;
+		std::cout << "Test number " << total_tests << " failed!" << std::endl;
+		std::cout << "\tExpected '" << expected_result << "' but got '" << result << "' instead" << std::endl;
 	}
-
-	return str;
 }
 
 int main()
 {
-	if (goodTests == totalTests)
-		printf("All %u tests succeeded." ENDL, totalTests);
+	if (good_tests == total_tests)
+		std::cout << "All " << total_tests << " tests succeeded." << std::endl;
 	else
-		printf("ERROR: Only %u/%u tests succeeded. %u tests failed." ENDL, goodTests, totalTests, totalTests - goodTests);
+		std::cout << "ERROR: Only " << good_tests << "/" << total_tests << " tests succeeded. " << total_tests - good_tests << " tests failed." << std::endl;
 
-	puts("Press any key to continue...");
-	fgetc(stdin);
+	std::cout << "Press any key to continue..." << std::endl;
+	std::cin.get();
 
 	return 0;
 }

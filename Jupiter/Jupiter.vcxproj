@@ -192,7 +192,6 @@
     <ClCompile Include="IRC_Client.cpp" />
     <ClCompile Include="Jupiter.cpp" />
     <ClCompile Include="Plugin.cpp" />
-    <ClCompile Include="Queue.cpp" />
     <ClCompile Include="Rehash.cpp" />
     <ClCompile Include="SecureSocket.cpp" />
     <ClCompile Include="Socket.cpp" />
@@ -212,7 +211,6 @@
     <ClInclude Include="Database.h" />
     <ClInclude Include="DataBuffer.h" />
     <ClInclude Include="DataBuffer_Imp.h" />
-    <ClInclude Include="DLList.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="GenericCommand.h" />
     <ClInclude Include="Hash.h" />
@@ -227,9 +225,7 @@
     <ClInclude Include="Jupiter.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="IRC_Client.h" />
-    <ClInclude Include="List.h" />
     <ClInclude Include="Plugin.h" />
-    <ClInclude Include="Queue.h" />
     <ClInclude Include="Readable_String.h" />
     <ClInclude Include="Readable_String_Imp.h" />
     <ClInclude Include="Reference_String.h" />

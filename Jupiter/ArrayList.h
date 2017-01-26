@@ -25,14 +25,14 @@
  */
 
 #include "Jupiter.h"
-#include "List.h"
+#include "DataBuffer.h"
 
 namespace Jupiter
 {
 	/**
 	* @brief Provides an array-based list implementation using the List interface.
 	*/
-	template<typename T> class ArrayList : public List<T>
+	template<typename T> class ArrayList
 	{
 	public:
 
@@ -73,6 +73,13 @@ namespace Jupiter
 		* @param data Data to add to the list.
 		*/
 		void add(T *data);
+
+		/**
+		* @brief Returns the size of the list.
+		*
+		* @return Number of nodes in the list.
+		*/
+		size_t size() const { return m_length; };
 
 		/**
 		* @brief Empties the ArrayList of all elements.
@@ -120,6 +127,7 @@ namespace Jupiter
 	private:
 		T **data;
 		size_t dataSize;
+		size_t m_length;
 		size_t expandArray();
 	};
 
@@ -130,7 +138,9 @@ namespace Jupiter
 template<typename T> size_t Jupiter::ArrayList<T>::expandArray()
 {
 	T **tmp = new T *[Jupiter::ArrayList<T>::dataSize * 2];
-	for (size_t i = 0; i < Jupiter::ArrayList<T>::dataSize; i++) tmp[i] = data[i];
+	for (size_t i = 0; i < Jupiter::ArrayList<T>::dataSize; i++)
+		tmp[i] = data[i];
+
 	delete[] Jupiter::ArrayList<T>::data;
 	Jupiter::ArrayList<T>::data = tmp;
 	Jupiter::ArrayList<T>::dataSize *= 2;
@@ -145,18 +155,18 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList(size_t length_)
 {
 	Jupiter::ArrayList<T>::dataSize = length_;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
-	Jupiter::List<T>::length = 0;
+	m_length = 0;
 }
 
 template<typename T> Jupiter::ArrayList<T>::ArrayList(const Jupiter::ArrayList<T> &source)
 {
 	Jupiter::ArrayList<T>::dataSize = source.dataSize;
 	Jupiter::ArrayList<T>::data = new T*[Jupiter::ArrayList<T>::dataSize];
-	Jupiter::List<T>::length = 0;
-	while (Jupiter::List<T>::length != source.length)
+	m_length = 0;
+	while (m_length != source.m_length)
 	{
-		Jupiter::ArrayList<T>::data[Jupiter::List<T>::length] = source.data[Jupiter::List<T>::length];
-		++Jupiter::List<T>::length;
+		Jupiter::ArrayList<T>::data[m_length] = source.data[m_length];
+		++m_length;
 	}
 }
 
@@ -164,10 +174,10 @@ template<typename T> Jupiter::ArrayList<T>::ArrayList(ArrayList<T> &&source)
 {
 	Jupiter::ArrayList<T>::dataSize = source.dataSize;
 	Jupiter::ArrayList<T>::data = source.data;
-	Jupiter::List<T>::length = source.length;
+	m_length = source.m_length;
 	source.dataSize = Jupiter::ArrayList<T>::start_size;
 	source.data = new T*[source.dataSize];
-	source.length = 0;
+	source.m_length = 0;
 }
 
 template<typename T> Jupiter::ArrayList<T>::~ArrayList()
@@ -184,45 +194,53 @@ template<typename T> T *Jupiter::ArrayList<T>::remove(size_t index)
 {
 	T *r = Jupiter::ArrayList<T>::data[index];
 	Jupiter::ArrayList<T>::data[index] = nullptr;
-	for (size_t i = index + 1; i < Jupiter::List<T>::length; i++) Jupiter::ArrayList<T>::data[i - 1] = Jupiter::ArrayList<T>::data[i];
-	Jupiter::List<T>::length--;
+
+	for (size_t i = index + 1; i < m_length; i++)
+		Jupiter::ArrayList<T>::data[i - 1] = Jupiter::ArrayList<T>::data[i];
+
+	--m_length;
 	return r;
 }
 
 template<typename T> T *Jupiter::ArrayList<T>::pop()
 {
-	return Jupiter::ArrayList<T>::data[--Jupiter::List<T>::length];
+	return Jupiter::ArrayList<T>::data[--m_length];
 }
 
 template<typename T> void Jupiter::ArrayList<T>::add(T *ndata, size_t index)
 {
-	if (Jupiter::List<T>::length == Jupiter::ArrayList<T>::dataSize) Jupiter::ArrayList<T>::expandArray();
-	for (size_t i = Jupiter::List<T>::length; i > index; i--) Jupiter::ArrayList<T>::data[i] = Jupiter::ArrayList<T>::data[i - 1];
+	if (m_length == Jupiter::ArrayList<T>::dataSize) Jupiter::ArrayList<T>::expandArray();
+
+	for (size_t i = m_length; i > index; i--)
+		Jupiter::ArrayList<T>::data[i] = Jupiter::ArrayList<T>::data[i - 1];
+
 	Jupiter::ArrayList<T>::data[index] = ndata;
-	Jupiter::List<T>::length++;
+	++m_length;
 }
 
 template<typename T> void Jupiter::ArrayList<T>::add(T *ndata)
 {
-	Jupiter::ArrayList<T>::add(ndata, Jupiter::List<T>::length);
+	Jupiter::ArrayList<T>::add(ndata, m_length);
 }
 
 template<typename T> void Jupiter::ArrayList<T>::empty()
 {
-	Jupiter::List<T>::length = 0;
+	m_length = 0;
 }
 
 template<typename T> void Jupiter::ArrayList<T>::emptyAndDelete()
 {
-	while (Jupiter::List<T>::length != 0)
-		delete Jupiter::ArrayList<T>::data[--Jupiter::List<T>::length];
+	while (m_length != 0)
+		delete Jupiter::ArrayList<T>::data[--m_length];
 }
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::ArrayList>
 {
 	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::ArrayList<Y> *data)
 	{
-		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::List>::push<Y>(buffer, data);
+		buffer->push<size_t>(data->size());
+		for (size_t index = 0; index != data->size(); index++)
+			buffer->push<Y>(*data->get(index));
 	};
 
 	template<typename Y> static Jupiter::ArrayList<Y> interpret(uint8_t *&head)

@@ -22,9 +22,6 @@
     <Filter Include="Header Files\IRC">
       <UniqueIdentifier>{a7ca0e66-d9b7-43e2-a3f8-d89744bd3c06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Lists">
-      <UniqueIdentifier>{b0dabf12-3147-44f6-911e-01142cc4e3a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\IRC">
       <UniqueIdentifier>{6f290a91-7cd8-495e-ae20-22c956fcfbcb}</UniqueIdentifier>
     </Filter>
@@ -71,9 +68,6 @@
     </ClCompile>
     <ClCompile Include="Jupiter.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Queue.cpp">
-      <Filter>Source Files\Lists</Filter>
     </ClCompile>
     <ClCompile Include="TCPSocket.cpp">
       <Filter>Source Files\Sockets</Filter>
@@ -139,15 +133,6 @@
     </ClInclude>
     <ClInclude Include="Jupiter.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="List.h">
-      <Filter>Header Files\Lists</Filter>
-    </ClInclude>
-    <ClInclude Include="Queue.h">
-      <Filter>Header Files\Lists</Filter>
-    </ClInclude>
-    <ClInclude Include="DLList.h">
-      <Filter>Header Files\Lists</Filter>
     </ClInclude>
     <ClInclude Include="UDPSocket.h">
       <Filter>Header Files\Sockets</Filter>
