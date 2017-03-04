@@ -136,7 +136,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <Version>0.0</Version>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>libeay32MD.lib;ssleay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto32MD.lib;libssl32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>
@@ -168,7 +168,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ShowProgress>NotSet</ShowProgress>
       <Version>0.0</Version>
-      <AdditionalDependencies>libeay32MD.lib;ssleay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcrypto64MD.lib;libssl64MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>

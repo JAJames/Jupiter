@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2016 Jessica James.
+ * Copyright (C) 2013-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -45,7 +45,7 @@ namespace Jupiter
 		*/
 		enum EncryptionMethod
 		{
-			SSL3 = 1,	/** SSL 3.0 - Unrecommended */
+			//SSL3 = 1,	/** SSL 3.0 - Unrecommended */
 			TLS1 = 2,	/** TLS 1.0 - Unrecommended */
 			TLS1_1 = 3,	/** TLS 1.1 */
 			TLS1_2 = 4,	/** TLS 1.2 */

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2016 Jessica James.
+ * Copyright (C) 2013-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -122,8 +122,8 @@ const SSL_METHOD *translateEncryptionMethod(Jupiter::SecureSocket::EncryptionMet
 {
 	switch (method)
 	{
-	case Jupiter::SecureSocket::EncryptionMethod::SSL3:
-		return SSLv3_method();
+	//case Jupiter::SecureSocket::EncryptionMethod::SSL3:
+	//	return SSLv3_method();
 	case Jupiter::SecureSocket::EncryptionMethod::TLS1:
 		return TLSv1_method();
 	case Jupiter::SecureSocket::EncryptionMethod::TLS1_1:
