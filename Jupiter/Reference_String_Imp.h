@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -247,34 +247,34 @@ template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_Strin
 
 // tokenize
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T &separator) const
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T &separator) const
 {
 	return Jupiter::Reference_String<T>::tokenize(*this, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &separator) const
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &separator) const
 {
 	return Jupiter::Reference_String<T>::tokenize(*this, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T *separator, size_t separator_size) const
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const T *separator, size_t separator_size) const
 {
 	return Jupiter::Reference_String<T>::tokenize(*this, separator, separator_size);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template Reference_String>(in, token);
+	return typename Jupiter::Readable_String<T>::tokenize<typename Jupiter::Reference_String>(in, token);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template Reference_String>(in, separator);
+	return typename Jupiter::Readable_String<T>::tokenize<typename Jupiter::Reference_String>(in, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> Jupiter::Reference_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template Reference_String>(in, separator, separator_size);
+	return typename Jupiter::Readable_String<T>::tokenize<typename Jupiter::Reference_String>(in, separator, separator_size);
 }
 
 // Jupiter::DataBuffer specialization

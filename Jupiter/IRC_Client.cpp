@@ -1564,7 +1564,7 @@ Jupiter::IRC::Client::Channel::Channel(const Jupiter::ReadableString &in_name, J
 
 		while (itr != end)
 		{
-			result += tolower(*itr);
+			result += static_cast<char>(tolower(*itr));
 			++itr;
 		}
 

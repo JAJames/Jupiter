@@ -55,15 +55,14 @@ template<typename T> inline size_t Jupiter::default_hash_function(const T &in)
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Entry::Entry(const InKeyT &in_key)
+	: key{ in_key }
 {
-	key = in_key;
 }
 
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::Bucket::Entry::Entry(const InKeyT &in_key, const InValueT &in_value)
+	: key{ in_key }, value{ in_value }
 {
-	key = in_key;
-	value = in_value;
 }
 
 /** Hash_Table::Bucket */

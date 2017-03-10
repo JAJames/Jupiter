@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2016 Jessica James.
+ * Copyright (C) 2014-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -391,9 +391,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/**
 		* @brief Destructor for the Readable_String class.

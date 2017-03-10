@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2017 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1405,7 +1405,7 @@ template<typename T> template<template<typename> class R> inline typename Jupite
 
 // tokenize
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
 {
 	// special case: no input
 	if (in.isEmpty())
@@ -1454,12 +1454,12 @@ template<typename T> template<template<typename> class R> typename Jupiter::Read
 	return TokenizeResult<R>(tokens, length);
 }
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
 {
 	return Jupiter::Readable_String<T>::tokenize<R>(in, separator.ptr(), separator.size());
 }
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
 {
 	// special case: separator is a single element
 	if (separator_size == 1)
