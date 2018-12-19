@@ -41,8 +41,11 @@ int64_t getFileSize(const char *file)
 
 const size_t defaultBufferSize = 8192;
 
-//template class JUPITER_API Jupiter::CString_Type<char>;
-//template class JUPITER_API Jupiter::ArrayList<Jupiter::StringS>;
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 struct JUPITER_API Jupiter::File::Data
 {
@@ -53,6 +56,11 @@ struct JUPITER_API Jupiter::File::Data
 	Data(const Data &data);
 	~Data();
 };
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif
 
 Jupiter::File::Data::Data()
 {

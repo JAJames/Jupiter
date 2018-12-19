@@ -1,0 +1,5 @@
+# Setup MSVC-specific macros
+set(JUPITER_PRIVATE_DEFS
+        JUPITER_EXPORTS
+        _CRT_SECURE_NO_WARNINGS
+        _CRT_NONSTDC_NO_DEPRECATE)

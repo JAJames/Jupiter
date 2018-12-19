@@ -33,8 +33,5 @@ find_package(OpenSSL REQUIRED)
 target_include_directories(jupiter PUBLIC ../include)
 target_include_directories(jupiter PRIVATE ${OPENSSL_INCLUDE_DIR})
 
-# Setup additionally needed libs
-target_link_libraries(jupiter ${OPENSSL_LIBRARIES})
-
-# Setup macros JUPITER_EXPORTS
-target_compile_definitions(jupiter PRIVATE JUPITER_EXPORTS)
+# Setup platform-specific definitions
+target_compile_definitions(jupiter PRIVATE ${JUPITER_PRIVATE_DEFS})
