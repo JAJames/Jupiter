@@ -304,7 +304,7 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::callback(CallT 
 
 	while (itr != end)
 	{
-		itr->callback<CallT>(in_callback);
+		itr->template callback<CallT>(in_callback);
 		++itr;
 	}
 }
@@ -318,7 +318,7 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::callback(CallT 
 
 	while (itr != end)
 	{
-		itr->callback<CallT>(in_callback);
+		itr->template callback<CallT>(in_callback);
 		++itr;
 	}
 }
@@ -364,14 +364,12 @@ typename Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF> &Jupiter::Ha
 		else
 		{
 			// we need to erase data; slightly modified version of copy_to_buckets()
-			std::forward_list<Bucket::Entry>::iterator node;
-
 			size_t index = 0;
 			while (index != in_table.m_buckets_size)
 			{
 				in_table.m_buckets[index].m_entries.clear();
 
-				for (node = in_table.m_buckets[index].m_entries.begin(); node != in_table.m_buckets[index].m_entries.end(); ++node)
+				for (auto node = in_table.m_buckets[index].m_entries.begin(); node != in_table.m_buckets[index].m_entries.end(); ++node)
 					m_buckets[HashF(node->key) % m_buckets_size].set(node->key, node->value);
 
 				++index;
@@ -497,10 +495,8 @@ void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::expand()
 template<typename KeyT, typename ValueT, typename InKeyT, typename InValueT, size_t(*HashF)(const InKeyT &)>
 void Jupiter::Hash_Table<KeyT, ValueT, InKeyT, InValueT, HashF>::copy_to_buckets(Bucket *in_buckets, size_t in_buckets_size) const
 {
-	std::forward_list<Bucket::Entry>::iterator node;
-
 	for (size_t index = 0; index != m_buckets_size; ++index)
-		for (node = m_buckets[index].m_entries.begin(); node != m_buckets[index].m_entries.end(); ++node)
+		for (auto node = m_buckets[index].m_entries.begin(); node != m_buckets[index].m_entries.end(); ++node)
 			in_buckets[HashF(node->key) % in_buckets_size].set(node->key, node->value);
 }
 

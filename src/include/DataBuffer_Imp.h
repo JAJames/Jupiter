@@ -40,20 +40,8 @@ template<typename T> T Jupiter::DataBuffer::interpret_data(uint8_t *&head)
 	return r;
 }
 
-template<template<typename> class T, typename Y> static T<Y> interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl_std<T>::interpret<Y>(head);
-}
-
-template<template<typename, typename> class T, typename X, typename Y> static T<X, Y> interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::interpret<X, Y>(head);
-}
-
-template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> static T<X, Y, Z> interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::interpret<X, Y, Z>(head);
-}
+template<template<typename, typename> class T, typename X, typename Y> static T<X, Y> interpret_data(uint8_t *&head);
+template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> static T<X, Y, Z> interpret_data(uint8_t *&head);
 
 // Basic peek
 
@@ -204,7 +192,7 @@ template<template<typename> class T> struct _Jupiter_DataBuffer_partial_speciali
 
 template<template<typename> class T, typename Y> void Jupiter::DataBuffer::push(const T<Y> *data)
 {
-	_Jupiter_DataBuffer_partial_specialization_impl<T>::push<Y>(this, data);
+	_Jupiter_DataBuffer_partial_specialization_impl<T>::template push<Y>(this, data);
 }
 
 template<template<typename> class T, typename Y> void Jupiter::DataBuffer::push(const T<Y> &data)
@@ -214,7 +202,7 @@ template<template<typename> class T, typename Y> void Jupiter::DataBuffer::push(
 
 template<template<typename> class T, typename Y> T<Y> Jupiter::DataBuffer::interpret_data(uint8_t *&head)
 {
-	return _Jupiter_DataBuffer_partial_specialization_impl<T>::interpret<Y>(head);
+	return _Jupiter_DataBuffer_partial_specialization_impl<T>::template interpret<Y>(head);
 }
 
 // PUSH SPECIALIZATION: std::array
@@ -228,12 +216,12 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_array<std:
 	template<typename X, size_t Y> static void push(Jupiter::DataBuffer *buffer, const std::array<X, Y> *data)
 	{
 		buffer->push<size_t>(Y);
-		if (std::is_fundamental<std::array<X, Y>::value_type>::value)
+		if (std::is_fundamental<typename std::array<X, Y>::value_type>::value)
 			buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(std::array<X, Y>::value_type));
 		else
 		{
-			std::array<X, Y>::const_iterator itr = data->begin();
-			std::array<X, Y>::const_iterator end = data->end();
+			auto itr = data->begin();
+			auto end = data->end();
 			while (itr != end)
 				buffer->push<std::array<X, Y>::value_type>(*itr++);
 		}
@@ -242,7 +230,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_array<std:
 
 template<template<typename, size_t> class T, typename X, size_t Y> void Jupiter::DataBuffer::push(const T<X, Y> *data)
 {
-	_Jupiter_DataBuffer_partial_specialization_impl_std_array<T>::push<X, Y>(this, data);
+	_Jupiter_DataBuffer_partial_specialization_impl_std_array<T>::template push<X, Y>(this, data);
 }
 
 template<template<typename, size_t> class T, typename X, size_t Y> void Jupiter::DataBuffer::push(const T<X, Y> &data)
@@ -261,12 +249,12 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_vector<std
 	template<typename X, typename Y> static void push(Jupiter::DataBuffer *buffer, const std::vector<X, Y> *data)
 	{
 		buffer->push<std::vector<X, Y>::size_type>(data->size());
-		if (std::is_fundamental<std::vector<X, Y>::value_type>::value)
+		if (std::is_fundamental<typename std::vector<X, Y>::value_type>::value)
 			buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(std::vector<X, Y>::value_type));
 		else
 		{
-			std::vector<X, Y>::const_iterator itr = data->begin();
-			std::vector<X, Y>::const_iterator end = data->end();
+			auto itr = data->begin();
+			auto end = data->end();
 			while (itr != end)
 				buffer->push<std::vector<X, Y>::value_type>(*itr++);
 		}
@@ -279,14 +267,14 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_vector<std
 		std::vector<X, Y> r;
 		r.reserve(size_);
 		while (size_-- != 0)
-			r.push_back(Jupiter::DataBuffer::interpret_data<std::vector<X, Y>::value_type>(head));
+			r.push_back(Jupiter::DataBuffer::interpret_data<typename std::vector<X, Y>::value_type>(head));
 		return r;
 	}
 };
 
 template<template<typename, typename> class T, typename X, typename Y> void Jupiter::DataBuffer::push(const T<X, Y> *data)
 {
-	_Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::push<X, Y>(this, data);
+	_Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::template push<X, Y>(this, data);
 }
 
 template<template<typename, typename> class T, typename X, typename Y> void Jupiter::DataBuffer::push(const T<X, Y> &data)
@@ -296,7 +284,12 @@ template<template<typename, typename> class T, typename X, typename Y> void Jupi
 
 template<template<typename, typename> class T, typename X, typename Y> T<X, Y> Jupiter::DataBuffer::interpret_data(uint8_t *&head)
 {
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::interpret<X, Y>(head);
+	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::template interpret<X, Y>(head);
+}
+
+template<template<typename, typename> class T, typename X, typename Y> static T<X, Y> interpret_data(uint8_t *&head)
+{
+	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::template interpret<X, Y>(head);
 }
 
 // SPECIALIZATION: std::string
@@ -310,12 +303,12 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std
 	template<typename X, typename Y, typename Z> static void push(Jupiter::DataBuffer *buffer, const std::basic_string<X, Y, Z> *data)
 	{
 		buffer->push(data->size());
-		if (std::is_fundamental<std::basic_string<X, Y, Z>::value_type>::value)
+		if (std::is_fundamental<typename std::basic_string<X, Y, Z>::value_type>::value)
 			buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(X));
 		else
 		{
-			std::basic_string<X, Y, Z>::const_iterator itr = data->begin();
-			std::basic_string<X, Y, Z>::const_iterator end = data->end();
+			auto itr = data->begin();
+			auto end = data->end();
 			while (itr != end)
 				buffer->push<std::basic_string<X, Y, Z>::value_type>(*itr++);
 		}
@@ -335,7 +328,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std
 
 template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> void Jupiter::DataBuffer::push(const T<X, Y, Z> *data)
 {
-	_Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::push<X, Y, Z>(this, data);
+	_Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::template push<X, Y, Z>(this, data);
 }
 
 template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> void Jupiter::DataBuffer::push(const T<X, Y, Z> &data)
@@ -345,7 +338,12 @@ template<template<typename, typename, typename> class T, typename X, typename Y,
 
 template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> T<X, Y, Z> Jupiter::DataBuffer::interpret_data(uint8_t *&head)
 {
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::interpret<X, Y, Z>(head);
+	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::template interpret<X, Y, Z>(head);
+}
+
+template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> static T<X, Y, Z> interpret_data(uint8_t *&head)
+{
+	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::template interpret<X, Y, Z>(head);
 }
 
 #endif // _DATABUFFER_IMP_H_HEADER

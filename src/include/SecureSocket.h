@@ -164,7 +164,7 @@ namespace Jupiter
 		* @param source Socket to move data from
 		* @return Reference to this socket.
 		*/
-		SecureSocket &SecureSocket::operator=(SecureSocket &&source);
+		SecureSocket &operator=(SecureSocket &&source);
 
 		/**
 		* @brief Default constructor for the SecureSocket class.

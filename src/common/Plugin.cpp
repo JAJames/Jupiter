@@ -57,7 +57,7 @@ dlib::~dlib()
 #if defined _WIN32
 		FreeLibrary(dlib::lib);
 #else // _WIN32
-		dlclose(dllib::lib);
+		dlclose(dlib::lib);
 #endif // _WIN32
 	}
 }

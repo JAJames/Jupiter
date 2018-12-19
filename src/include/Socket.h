@@ -30,7 +30,13 @@
 #include "String.hpp"
 
 struct addrinfo;
+
+#ifdef _WIN32
 struct in_addr6;
+#else
+#define in_addr6 in6_addr
+struct in6_addr;
+#endif
 
 namespace Jupiter
 {
@@ -492,7 +498,7 @@ namespace Jupiter
 		* @param source Socket to move data from
 		* @return Reference to this socket.
 		*/
-		Socket &Socket::operator=(Socket &&source);
+		Socket &operator=(Socket &&source);
 
 		/**
 		* @brief Default constructor for the Socket class.
@@ -529,7 +535,7 @@ namespace Jupiter
 
 #if defined _WIN32
 		typedef uintptr_t SocketType;
-#else if
+#else
 		typedef int SocketType;
 #endif
 

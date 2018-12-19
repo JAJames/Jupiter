@@ -1376,7 +1376,13 @@ template<typename T> template<template<typename> class R> void Jupiter::Readable
 
 // TokenizeResult Operators
 
-template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename const Jupiter::Readable_String<T>::TokenizeResult<R> &source)
+#ifdef _WIN32
+#define TOKENIZE_RESULT_PREFIX
+#else // _WIN32
+#define TOKENIZE_RESULT_PREFIX template
+#endif // _WIN32
+
+template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TOKENIZE_RESULT_PREFIX TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(const Jupiter::Readable_String<T>::TokenizeResult<R> &source)
 {
 	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
@@ -1391,7 +1397,7 @@ template<typename T> template<template<typename> class R> inline typename Jupite
 	return *this;
 }
 
-template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(typename Jupiter::Readable_String<T>::TokenizeResult<R> &&source)
+template<typename T> template<template<typename> class R> inline typename Jupiter::Readable_String<T>::TOKENIZE_RESULT_PREFIX TokenizeResult<R> &Jupiter::Readable_String<T>::TokenizeResult<R>::operator=(Jupiter::Readable_String<T>::TokenizeResult<R> &&source)
 {
 	if (Jupiter::Readable_String<T>::TokenizeResult<R>::tokens != nullptr)
 		delete[] Jupiter::Readable_String<T>::TokenizeResult<R>::tokens;
@@ -1405,7 +1411,7 @@ template<typename T> template<template<typename> class R> inline typename Jupite
 
 // tokenize
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
 {
 	// special case: no input
 	if (in.isEmpty())
@@ -1454,12 +1460,12 @@ template<typename T> template<template<typename> class R> typename Jupiter::Read
 	return TokenizeResult<R>(tokens, length);
 }
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
 {
 	return Jupiter::Readable_String<T>::tokenize<R>(in, separator.ptr(), separator.size());
 }
 
-template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+template<typename T> template<template<typename> class R> typename Jupiter::Readable_String<T>::template TokenizeResult<R> Jupiter::Readable_String<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
 {
 	// special case: separator is a single element
 	if (separator_size == 1)

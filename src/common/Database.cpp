@@ -17,6 +17,7 @@
  */
 
 #include "Database.h"
+#include <cstring>
 
 struct Jupiter::Database::Data
 {
@@ -151,7 +152,8 @@ bool Jupiter::Database::append(const char *file, Jupiter::DataBuffer &data)
 
 bool Jupiter::Database::append(FILE *file, Jupiter::DataBuffer &data)
 {
-	fwrite(std::addressof<const size_t>(data.size()), sizeof(size_t), 1, file);
+	size_t data_size = data.size();
+	fwrite(&data_size, sizeof(size_t), 1, file);
 	fwrite(data.getHead(), sizeof(uint8_t), data.size(), file);
 	return true;
 }

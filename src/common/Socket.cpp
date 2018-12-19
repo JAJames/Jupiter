@@ -416,7 +416,7 @@ Jupiter::StringS Jupiter::Socket::ntop(void *ip, size_t size)
 Jupiter::Socket *Jupiter::Socket::accept()
 {
 	sockaddr addr;
-	int size = sizeof(addr);
+	socklen_t size = sizeof(addr);
 	SocketType tSock = ::accept(Socket::data_->rawSock, &addr, &size);
 	if (tSock != INVALID_SOCKET)
 	{
@@ -482,7 +482,7 @@ bool Jupiter::Socket::getBlockingMode() const
 #if defined _WIN32
 	return !Jupiter::Socket::data_->blockMode;
 #else // _WIN32
-	int flags = fcntl(sock_fd, F_GETFL, 0);
+	int flags = fcntl(data_->rawSock, F_GETFL, 0);
 	if (flags == -1) return false;
 	return !(flags & O_NONBLOCK);
 #endif

@@ -27,6 +27,7 @@
 
 #include "Functions.h"
 #include "CString.h"
+#include "String.hpp"
 
 #if !defined va_copy
 
@@ -322,7 +323,7 @@ template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::substrin
 
 template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::substring(const T *in, size_t pos)
 {
-	Jupiter::CString_Type<T> r = Jupiter::String_Type<T>::substring<Jupiter::CString_Type>(in, pos);
+	Jupiter::CString_Type<T> r = Jupiter::String_Type<T>::template substring<Jupiter::CString_Type>(in, pos);
 	r.str[r.length] = 0;
 	return r;
 }
@@ -338,7 +339,7 @@ template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::substrin
 
 template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::substring(const T *in, size_t pos, size_t len)
 {
-	Jupiter::CString_Type<T> r = Jupiter::String_Type<T>::substring<Jupiter::CString_Type>(in, pos, len);
+	Jupiter::CString_Type<T> r = Jupiter::String_Type<T>::template substring<Jupiter::CString_Type>(in, pos, len);
 	r.str[r.length] = 0;
 	return r;
 }
@@ -352,12 +353,12 @@ template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::getWord(
 
 template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::getWord<Jupiter::CString_Type>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template getWord<Jupiter::CString_Type>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::getWord(const T *in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::getWord<Jupiter::CString_Type>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template getWord<Jupiter::CString_Type>(in, pos, whitespace);
 }
 
 // gotoWord
@@ -369,39 +370,39 @@ template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::gotoWord
 
 template<typename T> Jupiter::CString_Type<T> Jupiter::CString_Type<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::gotoWord<Jupiter::CString_Type>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::CString_Type>(in, pos, whitespace);
 }
 
 // tokenize
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const T &separator) const
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const T &separator) const
 {
 	return Jupiter::CString_Type<T>::tokenize(*this, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &separator) const
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &separator) const
 {
 	return Jupiter::CString_Type<T>::tokenize(*this, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const T *separator, size_t separator_size) const
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const T *separator, size_t separator_size) const
 {
 	return Jupiter::CString_Type<T>::tokenize(*this, separator, separator_size);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type>(in, token);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type<T>>(in, token);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type>(in, separator);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type<T>>(in, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Type> Jupiter::CString_Type<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type>(in, separator, separator_size);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Type<T>>(in, separator, separator_size);
 }
 
 // set
@@ -480,7 +481,7 @@ template<typename T> size_t Jupiter::CString_Type<T>::concat(const T &in)
 
 template<typename T> inline Jupiter::CString_Type<T> Jupiter::CString_Type<T>::operator+(const T &rhs) const
 {
-	return Jupiter::operator+(*this, rhs);
+	return Jupiter::template operator+<T>(*this, rhs);
 }
 
 template<typename T> inline Jupiter::CString_Type<T> Jupiter::CString_Type<T>::operator+(const Jupiter::CString_Type<T> &rhs) const
@@ -780,7 +781,7 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substr
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(const T *in, size_t pos)
 {
-	Jupiter::CString_Loose<T> r = Jupiter::String_Type<T>::substring<Jupiter::CString_Loose>(in, pos);
+	Jupiter::CString_Loose<T> r = Jupiter::String_Type<T>::template substring<Jupiter::CString_Loose>(in, pos);
 	r.str[r.length] = 0;
 	return r;
 }
@@ -796,7 +797,7 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substr
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::substring(const T *in, size_t pos, size_t len)
 {
-	Jupiter::CString_Loose<T> r = Jupiter::String_Type<T>::substring<Jupiter::CString_Loose>(in, pos, len);
+	Jupiter::CString_Loose<T> r = Jupiter::String_Type<T>::template substring<Jupiter::CString_Loose>(in, pos, len);
 	r.str[r.length] = 0;
 	return r;
 }
@@ -808,12 +809,12 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::getWor
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::getWord<Jupiter::CString_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template getWord<Jupiter::CString_Loose>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::getWord(const T *in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::getWord<Jupiter::CString_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template getWord<Jupiter::CString_Loose>(in, pos, whitespace);
 }
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::gotoWord(size_t pos, const T *whitespace) const
@@ -823,39 +824,39 @@ template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::gotoWo
 
 template<typename T> Jupiter::CString_Loose<T> Jupiter::CString_Loose<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
-	return Jupiter::Readable_String<T>::gotoWord<Jupiter::CString_Loose>(in, pos, whitespace);
+	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::CString_Loose>(in, pos, whitespace);
 }
 
 // tokenize
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const T &token)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const T &token)
 {
 	return Jupiter::CString_Loose<T>::tokenize(*this, token);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &separator)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &separator)
 {
 	return Jupiter::CString_Loose<T>::tokenize(*this, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const T *separator, size_t separator_size)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const T *separator, size_t separator_size)
 {
 	return Jupiter::CString_Loose<T>::tokenize(*this, separator, separator_size);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const T &token)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose>(in, token);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose<T>>(in, token);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose>(in, separator);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose<T>>(in, separator);
 }
 
-template<typename T> typename Jupiter::Readable_String<T>::TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
+template<typename T> typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::CString_Loose> Jupiter::CString_Loose<T>::tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size)
 {
-	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose>(in, separator, separator_size);
+	return typename Jupiter::template Readable_String<T>::template tokenize<typename Jupiter::template CString_Loose<T>>(in, separator, separator_size);
 }
 
 // Operators

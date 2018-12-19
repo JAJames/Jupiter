@@ -25,8 +25,10 @@
  */
 
 #include <cwchar> // wchar_t
+#include <cwctype> // towupper
 #include <cstdio> // FILE
 #include <string> // std::basic_string<T> type
+#include <iostream> // std::endl
 #include "InvalidIndex.h"
 #include "DataBuffer.h"
 
@@ -391,9 +393,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/**
 		* @brief Destructor for the Readable_String class.

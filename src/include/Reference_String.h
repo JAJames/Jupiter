@@ -246,9 +246,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const T &separator) const;
-		Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &separator) const;
-		Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const T *separator, size_t separator_size) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const T &separator) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &separator) const;
+		typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const T *separator, size_t separator_size) const;
 
 		/**
 		* @brief Tokenizes a string, based on an input token separator
@@ -257,9 +257,9 @@ namespace Jupiter
 		* @param separator Separator to split tokens by
 		* @return TokenizeResult containing the results of the tokenization process.
 		*/
-		static Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		static Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		static Jupiter::Readable_String<T>::TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
+		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Mutative operators */
 		inline Readable_String<T> &operator-=(size_t right) { this->truncate(right); return *this; };

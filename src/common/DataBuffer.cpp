@@ -17,6 +17,7 @@
  */
 
 #include <cstdlib>
+#include <cstring>
 #include "DataBuffer.h"
 #include "Reference_String.h"
 
@@ -126,7 +127,8 @@ void Jupiter::DataBuffer::pop_from(FILE *file, size_t size_)
 
 void Jupiter::DataBuffer::copy_to(FILE *file)
 {
-	fwrite(std::addressof<const size_t>(Jupiter::DataBuffer::size()), sizeof(size_t), 1, file);
+	size_t data_size = Jupiter::DataBuffer::size();
+	fwrite(&data_size, sizeof(size_t), 1, file);
 	Jupiter::DataBuffer::copy_to(file, Jupiter::DataBuffer::size());
 }
 
