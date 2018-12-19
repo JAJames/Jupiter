@@ -27,7 +27,7 @@
 #include <cstdint>
 #include <cstddef>
 #include "Jupiter.h"
-#include "String.h"
+#include "String.hpp"
 
 namespace Jupiter
 {

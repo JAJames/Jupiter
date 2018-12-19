@@ -25,7 +25,7 @@
 */
 
 #include "Command.h"
-#include "String.h"
+#include "String.hpp"
 #include "ArrayList.h"
 
 /** DLL Linkage Nagging */

@@ -28,7 +28,7 @@
 #include "Thinker.h"
 #include "Rehash.h"
 #include "INIConfig.h"
-#include "String.h"
+#include "String.hpp"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER

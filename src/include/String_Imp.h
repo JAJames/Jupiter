@@ -24,7 +24,7 @@
 * @brief Provides the implementations for String_Strict and String_Loose.
 */
 
-#include "String.h"
+#include "String.hpp"
 
 #if !defined va_copy
 

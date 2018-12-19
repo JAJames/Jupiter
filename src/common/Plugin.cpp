@@ -29,7 +29,7 @@
 #include "Functions.h"
 #include "ArrayList.h"
 #include "CString.h"
-#include "String.h"
+#include "String.hpp"
 
 using namespace Jupiter::literals;
 

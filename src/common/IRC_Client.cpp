@@ -24,7 +24,7 @@
 #include "IRC_Client.h"
 #include "TCPSocket.h"
 #include "CString.h"
-#include "String.h"
+#include "String.hpp"
 #include "Plugin.h"
 #include "Base64.h"
 

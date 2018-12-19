@@ -18,7 +18,7 @@
 
 #include <ctime>
 #include <chrono>
-#include "String.h"
+#include "String.hpp"
 #include "CString.h"
 #include "Reference_String.h"
 #include "TCPSocket.h"

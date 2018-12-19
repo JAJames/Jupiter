@@ -25,7 +25,7 @@
  */
 
 #include <forward_list>
-#include "String.h"
+#include "String.hpp"
 
 namespace Jupiter
 {

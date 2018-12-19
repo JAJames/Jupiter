@@ -27,7 +27,7 @@
 #include <cstring>
 #include "Jupiter.h"
 #include "Readable_String.h"
-#include "String.h"
+#include "String.hpp"
 
 struct addrinfo;
 struct in_addr6;

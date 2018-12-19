@@ -20,7 +20,7 @@
 #include "ArrayList.h"
 #include "Functions.h"
 #include "Command.h"
-#include "String.h"
+#include "String.hpp"
 
 struct Jupiter::Command::Data
 {

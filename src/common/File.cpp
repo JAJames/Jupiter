@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 #include "File.h"
 #include "CString.h"
-#include "String.h"
+#include "String.hpp"
 #include "Reference_String.h"
 #include "ArrayList.h"
 
