@@ -26,8 +26,11 @@ set(SOURCE_FILES
 # Setup library build target
 add_library(jupiter SHARED ${SOURCE_FILES})
 
-# Find OpenSSL
+# Find and link OpenSSL
 find_package(OpenSSL REQUIRED)
+target_link_libraries(jupiter
+        OpenSSL::SSL
+        OpenSSL::Crypto)
 
 # Setup include directories
 target_include_directories(jupiter PUBLIC ../include)
