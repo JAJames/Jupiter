@@ -55,7 +55,7 @@ template<typename T> Jupiter::Reference_String<T>::Reference_String(Jupiter::Ref
 	Jupiter::Reference_String<T>::str = source.str;
 	Jupiter::Reference_String<T>::length = source.length;
 	source.length = 0;
-	source.str = "";
+	source.str = nullptr;
 }
 
 template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupiter::Readable_String<T> &in) : Reference_String(in.ptr(), in.size())
