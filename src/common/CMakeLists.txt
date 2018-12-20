@@ -31,6 +31,7 @@ find_package(OpenSSL REQUIRED)
 
 # Setup include directories
 target_include_directories(jupiter PUBLIC ../include)
+target_include_directories(jupiter PRIVATE ../include/Jupiter)
 target_include_directories(jupiter PRIVATE ${OPENSSL_INCLUDE_DIR})
 
 # Setup platform-specific definitions
