@@ -19,7 +19,7 @@
 #if !defined _HTTP_QUERYSTRING_H_HEADER
 #define _HTTP_QUERYSTRING_H_HEADER
 
-#include "String.h"
+#include "String.hpp"
 #include "Hash_Table.h"
 
 /**
