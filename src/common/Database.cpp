@@ -25,7 +25,7 @@ struct Jupiter::Database::Data
 	static bool create_database(FILE *file, const Jupiter::DataBuffer *header);
 
 	bool auto_create = true;
-	Jupiter::CStringS file_name;
+	std::string file_name;
 };
 
 void Jupiter::Database::process_header(FILE *)
@@ -38,11 +38,11 @@ void Jupiter::Database::create_header(FILE *)
 
 bool Jupiter::Database::process_file(const Jupiter::ReadableString &file)
 {
-	Jupiter::Database::data_->file_name = file;
+	Jupiter::Database::data_->file_name = static_cast<std::string>(file);
 	return Jupiter::Database::Data::process_file(this);
 }
 
-bool Jupiter::Database::process_file(const Jupiter::CStringType &file)
+bool Jupiter::Database::process_file(const std::string &file)
 {
 	Jupiter::Database::data_->file_name = file;
 	return Jupiter::Database::Data::process_file(this);
@@ -115,7 +115,7 @@ void Jupiter::Database::process_file_finish(FILE *)
 {
 }
 
-const Jupiter::CStringType &Jupiter::Database::getFilename() const
+const std::string &Jupiter::Database::getFilename() const
 {
 	return Jupiter::Database::data_->file_name;
 }
@@ -135,7 +135,7 @@ bool Jupiter::Database::append(Jupiter::ReadableString &file, Jupiter::DataBuffe
 	return r;
 }
 
-bool Jupiter::Database::append(Jupiter::CStringType &file, Jupiter::DataBuffer &data)
+bool Jupiter::Database::append(std::string &file, Jupiter::DataBuffer &data)
 {
 	return Jupiter::Database::append(file.c_str(), data);
 }
@@ -168,7 +168,7 @@ bool Jupiter::Database::create_database(const Jupiter::ReadableString &file, con
 	return r;
 }
 
-bool Jupiter::Database::create_database(const Jupiter::CStringType &file, const Jupiter::DataBuffer *header)
+bool Jupiter::Database::create_database(const std::string &file, const Jupiter::DataBuffer *header)
 {
 	return Jupiter::Database::create_database(file.c_str(), header);
 }

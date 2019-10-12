@@ -20,7 +20,6 @@
 #include <openssl/ssl.h> // OpenSSL SSL functions
 #include <openssl/err.h> // OpenSSL SSL errors
 #include "SecureSocket.h"
-#include "CString.h"
 
 struct Jupiter::SecureSocket::SSLData
 {
@@ -28,8 +27,8 @@ struct Jupiter::SecureSocket::SSLData
     SSL_CTX *context = nullptr;
 	const SSL_METHOD *method = nullptr;
 	Jupiter::SecureSocket::EncryptionMethod eMethod = ANY;
-	Jupiter::CStringS cert;
-	Jupiter::CStringS key;
+	std::string cert;
+	std::string key;
 	~SSLData();
 };
 
@@ -178,8 +177,8 @@ bool loadCertificate(SSL_CTX *context, const char *cert, const char *key)
 
 void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &cert, const Jupiter::ReadableString &key)
 {
-	Jupiter::SecureSocket::SSLdata_->cert = cert;
-	Jupiter::SecureSocket::SSLdata_->key = key;
+	Jupiter::SecureSocket::SSLdata_->cert = static_cast<std::string>(cert);
+	Jupiter::SecureSocket::SSLdata_->key = static_cast<std::string>(key);
 }
 
 void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &pem)
@@ -241,7 +240,7 @@ bool Jupiter::SecureSocket::initSSL()
 			ERR_print_errors_fp(stderr);
 			return false;
 		}
-		if (Jupiter::SecureSocket::SSLdata_->cert.isNotEmpty())
+		if (!Jupiter::SecureSocket::SSLdata_->cert.empty())
 			loadCertificate(Jupiter::SecureSocket::SSLdata_->context, Jupiter::SecureSocket::SSLdata_->cert.c_str(), Jupiter::SecureSocket::SSLdata_->key.c_str());
 	}
 

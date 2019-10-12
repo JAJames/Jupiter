@@ -19,7 +19,6 @@
 #include <ctime>
 #include <chrono>
 #include "String.hpp"
-#include "CString.h"
 #include "Reference_String.h"
 #include "TCPSocket.h"
 #include "ArrayList.h"
@@ -759,7 +758,7 @@ Jupiter::ReadableString *Jupiter::HTTP::Server::execute(const Jupiter::ReadableS
 bool Jupiter::HTTP::Server::bind(const Jupiter::ReadableString &hostname, uint16_t port)
 {
 	Jupiter::TCPSocket *socket = new Jupiter::TCPSocket();
-	if (socket->bind(Jupiter::CStringS(hostname).c_str(), port, true))
+	if (socket->bind(static_cast<std::string>(hostname).c_str(), port, true))
 	{
 		socket->setBlocking(false);
 		Jupiter::HTTP::Server::data_->ports.add(socket);
@@ -772,7 +771,7 @@ bool Jupiter::HTTP::Server::bind(const Jupiter::ReadableString &hostname, uint16
 bool Jupiter::HTTP::Server::tls_bind(const Jupiter::ReadableString &hostname, uint16_t port)
 {
 	Jupiter::SecureTCPSocket *socket = new Jupiter::SecureTCPSocket();
-	if (socket->bind(Jupiter::CStringS(hostname).c_str(), port, true))
+	if (socket->bind(static_cast<std::string>(hostname).c_str(), port, true))
 	{
 		Jupiter::HTTP::Server::data_->ports.add(socket);
 		return true;
@@ -821,7 +820,7 @@ int Jupiter::HTTP::Server::think()
 			else // reject
 				delete Jupiter::HTTP::Server::data_->sessions.remove(index);
 		}
-		else if (session->sock.getLastError() != 10035)
+		else if (session->sock.getLastError() != JUPITER_SOCK_EWOULDBLOCK)
 			delete Jupiter::HTTP::Server::data_->sessions.remove(index);
 	}
 
@@ -869,7 +868,7 @@ int Jupiter::HTTP::Server::think()
 				else // reject (too large)
 					delete session;
 			}
-			else if (session->sock.getLastError() == 10035) // store for more processing
+			else if (session->sock.getLastError() == JUPITER_SOCK_EWOULDBLOCK) // store for more processing
 				Jupiter::HTTP::Server::data_->sessions.add(session);
 		}
 	}

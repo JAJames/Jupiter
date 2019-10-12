@@ -314,7 +314,7 @@ namespace Jupiter
 					Jupiter::StringS m_prefixes;
 				};
 
-				typedef Jupiter::Hash_Table<Jupiter::StringS, Channel::User, Jupiter::ReadableString> UserTableType;
+				using UserTableType = std::unordered_map<Jupiter::StringS, Channel::User, default_hash_function>;
 
 				/**
 				* @brief Returns the name of the channel.
@@ -428,8 +428,8 @@ namespace Jupiter
 				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class
 
-			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::Channel, Jupiter::ReadableString> ChannelTableType;
-			typedef Jupiter::Hash_Table<Jupiter::StringS, Client::User, Jupiter::ReadableString> UserTableType;
+			using ChannelTableType = std::unordered_map<Jupiter::StringS, Client::Channel, default_hash_function>;
+			using UserTableType = std::unordered_map<Jupiter::StringS, Client::User, default_hash_function>;
 
 			/**
 			* @brief Returns the name of the primary config section this client reads from.
@@ -473,7 +473,7 @@ namespace Jupiter
 			*
 			* @return String containing a log file's name.
 			*/
-			const Jupiter::ReadableString &getLogFile() const;
+			const std::string &getLogFile() const;
 
 			/**
 			* @brief Returns the nickname prefixes supported by the connected server.
@@ -516,7 +516,7 @@ namespace Jupiter
 			*
 			* @return String containing a hostname.
 			*/
-			const Jupiter::ReadableString &getServerHostname() const;
+			const std::string &getServerHostname() const;
 
 			/**
 			* @brief Returns the server's port.
@@ -829,7 +829,7 @@ namespace Jupiter
 		private:
 			Jupiter::Socket *m_socket;
 			uint16_t m_server_port;
-			Jupiter::CStringS m_server_hostname;
+			std::string m_server_hostname;
 
 			bool m_ssl;
 			Jupiter::StringS m_ssl_certificate;
@@ -842,7 +842,7 @@ namespace Jupiter
 			Jupiter::StringS m_primary_section_name;
 			Jupiter::Config *m_primary_section;
 			Jupiter::Config *m_secondary_section;
-			Jupiter::CStringS m_log_file_name;
+			std::string m_log_file_name;
 			Jupiter::StringS m_last_line;
 			Jupiter::StringS m_server_name;
 			Jupiter::StringS m_nickname;

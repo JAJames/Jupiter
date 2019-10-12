@@ -27,6 +27,7 @@
  */
 
 #include "Shift_String.h"
+#include "Hash.h"
 
 /** Disable warning 4458 */
 #if defined _MSC_VER
@@ -269,11 +270,6 @@ namespace Jupiter
 		inline String_Strict<T> &operator=(const T right) { this->set(right); return *this; };
 
 		static const Jupiter::String_Strict<T> empty; /** Empty instantiation of String_Strict */
-
-	protected:
-
-		/** Dummy constructor to prevent string initialization */
-		String_Strict(Jupiter::String_Constructor_Base &) {};
 	};
 
 #if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
@@ -549,9 +545,6 @@ namespace Jupiter
 		static const size_t start_size = 8; /** Starting size for loose Strings. */
 
 	protected:
-		/** Dummy constructor to prevent string initialization */
-		String_Loose(Jupiter::String_Constructor_Base &) {};
-
 		size_t strSize; /** Size of underlying string buffer */
 	};
 
@@ -597,6 +590,16 @@ namespace Jupiter
 		inline Jupiter::StringS operator""_js(const char *str, size_t len) { return Jupiter::String(str, len); }
 		inline Jupiter::WStringS operator""_jws(const wchar_t *str, size_t len) { return Jupiter::WString(str, len); }
 	}
+
+	// Carried over from Hash_Table.h for compatibility
+	struct default_hash_function {
+		size_t operator()(const Jupiter::ReadableString& in) const {
+			if constexpr (sizeof(size_t) >= sizeof(uint64_t))
+				return static_cast<size_t>(Jupiter::fnv1a<char>(in));
+
+			return static_cast<size_t>(Jupiter::fnv1a_32<char>(in));
+		}
+	};
 }
 
 /** Re-enable warning */

@@ -307,8 +307,8 @@ namespace Jupiter
 		virtual ~String_Type() = default;
 
 	protected:
-		T *str; /** Pointer for the underlying string of elements */
-		size_t length; /** Number of representable elements in the string */
+		T *str{}; /** Pointer for the underlying string of elements */
+		size_t length{}; /** Number of representable elements in the string */
 	};
 
 	/** Generic String Type */

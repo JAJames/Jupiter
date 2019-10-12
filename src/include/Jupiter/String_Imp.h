@@ -54,7 +54,7 @@
 *	String_Strict
 */
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict() : Jupiter::String_Strict<T>::String_Strict(size_t(0))
+template<typename T> Jupiter::String_Strict<T>::String_Strict()
 {
 }
 

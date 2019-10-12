@@ -24,10 +24,12 @@
  * @brief Defines the Config class, which provides common functionality for Config files in differing formats.
  */
 
+#include <unordered_map>
+#include <memory>
 #include "Jupiter.h"
-#include "Hash_Table.h"
+#include "Hash.h"
 #include "Reference_String.h"
-#include "CString.h"
+#include "String.hpp"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -44,7 +46,14 @@ namespace Jupiter
 	{
 	public:
 		/** Hash_Table type for sections */
-		typedef Hash_Table<StringS, Config, ReadableString> SectionHashTable;
+		using SectionHashTable = std::unordered_map<StringS, Config, default_hash_function>;
+		using ValuesHashTable = std::unordered_map<StringS, StringS, default_hash_function>;
+
+		Config() = default;
+		Config(const Config& in_config);
+		Config(Config&& in_config) = default;
+		Config& operator=(const Config& in_config);
+		Config& operator=(Config&& in_config) = default;
 
 		/**
 		* @brief Fetches the value of an entry.
@@ -54,14 +63,6 @@ namespace Jupiter
 		* @return Value of the entry if it exists, an empty string otherwise.
 		*/
 		const Jupiter::ReadableString &get(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_default_value = Jupiter::ReferenceString::empty) const;
-
-		/**
-		* @brief Fetches the value of an entry
-		*
-		* @param in_key Key of the entry to fetch
-		* @return Pointer to the value of the entry on success, nullptr otherwise
-		*/
-		const Jupiter::ReadableString *getValue(const Jupiter::ReadableString &in_key) const;
 
 		/**
 		* @brief Fetches the value of an entry and interprets it as another type.
@@ -114,7 +115,7 @@ namespace Jupiter
 		*
 		* @return Name of this section
 		*/
-		const Jupiter::ReadableString &getName() const;
+		const std::string &getName() const;
 
 		/**
 		* @brief Erases all data from this section
@@ -188,14 +189,14 @@ namespace Jupiter
 		*
 		* @return Reference to m_table
 		*/
-		inline const HashTable &getTable() const { return m_table; }
+		inline const ValuesHashTable &getTable() const { return m_table; }
 
 		/**
 		* @brief Fetches a reference to this config's subsections
 		*
 		* @return Reference to m_sections
 		*/
-		inline const SectionHashTable &getSections() const { return m_sections; }
+		const SectionHashTable &getSections() const;
 
 		/** Subscript operator */
 		Config &operator[](const Jupiter::ReadableString &in_key);
@@ -224,13 +225,13 @@ namespace Jupiter
 		virtual bool write_internal(const char *in_filename);
 
 		/** Name of this Config section. This is empty or the filename at the root level. */
-		Jupiter::CStringS m_name;
+		std::string m_name;
 
 		/** Table of entries within this section */
-		HashTable m_table;
+		ValuesHashTable m_table;
 
 		/** Table of sections within this section */
-		SectionHashTable m_sections;
+		std::unique_ptr<SectionHashTable> m_sections;
 	};
 }
 
@@ -238,12 +239,12 @@ namespace Jupiter
 
 template<typename T> inline T Jupiter::Config::get(const Jupiter::ReadableString &in_key, T in_default_value) const
 {
-	const Jupiter::ReadableString *result = m_table.get(in_key);
+	auto result = m_table.find(in_key);
 
-	if (result == nullptr)
+	if (result == m_table.end())
 		return in_default_value;
 
-	return static_cast<T>(*result);
+	return static_cast<T>(result->second);
 }
 
 /** Re-enable warnings */

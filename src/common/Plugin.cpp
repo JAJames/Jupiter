@@ -18,6 +18,7 @@
 
 #include <cstring>
 #include <cstdio>
+#include <string_view>
 
 #if defined _WIN32
 #include <Windows.h>
@@ -28,10 +29,10 @@
 #include "Plugin.h"
 #include "Functions.h"
 #include "ArrayList.h"
-#include "CString.h"
 #include "String.hpp"
 
 using namespace Jupiter::literals;
+using namespace std::literals;
 
 #if defined _WIN32
 constexpr char directory_character = '\\';
@@ -63,9 +64,9 @@ dlib::~dlib()
 }
 
 #if defined _WIN32
-const Jupiter::ReferenceString module_file_extension = ".dll"_jrs;
+const char module_file_extension[]{ ".dll" };
 #else // _WIN32
-const Jupiter::ReferenceString module_file_extension = ".so"_jrs;
+const char module_file_extension[]{ ".so" };
 #endif // _WIN32
 
 const Jupiter::ReferenceString config_file_extension = ".ini"_jrs;
@@ -147,14 +148,14 @@ const Jupiter::ReadableString &Jupiter::Plugin::getConfigDirectory()
 
 Jupiter::Plugin *Jupiter::Plugin::load(const Jupiter::ReadableString &pluginName)
 {
-	Jupiter::CStringS file = plugins_directory + pluginName + module_file_extension;
+	std::string file = static_cast<std::string>(plugins_directory) + static_cast<std::string>(pluginName) + module_file_extension;
 	dlib *dPlug = new dlib();
 
 	// Load the library
 #if defined _WIN32
 	dPlug->lib = LoadLibraryA(file.c_str());
 #else // _WIN32
-	dPlug->lib = dlopen(file.c_str(), RTLD_LAZY);
+	dPlug->lib = dlopen(file.c_str(), RTLD_NOW);
 #endif // _WIN32
 	if (dPlug->lib == nullptr)
 	{

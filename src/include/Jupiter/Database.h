@@ -24,7 +24,7 @@
  * @brief Defines a database file structure.
  */
 
-#include "CString.h"
+#include "String.hpp"
 
 namespace Jupiter
 {
@@ -67,7 +67,7 @@ namespace Jupiter
 		* @return True on success, false otherwise
 		*/
 		bool process_file(const Jupiter::ReadableString &file);
-		bool process_file(const Jupiter::CStringType &file);
+		bool process_file(const std::string &file);
 		bool process_file(const char *file);
 		bool process_file(FILE *file);
 
@@ -83,7 +83,7 @@ namespace Jupiter
 		*
 		* @return Name of the file on the file system.
 		*/
-		const Jupiter::CStringType &getFilename() const;
+		const std::string &getFilename() const;
 
 		/**
 		* @brief Appends a DataBuffer to the end of the Database.
@@ -100,7 +100,7 @@ namespace Jupiter
 		* @return True on success, false otherwise.
 		*/
 		static bool append(Jupiter::ReadableString &file, Jupiter::DataBuffer &data);
-		static bool append(Jupiter::CStringType &file, Jupiter::DataBuffer &data);
+		static bool append(std::string &file, Jupiter::DataBuffer &data);
 		static bool append(const char *file, Jupiter::DataBuffer &data);
 		static bool append(FILE *file, Jupiter::DataBuffer &data);
 
@@ -112,7 +112,7 @@ namespace Jupiter
 		* @param header DataBuffer containing the header to write to the file
 		*/
 		static bool create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header = nullptr);
-		static bool create_database(const Jupiter::CStringType &file, const Jupiter::DataBuffer *header = nullptr);
+		static bool create_database(const std::string &file, const Jupiter::DataBuffer *header = nullptr);
 		static bool create_database(const char *file, const Jupiter::DataBuffer *header = nullptr);
 
 		/**

@@ -125,7 +125,7 @@ namespace Jupiter
 		virtual ~Shift_String_Type();
 
 	protected:
-		T *base; /** Base pointer for the underlying String's memory allocation */
+		T *base{ nullptr }; /** Base pointer for the underlying String's memory allocation */
 	};
 }
 

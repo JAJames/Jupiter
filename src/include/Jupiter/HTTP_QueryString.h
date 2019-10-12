@@ -19,8 +19,8 @@
 #if !defined _HTTP_QUERYSTRING_H_HEADER
 #define _HTTP_QUERYSTRING_H_HEADER
 
+#include <unordered_map>
 #include "String.hpp"
-#include "Hash_Table.h"
 
 /**
  * @file HTTP_QueryString.h
@@ -52,7 +52,28 @@ namespace Jupiter
 			HTMLFormResponse() = delete;
 			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.ptr(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
-			Jupiter::HashTable table;
+			using TableType = std::unordered_map<Jupiter::StringS, Jupiter::StringS, Jupiter::default_hash_function>;
+
+			template<typename CastT>
+			CastT tableGetCast(const Jupiter::StringS &in_key, const CastT &in_value) const {
+				auto item = table.find(in_key);
+				if (item != table.end()) {
+					return static_cast<CastT>(item->second);
+				}
+
+				return in_value;
+			}
+
+			const Jupiter::ReadableString& tableGet(const Jupiter::StringS& in_key, const Jupiter::ReadableString& in_value) {
+				auto item = table.find(in_key);
+				if (item != table.end()) {
+					return item->second;
+				}
+
+				return in_value;
+			}
+
+			TableType table;
 		};
 	}
 }
@@ -164,7 +185,7 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 		else if (*ptr == '&') // End of key/value, start of key
 		{
 			if (key.isNotEmpty()) // A key was already set; end of value
-				Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(token_start, buf - token_start));
+				Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start);
 
 			key.erase();
 			++buf, ++ptr;
@@ -190,13 +211,13 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 	{
 		key.set(token_start, ++buf - token_start);
 		*buf = *++ptr;
-		Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(ptr, 1));
+		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(ptr, 1);
 	}
 	else
 		*++buf = *++ptr;
 
 	if (key.isNotEmpty()) // A key was already set; end of value
-		Jupiter::HTTP::HTMLFormResponse::table.set(key, Jupiter::ReferenceString(token_start, buf - token_start + 1));
+		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start + 1);
 
 	Jupiter::StringType::length = buf + 1 - str;
 }

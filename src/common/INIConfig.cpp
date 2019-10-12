@@ -37,7 +37,7 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 		for (index = 0; index != in_depth; ++index)
 			fputc('[', in_file);
 
-		in_section->getName().print(in_file);
+		fputs(in_section->getName().c_str(), in_file);
 
 		for (index = 0; index != in_depth; ++index)
 			fputc(']', in_file);
@@ -46,42 +46,21 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 	}
 
 	// Write table entries
+	for (auto& table_entry : in_section->getTable())
 	{
-		auto bucket_itr = in_section->getTable().begin();
-		auto bucket_end = in_section->getTable().end();
-		std::forward_list<HashTable::Bucket::Entry>::iterator entry_itr;
+		// Tabs
+		for (index = 1; index < in_depth; ++index)
+			fputc('\t', in_file);
 
-		while (bucket_itr != bucket_end)
-		{
-			for (entry_itr = bucket_itr->m_entries.begin(); entry_itr != bucket_itr->m_entries.end(); ++entry_itr)
-			{
-				// Tabs
-				for (index = 1; index < in_depth; ++index)
-					fputc('\t', in_file);
-
-				// Write entry
-				entry_itr->key.print(in_file);
-				fputs(" = ", in_file);
-				entry_itr->value.println(in_file);
-			}
-
-			++bucket_itr;
-		}
+		// Write entry
+		table_entry.first.print(in_file);
+		fputs(" = ", in_file);
+		table_entry.second.println(in_file);
 	}
 
 	// Write subsections
-	{
-		auto bucket_itr = in_section->getSections().begin();
-		auto bucket_end = in_section->getSections().end();
-		std::forward_list<SectionHashTable::Bucket::Entry>::iterator entry_itr;
-
-		while (bucket_itr != bucket_end)
-		{
-			for (entry_itr = bucket_itr->m_entries.begin(); entry_itr != bucket_itr->m_entries.end(); ++entry_itr)
-				write_helper(in_file, &entry_itr->value, in_depth + 1);
-
-			++bucket_itr;
-		}
+	for (auto& subsection : in_section->getSections()) {
+		write_helper(in_file, &subsection.second, in_depth + 1);
 	}
 }
 

@@ -55,7 +55,7 @@ namespace Jupiter
 		*
 		* @return String containing the name of the first file loaded into this file.
 		*/
-		const Jupiter::ReadableString &getFileName() const;
+		const std::string &getFileName() const;
 
 		/**
 		* @brief Adds data to a file, which may consist of one or more lines.

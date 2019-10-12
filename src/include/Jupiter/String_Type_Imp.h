@@ -796,11 +796,6 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 	return r;
 }
 
-namespace Jupiter
-{
-	static struct String_Constructor_Base {} stringConstructorBase;
-}
-
 // Jupiter::DataBuffer specialization
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type>

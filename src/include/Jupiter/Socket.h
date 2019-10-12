@@ -32,8 +32,10 @@
 struct addrinfo;
 
 #ifdef _WIN32
+#define JUPITER_SOCK_EWOULDBLOCK 10035
 struct in_addr6;
 #else
+#define JUPITER_SOCK_EWOULDBLOCK EWOULDBLOCK
 #define in_addr6 in6_addr
 struct in6_addr;
 #endif
@@ -294,7 +296,7 @@ namespace Jupiter
 		*
 		* @return String containing the hostname.
 		*/
-		const Jupiter::ReadableString &getRemoteHostname() const;
+		const std::string &getRemoteHostname() const;
 		const char *getRemoteHostnameC() const;
 
 		/**
@@ -302,7 +304,7 @@ namespace Jupiter
 		*
 		* @return String containing the hostname.
 		*/
-		const Jupiter::ReadableString &getBoundHostname() const;
+		const std::string &getBoundHostname() const;
 		const char *getBoundHostnameC() const;
 
 		/**
