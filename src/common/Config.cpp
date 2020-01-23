@@ -26,6 +26,7 @@ Jupiter::Config::Config(const Config& in_config)
 
 Jupiter::Config& Jupiter::Config::operator=(const Config& in_config) {
 	m_sections = std::make_unique<SectionHashTable>(*in_config.m_sections);
+	return *this;
 }
 
 const Jupiter::ReadableString &Jupiter::Config::get(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_default_value) const

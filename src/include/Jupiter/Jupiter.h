@@ -40,7 +40,7 @@
 #define JUPITER_PLATFORM
 #endif
 
-#define JUPITER_VERSION "Jupiter 0.19-dev (" JUPITER_PLATFORM __DATE__ ")" /** Version of this program at compile time. */
+#define JUPITER_VERSION "Jupiter 0.19 (" JUPITER_PLATFORM __DATE__ ")" /** Version of this program at compile time. */
 
 #if defined __cplusplus
 extern "C"
