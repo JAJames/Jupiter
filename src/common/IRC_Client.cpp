@@ -1082,37 +1082,44 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 											Jupiter::ReferenceString modes = modestring.getWord(0, " ");
 											if (modes.isNotEmpty())
 											{
-												modestring.shiftRight(modestring.find(' ') + 1);
+												Jupiter::ReferenceString modeParameters = modestring.gotoWord(1, " ");
 												Jupiter::ReferenceString tword;
-												unsigned char g = 0;
+												unsigned char word_index = 0;
 												char symb = 0;
-												for (uint8_t z = 0; z != modes.size(); z++)
+												for (uint8_t mode_index = 0; mode_index != modes.size(); mode_index++)
 												{
-													if (modes[z] == '+' || modes[z] == '-')
-														symb = modes[z];
-													else if (m_prefix_modes.contains(modes[z])) // user prefix mode
+													if (modes[mode_index] == '+' || modes[mode_index] == '-')
+														symb = modes[mode_index];
+													else if (m_prefix_modes.contains(modes[mode_index])) // user prefix mode
 													{
+														tword = modeParameters.getWord(word_index, " ");
+														if (tword.isNotEmpty() && tword[0] == ':') {
+															// Sttrip leading ':'
+															tword.shiftRight(1);
 
-														tword = modestring.getWord(g, " ");
+															// erase modeParameters
+															modeParameters.erase();
+														}
+
 														if (tword.isNotEmpty())
 														{
 															Jupiter::IRC::Client::Channel *channel = getChannel(chan);
 															if (channel != nullptr)
 															{
 																if (symb == '+')
-																	channel->addUserPrefix(Jupiter::ReferenceString(tword), m_prefixes[m_prefix_modes.find(modes[z])]);
+																	channel->addUserPrefix(tword, m_prefixes[m_prefix_modes.find(modes[mode_index])]);
 																else
-																	channel->delUserPrefix(Jupiter::ReferenceString(tword), m_prefixes[m_prefix_modes.find(modes[z])]);
+																	channel->delUserPrefix(tword, m_prefixes[m_prefix_modes.find(modes[mode_index])]);
 															}
 														}
-														g++;
+														++word_index;
 													}
-													else if (m_modeA.contains(modes[z])) // mode type A
-														g++;
-													else if (m_modeB.contains(modes[z])) // mode type B
-														g++;
-													else if (m_modeC.contains(modes[z]) && symb == '+') // mode type C (with parameter)
-														g++;
+													else if (m_modeA.contains(modes[mode_index])) // mode type A
+														++word_index;
+													else if (m_modeB.contains(modes[mode_index])) // mode type B
+														++word_index;
+													else if (m_modeC.contains(modes[mode_index]) && symb == '+') // mode type C (with parameter)
+														++word_index;
 													// else; // mode type D
 												}
 											}
