@@ -110,6 +110,14 @@ namespace Jupiter
 		bool remove(const Jupiter::ReadableString &in_key);
 
 		/**
+		* @brief Removes a section from the table
+		*
+		* @param in_key Key of the section to remove
+		* @return True if an entry was removed, false otherwise
+		*/
+		bool removeSection(const Jupiter::ReadableString &in_key);
+
+		/**
 		* @brief Fetches the name of this config section
 		* Note: This is the filename on the root node
 		*

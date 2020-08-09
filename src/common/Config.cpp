@@ -76,6 +76,11 @@ bool Jupiter::Config::remove(const Jupiter::ReadableString &in_key)
 	return m_table.erase(in_key) > 0;
 }
 
+bool Jupiter::Config::removeSection(const Jupiter::ReadableString &in_key)
+{
+	return m_sections != nullptr && m_sections->erase(in_key) > 0;
+}
+
 const std::string &Jupiter::Config::getName() const
 {
 	return m_name;
