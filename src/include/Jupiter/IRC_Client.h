@@ -828,7 +828,7 @@ namespace Jupiter
 
 		/** Private members */
 		private:
-			Jupiter::Socket *m_socket;
+			std::unique_ptr<Jupiter::Socket> m_socket;
 			uint16_t m_server_port;
 			std::string m_server_hostname;
 

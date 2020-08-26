@@ -89,24 +89,26 @@ Jupiter::IRC::Client::Client(Jupiter::Config *in_primary_section, Jupiter::Confi
 		m_log_file = fopen(m_log_file_name.c_str(), "a+b");
 	else m_log_file = nullptr;
 
-	if (m_ssl)
-	{
+	if (m_ssl) {
 		Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket();
+
 		if (m_ssl_certificate.isNotEmpty())
 			t->setCertificate(m_ssl_certificate, m_ssl_key);
-		m_socket = t;
+
+		m_socket.reset(t);
 	}
-	else m_socket = new Jupiter::TCPSocket();
+	else {
+		m_socket.reset(new Jupiter::TCPSocket());
+	}
 
 	m_connection_status = 0;
 }
 
-Jupiter::IRC::Client::~Client()
-{
-	m_socket->close();
-
-	if (m_socket != nullptr)
-		delete m_socket;
+Jupiter::IRC::Client::~Client() {
+	if (m_socket != nullptr) {
+		m_socket->close();
+		m_socket = nullptr;
+	}
 
 	if (m_log_file != nullptr)
 		fclose(m_log_file);
@@ -476,8 +478,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 							if (m_ssl == false)
 							{
 								m_ssl = true;
-								delete m_socket;
-								m_socket = new Jupiter::SecureTCPSocket();
+								m_socket.reset(new Jupiter::SecureTCPSocket());
 							}
 						}
 						else
@@ -486,8 +487,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 							if (m_ssl == true)
 							{
 								m_ssl = false;
-								delete m_socket;
-								m_socket = new Jupiter::TCPSocket();
+								m_socket.reset(new Jupiter::TCPSocket());
 							}
 						}
 						if (port != 0) // Don't default -- could be non-compliant input.
@@ -518,8 +518,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 									if (m_ssl == false)
 									{
 										m_ssl = true;
-										delete m_socket;
-										m_socket = new Jupiter::SecureTCPSocket();
+										m_socket.reset(new Jupiter::SecureTCPSocket());
 									}
 								}
 								else
@@ -528,8 +527,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 									if (m_ssl == true)
 									{
 										m_ssl = false;
-										delete m_socket;
-										m_socket = new Jupiter::TCPSocket();
+										m_socket.reset(new Jupiter::TCPSocket());
 									}
 								}
 								if (bouncePort != 0)
@@ -556,8 +554,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 						case Reply::STARTTLS: // 670
 						{
 							Jupiter::SecureTCPSocket *t = new Jupiter::SecureTCPSocket(std::move(*m_socket));
-							delete m_socket;
-							m_socket = t;
+							m_socket.reset(t);
 							m_ssl = true;
 							// toggle blocking to prevent error
 							if (m_ssl_certificate.isNotEmpty())
@@ -1248,14 +1245,12 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 			if (m_ssl_certificate.isNotEmpty())
 				t->setCertificate(m_ssl_certificate, m_ssl_key);
 
-			delete m_socket;
-			m_socket = t;
+			m_socket.reset(t);
 		}
 		else
 		{
 			Jupiter::TCPSocket *t = new Jupiter::TCPSocket(std::move(*m_socket));
-			delete m_socket;
-			m_socket = t;
+			m_socket.reset(t);
 		}
 	}
 	for (size_t i = 0; i < Jupiter::plugins->size(); i++)
