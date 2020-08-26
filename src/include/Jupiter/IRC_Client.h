@@ -26,6 +26,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <utility>
 #include "Jupiter.h"
 #include "Thinker.h"
 #include "IRC.h"
@@ -310,11 +311,11 @@ namespace Jupiter
 
 				/** Private members */
 				private:
-					Jupiter::IRC::Client::User *m_user = nullptr;
+					std::shared_ptr<Jupiter::IRC::Client::User> m_user;
 					Jupiter::StringS m_prefixes;
 				};
 
-				using UserTableType = std::unordered_map<Jupiter::StringS, Channel::User, default_hash_function>;
+				using UserTableType = std::unordered_map<Jupiter::StringS, std::shared_ptr<Channel::User>, default_hash_function>;
 
 				/**
 				* @brief Returns the name of the channel.
@@ -329,7 +330,7 @@ namespace Jupiter
 				* @param nickname String containing the nickname of the user to find.
 				* @return A user if a match is found, nullptr otherwise.
 				*/
-				Jupiter::IRC::Client::Channel::User *getUser(const Jupiter::ReadableString &in_nickname) const;
+				std::shared_ptr<Channel::User> getUser(const Jupiter::ReadableString &in_nickname) const;
 
 				/**
 				* @brief Adds a user to the channel
@@ -337,7 +338,7 @@ namespace Jupiter
 				* @param nickname Nickname of the user.
 				* @return Index of the new user.
 				*/
-				Channel::User *addUser(Jupiter::IRC::Client::User *in_user);
+				std::shared_ptr<Channel::User> addUser(std::shared_ptr<Client::User> in_user);
 
 				/**
 				* @brief Adds a user to the channel
@@ -346,7 +347,7 @@ namespace Jupiter
 				* @param prefix The user's prefix.
 				* @return Index of the new user.
 				*/
-				Channel::User *addUser(Jupiter::IRC::Client::User *in_user, const char in_prefix);
+				std::shared_ptr<Channel::User> addUser(std::shared_ptr<Client::User> in_user, const char in_prefix);
 
 				/**
 				* @brief Removes a user from the channel.
@@ -429,7 +430,7 @@ namespace Jupiter
 			}; // Jupiter::IRC::Client::Channel class
 
 			using ChannelTableType = std::unordered_map<Jupiter::StringS, Client::Channel, default_hash_function>;
-			using UserTableType = std::unordered_map<Jupiter::StringS, Client::User, default_hash_function>;
+			using UserTableType = std::unordered_map<Jupiter::StringS, std::shared_ptr<Client::User>, default_hash_function>;
 
 			/**
 			* @brief Returns the name of the primary config section this client reads from.
@@ -597,7 +598,7 @@ namespace Jupiter
 			* @param nickname String containing the nickname of the user to fetch.
 			* @return A User if a match is found, nullptr otherwise.
 			*/
-			Jupiter::IRC::Client::User *getUser(const Jupiter::ReadableString &in_nickname) const;
+			std::shared_ptr<User> getUser(const Jupiter::ReadableString &in_nickname) const;
 
 			/**
 			* @brief Fetches the channel table
@@ -876,8 +877,8 @@ namespace Jupiter
 
 			bool startCAP();
 			bool registerClient();
-			Jupiter::IRC::Client::User *findUser(const Jupiter::ReadableString &in_nickname) const;
-			Jupiter::IRC::Client::User *findUserOrAdd(const Jupiter::ReadableString &in_nickname);
+			std::shared_ptr<User> findUser(const Jupiter::ReadableString &in_nickname) const;
+			std::shared_ptr<User> findUserOrAdd(const Jupiter::ReadableString &in_nickname);
 		}; // Jupiter::IRC::Client class
 
 	} // Jupiter::IRC namespace
