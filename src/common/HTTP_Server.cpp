@@ -268,7 +268,7 @@ struct Jupiter::HTTP::Server::Data
 	Jupiter::ArrayList<HTTPSession> sessions;
 	std::chrono::milliseconds session_timeout = std::chrono::milliseconds(2000); // TODO: Config variable
 	std::chrono::milliseconds keep_alive_session_timeout = std::chrono::milliseconds(5000); // TODO: Config variable
-	size_t max_request_size = 1024; // TODO: Config variable
+	size_t max_request_size = 8192; // TODO: Config variable
 	bool permit_keept_alive = true; // TODO: Config variable
 
 	/** Foward functions */
