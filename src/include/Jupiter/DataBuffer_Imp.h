@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <array>
+#include <string>
 
 /**
 * IMPLEMENTATION:

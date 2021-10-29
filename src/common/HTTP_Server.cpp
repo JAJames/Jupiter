@@ -790,7 +790,6 @@ int Jupiter::HTTP::Server::think()
 	while (index != 0)
 	{
 		session = Jupiter::HTTP::Server::data_->sessions.get(--index);
-		std::chrono::steady_clock::now();
 		if (session->sock.isShutdown())
 		{
 			if (session->sock.recv() == 0)
