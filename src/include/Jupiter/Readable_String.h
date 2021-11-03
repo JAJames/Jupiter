@@ -447,6 +447,7 @@ namespace Jupiter
 		explicit inline operator double() const { return this->asDouble(); }
 		explicit inline operator long double() const { return this->asDouble(); } // NEEDS TO NOT CAST FROM DOUBLE
 		explicit inline operator std::basic_string<T>() const { return std::basic_string<T>(this->ptr(), this->size()); }
+		inline operator std::basic_string_view<T>() const { return std::basic_string_view<T>(this->ptr(), this->size()); }
 
 	private:
 		template<typename R> R calcChecksumiHelper() const;
