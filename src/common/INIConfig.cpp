@@ -141,7 +141,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 			// Truncate spaces
 			--end;
 
-			while (isspace(*end))
+			while (isspace(static_cast<unsigned char>(*end)))
 				--end; // don't need a safety check since we know there is at least 1 non-space character
 			// end now points to a non-space character within the bounds
 
