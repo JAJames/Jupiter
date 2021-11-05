@@ -37,10 +37,32 @@
 #endif // _WIN32
 
 #if !defined JUPITER_PLATFORM
-#define JUPITER_PLATFORM
+
+#ifdef _WIN64
+#define JUPITER_PLATFORM "Win64"
+#elif defined _WIN32
+#define JUPITER_PLATFORM "Win32"
+#elif defined __linux__
+#define JUPITER_PLATFORM "Linux"
+#elif defined __unix__
+#define JUPITER_PLATFORM "UNIX"
+#elif defined _POSIX_VERSION
+#define JUPITER_PLATFORM "POSIX"
+#else
+#define JUPITER_PLATFORM "Unknown"
 #endif
 
-#define JUPITER_VERSION "Jupiter 1.0 (" JUPITER_PLATFORM __DATE__ ")" /** Version of this program at compile time. */
+#endif // JUPITER_PLATFORM
+
+#if !defined JUPITER_VERSION_SHORT
+#if !defined JUPITER_REVISION
+#define JUPITER_REVISION
+#endif // JUPITER_REVISION
+
+#define JUPITER_VERSION_SHORT "1.1.0" JUPITER_REVISION
+#endif // JUPITER_VERSION_SHORT
+
+#define JUPITER_VERSION "Jupiter " JUPITER_VERSION_SHORT " (" JUPITER_PLATFORM " " __DATE__ ")" /** Version of this program at compile time. */
 
 #if defined __cplusplus
 extern "C"
