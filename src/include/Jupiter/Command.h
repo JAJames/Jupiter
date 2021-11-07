@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,6 @@
  */
 
 #include "Jupiter.h"
-#include "ArrayList.h"
 #include "Reference_String.h"
 
 namespace Jupiter
@@ -94,7 +93,7 @@ namespace Jupiter
 		/** Private members */
 	private:
 		struct Data;
-		Data *data_;
+		Data *m_data;
 	};
 
 }

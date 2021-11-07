@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Jessica James.
+ * Copyright (C) 2015-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,10 +24,10 @@
  * @brief Provides an interface to distribute data using HTTP.
  */
 
+#include <memory>
 #include "Jupiter.h"
 #include "Thinker.h"
 #include "Readable_String.h"
-#include "ArrayList.h"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -67,18 +67,20 @@ namespace Jupiter
 			class JUPITER_API Directory
 			{
 			public:
-				Jupiter::ArrayList<Jupiter::HTTP::Server::Directory> directories;
-				Jupiter::ArrayList<Jupiter::HTTP::Server::Content> content;
+				std::vector<std::unique_ptr<Server::Directory>> directories;
+				std::vector<std::unique_ptr<Server::Content>> content;
 				Jupiter::StringS name;
 				unsigned int name_checksum;
 
-				virtual void hook(const Jupiter::ReadableString &path, Content *in_content);
+				virtual void hook(const Jupiter::ReadableString &path, std::unique_ptr<Content> in_content);
 				//virtual bool remove(const Jupiter::ReadableString &path);
 				virtual bool remove(const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
 				virtual bool has(const Jupiter::ReadableString &name);
-				virtual Jupiter::HTTP::Server::Content *find(const Jupiter::ReadableString &name);
-				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
+				virtual Jupiter::HTTP::Server::Content* find(const Jupiter::ReadableString &name);
+				virtual Jupiter::ReadableString* execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
 
+				Directory(const Directory&) = delete;
+				Directory& operator=(const Directory&) = delete;
 				Directory(const Jupiter::ReadableString &in_name);
 				virtual ~Directory();
 			};
@@ -95,7 +97,7 @@ namespace Jupiter
 				Host(const Jupiter::ReadableString &in_name);
 			};
 
-			void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, Content *in_content);
+			void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, std::unique_ptr<Content> in_content);
 			bool remove(const Jupiter::ReadableString &host);
 			//bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path);
 			bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
@@ -115,7 +117,7 @@ namespace Jupiter
 		/** Private members */
 		private:
 			struct Data;
-			Data *data_;
+			Data *m_data;
 		}; // Jupiter::HTTP::Server class
 	} // Jupiter::HTTP namespace
 } // Jupiter namespace

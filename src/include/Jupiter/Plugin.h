@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2016 Jessica James.
+ * Copyright (C) 2014-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,7 +24,6 @@
  * @brief Provides a hot-swapable plugin system.
  */
 
-#include "ArrayList.h"
 #include "Thinker.h"
 #include "Rehash.h"
 #include "INIConfig.h"
@@ -376,7 +375,7 @@ namespace Jupiter
 	};
 
 	/** The list containing pointers to plugins */
-	JUPITER_API extern Jupiter::ArrayList<Jupiter::Plugin> *plugins;
+	JUPITER_API extern std::vector<Jupiter::Plugin*>& plugins; // TODO: There are better ways to expose this
 }
 
 /** Re-enable warnings */

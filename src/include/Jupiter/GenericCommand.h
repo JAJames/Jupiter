@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Jessica James.
+ * Copyright (C) 2015-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -24,9 +24,9 @@
 * @brief Provides an extendable command system.
 */
 
+#include <memory>
 #include "Command.h"
 #include "String.hpp"
-#include "ArrayList.h"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -41,8 +41,9 @@ namespace Jupiter
 	/**
 	* @brief Provides the base for generic commands.
 	*/
-	class JUPITER_API GenericCommand : public Jupiter::Command
-	{
+	class JUPITER_API GenericCommand : public Jupiter::Command, public std::enable_shared_from_this<GenericCommand> {
+		// Note: only needs shared_from_this because of the horrendous way this was originally written before shared_ptr
+		// This isn't worth improving since it should be replaced eventually
 	public:
 		/** Enumerated class to guide output in generic command interpreters */
 		enum class DisplayType
@@ -138,7 +139,7 @@ namespace Jupiter
 		bool isUsing() const;
 		void setUsing(bool in_value);
 
-		Jupiter::ArrayList<GenericCommand> getCommands() const; // differs from m_commands in that it checks if it's using a namespace
+		std::vector<GenericCommand*> getCommands() const; // differs from m_commands in that it checks if it's using a namespace
 		GenericCommand *getCommand(const Jupiter::ReadableString &in_command) const;
 
 		void addCommand(GenericCommand &in_command);
@@ -151,7 +152,7 @@ namespace Jupiter
 
 	protected:
 		bool m_using;
-		Jupiter::ArrayList<GenericCommand> m_commands;
+		std::vector<GenericCommand*> m_commands;
 
 	private:
 		bool m_should_update_help = true;
@@ -183,8 +184,8 @@ class CLASS : public Jupiter::GenericCommand { \
 class CLASS ## _Init : public CLASS { \
 public: \
 	CLASS ## _Init() { \
-		for (size_t index = 0; index != Jupiter::plugins->size(); ++index) \
-			Jupiter::plugins->get(index)->OnGenericCommandAdd(*this); \
+		for (auto& plugin : Jupiter::plugins) \
+			plugin->OnGenericCommandAdd(*this); \
 	} }; \
 	CLASS ## _Init CLASS ## _instance = CLASS ## _Init (); \
 	CLASS & CLASS :: instance = CLASS ## _instance;

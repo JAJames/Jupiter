@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Jessica James.
+ * Copyright (C) 2014-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,19 +20,12 @@
 #include <string>
 #include "File.h"
 #include "String.hpp"
-#include "ArrayList.h"
-
-/**
-* TODO:
-*	Consider replacing the ArrayList of Strings with a Rope (requires a Rope implementation).
-*/
 
 #if defined _WIN32
 #define stat64 _stat64
 #endif
 
-int64_t getFileSize(const char *file)
-{
+int64_t getFileSize(const char *file) {
 	struct stat64 data;
 	if (stat64(file, &data) == 0) return data.st_size;
 	return -1;
@@ -46,10 +39,9 @@ const size_t defaultBufferSize = 8192;
 #pragma warning(disable: 4251)
 #endif
 
-struct JUPITER_API Jupiter::File::Data
-{
+struct JUPITER_API Jupiter::File::Data { // TODO: remove pimpl
 	std::string fileName;
-	Jupiter::ArrayList<Jupiter::StringS> lines;
+	std::vector<Jupiter::StringS> lines;
 
 	Data();
 	Data(const Data &data);
@@ -61,125 +53,119 @@ struct JUPITER_API Jupiter::File::Data
 #pragma warning(pop)
 #endif
 
-Jupiter::File::Data::Data()
-{
+Jupiter::File::Data::Data() {
 }
 
-Jupiter::File::Data::Data(const Jupiter::File::Data &data)
-{
-	Jupiter::File::Data::fileName = data.fileName;
+Jupiter::File::Data::Data(const Jupiter::File::Data &data) {
+	fileName = data.fileName;
 
-	for (size_t i = 0; i != Jupiter::File::Data::lines.size(); i++)
-		Jupiter::File::Data::lines.add(new Jupiter::StringS(*data.lines.get(i)));
+	// TODO: fix or remove this
+	//for (size_t i = 0; i != lines.size(); i++) // lines.size() will always be 0 here; this code does nothing?
+	//	lines.emplace_back(data.lines[i]);
 }
 
-Jupiter::File::Data::~Data()
-{
-	Jupiter::File::Data::lines.emptyAndDelete();
+Jupiter::File::Data::~Data() {
 }
 
-Jupiter::File::File()
-{
-	Jupiter::File::data_ = new Jupiter::File::Data();
+Jupiter::File::File() {
+	m_data = new Data();
 }
 
-Jupiter::File::File(File &&file)
-{
-	Jupiter::File::data_ = file.data_;
-	file.data_ = new Jupiter::File::Data();
+Jupiter::File::File(File &&file) {
+	m_data = file.m_data;
+	file.m_data = new Data();
 }
 
-Jupiter::File::File(const File &file)
-{
-	Jupiter::File::data_ = new Jupiter::File::Data(*file.data_);
+Jupiter::File::File(const File &file) {
+	m_data = new Data(*file.m_data);
 }
 
-Jupiter::File::~File()
-{
-	delete Jupiter::File::data_;
+Jupiter::File::~File() {
+	delete m_data; // TODO: remove raw delete
 }
 
-size_t Jupiter::File::getLineCount() const
-{
-	return Jupiter::File::data_->lines.size();
+size_t Jupiter::File::getLineCount() const {
+	return m_data->lines.size();
 }
 
-const Jupiter::ReadableString &Jupiter::File::getLine(size_t line) const
-{
-	return *Jupiter::File::data_->lines.get(line);
+const Jupiter::ReadableString &Jupiter::File::getLine(size_t line) const {
+	return m_data->lines[line];
 }
 
-const std::string &Jupiter::File::getFileName() const
-{
-	return Jupiter::File::data_->fileName;
+const std::string &Jupiter::File::getFileName() const {
+	return m_data->fileName;
 }
 
-bool Jupiter::File::addData(const Jupiter::ReadableString &data)
-{
-	unsigned int wc = data.wordCount(ENDL);
-	if (wc == 0) return false;
+bool Jupiter::File::addData(const Jupiter::ReadableString &data) {
+	unsigned int word_count = data.wordCount(ENDL);
+	if (word_count == 0) return false;
 
-	for (unsigned int i = 0; i < wc; i++) Jupiter::File::data_->lines.add(new Jupiter::StringS(std::move(Jupiter::StringS::getWord(data, i, ENDL))));
+	for (unsigned int i = 0; i < word_count; i++) {
+		m_data->lines.emplace_back(std::move(Jupiter::StringS::getWord(data, i, ENDL)));
+	}
 	return true;
 }
 
-bool Jupiter::File::load(const char *file)
-{
+bool Jupiter::File::load(const char *file) {
 	FILE *filePtr = fopen(file, "rb");
-	if (filePtr == nullptr) return false;
-	if (Jupiter::File::data_->fileName.empty())
-		Jupiter::File::data_->fileName = file;
-	bool r = Jupiter::File::load(filePtr);
+	if (filePtr == nullptr) {
+		return false;
+	}
+
+	if (m_data->fileName.empty()) {
+		m_data->fileName = file;
+	}
+
+	bool result = load(filePtr);
 	fclose(filePtr);
-	return r;
+	return result;
 }
 
-bool Jupiter::File::load(const Jupiter::ReadableString &file)
-{
+bool Jupiter::File::load(const Jupiter::ReadableString &file) {
 	std::string fileName = static_cast<std::string>(file);
 	FILE *filePtr = fopen(fileName.c_str(), "rb");
-	if (filePtr == nullptr) return false;
-	if (Jupiter::File::data_->fileName.empty())
-		Jupiter::File::data_->fileName = fileName;
-	bool r = Jupiter::File::load(filePtr);
+	if (filePtr == nullptr) {
+		return false;
+	}
+
+	if (m_data->fileName.empty()) {
+		m_data->fileName = fileName;
+	}
+
+	bool r = load(filePtr);
 	fclose(filePtr);
 	return r;
 }
 
-bool Jupiter::File::load(FILE *file)
-{
+bool Jupiter::File::load(FILE *file) {
 	Jupiter::String buffer(defaultBufferSize);
 
 	int chr;
 
-	while (true)
-	{
+	while (true) {
 		chr = fgetc(file);
 
-		if (chr == EOF)
-		{
-			if (buffer.isNotEmpty())
-			{
-				Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+		if (chr == EOF) {
+			if (buffer.isNotEmpty()) {
+				m_data->lines.emplace_back(buffer);
 				return true;
 			}
 
-			return Jupiter::File::data_->lines.size() != 0;
+			return !m_data->lines.empty();
 		}
 
-		if (static_cast<char>(chr) == '\r') // new line
-		{
+		// TODO: refactor this nonsense
+		if (static_cast<char>(chr) == '\r') { // new line
 		new_line_r:
 
-			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			m_data->lines.emplace_back(buffer);
 			buffer.erase();
 
 			// check for optional trailing \n
 
 			chr = fgetc(file);
 
-			switch (chr)
-			{
+			switch (chr) {
 			case EOF:
 				return true;
 
@@ -196,19 +182,17 @@ bool Jupiter::File::load(FILE *file)
 			continue;
 		}
 
-		if (static_cast<char>(chr) == '\n') // new line
-		{
+		if (static_cast<char>(chr) == '\n') { // new line
 		new_line_n:
 
-			Jupiter::File::data_->lines.add(new Jupiter::StringS(buffer));
+			m_data->lines.emplace_back(buffer);
 			buffer.erase();
 
 			// check for optional trailing \r
 
 			chr = fgetc(file);
 
-			switch (chr)
-			{
+			switch (chr) {
 			case EOF:
 				return true;
 
@@ -229,63 +213,60 @@ bool Jupiter::File::load(FILE *file)
 	}
 }
 
-void Jupiter::File::unload()
-{
-	Jupiter::File::data_->fileName.clear();
-	Jupiter::File::data_->lines.emptyAndDelete();
+void Jupiter::File::unload() {
+	m_data->fileName.clear();
+	m_data->lines.clear();
 }
 
-bool Jupiter::File::reload()
-{
-	if (Jupiter::File::data_->fileName.empty())
+bool Jupiter::File::reload() {
+	if (m_data->fileName.empty()) {
 		return false;
-	std::string fileName(std::move(Jupiter::File::data_->fileName));
-	Jupiter::File::unload();
-	return Jupiter::File::load(fileName.c_str());
+	}
+
+	std::string fileName(std::move(m_data->fileName));
+	unload();
+	return load(fileName.c_str());
 }
 
-bool Jupiter::File::reload(const char *file)
-{
-	Jupiter::File::unload();
-	return Jupiter::File::load(file);
+bool Jupiter::File::reload(const char *file) {
+	unload();
+	return load(file);
 }
 
-bool Jupiter::File::reload(const Jupiter::ReadableString &file)
-{
-	Jupiter::File::unload();
-	return Jupiter::File::load(file);
+bool Jupiter::File::reload(const Jupiter::ReadableString &file) {
+	unload();
+	return load(file);
 }
 
-bool Jupiter::File::reload(FILE *file)
-{
-	Jupiter::File::unload();
-	return Jupiter::File::load(file);
+bool Jupiter::File::reload(FILE *file) {
+	unload();
+	return load(file);
 }
 
-bool Jupiter::File::sync()
-{
-	if (Jupiter::File::data_->fileName.empty())
+bool Jupiter::File::sync() {
+	if (m_data->fileName.empty()) {
 		return false;
-	return Jupiter::File::sync(Jupiter::File::data_->fileName.c_str());
+	}
+
+	return sync(m_data->fileName.c_str());
 }
 
-bool Jupiter::File::sync(const char *file)
-{
+bool Jupiter::File::sync(const char *file) {
 	FILE *filePtr = fopen(file, "wb");
 	if (filePtr == nullptr) return false;
-	Jupiter::File::sync(filePtr); // Always returns true.
+	sync(filePtr); // Always returns true.
 	fclose(filePtr);
 	return true;
 }
 
-bool Jupiter::File::sync(const Jupiter::ReadableString &file)
-{
-	return Jupiter::File::sync(static_cast<std::string>(file).c_str());
+bool Jupiter::File::sync(const Jupiter::ReadableString &file) {
+	return sync(static_cast<std::string>(file).c_str());
 }
 
-bool Jupiter::File::sync(FILE *file)
-{
-	for (size_t i = 0; i != Jupiter::File::data_->lines.size(); i++)
-		Jupiter::File::data_->lines.get(i)->println(file);
+bool Jupiter::File::sync(FILE *file) {
+	for (const auto& line : m_data->lines) {
+		line.println(file);
+	}
+
 	return true;
 }

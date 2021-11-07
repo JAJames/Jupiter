@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013-2015 Jessica James.
+ * Copyright (C) 2013-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,55 +17,43 @@
  */
 
 #include <cstring>
-#include "ArrayList.h"
-#include "Functions.h"
 #include "Command.h"
 #include "String.hpp"
 
-struct Jupiter::Command::Data
-{
-public:
-	Jupiter::ArrayList<Jupiter::StringS> triggers;
+struct Jupiter::Command::Data { // TODO: remove pimpl
+	std::vector<Jupiter::StringS> triggers;
 };
 
-Jupiter::Command::Command()
-{
-	Jupiter::Command::data_ = new Jupiter::Command::Data();
+Jupiter::Command::Command() {
+	m_data = new Data();
 }
 
-Jupiter::Command::Command(const Command &command)
-{
-	Jupiter::Command::data_ = new Jupiter::Command::Data();
-	for (size_t i = 0; i != Jupiter::Command::data_->triggers.size(); i++)
-		Jupiter::Command::data_->triggers.add(new Jupiter::StringS(*command.data_->triggers.get(i)));
+Jupiter::Command::Command(const Command &command) {
+	m_data = new Data();
+	//for (size_t i = 0; i != m_data->triggers.size(); i++) // triggers.size() would always be 0? this code does nothing?
+	//	m_data->triggers.add(new Jupiter::StringS(*command.m_data->triggers.get(i)));
 }
 
-Jupiter::Command::~Command()
-{
-	Jupiter::Command::data_->triggers.emptyAndDelete();
-	delete Jupiter::Command::data_;
+Jupiter::Command::~Command() {
+	delete m_data;
 }
 
 // Command Functions
 
-void Jupiter::Command::addTrigger(const Jupiter::ReadableString &trigger)
-{
-	Jupiter::Command::data_->triggers.add(new Jupiter::StringS(trigger));
+void Jupiter::Command::addTrigger(const Jupiter::ReadableString &trigger) {
+	m_data->triggers.emplace_back(trigger);
 }
 
-const Jupiter::ReadableString &Jupiter::Command::getTrigger(size_t index) const
-{
-	return *Jupiter::Command::data_->triggers.get(index);
+const Jupiter::ReadableString &Jupiter::Command::getTrigger(size_t index) const {
+	return m_data->triggers[index];
 }
 
-size_t Jupiter::Command::getTriggerCount() const
-{
-	return Jupiter::Command::data_->triggers.size();
+size_t Jupiter::Command::getTriggerCount() const {
+	return m_data->triggers.size();
 }
 
-bool Jupiter::Command::matches(const Jupiter::ReadableString &trigger) const
-{
-	for (size_t i = 0; i != Jupiter::Command::data_->triggers.size(); i++)
-		if (Jupiter::Command::data_->triggers.get(i)->equalsi(trigger)) return true;
+bool Jupiter::Command::matches(const Jupiter::ReadableString &in_trigger) const {
+	for (const auto& trigger : m_data->triggers)
+		if (trigger.equalsi(in_trigger)) return true;
 	return false;
 }
