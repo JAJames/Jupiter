@@ -22,9 +22,10 @@
 /**
  * @file Reference_String.h
  * @brief Provides the basis for String types, of any implementation.
- * Note: Some methods are commented out. This means that they should be implemented, but could not be put declared in this template (return of abstract type).
+ * Note: DEPRECATED
  */
 
+#include <string_view>
 #include "Readable_String.h"
 
 namespace Jupiter
@@ -36,8 +37,8 @@ namespace Jupiter
 	*
 	* @param T Element type which the String will store. Defaults to char.
 	*/
-	template<typename T = char> class Reference_String : public Jupiter::Readable_String<T>
-	{
+	template<typename T = char> class Reference_String : public Jupiter::Readable_String<T>, public std::basic_string_view<T> {
+		/** DEPRECATED IN FAVOR OF std::string_view */
 	public:
 
 		/**
@@ -46,21 +47,21 @@ namespace Jupiter
 		* @param index Index of the element to return.
 		* @return The element located at the specified index.
 		*/
-		const T &get(size_t index) const;
+		const T &get(size_t index) const override;
 
 		/**
 		* @brief Returns the number of elements in the String.
 		*
 		* @return Number of elements in the string.
 		*/
-		size_t size() const;
+		size_t size() const override;
 
 		/**
 		* @brief Returns a pointer to the underlying string of elements.
 		*
 		* @return Pointer to the underlying string of elements.
 		*/
-		const T *ptr() const;
+		const T *ptr() const override;
 
 		/**
 		* @brief Truncates the string by a specified number of elements.
@@ -262,36 +263,30 @@ namespace Jupiter
 		static typename Jupiter::Readable_String<T>::template TokenizeResult<Jupiter::Reference_String> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
 
 		/** Mutative operators */
-		inline Readable_String<T> &operator-=(size_t right) { this->truncate(right); return *this; };
-		inline Readable_String<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
-		inline Readable_String<T> &operator=(const Reference_String<T> &right) { this->set(right); return *this; };
-		inline Readable_String<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
-		inline Readable_String<T> &operator=(const T *right) { this->set(right); return *this; };
+		inline Reference_String<T>& operator-=(size_t right) { this->truncate(right); return *this; };
+		inline Reference_String<T>& operator=(const Readable_String<T> &right) { std::basic_string_view<T>::operator=({right.ptr(), right.size()}); return *this; };
+		inline Reference_String<T>& operator=(const Reference_String<T> &right) = default;
+		inline Reference_String<T>& operator=(const std::basic_string<T> &right) { std::basic_string_view<T>::operator=(right); return *this; };
+		inline Reference_String<T>& operator=(const std::basic_string_view<T> &right) { std::basic_string_view<T>::operator=(right); return *this; };
+		inline Reference_String<T>& operator=(const T *right) { std::basic_string_view<T>::operator=(right); return *this; };
 
 		/**
 		* @brief Default constructor for the Reference_String class.
 		*/
-		Reference_String();
+		Reference_String() = default;
 
 		/**
 		* @brief Creates a reference to a C-Style string.
+		* Difference from basic_string_view: checks nullptr
 		*
 		* @param in String to get a reference of.
 		*/
 		Reference_String(const T *in);
 
 		/**
-		* @brief Creates a reference to a string.
-		*
-		* @param in String to get a reference of.
-		* @param len Length of the string to track.
-		*/
-		Reference_String(const T *in, size_t len);
-
-		/**
 		* @brief Move constructor for the Reference_String class.
 		*/
-		Reference_String(Jupiter::Reference_String<T> &&source);
+		Reference_String(Jupiter::Reference_String<T> &&source) = default;
 
 		/**
 		* @brief Constructor for the Refererence_String class to create a reference to an existing string.
@@ -301,32 +296,24 @@ namespace Jupiter
 		/**
 		* @brief Copy constructor for the Reference_String class.
 		*/
-		Reference_String(const Jupiter::Reference_String<T> &in);
+		Reference_String(const Jupiter::Reference_String<T> &in) = default;
 
-		/**
-		* @brief Conversion constructor for Jupiter::DataBuffer class.
-		*/
-		Reference_String(const Jupiter::DataBuffer &in);
+		// Bring in constructors from basic_string_view
+		using std::basic_string_view<T>::basic_string_view;
 
 		static const Jupiter::Reference_String<T> empty; /** Empty instantiation of Reference_String */
 
-	protected:
-
-		const T *str; /** Pointer for the underlying string of elements */
-		size_t length; /** Number of representable elements in the string */
+		/** Methods to force disambiguation between bases until this class is removed entirely */
+		using std::basic_string_view<T>::find;
+		using std::basic_string_view<T>::operator[];
 	};
 
 	/** Generic Reference String Type */
 	typedef Reference_String<char> ReferenceString;
 
-	/** Generic Wide Reference String Type */
-	typedef Reference_String<wchar_t> ReferenceWString;
-
-	namespace literals
-	{
+	namespace literals {
 		/** Reference_String literals */
 		inline Jupiter::ReferenceString operator"" _jrs(const char *str, size_t len) { return Jupiter::ReferenceString(str, len); }
-		inline Jupiter::ReferenceWString operator"" _jrws(const wchar_t *str, size_t len) { return Jupiter::ReferenceWString(str, len); }
 	}
 }
 

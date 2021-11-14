@@ -455,9 +455,6 @@ namespace Jupiter
 
 	/** Generic Readable String Type */
 	typedef Readable_String<char> ReadableString;
-
-	/** Generic Wide Readable String Type */
-	typedef Readable_String<wchar_t> ReadableWString;
 }
 
 #include "Readable_String_Imp.h"
