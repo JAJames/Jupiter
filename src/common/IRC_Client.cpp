@@ -46,7 +46,7 @@ Jupiter::IRC::Client::Client(Jupiter::Config *in_primary_section, Jupiter::Confi
 	if (m_primary_section != nullptr)
 		m_primary_section_name = m_primary_section->getName();
 
-	m_server_hostname = static_cast<std::string>(Jupiter::IRC::Client::readConfigValue("Hostname"_jrs, "irc.cncirc.net"_jrs));
+	m_server_hostname = static_cast<std::string>(Jupiter::IRC::Client::readConfigValue("Hostname"_jrs, ""_jrs));
 	
 	m_log_file_name = static_cast<std::string>(Jupiter::IRC::Client::readConfigValue("LogFile"_jrs));
 	m_nickname = Jupiter::IRC::Client::readConfigValue("Nick"_jrs, "Jupiter"_jrs);
@@ -849,7 +849,7 @@ int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
 											else if (command.equals("VERSION")) response += Jupiter::version;
 											else if (command.equals("FINGER")) response += "Oh, yeah, a little to the left.";
 											else if (command.equals("SOURCE")) response += "https://github.com/JAJames/Jupiter";
-											else if (command.equals("USERINFO")) response += "Hey, I'm Jupiter! If you have questions, ask Agent! (irc.cncirc.net)";
+											else if (command.equals("USERINFO")) response += "Hey, I'm Jupiter! If you have questions, ask Agent! (GitHub: JAJames; Discord: Agent#0001)";
 											else if (command.equals("CLIENTINFO")) response += "I'll tell you what I don't know: This command!";
 											else if (command.equals("TIME")) response += getTime();
 											else if (command.equals("ERRMSG")) response += message;
