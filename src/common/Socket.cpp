@@ -39,6 +39,12 @@ bool socketInit = false;
 #include "Socket.h"
 #include "Functions.h"
 
+/** Narrowing conversions; I just don't want to explicitly static_cast parameters to methods that might vary by platform */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4267)
+#endif
+
 void Jupiter::Socket::Buffer::set_length(size_t in_length)
 {
 	this->length = in_length;
@@ -698,3 +704,8 @@ Jupiter::Socket::Buffer &Jupiter::Socket::getInternalBuffer() const
 {
 	return Jupiter::Socket::data_->buffer;
 }
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif

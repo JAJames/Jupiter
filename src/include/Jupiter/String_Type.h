@@ -313,10 +313,6 @@ namespace Jupiter
 
 	/** Generic String Type */
 	typedef String_Type<char> StringType;
-
-	/** Generic Wide String Type */
-	typedef String_Type<wchar_t> WStringType;
-
 }
 
 /** Re-enable warning */

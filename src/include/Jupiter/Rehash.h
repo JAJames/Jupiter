@@ -24,6 +24,7 @@
  * @brief Provides a C++ rehash system, which is also accessable through a C interface.
  */
 
+#include <cstddef>
 #include "Jupiter.h"
 
 namespace Jupiter

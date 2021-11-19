@@ -24,7 +24,7 @@
  * On anything other than Windows, JUPITER_API is defined as nothing, to prevent compiler errors.
  */
 
-#if defined _WIN32
+#if defined(_WIN32) && defined(JUPITER_SHARED_LIB)
 
 #if defined JUPITER_EXPORTS
 #define JUPITER_API __declspec(dllexport) 
@@ -55,11 +55,7 @@
 #endif // JUPITER_PLATFORM
 
 #if !defined JUPITER_VERSION_SHORT
-#if !defined JUPITER_REVISION
-#define JUPITER_REVISION
-#endif // JUPITER_REVISION
-
-#define JUPITER_VERSION_SHORT "1.1.0" JUPITER_REVISION
+#define JUPITER_VERSION_SHORT "[unversioned]"
 #endif // JUPITER_VERSION_SHORT
 
 #define JUPITER_VERSION "Jupiter " JUPITER_VERSION_SHORT " (" JUPITER_PLATFORM " " __DATE__ ")" /** Version of this program at compile time. */

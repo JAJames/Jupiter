@@ -273,7 +273,7 @@ namespace Jupiter
 	};
 
 #if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
-	/** String_Loose<T> Addition Operators */
+	/** String_Strict<T> Addition Operators */
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
@@ -561,34 +561,15 @@ namespace Jupiter
 	/** Definition of a Strict String. */
 	typedef String_Strict<char> StringS;
 
-	/** Definition of a Strict Wide String */
-	typedef String_Strict<wchar_t> WStringS;
-
 	/** Definition of a Loose String. */
 	typedef String_Loose<char> StringL;
-
-	/** Definition of a Loose Wide String */
-	typedef String_Loose<wchar_t> WStringL;
 
 	/** Definition of a String. */
 	typedef StringL String;
 
-	/** Definition of a Wide String */
-	typedef WStringL WString;
-
-	namespace literals
-	{
+	namespace literals {
 		/** String_Strict literals */
 		inline Jupiter::StringS operator""_jss(const char *str, size_t len) { return Jupiter::StringS(str, len); }
-		inline Jupiter::WStringS operator""_jwss(const wchar_t *str, size_t len) { return Jupiter::WStringS(str, len); }
-
-		/** String_Loose literals */
-		inline Jupiter::StringL operator""_jsl(const char *str, size_t len) { return Jupiter::StringL(str, len); }
-		inline Jupiter::WStringL operator""_jwsl(const wchar_t *str, size_t len) { return Jupiter::WStringL(str, len); }
-
-		/** String literals */
-		inline Jupiter::StringS operator""_js(const char *str, size_t len) { return Jupiter::String(str, len); }
-		inline Jupiter::WStringS operator""_jws(const wchar_t *str, size_t len) { return Jupiter::WString(str, len); }
 	}
 
 	// Carried over from Hash_Table.h for compatibility

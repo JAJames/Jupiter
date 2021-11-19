@@ -229,9 +229,9 @@ HTTPSession::~HTTPSession() {
 
 struct Jupiter::HTTP::Server::Data {
 	/** Data */
-	std::vector<std::unique_ptr<Jupiter::HTTP::Server::Host>> m_hosts;
-	std::vector<std::unique_ptr<Socket>> m_ports;
-	std::vector<std::unique_ptr<HTTPSession>> m_sessions;
+	std::vector<std::unique_ptr<Jupiter::HTTP::Server::Host>> m_hosts; // TODO: remove heap allocation, requires move semantics
+	std::vector<std::unique_ptr<Socket>> m_ports; // TODO: remove heap allocation, sockets are already pimpl
+	std::vector<std::unique_ptr<HTTPSession>> m_sessions; // TODO: consider removing heap allocation
 	std::chrono::milliseconds session_timeout = std::chrono::milliseconds(2000); // TODO: Config variable
 	std::chrono::milliseconds keep_alive_session_timeout = std::chrono::milliseconds(5000); // TODO: Config variable
 	size_t max_request_size = 8192; // TODO: Config variable
@@ -706,13 +706,13 @@ int Jupiter::HTTP::Server::think() {
 		auto& session = *itr;
 		if (session->sock.isShutdown()) {
 			if (session->sock.recv() == 0) {
-				itr = m_data->m_sessions.erase(itr + 1);
+				itr = m_data->m_sessions.erase(itr);
 				continue;
 			}
 		}
 		else if ((std::chrono::steady_clock::now() > session->last_active + m_data->keep_alive_session_timeout)
 			|| (session->keep_alive == false && std::chrono::steady_clock::now() > session->last_active + m_data->session_timeout)) {
-			itr = m_data->m_sessions.erase(itr + 1);
+			itr = m_data->m_sessions.erase(itr);
 			continue;
 		}
 		else if (session->sock.recv() > 0) {
@@ -723,25 +723,25 @@ int Jupiter::HTTP::Server::think() {
 					session->last_active = std::chrono::steady_clock::now();
 					m_data->process_request(*session);
 					if (session->keep_alive == false) { // remove completed session
-						itr = m_data->m_sessions.erase(itr + 1);
+						itr = m_data->m_sessions.erase(itr);
 						//session->sock.shutdown();
 						continue;
 					}
 					// else // keep_alive: session not deleted
 				}
 				else if (session->request.size() == m_data->max_request_size) { // reject (full buffer)
-					itr = m_data->m_sessions.erase(itr + 1);
+					itr = m_data->m_sessions.erase(itr);
 					continue;
 				}
 				// else // request not over: session not deleted
 			}
 			else { // reject
-				itr = m_data->m_sessions.erase(itr + 1);
+				itr = m_data->m_sessions.erase(itr);
 				continue;
 			}
 		}
 		else if (session->sock.getLastError() != JUPITER_SOCK_EWOULDBLOCK) {
-			itr = m_data->m_sessions.erase(itr + 1);
+			itr = m_data->m_sessions.erase(itr);
 			continue;
 		}
 		// else // EWOULDBLOCK: session not deleted
