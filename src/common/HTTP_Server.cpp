@@ -701,8 +701,7 @@ bool Jupiter::HTTP::Server::tls_bind(const Jupiter::ReadableString &hostname, ui
 
 int Jupiter::HTTP::Server::think() {
 	// Process existing clients
-	auto sessions_end = m_data->m_sessions.end();
-	for (auto itr = m_data->m_sessions.begin(); itr != sessions_end;) {
+	for (auto itr = m_data->m_sessions.begin(); itr != m_data->m_sessions.end();) {
 		auto& session = *itr;
 		if (session->sock.isShutdown()) {
 			if (session->sock.recv() == 0) {
@@ -752,7 +751,7 @@ int Jupiter::HTTP::Server::think() {
 	// Process incoming clients
 	std::unique_ptr<Jupiter::Socket> socket;
 	for (auto& port : m_data->m_ports) {
-		socket.reset(socket->accept());
+		socket.reset(port->accept());
 		if (socket != nullptr) {
 			socket->setBlocking(false);
 			auto session = std::make_unique<HTTPSession>(std::move(*socket));
