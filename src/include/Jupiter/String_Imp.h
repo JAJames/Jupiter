@@ -298,26 +298,6 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWor
 	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Strict>(in, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getToken(size_t pos, const T &token) const
-{
-	return Jupiter::String_Strict<T>::getToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getToken(size_t pos, const Jupiter::Readable_String<T> &token) const
-{
-	return Jupiter::String_Strict<T>::getToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	return Jupiter::Readable_String<T>::template getToken<Jupiter::template String_Strict>(in, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	return Jupiter::Readable_String<T>::template getToken<Jupiter::template String_Strict>(in, pos, token);
-}
-
 template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(size_t pos, const T *whitespace) const
 {
 	return Jupiter::String_Strict<T>::gotoWord(*this, pos, whitespace);
@@ -326,26 +306,6 @@ template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWo
 template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
 	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::template String_Strict>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoToken(size_t pos, const T &token) const
-{
-	return Jupiter::String_Strict<T>::gotoToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoToken(size_t pos, const Jupiter::Readable_String<T> &token) const
-{
-	return Jupiter::String_Strict<T>::gotoToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	return Jupiter::Readable_String<T>::template gotoToken<Jupiter::template String_Strict>(in, pos, token);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	return Jupiter::Readable_String<T>::template gotoToken<Jupiter::template String_Strict>(in, pos, token);
 }
 
 // Operators
@@ -752,26 +712,6 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(
 	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Loose>(in, pos, whitespace);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getToken(size_t pos, const T &token) const
-{
-	return Jupiter::String_Loose<T>::getToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getToken(size_t pos, const Jupiter::Readable_String<T> &token) const
-{
-	return Jupiter::String_Loose<T>::getToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	return Jupiter::Readable_String<T>::template getToken<Jupiter::template String_Loose>(in, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	return Jupiter::Readable_String<T>::template getToken<Jupiter::template String_Loose>(in, pos, token);
-}
-
 template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(size_t pos, const T *whitespace) const
 {
 	return Jupiter::String_Loose<T>::gotoWord(*this, pos, whitespace);
@@ -780,26 +720,6 @@ template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord
 template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
 {
 	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::template String_Loose>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToken(size_t pos, const T &token) const
-{
-	return Jupiter::String_Loose<T>::gotoToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToken(size_t pos, const Jupiter::Readable_String<T> &token) const
-{
-	return Jupiter::String_Loose<T>::gotoToken(*this, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	return Jupiter::Readable_String<T>::template gotoToken<Jupiter::template String_Loose>(in, pos, token);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	return Jupiter::Readable_String<T>::template gotoToken<Jupiter::template String_Loose>(in, pos, token);
 }
 
 // Operators

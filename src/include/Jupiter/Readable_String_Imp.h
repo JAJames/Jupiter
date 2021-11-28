@@ -888,60 +888,6 @@ template<typename T> unsigned int Jupiter::Readable_String<T>::wordCount(const T
 	return result;
 }
 
-// tokenCount()
-
-template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T &token) const
-{
-	if (this->size() == 0)
-		return 0;
-
-	size_t total = 1;
-	for (size_t i = 0; i != this->size(); i++)
-		if (this->get(i) == token)
-			total++;
-	return total;
-}
-
-template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const Jupiter::Readable_String<T> &token) const
-{
-	return this->tokenCount(token.ptr(), token.size());
-}
-
-template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const std::basic_string<T> &token) const
-{
-	return this->tokenCount(token.data(), token.size());
-}
-
-template<typename T> size_t Jupiter::Readable_String<T>::tokenCount(const T *token, size_t tokenLength) const
-{
-	if (tokenLength == 1)
-		return this->tokenCount(*token);
-	if (tokenLength == 0 || tokenLength > this->size())
-		return 0;
-	if (tokenLength == this->size())
-		return this->equals(token, tokenLength) ? 1 : 0;
-
-	size_t total = 1;
-	for (size_t i = 0, j; i != this->size() - tokenLength + 1; i++)
-	{
-		Jupiter_Readable_String_tokenCount_skip_increment:
-		j = 0;
-		while (this->get(i + j) == token[j])
-		{
-			if (++j == tokenLength)
-			{
-				i += j;
-				total++;
-				if (i >= this->size() - tokenLength + 1)
-					return total;
-
-				goto Jupiter_Readable_String_tokenCount_skip_increment;
-			}
-		}
-	}
-	return total;
-}
-
 // as<type>
 
 template<> bool inline Jupiter::Readable_String<char>::asBool() const
@@ -1131,59 +1077,6 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 	return R<T>::substring(in, 0, pos);
 }
 
-// getToken
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	size_t x, y;
-	for (x = 0; x != in.size() && pos != 0; x++)
-		if (in.get(x) == token)
-			pos--;
-	for (y = x; y != in.size() && in.get(y) != token; y++);
-	return R<T>::substring(in, x, y - x);
-}
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::getToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	if (token.isEmpty())
-		return R<T>(in);
-	if (token.size() == 1)
-		return Jupiter::Readable_String<T>::getToken<R>(in, pos, token.get(0));
-	if (pos == 0)
-		return R<T>::substring(in, 0, in.find(token));
-
-	size_t i, j;
-	for (i = 0; i != in.size(); i++)
-	{
-		Jupiter_Readable_String_getToken_skip_increment:
-		j = 0;
-		while (in.get(i + j) == token.get(j))
-		{
-			if (++j == token.size())
-			{
-				i += j;
-				if (--pos == 0)
-				{
-					size_t k;
-					for (j = i; j != in.size(); j++)
-					{
-						k = 0;
-						while (in.get(j + k) == token.get(k))
-							if (++k == token.size())
-								return R<T>::substring(in, i, j - i);
-					}
-					return R<T>::substring(in, i);
-				}
-				else
-					goto Jupiter_Readable_String_getToken_skip_increment;
-				break;
-			}
-		}
-	}
-
-	return R<T>();
-}
-
 // gotoWord
 
 template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
@@ -1232,43 +1125,6 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::Readable
 		}
 	}
 	return R<T>::substring(in, x);
-}
-
-// gotoToken
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const T &token)
-{
-	size_t i;
-	for (i = 0; i != in.size() && pos != 0; i++)
-		if (in.get(i) == token)
-			pos--;
-
-	return R<T>::substring(in, i);
-}
-
-template<typename T> template<template<typename> class R> R<T> Jupiter::Readable_String<T>::gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token)
-{
-	if (pos == 0 || token.isEmpty())
-		return R<T>(in);
-	if (token.size() == 1)
-		return Jupiter::Readable_String<T>::gotoToken<R>(in, pos, token.get(0));
-
-	size_t i, j;
-	for (i = 0; i != in.size(); i++)
-	{
-		j = 0;
-		while (in.get(i + j) == token.get(j))
-		{
-			if (++j == token.size())
-			{
-				if (--pos == 0)
-					return R<T>::substring(in, i + token.size());
-				break;
-			}
-		}
-	}
-
-	return R<T>();
 }
 
 // Jupiter::DataBuffer specialization
