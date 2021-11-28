@@ -75,8 +75,8 @@ const char module_file_extension[]{ ".so" };
 
 const Jupiter::ReferenceString config_file_extension = ".ini"_jrs;
 
-Jupiter::StringS plugins_directory = "Plugins"_jrs + directory_character;
-Jupiter::StringS plugin_configs_directory = "Configs"_jrs + directory_character;
+std::string plugins_directory = "Plugins"s + directory_character;
+std::string plugin_configs_directory = "Configs"s + directory_character;
 
 std::vector<Jupiter::Plugin*> g_plugins; // Array of weak pointers to plugin instances generally stored in static memory
 std::vector<Jupiter::Plugin*>& Jupiter::plugins = g_plugins;
@@ -120,27 +120,31 @@ void Jupiter::Plugin::OnPostInitialize() {
 // Static Functions
 
 void Jupiter::Plugin::setDirectory(const Jupiter::ReadableString &dir) {
-	if (plugins_directory.set(dir) != 0 && plugins_directory.get(plugins_directory.size() - 1) != directory_character) {
+	plugins_directory = dir;
+	if (!plugins_directory.empty() && plugins_directory.back() != directory_character) {
 		plugins_directory += directory_character;
 	}
 }
 
-const Jupiter::ReadableString &Jupiter::Plugin::getDirectory() {
+const std::string& Jupiter::Plugin::getDirectory() {
 	return plugins_directory;
 }
 
 void Jupiter::Plugin::setConfigDirectory(const Jupiter::ReadableString &dir) {
-	if (plugin_configs_directory.set(dir) != 0 && plugin_configs_directory.get(plugin_configs_directory.size() - 1) != directory_character) {
+	plugin_configs_directory = dir;
+	if (!plugin_configs_directory.empty() && plugin_configs_directory.back() != directory_character) {
 		plugin_configs_directory += directory_character;
 	}
 }
 
-const Jupiter::ReadableString &Jupiter::Plugin::getConfigDirectory() {
+const std::string& Jupiter::Plugin::getConfigDirectory() {
 	return plugin_configs_directory;
 }
 
-Jupiter::Plugin *Jupiter::Plugin::load(const Jupiter::ReadableString &pluginName) {
-	std::string file = static_cast<std::string>(plugins_directory) + static_cast<std::string>(pluginName) + module_file_extension;
+Jupiter::Plugin *Jupiter::Plugin::load(const std::string_view& pluginName) {
+	std::string file = plugins_directory;
+	file += pluginName;
+	file += module_file_extension;
 	std::unique_ptr<dlib> dPlug{ std::make_unique<dlib>() };
 
 	// Load the library
@@ -176,8 +180,11 @@ Jupiter::Plugin *Jupiter::Plugin::load(const Jupiter::ReadableString &pluginName
 		}
 
 		// Initialize the plugin
-		weak_plugin->name.set(pluginName);
-		weak_plugin->config.read(plugin_configs_directory + pluginName + config_file_extension);
+		weak_plugin->name = Jupiter::ReferenceString{pluginName};
+		std::string config_path = plugin_configs_directory;
+		config_path += pluginName;
+		config_path += config_file_extension;
+		weak_plugin->config.read(config_path);
 		weak_plugin->initialize();
 	}
 	{
@@ -236,33 +243,9 @@ bool Jupiter::Plugin::free(Jupiter::Plugin *plugin) {
 	return false;
 }
 
-bool Jupiter::Plugin::free(const Jupiter::ReadableString &pluginName) {
-	if (pluginName == nullptr) {
-		return false;
-	}
-
-	for (size_t index = 0; index != g_plugins.size(); ++index) {
-		if (pluginName.matchi(g_plugins[index]->getName())) {
-			return Jupiter::Plugin::free(index);
-		}
-	}
-
-	return false;
-}
-
 Jupiter::Plugin *Jupiter::Plugin::get(size_t index) {
 	if (index < g_plugins.size()) {
 		return g_plugins[index];
-	}
-
-	return nullptr;
-}
-
-Jupiter::Plugin *Jupiter::Plugin::get(const Jupiter::ReadableString &pluginName) {
-	for (const auto& plugin : g_plugins) {
-		if (pluginName.matchi(plugin->getName())) {
-			return plugin;
-		}
 	}
 
 	return nullptr;

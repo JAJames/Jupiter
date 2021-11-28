@@ -144,7 +144,7 @@ namespace Jupiter
 		* @param in_filename Name of the file to read from
 		* @return True on success, false otherwise
 		*/
-		bool read(const Jupiter::ReadableString &in_filename);
+		bool read(const std::string_view& in_filename);
 
 		/**
 		* @brief Writes config data to the last read file

@@ -277,6 +277,7 @@ namespace Jupiter
 		inline String_Type<T> &operator=(const Readable_String<T> &right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const String_Type<T> &right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
+		inline String_Type<T> &operator=(const std::basic_string_view<T> &right) { this->set(right.data(), right.size()); return *this; };
 		inline String_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const T right) { this->set(right); return *this; };
 

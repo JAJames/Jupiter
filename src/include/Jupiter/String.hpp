@@ -244,6 +244,7 @@ namespace Jupiter
 		String_Strict(const String_Strict<T> &in);
 		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
+		//String_Strict(const std::basic_string_view<T> &in) : String_Strict<T>(in.data(), in.size()){};
 		String_Strict(const T *in, size_t len);
 		String_Strict(const T *in);
 		String_Strict(const Jupiter::DataBuffer &in);

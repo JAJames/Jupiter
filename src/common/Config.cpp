@@ -98,7 +98,7 @@ bool Jupiter::Config::read(const char *in_filename)
 	return this->read_internal(in_filename);
 }
 
-bool Jupiter::Config::read(const Jupiter::ReadableString &in_filename)
+bool Jupiter::Config::read(const std::string_view& in_filename)
 {
 	m_name = static_cast<std::string>(in_filename);
 	return this->read_internal(m_name.c_str());

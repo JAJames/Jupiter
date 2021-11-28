@@ -297,6 +297,7 @@ namespace Jupiter
 		* @brief Copy constructor for the Reference_String class.
 		*/
 		Reference_String(const Jupiter::Reference_String<T> &in) = default;
+		Reference_String(const std::basic_string_view<T>&in) : std::basic_string_view<T>(in){}
 
 		// Bring in constructors from basic_string_view
 		using std::basic_string_view<T>::basic_string_view;

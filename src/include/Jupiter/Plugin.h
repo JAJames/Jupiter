@@ -303,7 +303,7 @@ namespace Jupiter
 		*
 		* @return String containing the directory which is prepended to module load attempts.
 		*/
-		static const Jupiter::ReadableString &getDirectory();
+		static const std::string& getDirectory();
 
 		/**
 		* @brief Sets the directory to look in for plugin configuration files.
@@ -317,7 +317,7 @@ namespace Jupiter
 		*
 		* @return String containing the directory which is prepended to configuration load attempts.
 		*/
-		static const Jupiter::ReadableString &getConfigDirectory();
+		static const std::string& getConfigDirectory();
 
 		/**
 		* @brief Loads a module, appending .so or .dll as appropriate for the operating system.
@@ -325,7 +325,7 @@ namespace Jupiter
 		* @param pluginName The name of the plugin to load.
 		* @return A pointer to the plugin that was loaded on success, nullptr otherwise.
 		*/
-		static Jupiter::Plugin *load(const Jupiter::ReadableString &pluginName);
+		static Jupiter::Plugin *load(const std::string_view& pluginName);
 
 		/**
 		* @brief Unloads a module and removes it from the module list, based on its index.
@@ -344,29 +344,12 @@ namespace Jupiter
 		static bool free(Jupiter::Plugin *plugin);
 
 		/**
-		* @brief Unloads a module and removes it from the module list, based on its name.
-		* Note: This function accepts wildcard strings.
-		*
-		* @param pluginName Name of the module to unload.
-		* @return True if a module was unloaded, false otherwise.
-		*/
-		static bool free(const Jupiter::ReadableString &pluginName);
-
-		/**
 		* @brief Fetches a plugin from the list and returns it, based on its index.
 		*
 		* @param index Index of the module to return.
 		* @return A module on success, nullptr otherwise.
 		*/
 		static Jupiter::Plugin *get(size_t index);
-
-		/**
-		* @brief Fetches a plugin from the list and returns it, based on its name.
-		*
-		* @param pluginName String containing the name of the plugin.
-		* @return A module on success, nullptr otherwise.
-		*/
-		static Jupiter::Plugin *get(const Jupiter::ReadableString &pluginName);
 
 	protected:
 		bool _shouldRemove = false;

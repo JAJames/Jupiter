@@ -30,6 +30,9 @@
 
 #if defined __cplusplus
 
+// Just quickly using a macro because I don't want to risk having to deal with more DLL linkage warnings
+#define WHITESPACE_SV std::string_view{" \t"}
+
 #include <cstdint>
 #include <cstddef>
 #include <type_traits>
