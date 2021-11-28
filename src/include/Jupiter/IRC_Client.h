@@ -722,7 +722,7 @@ namespace Jupiter
 			*
 			* @return 0 upon success, an error code otherwise.
 			*/
-			int process_line(const Jupiter::ReadableString &in_line);
+			int process_line(std::string_view in_line);
 
 			/**
 			* @brief Returns a key's value.
@@ -844,7 +844,7 @@ namespace Jupiter
 			Jupiter::Config *m_primary_section;
 			Jupiter::Config *m_secondary_section;
 			std::string m_log_file_name;
-			Jupiter::StringS m_last_line;
+			std::string m_last_line;
 			Jupiter::StringS m_server_name;
 			Jupiter::StringS m_nickname;
 			Jupiter::StringS m_realname;

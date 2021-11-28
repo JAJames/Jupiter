@@ -19,6 +19,7 @@
 #include <cstring>
 #include <cstdio>
 #include <ctime>
+#include "jessilib/split.hpp"
 #include "Jupiter.h"
 #include "Functions.h"
 #include "IRC_Client.h"
@@ -449,8 +450,8 @@ size_t Jupiter::IRC::Client::messageChannels(const Jupiter::ReadableString &mess
 	return m_channels.size();
 }
 
-int Jupiter::IRC::Client::process_line(const Jupiter::ReadableString &line)
-{
+int Jupiter::IRC::Client::process_line(std::string_view in_line) {
+	Jupiter::ReferenceString line{in_line}; // TODO: remove this
 	if (line.isNotEmpty())
 	{
 		Jupiter::IRC::Client::writeToLogs(line);
@@ -1317,36 +1318,34 @@ int Jupiter::IRC::Client::think()
 	if (tmp > 0)
 	{
 		// Process incoming data
-		Jupiter::ReadableString::TokenizeResult<Jupiter::Reference_String> result = Jupiter::ReferenceString::tokenize(m_socket->getBuffer(), "\r\n"_jrs);
-		if (result.token_count != 0)
-		{
-			if (result.tokens[0].size() > 0)
-			{
+		using namespace std::literals;
+		auto tokens = jessilib::split_view(m_socket->getBuffer(), "\r\n"sv);
+		if (tokens.size() != 0) {
+			if (tokens[0].size() > 0) {
 				// Ensure there's not a token getting split over separate buffers
-				if (m_last_line.size() > 0)
-				{
-					if (result.tokens[0][0] == '\n' && m_last_line[m_last_line.size() - 1] == '\r')
-					{
-						m_last_line.truncate(1); // Remove \r
-
+				std::string_view token_0 = tokens[0];
+				if (m_last_line.size() > 0) {
+					if (tokens[0][0] == '\n' && m_last_line[m_last_line.size() - 1] == '\r') {
+						m_last_line.pop_back();
 						Jupiter::IRC::Client::process_line(m_last_line);
 						m_last_line.erase();
 
-						result.tokens[0].shiftRight(1); // Remove \n
+						token_0.remove_prefix(1);
 					}
 				}
 
-				m_last_line += result.tokens[0];
+				m_last_line += token_0;
 			}
 
-			if (result.token_count != 1)
-			{
+			if (tokens.size() != 1) {
 				Jupiter::IRC::Client::process_line(m_last_line);
-				m_last_line = result.tokens[result.token_count - 1];
+				m_last_line = tokens[tokens.size() - 1];
 
-				for (size_t index = 1; index != result.token_count - 1; ++index)
-					if (Jupiter::IRC::Client::process_line(result.tokens[index]) != 0)
+				for (size_t index = 1; index != tokens.size() - 1; ++index) {
+					if (Jupiter::IRC::Client::process_line(tokens[index]) != 0) {
 						return handle_error(1);
+					}
+				}
 			}
 		}
 

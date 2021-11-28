@@ -20,6 +20,7 @@
 #define _HTTP_QUERYSTRING_H_HEADER
 
 #include <unordered_map>
+#include <charconv>
 #include "String.hpp"
 
 /**
@@ -29,6 +30,21 @@
 
 namespace Jupiter
 {
+	template<typename CharT>
+	struct str_hash {
+		using is_transparent = std::true_type;
+
+		// C++17 introduces a requirement that these two operators return the same values for same CharT type, but not
+		// any requirement that std::hash<> be able to accept both key types. This just ties them for convenience
+		auto operator()(std::basic_string_view<CharT> in_key) const noexcept {
+			return std::hash<std::basic_string_view<CharT>>()(in_key);
+		}
+
+		auto operator()(const std::basic_string<CharT>& in_key) const noexcept {
+			return std::hash<std::basic_string<CharT>>()(in_key);
+		}
+	};
+
 	namespace HTTP
 	{
 		/**
@@ -50,21 +66,48 @@ namespace Jupiter
 		{
 		public:
 			HTMLFormResponse() = delete;
+			inline HTMLFormResponse(std::string_view query_string) : HTMLFormResponse(query_string.data(), query_string.size()) {}
 			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.ptr(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
-			using TableType = std::unordered_map<Jupiter::StringS, Jupiter::StringS, Jupiter::default_hash_function>;
+			using TableType = std::unordered_map<std::string, std::string, Jupiter::str_hash<char>, std::equal_to<>>;
+#ifdef __cpp_lib_generic_unordered_lookup
+			using InKeyType = std::string_view;
+#else // We can't use std::string_view for InKeyType until GCC 11 & clang 12, and I still want to support GCC 9
+			using InKeyType = const std::string&;
 
 			template<typename CastT>
-			CastT tableGetCast(const Jupiter::StringS &in_key, const CastT &in_value) const {
-				auto item = table.find(in_key);
-				if (item != table.end()) {
-					return static_cast<CastT>(item->second);
-				}
-
-				return in_value;
+			CastT tableGetCast(std::string_view in_key, const CastT &in_value) const {
+				return tableGetCast<CastT>(static_cast<std::string>(in_key), in_value);
 			}
 
-			const Jupiter::ReadableString& tableGet(const Jupiter::StringS& in_key, const Jupiter::ReadableString& in_value) {
+			std::string_view tableGet(std::string_view in_key, std::string_view in_value) const {
+				return tableGet(static_cast<std::string>(in_key), in_value);
+			}
+#endif // __cpp_lib_generic_unordered_lookup
+
+			template<typename CastT>
+			CastT tableGetCast(InKeyType in_key, const CastT &in_value) const {
+				CastT result = in_value;
+				auto item = table.find(in_key);
+				if (item != table.end()) {
+					std::from_chars(item->second.data(), item->second.data() + item->second.size(), result);
+					return result;
+				}
+
+				return result;
+			}
+
+			auto tableFind(InKeyType in_key) const {
+				return table.find(in_key);
+			}
+
+#ifndef __cpp_lib_generic_unordered_lookup
+			auto tableFind(std::string_view in_key) const {
+				return tableFind(static_cast<std::string>(in_key));
+			}
+#endif // __cpp_lib_generic_unordered_lookup
+
+			std::string_view tableGet(InKeyType in_key, std::string_view in_value) const {
 				auto item = table.find(in_key);
 				if (item != table.end()) {
 					return item->second;
@@ -157,7 +200,7 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 	char *buf = str;
 	const char *token_start = buf;
 	int val;
-	Jupiter::ReferenceString key;
+	std::string key;
 
 	while (ptr != end)
 	{
@@ -184,16 +227,17 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 		}
 		else if (*ptr == '&') // End of key/value, start of key
 		{
-			if (key.isNotEmpty()) // A key was already set; end of value
+			if (!key.empty()) { // A key was already set; end of value
 				Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start);
+			}
 
-			key.erase();
+			key = std::string_view{};
 			++buf, ++ptr;
 			token_start = buf;
 		}
 		else if (*ptr == '=') // End of key, start of value
 		{
-			key.set(token_start, buf - token_start);
+			key = std::string_view(token_start, buf - token_start);
 			++buf, ++ptr;
 			token_start = buf;
 		}
@@ -209,14 +253,14 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 
 	if (*buf == '=') // End of key, start of value
 	{
-		key.set(token_start, ++buf - token_start);
+		key = std::string_view(token_start, ++buf - token_start);
 		*buf = *++ptr;
 		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(ptr, 1);
 	}
 	else
 		*++buf = *++ptr;
 
-	if (key.isNotEmpty()) // A key was already set; end of value
+	if (!key.empty()) // A key was already set; end of value
 		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start + 1);
 
 	Jupiter::StringType::length = buf + 1 - str;

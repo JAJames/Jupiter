@@ -340,7 +340,7 @@ namespace Jupiter
 		*
 		* @return Buffer.
 		*/
-		const Jupiter::ReadableString &getBuffer() const;
+		std::string_view getBuffer() const;
 
 		/**
 		* @brief Returns the size of the socket buffer.

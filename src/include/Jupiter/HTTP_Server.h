@@ -45,7 +45,7 @@ namespace Jupiter
 			virtual int think();
 
 		public: // Server
-			typedef Jupiter::ReadableString *HTTPFunction(const Jupiter::ReadableString &query_string);
+			typedef Jupiter::ReadableString *HTTPFunction(std::string_view query_string);
 			static const Jupiter::ReadableString &global_namespace;
 			static const Jupiter::ReadableString &server_string;
 
@@ -53,15 +53,15 @@ namespace Jupiter
 			{
 				bool free_result = true;
 				Jupiter::HTTP::Server::HTTPFunction *function; // function to generate content data
-				Jupiter::StringS name; // name of the content
+				std::string name; // name of the content
 				unsigned int name_checksum; // name.calcChecksum()
 				const Jupiter::ReadableString *language = nullptr; // Pointer to a constant (or otherwise managed) string
 				const Jupiter::ReadableString *type = nullptr; // Pointer to a constant (or otherwise managed) string
 				const Jupiter::ReadableString *charset = nullptr; // Pointer to a constant (or otherwise managed) string
 
-				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &query_string);
+				virtual Jupiter::ReadableString *execute(std::string_view query_string);
 
-				Content(const Jupiter::ReadableString &in_name, Jupiter::HTTP::Server::HTTPFunction in_function);
+				Content(std::string in_name, Jupiter::HTTP::Server::HTTPFunction in_function);
 			};
 
 			class JUPITER_API Directory
@@ -69,47 +69,39 @@ namespace Jupiter
 			public:
 				std::vector<std::unique_ptr<Server::Directory>> directories;
 				std::vector<std::unique_ptr<Server::Content>> content;
-				Jupiter::StringS name;
+				std::string name;
 				unsigned int name_checksum;
 
-				virtual void hook(const Jupiter::ReadableString &path, std::unique_ptr<Content> in_content);
-				//virtual bool remove(const Jupiter::ReadableString &path);
-				virtual bool remove(const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
-				virtual bool has(const Jupiter::ReadableString &name);
-				virtual Jupiter::HTTP::Server::Content* find(const Jupiter::ReadableString &name);
-				virtual Jupiter::ReadableString* execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
+				virtual void hook(std::string_view path, std::unique_ptr<Content> in_content);
+				virtual bool remove(std::string_view path, std::string_view name);
+				virtual bool has(std::string_view name);
+				virtual Jupiter::HTTP::Server::Content* find(std::string_view name);
+				virtual Jupiter::ReadableString* execute(std::string_view name, std::string_view query_string);
 
 				Directory(const Directory&) = delete;
 				Directory& operator=(const Directory&) = delete;
-				Directory(const Jupiter::ReadableString &in_name);
+				Directory(std::string in_name);
 				virtual ~Directory();
 			};
 
 			class JUPITER_API Host : public Directory
 			{
 			public:
-				/*virtual bool remove(const Jupiter::ReadableString &name);
-				virtual bool has(const Jupiter::ReadableString &name);
-				virtual Jupiter::HTTP::Server::Content *find(const Jupiter::ReadableString &name);
-				//virtual Jupiter::HTTP::Server::Directory *find_directory(const Jupiter::ReadableString &name);
-				virtual Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &parameters);*/
-
-				Host(const Jupiter::ReadableString &in_name);
+				Host(std::string in_name);
 			};
 
-			void hook(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, std::unique_ptr<Content> in_content);
-			bool remove(const Jupiter::ReadableString &host);
-			//bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path);
-			bool remove(const Jupiter::ReadableString &host, const Jupiter::ReadableString &path, const Jupiter::ReadableString &name);
-			bool has(const Jupiter::ReadableString &host);
-			bool has(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
-			Content *find(const Jupiter::ReadableString &name);
-			Content *find(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name);
-			Jupiter::ReadableString *execute(const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
-			Jupiter::ReadableString *execute(const Jupiter::ReadableString &host, const Jupiter::ReadableString &name, const Jupiter::ReadableString &query_string);
+			void hook(std::string_view host, std::string_view path, std::unique_ptr<Content> in_content);
+			bool remove(std::string_view host);
+			bool remove(std::string_view host, std::string_view path, std::string_view name);
+			bool has(std::string_view host);
+			bool has(std::string_view host, std::string_view name);
+			Content *find(std::string_view name);
+			Content *find(std::string_view host, std::string_view name);
+			Jupiter::ReadableString *execute(std::string_view name, std::string_view query_string);
+			Jupiter::ReadableString *execute(std::string_view host, std::string_view name, std::string_view query_string);
 
-			bool bind(const Jupiter::ReadableString &hostname, uint16_t port = 80);
-			bool tls_bind(const Jupiter::ReadableString &hostname, uint16_t port = 443);
+			bool bind(std::string_view hostname, uint16_t port = 80);
+			bool tls_bind(std::string_view hostname, uint16_t port = 443);
 
 			Server();
 			Server(Jupiter::HTTP::Server &&source);

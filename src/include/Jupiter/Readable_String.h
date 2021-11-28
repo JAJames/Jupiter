@@ -232,24 +232,6 @@ namespace Jupiter
 		double asDouble() const;
 
 		/**
-		* @brief Sums together all of the elements in the string.
-		*
-		* @param T Integral type to return
-		*
-		* @return Sum of all the elements in the string
-		*/
-		template<typename R = unsigned int> R calcChecksum() const;
-
-		/**
-		* @brief Sums together the uppercase version of all of the elements in the string.
-		*
-		* @param T Integral type to return
-		*
-		* @return Sum of all the elements in the string
-		*/
-		template<typename R = unsigned int> R calcChecksumi() const;
-
-		/**
 		* @brief Outputs the string to a FILE stream.
 		*
 		* @param out Stream to output to.
@@ -320,84 +302,6 @@ namespace Jupiter
 		template<template<typename> class R> static R<T> gotoToken(const Jupiter::Readable_String<T> &in, size_t pos, const Jupiter::Readable_String<T> &token);
 
 		/**
-		* @brief Contains the results from a call to tokenize().
-		*/
-		template<template<typename> class R> struct TokenizeResult
-		{
-			/** Underlying type used to represent each token */
-			typedef R<T> token_type;
-
-			/** Array of tokens, with a length of 'token_count' */
-			R<T> *tokens;
-
-			/** Length of 'tokens' array */
-			size_t token_count;
-
-			/**
-			* @brief A safe accessor method, for fetching tokens.
-			*
-			* @param index Index of token to fetch
-			* @return The token at the specified index if it exists, an empty string otherwise.
-			*/
-			const R<T> &getToken(size_t index) const;
-
-			/**
-			* @brief Restores the TokenizeResult to a default state, by deleting the stored tokens.
-			*/
-			void erase();
-
-			/**
-			* @brief Default constructor for the TokenizeResult class.
-			* Note: 'tokens' assigned nullptr, and 'token_count' is assigned 0.
-			*/
-			TokenizeResult();
-
-			/**
-			* @brief Allocation constructor for the TokenizeResult class.
-			*/
-			TokenizeResult(size_t in_token_count);
-
-			/**
-			* @brief Capture constructor for the TokenizeResult class.
-			*/
-			TokenizeResult(R<T> *in_tokens, size_t in_token_count);
-
-			/**
-			* @brief Copy constructor for the TokenizeResult class.
-			*/
-			TokenizeResult(const TokenizeResult &source);
-
-			/**
-			* @brief Move constructor for the TokenizeResult class.
-			*/
-			TokenizeResult(TokenizeResult &&source);
-
-			/**
-			* @brief Destructor for the TokenizeResult class.
-			*/
-			~TokenizeResult();
-
-			/** Assignment Operator */
-			inline TokenizeResult<R> &operator=(const TokenizeResult<R> &right);
-
-			/** Move Operator */
-			inline TokenizeResult<R> &operator=(TokenizeResult<R> &&right);
-		};
-
-		/**
-		* @brief Tokenizes a string, based on an input token separator
-		*
-		* @param R String type to use when constructing results
-		*
-		* @param in String to split into tokens
-		* @param separator Separator to split tokens by
-		* @return TokenizeResult containing the results of the tokenization process.
-		*/
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const Jupiter::Readable_String<T> &separator);
-		template<template<typename> class R> static typename Jupiter::Readable_String<T>::template TokenizeResult<R> tokenize(const Jupiter::Readable_String<T> &in, const T *separator, size_t separator_size);
-
-		/**
 		* @brief Destructor for the Readable_String class.
 		*/
 		virtual ~Readable_String() = default;
@@ -448,9 +352,6 @@ namespace Jupiter
 		explicit inline operator long double() const { return this->asDouble(); } // NEEDS TO NOT CAST FROM DOUBLE
 		explicit inline operator std::basic_string<T>() const { return std::basic_string<T>(this->ptr(), this->size()); }
 		inline operator std::basic_string_view<T>() const { return std::basic_string_view<T>(this->ptr(), this->size()); }
-
-	private:
-		template<typename R> R calcChecksumiHelper() const;
 	};
 
 	/** Generic Readable String Type */
