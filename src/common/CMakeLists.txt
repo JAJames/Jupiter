@@ -31,6 +31,7 @@ find_package(OpenSSL REQUIRED)
 target_link_libraries(jupiter
         OpenSSL::SSL
         OpenSSL::Crypto
+        jessilib
         ${CMAKE_DL_LIBS})
 
 # Setup include directories

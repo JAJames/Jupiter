@@ -1,0 +1,3 @@
+[submodule "src/jessilib"]
+	path = src/jessilib
+	url = https://github.com/JAJames/jessilib.git
