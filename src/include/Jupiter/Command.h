@@ -41,7 +41,7 @@ namespace Jupiter
 		*
 		* @param trigger Trigger to add to the command.
 		*/
-		void addTrigger(const Jupiter::ReadableString &trigger);
+		void addTrigger(std::string_view trigger);
 
 		/**
 		* @brief Fetches a command's specified trigger.
@@ -49,7 +49,7 @@ namespace Jupiter
 		* @param index Index of the trigger to return.
 		* @return Trigger of the command at the specified index.
 		*/
-		const Jupiter::ReadableString &getTrigger(size_t index = 0) const;
+		std::string_view getTrigger(size_t index = 0) const;
 
 		/**
 		* @brief Returns the number of triggers accepted by the command.
@@ -65,7 +65,7 @@ namespace Jupiter
 		* @param trigger Trigger to check against the trigger list.
 		* @return True if a match was found, false otherwise.
 		*/
-		bool matches(const Jupiter::ReadableString &trigger) const;
+		bool matches(std::string_view trigger) const;
 
 		/**
 		* @brief Returns a brief explanation and syntax description about a command.

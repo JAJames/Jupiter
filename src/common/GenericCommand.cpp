@@ -227,7 +227,8 @@ void Jupiter::GenericCommandNamespace::updateHelp() {
 	m_should_update_help = false;
 
 	std::vector<Jupiter::GenericCommand*> commands = getCommands();
-	Jupiter::StringL tmp_help(commands.size() * 8);
+	std::string tmp_help;
+	tmp_help.reserve(commands.size() * 8);
 
 	for (const auto& command : commands) {
 		tmp_help += command->getTrigger();

@@ -29,9 +29,9 @@ Jupiter::Config& Jupiter::Config::operator=(const Config& in_config) {
 	return *this;
 }
 
-const Jupiter::ReadableString &Jupiter::Config::get(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_default_value) const
+std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view in_default_value) const
 {
-	auto value = m_table.find(in_key);
+	auto value = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
 	if (value != m_table.end()) {
 		return value->second;
 	}
@@ -39,10 +39,10 @@ const Jupiter::ReadableString &Jupiter::Config::get(const Jupiter::ReadableStrin
 	return in_default_value;
 }
 
-Jupiter::Config *Jupiter::Config::getSection(const Jupiter::ReadableString &in_key) const
+Jupiter::Config *Jupiter::Config::getSection(std::string_view in_key) const
 {
 	if (m_sections != nullptr) {
-		auto section = m_sections->find(in_key);
+		auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
 		if (section != m_sections->end()) {
 			return &section->second;
 		}
@@ -51,56 +51,69 @@ Jupiter::Config *Jupiter::Config::getSection(const Jupiter::ReadableString &in_k
 	return nullptr;
 }
 
-Jupiter::Config &Jupiter::Config::getSectionReference(const Jupiter::ReadableString &in_key)
+Jupiter::Config &Jupiter::Config::getSectionReference(std::string_view in_key)
 {
 	if (m_sections == nullptr) {
 		m_sections = std::make_unique<SectionHashTable>();
 	}
 
-	Config& section = (*m_sections)[in_key];
-
-	if (section.m_name.empty()) {
-		section.m_name = static_cast<std::string>(in_key);
+	auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	if (section == m_sections->end()) {
+		// for some reason msvc doesn't like emplace
+		section = m_sections->try_emplace(static_cast<std::string>(in_key)).first;
 	}
 
-	return section;
+	if (section->second.m_name.empty()) {
+		section->second.m_name = in_key;
+	}
+
+	return section->second;
 }
 
-bool Jupiter::Config::set(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_value)
-{
-	return m_table.insert_or_assign(in_key, in_value).second;
+bool Jupiter::Config::set(std::string_view in_key, std::string in_value) {
+	return m_table.insert_or_assign(static_cast<std::string>(in_key), std::move(in_value)).second;
 }
 
-bool Jupiter::Config::remove(const Jupiter::ReadableString &in_key)
-{
-	return m_table.erase(in_key) > 0;
+bool Jupiter::Config::remove(std::string_view in_key) {
+	auto value = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	if (value == m_table.end()) {
+		return false;
+	}
+
+	m_table.erase(value);
+	return true;
 }
 
-bool Jupiter::Config::removeSection(const Jupiter::ReadableString &in_key)
-{
-	return m_sections != nullptr && m_sections->erase(in_key) > 0;
+bool Jupiter::Config::removeSection(std::string_view in_key) {
+	if (m_sections == nullptr) {
+		return false;
+	}
+
+	auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	if (section == m_sections->end()) {
+		return false;
+	}
+
+	m_sections->erase(section);
+	return true;
 }
 
-const std::string &Jupiter::Config::getName() const
-{
+const std::string &Jupiter::Config::getName() const {
 	return m_name;
 }
 
-void Jupiter::Config::erase()
-{
+void Jupiter::Config::erase() {
 	m_table.clear();
 	m_sections = nullptr;
 }
 
-bool Jupiter::Config::read(const char *in_filename)
-{
+bool Jupiter::Config::read(const char *in_filename) {
 	m_name = in_filename;
 	return this->read_internal(in_filename);
 }
 
-bool Jupiter::Config::read(const std::string_view& in_filename)
-{
-	m_name = static_cast<std::string>(in_filename);
+bool Jupiter::Config::read(std::string_view in_filename) {
+	m_name = in_filename;
 	return this->read_internal(m_name.c_str());
 }
 
@@ -114,7 +127,7 @@ bool Jupiter::Config::write(const char *in_filename)
 	return this->write_internal(in_filename);
 }
 
-bool Jupiter::Config::write(const Jupiter::ReadableString &in_filename)
+bool Jupiter::Config::write(std::string_view in_filename)
 {
 	return this->write(static_cast<std::string>(in_filename).c_str());
 }
@@ -131,7 +144,7 @@ bool Jupiter::Config::reload(const char *in_filename)
 	return this->read(in_filename);
 }
 
-bool Jupiter::Config::reload(const Jupiter::ReadableString &in_filename)
+bool Jupiter::Config::reload(std::string_view in_filename)
 {
 	this->erase();
 	return this->read(in_filename);
@@ -146,7 +159,7 @@ const Jupiter::Config::SectionHashTable &Jupiter::Config::getSections() const {
 }
 
 /** Operators */
-Jupiter::Config &Jupiter::Config::operator[](const Jupiter::ReadableString &in_key)
+Jupiter::Config &Jupiter::Config::operator[](std::string_view in_key)
 {
 	return this->getSectionReference(in_key);
 }

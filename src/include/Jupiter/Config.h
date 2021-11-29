@@ -46,8 +46,16 @@ namespace Jupiter
 	{
 	public:
 		/** Hash_Table type for sections */
-		using SectionHashTable = std::unordered_map<StringS, Config, default_hash_function>;
-		using ValuesHashTable = std::unordered_map<StringS, StringS, default_hash_function>;
+		using SectionHashTable = std::unordered_map<std::string, Config, str_hash<char>, std::equal_to<>>;
+		using ValuesHashTable = std::unordered_map<std::string, std::string, str_hash<char>, std::equal_to<>>;
+
+#ifdef __cpp_lib_generic_unordered_lookup
+		using KeyType = std::string_view;
+#define JUPITER_WRAP_CONFIG_KEY(in_key) in_key
+#else // We can't use std::string_view for InKeyType until GCC 11 & clang 12, and I still want to support GCC 9
+		using KeyType = std::string;
+#define JUPITER_WRAP_CONFIG_KEY(in_key) static_cast<KeyType>(in_key)
+#endif // __cpp_lib_generic_unordered_lookup
 
 		Config() = default;
 		Config(const Config& in_config);
@@ -62,7 +70,7 @@ namespace Jupiter
 		* @param in_default_value Value to return if no such entry exists
 		* @return Value of the entry if it exists, an empty string otherwise.
 		*/
-		const Jupiter::ReadableString &get(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_default_value = Jupiter::ReferenceString::empty) const;
+		std::string_view get(std::string_view in_key, std::string_view in_default_value = std::string_view{}) const;
 
 		/**
 		* @brief Fetches the value of an entry and interprets it as another type.
@@ -73,7 +81,7 @@ namespace Jupiter
 		* @param in_default_value Value to return if no such entry exists
 		* @return Value of the entry if it exists, 0 otherwise.
 		*/
-		template<typename T> T get(const Jupiter::ReadableString &in_key, T in_default_value = 0) const;
+		template<typename T> T get(std::string_view in_key, T in_default_value = 0) const;
 
 		/**
 		* @brief Fetches a section based on its name
@@ -81,7 +89,7 @@ namespace Jupiter
 		* @param in_key Name of the section to fetch
 		* @return Pointer to a section if it exists, nullptr otherwise
 		*/
-		Config *getSection(const Jupiter::ReadableString &in_key) const;
+		Config *getSection(std::string_view in_key) const;
 
 		/**
 		* @brief Fetches a section based on its name
@@ -90,7 +98,7 @@ namespace Jupiter
 		* @param in_key Name of the section to fetch
 		* @return Reference to the section
 		*/
-		Config &getSectionReference(const Jupiter::ReadableString &in_key);
+		Config &getSectionReference(std::string_view in_key);
 
 		/**
 		* @brief Sets an entry's value in the table
@@ -99,7 +107,7 @@ namespace Jupiter
 		* @param in_value Value to write to the entry
 		* @return True if a new entry was added, false if an entry was overwritten
 		*/
-		bool set(const Jupiter::ReadableString &in_key, const Jupiter::ReadableString &in_value);
+		bool set(std::string_view in_key, std::string in_value);
 
 		/**
 		* @brief Removes an entry from the table
@@ -107,7 +115,7 @@ namespace Jupiter
 		* @param in_key Key of the entry to remove
 		* @return True if an entry was removed, false otherwise
 		*/
-		bool remove(const Jupiter::ReadableString &in_key);
+		bool remove(std::string_view in_key);
 
 		/**
 		* @brief Removes a section from the table
@@ -115,7 +123,7 @@ namespace Jupiter
 		* @param in_key Key of the section to remove
 		* @return True if an entry was removed, false otherwise
 		*/
-		bool removeSection(const Jupiter::ReadableString &in_key);
+		bool removeSection(std::string_view in_key);
 
 		/**
 		* @brief Fetches the name of this config section
@@ -123,7 +131,7 @@ namespace Jupiter
 		*
 		* @return Name of this section
 		*/
-		const std::string &getName() const;
+		const std::string& getName() const;
 
 		/**
 		* @brief Erases all data from this section
@@ -144,7 +152,7 @@ namespace Jupiter
 		* @param in_filename Name of the file to read from
 		* @return True on success, false otherwise
 		*/
-		bool read(const std::string_view& in_filename);
+		bool read(std::string_view in_filename);
 
 		/**
 		* @brief Writes config data to the last read file
@@ -167,7 +175,7 @@ namespace Jupiter
 		* @param in_filename Name of the file to write to
 		* @return True on success, false otherwise
 		*/
-		bool write(const Jupiter::ReadableString &in_filename);
+		bool write(std::string_view in_filename);
 
 		/**
 		* @brief Empties config data from memory and reads from the last read file
@@ -190,7 +198,7 @@ namespace Jupiter
 		* @param in_filename Name of the file to read from
 		* @return True on success, false otherwise
 		*/
-		bool reload(const Jupiter::ReadableString &in_filename);
+		bool reload(std::string_view in_filename);
 
 		/**
 		* @brief Fetches a reference to this config's entry table
@@ -207,7 +215,7 @@ namespace Jupiter
 		const SectionHashTable &getSections() const;
 
 		/** Subscript operator */
-		Config &operator[](const Jupiter::ReadableString &in_key);
+		Config &operator[](std::string_view in_key);
 
 		/** Used for low-level string operations */
 		class Buffer : public Jupiter::StringL
@@ -245,14 +253,14 @@ namespace Jupiter
 
 /** Template function implementations */
 
-template<typename T> inline T Jupiter::Config::get(const Jupiter::ReadableString &in_key, T in_default_value) const
+template<typename T> inline T Jupiter::Config::get(std::string_view in_key, T in_default_value) const
 {
-	auto result = m_table.find(in_key);
+	auto result = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
 
 	if (result == m_table.end())
 		return in_default_value;
 
-	return static_cast<T>(result->second);
+	return static_cast<T>(Jupiter::ReferenceString{result->second});
 }
 
 /** Re-enable warnings */

@@ -72,14 +72,15 @@ namespace Jupiter
 		*
 		* @return True if the String is empty, false otherwise.
 		*/
-		virtual bool isEmpty() const;
+		bool isEmpty() const { return size() == 0; };
+		bool empty() const { return size() == 0; };
 
 		/**
 		* @brief Checks if the String is not empty.
 		*
 		* @return True if the String is not empty, false otherwise.
 		*/
-		virtual bool isNotEmpty() const;
+		virtual bool isNotEmpty() const { return !empty(); };
 
 		/**
 		* @brief Checks if the string contains an element with the specified value.
@@ -100,17 +101,6 @@ namespace Jupiter
 		size_t find(const Readable_String<T> &in) const;
 
 		/**
-		* @brief Returns the index of the first element in the string with the specified value.
-		* Note: Case insensitive. Returns false for any type other than char and wchar_t.
-		*
-		* @param value Value of the element to search for.
-		* @param index Index of the match to return (i.e: 0 returns the first match).
-		* @return The index of an element if one is found, INVALID_INDEX otherwise.
-		*/
-		size_t findi(const T &value, size_t index = 0) const;
-		size_t findi(const Readable_String<T> &in) const;
-
-		/**
 		* @brief Returns the number of elements of the string which match the input string.
 		*
 		* @param in Character set to match against.
@@ -119,32 +109,6 @@ namespace Jupiter
 		size_t span(const Readable_String<T> &in) const;
 		size_t span(const T *str) const;
 		size_t span(const T &in) const;
-
-		/**
-		* @brief Compares another string against the String.
-		*
-		* @param in String to compare against.
-		* @return 0 if the strings are equal, negative if the first mismatched character is greater in the String, or positive if it's less.
-		*/
-		int compare(const Readable_String<T> &in) const;
-		int compare(const std::basic_string<T> &in) const;
-		int compare(const T *in) const;
-		int compare(const T &in) const;
-		int compare(const std::nullptr_t) const;
-
-		/**
-		* @brief Checks if the strings are equal.
-		* Note: Case sensitive.
-		*
-		* @param in String to compare against.
-		* @return True if the contents of the strings are equal, false otherwise.
-		*/
-		bool equals(const Readable_String<T> &in) const;
-		bool equals(const std::basic_string<T> &in) const;
-		bool equals(const T *in, size_t len) const;
-		bool equals(const T *in) const;
-		bool equals(const T &in) const;
-		bool equals(const std::nullptr_t) const;
 
 		/**
 		* @brief Checks if the strings are equal.
@@ -156,9 +120,7 @@ namespace Jupiter
 		bool equalsi(const Readable_String<T> &in) const;
 		bool equalsi(const std::basic_string<T> &in) const;
 		bool equalsi(const T *in, size_t len) const;
-		bool equalsi(const T *in) const;
 		bool equalsi(const T &in) const;
-		bool equalsi(const std::nullptr_t) const;
 
 		/**
 		* @brief Checks if the String matches a wildcard format.
@@ -273,29 +235,26 @@ namespace Jupiter
 		inline const T &operator[](size_t index) const { return this->get(index); };
 
 		/** Comparative operators */
-		inline bool operator==(const Readable_String<T> &right)const{ return this->equals(right); }
-		inline bool operator==(const std::basic_string<T> &right)const{ return this->equals(right); }
-		inline bool operator==(const T *right)const{ return this->equals(right); }
-		inline bool operator==(const T right)const{ return this->equals(right); }
+		inline bool operator==(const Readable_String<T>& right)const{ return operator==(std::basic_string_view<T>{right}); }
+		inline bool operator==(const std::basic_string<T>& right)const{ return operator==(std::basic_string_view<T>{right}); }
+		inline bool operator==(const std::basic_string_view<T>& right)const{ return std::basic_string_view<T>(ptr(), size()) == right; }
+		inline bool operator==(const T right)const{ return this->size() == 1 && this->get(0) == right; }
+		inline bool operator==(std::nullptr_t) = delete;
 		inline bool operator!=(const Readable_String<T> &right)const{ return !operator==(right); }
 		inline bool operator!=(const std::basic_string<T> &right)const{ return !operator==(right); }
-		inline bool operator!=(const T *right)const{ return !operator==(right); }
 		inline bool operator!=(const T right)const{ return !operator==(right); }
+		inline bool operator!=(std::nullptr_t) = delete;
 		inline bool operator<(const Readable_String<T> &right)const{ return this->compare(right) < 0; }
 		inline bool operator<(const std::basic_string<T> &right)const{ return this->compare(right) < 0; }
-		inline bool operator<(const T *right)const{ return this->compare(right) < 0; }
 		inline bool operator<(const T right)const{ return this->compare(right) < 0; }
 		inline bool operator>(const Readable_String<T> &right)const{ return  this->compare(right) > 0; }
 		inline bool operator>(const std::basic_string<T> &right)const{ return  this->compare(right) > 0; }
-		inline bool operator>(const T *right)const{ return  this->compare(right) > 0; }
 		inline bool operator>(const T right)const{ return  this->compare(right) > 0; }
 		inline bool operator<=(const Readable_String<T> &right)const{ return !operator>(right); }
 		inline bool operator<=(const std::basic_string<T> &right)const{ return !operator>(right); }
-		inline bool operator<=(const T *right)const{ return !operator>(right); }
 		inline bool operator<=(const T right)const{ return !operator>(right); }
 		inline bool operator>=(const Readable_String<T> &right)const{ return !operator<(right); }
 		inline bool operator>=(const std::basic_string<T> &right)const{ return !operator<(right); }
-		inline bool operator>=(const T *right)const{ return !operator<(right); }
 		inline bool operator>=(const T right)const{ return !operator<(right); }
 
 		/** Conversion operators */

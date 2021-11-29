@@ -495,14 +495,14 @@ namespace Jupiter
 			*
 			* @return String containing a nickame.
 			*/
-			const Jupiter::ReadableString &getNickname() const;
+			std::string_view getNickname() const;
 
 			/**
 			* @brief Returns the client's real name.
 			*
 			* @return String containing a name.
 			*/
-			const Jupiter::ReadableString &getRealname() const;
+			std::string_view getRealname() const;
 
 			/**
 			* @brief Returns the server's name
@@ -627,7 +627,7 @@ namespace Jupiter
 			*
 			* @param channel Channel to join.
 			*/
-			void joinChannel(const Jupiter::ReadableString &in_channel);
+			void joinChannel(std::string_view in_channel);
 
 			/**
 			* @brief Sends a join request with a password.
@@ -650,7 +650,7 @@ namespace Jupiter
 			* @param channel Channel to part.
 			* @param message Reason for parting.
 			*/
-			void partChannel(const Jupiter::ReadableString &in_channel, const Jupiter::ReadableString &in_message);
+			void partChannel(const Jupiter::ReadableString &in_channel, std::string_view in_message);
 
 			/**
 			* @brief Gets the access level of a user.
@@ -732,7 +732,7 @@ namespace Jupiter
 			* @param in_default_value Optional parameter specifying the default value to return if none is found.
 			* @return String containing the key value if it exists, in_default_value otherwise.
 			*/
-			const Jupiter::ReadableString &readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &in_default_value = Jupiter::ReferenceString::empty) const;
+			std::string_view readConfigValue(const Jupiter::ReadableString &key, const Jupiter::ReadableString &in_default_value = Jupiter::ReferenceString::empty) const;
 
 			/**
 			* @brief Returns a key's value as a boolean.
@@ -833,11 +833,11 @@ namespace Jupiter
 			std::string m_server_hostname;
 
 			bool m_ssl;
-			Jupiter::StringS m_ssl_certificate;
-			Jupiter::StringS m_ssl_key;
+			std::string m_ssl_certificate;
+			std::string m_ssl_key;
 
-			Jupiter::StringS m_sasl_account;
-			Jupiter::StringS m_sasl_password;
+			std::string m_sasl_account;
+			std::string m_sasl_password;
 
 			int m_connection_status;
 			Jupiter::StringS m_primary_section_name;
@@ -846,8 +846,8 @@ namespace Jupiter
 			std::string m_log_file_name;
 			std::string m_last_line;
 			Jupiter::StringS m_server_name;
-			Jupiter::StringS m_nickname;
-			Jupiter::StringS m_realname;
+			std::string m_nickname;
+			std::string m_realname;
 
 			Jupiter::StringS m_prefix_modes = "ov";
 			Jupiter::StringS m_prefixes = "@+";
@@ -861,7 +861,7 @@ namespace Jupiter
 			ChannelTableType m_channels;
 
 			bool m_join_on_kick;
-			Jupiter::StringS m_auto_part_message;
+			std::string m_auto_part_message;
 			time_t m_reconnect_delay;
 			time_t m_reconnect_time;
 			int m_max_reconnect_attempts;

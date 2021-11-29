@@ -311,7 +311,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std
 			auto itr = data->begin();
 			auto end = data->end();
 			while (itr != end)
-				buffer->push<std::basic_string<X, Y, Z>::value_type>(*itr++);
+				buffer->push<typename std::basic_string<X, Y, Z>::value_type>(*itr++);
 		}
 	};
 
@@ -322,7 +322,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std
 		std::basic_string<X, Y, Z> r;
 		r.reserve(size_);
 		while (size_-- != 0)
-			r.push_back(Jupiter::DataBuffer::interpret_data<std::basic_string<X, Y, Z>::value_type>(head));
+			r.push_back(Jupiter::DataBuffer::interpret_data<typename std::basic_string<X, Y, Z>::value_type>(head));
 		return r;
 	}
 };

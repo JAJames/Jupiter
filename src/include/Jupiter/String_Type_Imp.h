@@ -553,9 +553,12 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_
 	return Jupiter::String_Type<T>::length;
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, const Jupiter::Readable_String<T> &value)
-{
+template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, const Jupiter::Readable_String<T> &value) {
 	return this->replace(index, targetSize, value.ptr(), value.size());
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, std::basic_string_view<T> value) {
+	return this->replace(index, targetSize, value.data(), value.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const T &target, const T &value)
@@ -599,7 +602,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 
 			Jupiter::String_Type<T>::length = i;
 		}
-		else if (targetSize == Jupiter::String_Type<T>::length && this->equals(target, targetSize))
+		else if (targetSize == Jupiter::String_Type<T>::length && *this == std::basic_string_view<T>(target, targetSize))
 			return this->set(value);
 	}
 	return Jupiter::String_Type<T>::length;
@@ -702,7 +705,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 				Jupiter::String_Type<T>::length = i;
 			}
 		}
-		else if (targetSize == Jupiter::String_Type<T>::length && this->equals(target, targetSize))
+		else if (targetSize == Jupiter::String_Type<T>::length && *this == std::basic_string_view<T>(target, targetSize))
 			return this->set(value);
 	}
 	return Jupiter::String_Type<T>::length;
@@ -721,6 +724,11 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Read
 template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const Jupiter::Readable_String<T> &value)
 {
 	return this->replace(target.ptr(), target.size(), value.ptr(), value.size());
+}
+
+template<typename T> size_t Jupiter::String_Type<T>::replace(std::basic_string_view<T> target, std::basic_string_view<T> value)
+{
+	return this->replace(target.data(), target.size(), value.data(), value.size());
 }
 
 // concat

@@ -456,6 +456,21 @@ namespace Jupiter
 			return static_cast<size_t>(Jupiter::fnv1a_32<char>(in));
 		}
 	};
+
+	template<typename CharT>
+	struct str_hash {
+		using is_transparent = std::true_type;
+
+		// C++17 introduces a requirement that these two operators return the same values for same CharT type, but not
+		// any requirement that std::hash<> be able to accept both key types. This just ties them for convenience
+		auto operator()(std::basic_string_view<CharT> in_key) const noexcept {
+			return std::hash<std::basic_string_view<CharT>>()(in_key);
+		}
+
+		auto operator()(const std::basic_string<CharT>& in_key) const noexcept {
+			return std::hash<std::basic_string<CharT>>()(in_key);
+		}
+	};
 }
 
 /** Re-enable warning */

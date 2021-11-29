@@ -79,7 +79,7 @@ namespace Jupiter
 		* @param key String containing file location of private key.
 		* @return True on success, false otherwise.
 		*/
-		void setCertificate(const Jupiter::ReadableString &cert, const Jupiter::ReadableString &key);
+		void setCertificate(std::string cert, std::string key);
 
 		/**
 		* @brief Loads a certificate and key for use.
@@ -87,7 +87,7 @@ namespace Jupiter
 		* @param pem Combined certificate/key file.
 		* @return True on success, false otherwise.
 		*/
-		void setCertificate(const Jupiter::ReadableString &pem);
+		void setCertificate(std::string_view pem);
 
 		/**
 		* @brief Interface to provide simple connection establishing.

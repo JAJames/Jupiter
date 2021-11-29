@@ -192,6 +192,7 @@ namespace Jupiter
 		virtual size_t replace(size_t index, size_t length, const T &value);
 		virtual size_t replace(size_t index, size_t length, const T *value, size_t valueSize);
 		virtual size_t replace(size_t index, size_t length, const Jupiter::Readable_String<T> &value);
+		virtual size_t replace(size_t index, size_t length, std::basic_string_view<T> value);
 
 		/**
 		* @brief Replaces all instances of one value with another value.
@@ -211,6 +212,7 @@ namespace Jupiter
 		virtual size_t replace(const T *target, size_t targetSize, const Jupiter::Readable_String<T> &value);
 		virtual size_t replace(const Jupiter::Readable_String<T> &target, const T *value, size_t valueSize);
 		virtual size_t replace(const Jupiter::Readable_String<T> &target, const Jupiter::Readable_String<T> &value);
+		virtual size_t replace(std::basic_string_view<T> target, std::basic_string_view<T> value);
 
 		/**
 		* @brief Copies the data from the input string and concatenates it to the end of String.

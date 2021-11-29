@@ -178,15 +178,15 @@ bool loadCertificate(SSL_CTX *context, const char *cert, const char *key)
 	return true;
 }
 
-void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &cert, const Jupiter::ReadableString &key)
+void Jupiter::SecureSocket::setCertificate(std::string cert, std::string key)
 {
-	Jupiter::SecureSocket::SSLdata_->cert = static_cast<std::string>(cert);
-	Jupiter::SecureSocket::SSLdata_->key = static_cast<std::string>(key);
+	Jupiter::SecureSocket::SSLdata_->cert = std::move(cert);
+	Jupiter::SecureSocket::SSLdata_->key = std::move(key);
 }
 
-void Jupiter::SecureSocket::setCertificate(const Jupiter::ReadableString &pem)
+void Jupiter::SecureSocket::setCertificate(std::string_view pem)
 {
-	Jupiter::SecureSocket::setCertificate(pem, pem);
+	Jupiter::SecureSocket::setCertificate(static_cast<std::string>(pem), static_cast<std::string>(pem));
 }
 
 bool Jupiter::SecureSocket::connect(const char *hostname, unsigned short iPort, const char *clientAddress, unsigned short clientPort)

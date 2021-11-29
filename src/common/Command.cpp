@@ -17,11 +17,12 @@
  */
 
 #include <cstring>
+#include "jessilib/unicode.hpp"
 #include "Command.h"
 #include "String.hpp"
 
 struct Jupiter::Command::Data { // TODO: remove pimpl
-	std::vector<Jupiter::StringS> triggers;
+	std::vector<std::string> triggers;
 };
 
 Jupiter::Command::Command() {
@@ -40,11 +41,11 @@ Jupiter::Command::~Command() {
 
 // Command Functions
 
-void Jupiter::Command::addTrigger(const Jupiter::ReadableString &trigger) {
+void Jupiter::Command::addTrigger(std::string_view trigger) {
 	m_data->triggers.emplace_back(trigger);
 }
 
-const Jupiter::ReadableString &Jupiter::Command::getTrigger(size_t index) const {
+std::string_view Jupiter::Command::getTrigger(size_t index) const {
 	return m_data->triggers[index];
 }
 
@@ -52,8 +53,11 @@ size_t Jupiter::Command::getTriggerCount() const {
 	return m_data->triggers.size();
 }
 
-bool Jupiter::Command::matches(const Jupiter::ReadableString &in_trigger) const {
-	for (const auto& trigger : m_data->triggers)
-		if (trigger.equalsi(in_trigger)) return true;
+bool Jupiter::Command::matches(std::string_view in_trigger) const {
+	for (const auto& trigger : m_data->triggers) {
+		if (jessilib::equalsi(trigger, in_trigger)) {
+			return true;
+		}
+	}
 	return false;
 }

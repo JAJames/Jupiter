@@ -53,9 +53,10 @@ void Jupiter::INIConfig::write_helper(FILE *in_file, const Jupiter::Config *in_s
 			fputc('\t', in_file);
 
 		// Write entry
-		table_entry.first.print(in_file);
+		fwrite(table_entry.first.data(), sizeof(char), table_entry.first.size(), in_file);
 		fputs(" = ", in_file);
-		table_entry.second.println(in_file);
+		fwrite(table_entry.second.data(), sizeof(char), table_entry.second.size(), in_file);
+		fputs("\r\n", in_file);
 	}
 
 	// Write subsections
@@ -80,16 +81,15 @@ bool Jupiter::INIConfig::write_internal(const char *in_filename)
 	return true;
 }
 
-bool Jupiter::INIConfig::read_internal(const char *in_filename)
-{
-	Jupiter::ReferenceString line;
+bool Jupiter::INIConfig::read_internal(const char *in_filename) {
+	std::string_view line;
 	std::stack<Jupiter::Config *> section_stack;
 
 	section_stack.push(this);
 
 	auto process_line = [&line, &section_stack]()
 	{
-		const char *itr = line.ptr();
+		const char *itr = line.data();
 		const char *end = itr + line.size(); // guaranteed to be greater than itr
 
 		// Shift to right of spaces
@@ -98,7 +98,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 			if (++itr == end)
 				return; // Line is purely whitespace
 
-		line.shiftRight(itr - line.ptr());
+		line.remove_prefix(itr - line.data());
 
 		if (*itr == ';')
 			return; // Comment
@@ -112,7 +112,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 			for (++itr; itr != end && *itr == '['; ++itr)
 				++depth;
 
-			line.shiftRight(itr - line.ptr());
+			line.remove_prefix(itr - line.data());
 
 			while (end != itr)
 			{
@@ -124,7 +124,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 				}
 			}
 
-			line.set(itr, end - itr);
+			line = std::string_view(itr, end - itr);
 
 			// Add section to stack; pop sections or push blanks as necessary
 
@@ -132,9 +132,9 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 				section_stack.pop();
 
 			while (depth > section_stack.size())
-				section_stack.push(std::addressof(section_stack.top()->getSectionReference(Jupiter::ReferenceString::empty)));
+				section_stack.push(std::addressof(section_stack.top()->getSectionReference({})));
 
-			section_stack.push(&section_stack.top()->getSectionReference(line));
+			section_stack.push(&section_stack.top()->getSectionReference(static_cast<KeyType>(line)));
 		}
 		else
 		{
@@ -146,7 +146,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 			// end now points to a non-space character within the bounds
 
 			++end;
-			line.truncate(itr + line.size() - end);
+			line.remove_suffix(itr + line.size() - end);
 
 			// Parse key (can be empty)
 
@@ -154,9 +154,9 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 				if (++itr == end)
 					return; // Error: no assignment exists; ignore line
 
-			Jupiter::ReferenceString key;
+			std::string_view key;
 
-			if (itr != line.ptr())
+			if (itr != line.data())
 			{
 				// Truncate spaces from key; a non-space character is guaranteed
 				end = itr - 1;
@@ -164,9 +164,9 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 				while (isspace(*end))
 					--end;
 
-				key = line.substring(size_t{ 0 }, end + 1 - line.ptr());
+				key = line.substr(size_t{ 0 }, end + 1 - line.data());
 
-				end = line.ptr() + line.size();
+				end = line.data() + line.size();
 			}
 
 			// Parse value (can be empty)
@@ -177,13 +177,13 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 				while (isspace(*itr))
 					++itr;
 
-				line.shiftRight(itr - line.ptr());
+				line.remove_prefix(itr - line.data());
 			}
 			else
-				line = Jupiter::ReferenceString::empty;
+				line = std::string_view{};
 
 			// Add entry to current table on stack
-			section_stack.top()->set(key, line);
+			section_stack.top()->set(KeyType{key}, static_cast<std::string>(line));
 		}
 	};
 
@@ -214,7 +214,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 		end = itr + buffer.size();
 
 		// Reset line
-		line.set(buffer.ptr(), 0);
+		line = std::string_view(buffer.ptr(), 0);
 
 		// Parse buffer for lines
 		while (itr != end)
@@ -223,8 +223,8 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 			if (*itr == '\n' || *itr == '\r')
 			{
 				// Process line
-				line.set(buffer.ptr(), itr - buffer.ptr());
-				if (line.isNotEmpty())
+				line = std::string_view(buffer.ptr(), itr - buffer.ptr());
+				if (!line.empty())
 					process_line();
 
 				// Keep iterating until next non-newline character
@@ -253,8 +253,8 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename)
 	}
 
 	// Process data remaining in buffer as a line
-	line.set(buffer.ptr(), buffer.size());
-	if (line.isNotEmpty())
+	line = std::string_view(buffer.ptr(), buffer.size());
+	if (!line.empty())
 		process_line();
 
 	// File has been successfully read, or an error occurred.
