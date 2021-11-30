@@ -69,7 +69,7 @@ template<typename T> size_t Jupiter::Readable_String<T>::find(const Jupiter::Rea
 
 template<typename T> bool Jupiter::Readable_String<T>::equalsi(const Jupiter::Readable_String<T> &in) const
 {
-	return this->equalsi(in.ptr(), in.size());
+	return this->equalsi(in.data(), in.size());
 }
 
 template<typename T> bool Jupiter::Readable_String<T>::equalsi(const std::basic_string<T> &in) const
@@ -130,7 +130,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Reada
 	{
 		buffer->secure(sizeof(size_t) + data->size() * sizeof(Y));
 		buffer->push<size_t>(data->size());
-		buffer->push(reinterpret_cast<const uint8_t *>(data->ptr()), data->size() * sizeof(Y));
+		buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(Y));
 	};
 };
 

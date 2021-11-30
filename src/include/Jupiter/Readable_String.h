@@ -51,7 +51,7 @@ namespace Jupiter
 		*
 		* @return Pointer to the underlying string of elements.
 		*/
-		virtual const T *ptr() const = 0;  // RENAME; 'data'
+		virtual const T *data() const = 0; // KEEP
 
 		/**
 		* @brief Returns the number of elements in the String.
@@ -102,12 +102,12 @@ namespace Jupiter
 		virtual ~Readable_String() = default;
 
 		/** Access operator */
-		inline const T &operator[](size_t index) const { return this->ptr()[index]; };
+		inline const T &operator[](size_t index) const { return this->data()[index]; };
 
 		/** Comparative operators */
 		inline bool operator==(const Readable_String<T>& right)const{ return operator==(std::basic_string_view<T>{right}); }
 		inline bool operator==(const std::basic_string<T>& right)const{ return operator==(std::basic_string_view<T>{right}); }
-		inline bool operator==(const std::basic_string_view<T>& right)const{ return std::basic_string_view<T>(ptr(), size()) == right; }
+		inline bool operator==(const std::basic_string_view<T>& right)const{ return std::basic_string_view<T>(data(), size()) == right; }
 		inline bool operator==(const T right)const{ return this->size() == 1 && this->get(0) == right; }
 		inline bool operator==(std::nullptr_t) = delete;
 		inline bool operator!=(const Readable_String<T> &right)const{ return !operator==(right); }
@@ -128,8 +128,8 @@ namespace Jupiter
 		inline bool operator>=(const T right)const{ return !operator<(right); }
 
 		/** Conversion operators */
-		explicit inline operator std::basic_string<T>() const { return std::basic_string<T>(this->ptr(), this->size()); }
-		inline operator std::basic_string_view<T>() const { return std::basic_string_view<T>(this->ptr(), this->size()); }
+		explicit inline operator std::basic_string<T>() const { return std::basic_string<T>(this->data(), this->size()); }
+		inline operator std::basic_string_view<T>() const { return std::basic_string_view<T>(this->data(), this->size()); }
 	};
 
 	/** Generic Readable String Type */

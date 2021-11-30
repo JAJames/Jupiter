@@ -77,7 +77,7 @@ template<typename T, typename R> inline R Jupiter::calcsum(const T *in_data, siz
 
 template<typename T, typename R> inline R Jupiter::calcsum(const Jupiter::Readable_String<T> &str)
 {
-	return Jupiter::calcsum<T, R>(str.ptr(), str.size());
+	return Jupiter::calcsum<T, R>(str.data(), str.size());
 }
 
 /** fnv1 implementation */
@@ -93,7 +93,7 @@ template<typename T> inline uint64_t Jupiter::fnv1(const T *data, size_t length)
 
 template<typename T> inline uint64_t Jupiter::fnv1(const Jupiter::Readable_String<T> &data)
 {
-	return Jupiter::fnv1(reinterpret_cast<const uint8_t *>(data.ptr()), reinterpret_cast<const uint8_t *>(data.ptr() + data.size()));
+	return Jupiter::fnv1(reinterpret_cast<const uint8_t *>(data.data()), reinterpret_cast<const uint8_t *>(data.data() + data.size()));
 }
 
 template<typename T> inline uint32_t Jupiter::fnv1_32(const T &data)
@@ -108,7 +108,7 @@ template<typename T> inline uint32_t Jupiter::fnv1_32(const T *data, size_t leng
 
 template<typename T> inline uint32_t Jupiter::fnv1_32(const Jupiter::Readable_String<T> &data)
 {
-	return Jupiter::fnv1_32(reinterpret_cast<const uint8_t *>(data.ptr()), reinterpret_cast<const uint8_t *>(data.ptr() + data.size()));
+	return Jupiter::fnv1_32(reinterpret_cast<const uint8_t *>(data.data()), reinterpret_cast<const uint8_t *>(data.data() + data.size()));
 }
 
 template<typename T> inline uint64_t Jupiter::fnv1a(const T &data)
@@ -123,7 +123,7 @@ template<typename T> inline uint64_t Jupiter::fnv1a(const T *data, size_t length
 
 template<typename T> inline uint64_t Jupiter::fnv1a(const Jupiter::Readable_String<T> &data)
 {
-	return Jupiter::fnv1a(data.ptr(), data.size());
+	return Jupiter::fnv1a(data.data(), data.size());
 }
 
 template<typename T> inline uint32_t Jupiter::fnv1a_32(const T &data)
@@ -138,7 +138,7 @@ template<typename T> inline uint32_t Jupiter::fnv1a_32(const T *data, size_t len
 
 template<typename T> inline uint32_t Jupiter::fnv1a_32(const Jupiter::Readable_String<T> &data)
 {
-	return Jupiter::fnv1a_32(data.ptr(), data.size());
+	return Jupiter::fnv1a_32(data.data(), data.size());
 }
 
 #endif // _HASH_H_HEADER

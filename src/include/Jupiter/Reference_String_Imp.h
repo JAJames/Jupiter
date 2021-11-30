@@ -48,94 +48,15 @@ template<typename T> Jupiter::Reference_String<T>::Reference_String(const T *in)
 }
 
 template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupiter::Readable_String<T>& in)
-	: Reference_String(in.ptr(), in.size()) {
+	: Reference_String(in.data(), in.size()) {
 }
 
 template<typename T> size_t Jupiter::Reference_String<T>::size() const {
 	return std::basic_string_view<T>::size();
 }
 
-template<typename T> const T* Jupiter::Reference_String<T>::ptr() const {
+template<typename T> const T* Jupiter::Reference_String<T>::data() const {
 	return std::basic_string_view<T>::data();
-}
-
-// truncate
-
-template<typename T> size_t Jupiter::Reference_String<T>::truncate(size_t n) {
-	std::basic_string_view<T>::remove_suffix(std::min(n, size()));
-	return size();
-}
-
-// erase
-
-template<typename T> void Jupiter::Reference_String<T>::erase() {
-	std::basic_string_view<T>::remove_suffix(size());
-}
-
-// shift
-
-template<typename T> size_t Jupiter::Reference_String<T>::shiftLeft(size_t len) {
-	*this = std::basic_string_view<T>{ this->data() - len, size() };
-	return len;
-}
-
-template<typename T> size_t Jupiter::Reference_String<T>::shiftRight(size_t len) {
-	len = std::min(len, size());
-	this->remove_prefix(len);
-	return len;
-}
-
-// set
-
-template<typename T> size_t Jupiter::Reference_String<T>::set(const Jupiter::Readable_String<T> &in) {
-	return this->set(in.ptr(), in.size());
-}
-
-template<typename T> size_t Jupiter::Reference_String<T>::set(const std::basic_string<T> &in) {
-	*this = in;
-	return size();
-}
-
-template<typename T> size_t Jupiter::Reference_String<T>::set(const T *in, size_t len) {
-	*this = std::basic_string_view<T>{ in, len };
-	return size();
-}
-
-template<typename T> size_t Jupiter::Reference_String<T>::set(const T *in) {
-	if (in == nullptr) {
-		*this = std::basic_string_view<T>{};
-	}
-	*this = std::basic_string_view<T>{ in };
-	return size();
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(size_t pos) const {
-	return Jupiter::Reference_String<T>::substring(*this, pos);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(size_t pos, size_t len) const {
-	return Jupiter::Reference_String<T>::substring(*this, pos, len);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos) {
-	pos = std::min(pos, in.size());
-	return Jupiter::Reference_String<T>(in.ptr() + pos, in.size() - pos);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(const T *in, size_t pos) {
-	return Jupiter::Reference_String<T>(in + pos);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len) {
-	if (pos + len > in.size()) {
-		return Jupiter::Reference_String<T>::substring(in, pos);
-	}
-
-	return Jupiter::Reference_String<T>(in.ptr() + pos, len);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(const T *in, size_t pos, size_t len) {
-	return Jupiter::Reference_String<T>(in + pos, len);
 }
 
 // Jupiter::DataBuffer specialization

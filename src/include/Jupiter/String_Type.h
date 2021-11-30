@@ -48,19 +48,11 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Fetches an element from the string.
-		*
-		* @param index Index of the element to return.
-		* @return The element located at the specified index.
-		*/
-		const T &get(size_t index) const;
-
-		/**
 		* @brief Returns the number of elements in the String.
 		*
 		* @return Number of elements in the string.
 		*/
-		size_t size() const;
+		size_t size() const override;
 
 		/**
 		* @brief Returns the maximum number of elements the String can contain,
@@ -76,7 +68,7 @@ namespace Jupiter
 		*
 		* @return Pointer to the underlying string of elements.
 		*/
-		const T *ptr() const;
+		const T *data() const override;
 
 		/**
 		* @brief Sets the String's contents based on the format string and input variables.
@@ -282,6 +274,8 @@ namespace Jupiter
 		inline String_Type<T> &operator=(const std::basic_string_view<T> &right) { this->set(right.data(), right.size()); return *this; };
 		inline String_Type<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Type<T> &operator=(const T right) { this->set(right); return *this; };
+
+		using Readable_String<T>::operator[];
 
 		/**
 		* @brief Default constructor for the String_Type class.

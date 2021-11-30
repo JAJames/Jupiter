@@ -666,7 +666,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							// Parse supported channel types
 							pos = line.find("CHANTYPES="_jrs);
 							if (pos != Jupiter::INVALID_INDEX) {
-								m_chan_types = line.substring(pos + 10, line.find(' '));
+								m_chan_types = line.substr(pos + 10, line.find(' '));
 							}
 						}
 						break;
@@ -792,10 +792,9 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							std::string_view channel_name = getLineToken(2);
 							if (!channel_name.empty()) {
 								size_t pos = line.find('!', 0);
-								auto message = Jupiter::ReferenceString::substring(line, line.find(':', 1) + 1,
-									line.size());
+								auto message = jessilib::split_once_view(line, ':').second;
 								if (pos < line.find(' ')) {
-									auto nick = Jupiter::ReferenceString::substring(line, 1, pos);
+									auto nick = line.substr(1, pos);
 									this->OnNotice(channel_name, nick, message);
 									for (auto& plugin: Jupiter::plugins) {
 										plugin->OnNotice(this, channel_name, nick, message);
@@ -814,10 +813,10 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						}
 						else if (jessilib::equalsi(command_token, "NICK"sv)) {
 							auto nick = getSender(line);
-							Jupiter::ReferenceString newnick = Jupiter::ReferenceString::substring(line,
-								line.find(' ', 1) + 1);
-							if (newnick.isNotEmpty() && newnick[0] == ':')
-								newnick.shiftRight(1);
+							std::string_view newnick = jessilib::split_once_view(line, ' ').second;
+							if (!newnick.empty() && newnick[0] == ':') {
+								newnick.remove_prefix(1);
+							}
 							if (nick.equalsi(m_nickname)) {
 								m_nickname = newnick;
 							}
@@ -876,8 +875,8 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 											Jupiter::ReferenceString reason;
 											size_t pos = line.find(':', 1);
 
-											if (pos != Jupiter::INVALID_INDEX)
-												reason = Jupiter::ReferenceString::substring(line, pos + 1);
+											if (pos != std::string_view::npos)
+												reason = line.substr(pos + 1);
 
 											this->OnPart(channel_name, nick, reason);
 
@@ -910,8 +909,8 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 												size_t pos = line.find(':', 1);
 												Jupiter::ReferenceString reason;
 
-												if (pos != Jupiter::INVALID_INDEX)
-													reason = Jupiter::ReferenceString::substring(line, pos + 1);
+												if (pos != std::string_view::npos)
+													reason = line.substr(pos + 1);
 
 												this->OnKick(channel_name, kicker, kicked_nickname, reason);
 
@@ -937,8 +936,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						}
 						else if (jessilib::equalsi(command_token, "QUIT"sv)) {
 							Jupiter::ReferenceString nick = getSender(line);
-							Jupiter::ReferenceString message = Jupiter::ReferenceString::substring(line,
-								line.find(':', 1) + 1);
+							std::string_view message = jessilib::split_once_view(line.substr(1), ':').second;
 							auto user = getUser(nick);
 							if (user != nullptr) {
 								for (auto& channel: m_channels) {
@@ -957,11 +955,10 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						else if (jessilib::equalsi(command_token, "INVITE"sv)) {
 							Jupiter::ReferenceString inviter = getSender(line);
 							std::string_view invited_nickname = getLineToken(2);
-							Jupiter::ReferenceString chan = Jupiter::ReferenceString::substring(line,
-								line.find(':', 1) + 1);
-							this->OnInvite(chan, inviter, invited_nickname);
+							std::string_view channel_name = jessilib::split_once_view(line.substr(1), ':').second;
+							this->OnInvite(channel_name, inviter, invited_nickname);
 							for (auto& plugin: Jupiter::plugins) {
-								plugin->OnInvite(this, chan, inviter, invited_nickname);
+								plugin->OnInvite(this, channel_name, inviter, invited_nickname);
 							}
 						}
 						else if (jessilib::equalsi(command_token, "MODE"sv)) {
@@ -1040,8 +1037,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							// else if CHGHOST
 						else if (numeric == Reply::NAMREPLY) { // Some names.
 							std::string_view channel_name = getLineToken(4);
-							Jupiter::ReferenceString names = Jupiter::ReferenceString::substring(line,
-								line.find(':', 1) + 1);
+							std::string_view names = jessilib::split_once_view(line.substr(1), ':').second;
 
 							Channel* channel = getChannel(channel_name);
 							if (channel != nullptr) {
@@ -1082,7 +1078,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 				}
 				else if (w1 == "ERROR"sv)
 				{
-					Jupiter::ReferenceString reason = Jupiter::ReferenceString::substring(line, line.find(':') + 1);
+					std::string_view reason = jessilib::split_once_view(line, ':').second;
 					this->OnError(reason);
 					for (auto& plugin : Jupiter::plugins) {
 						plugin->OnError(this, reason);
@@ -1095,7 +1091,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 					{
 						Jupiter::StringS auth_str = m_nickname + '\0' + m_sasl_account + '\0' + m_sasl_password;
 
-						char *enc = Jupiter::base64encode(auth_str.ptr(), auth_str.size());
+						char *enc = Jupiter::base64encode(auth_str.data(), auth_str.size());
 						m_socket->send("AUTHENTICATE "_jrs + enc + ENDL);
 						delete[] enc;
 					}
@@ -1170,7 +1166,7 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 
 void Jupiter::IRC::Client::disconnect(const Jupiter::ReadableString &message, bool stayDead)
 {
-	m_socket->send(Jupiter::StringS::Format("QUIT :%.*s" ENDL, message.size(), message.ptr()));
+	m_socket->send(Jupiter::StringS::Format("QUIT :%.*s" ENDL, message.size(), message.data()));
 	Jupiter::IRC::Client::disconnect(stayDead);
 }
 
@@ -1337,7 +1333,7 @@ double Jupiter::IRC::Client::readConfigDouble(const Jupiter::ReadableString &key
 
 void Jupiter::IRC::Client::writeToLogs(const Jupiter::ReadableString &message) {
 	if (m_log_file != nullptr) {
-		fwrite(message.ptr(), sizeof(char), message.size(), m_log_file);
+		fwrite(message.data(), sizeof(char), message.size(), m_log_file);
 		fputs("\r\n", m_log_file);
 		fflush(m_log_file);
 	}
@@ -1436,15 +1432,15 @@ bool Jupiter::IRC::Client::registerClient() {
 * User Implementation
 */
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::User::getNickname() const {
+std::string_view Jupiter::IRC::Client::User::getNickname() const {
 	return m_nickname;
 }
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::User::getUsername() const {
+std::string_view Jupiter::IRC::Client::User::getUsername() const {
 	return m_username;
 }
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::User::getHostname() const {
+std::string_view Jupiter::IRC::Client::User::getHostname() const {
 	return m_hostname;
 }
 
@@ -1459,7 +1455,7 @@ size_t Jupiter::IRC::Client::User::getChannelCount() const {
 Jupiter::IRC::Client::Channel::Channel(const Jupiter::ReadableString &in_name, Jupiter::IRC::Client *in_parent) {
 	auto to_lower = [&in_name]() {
 		Jupiter::String result(in_name.size());
-		const char *itr = in_name.ptr();
+		const char *itr = in_name.data();
 		const char *end = itr + in_name.size();
 
 		while (itr != end)
@@ -1494,7 +1490,7 @@ std::shared_ptr<Jupiter::IRC::Client::Channel::User> Jupiter::IRC::Client::Chann
 
 	++user->m_channel_count;
 
-	m_users[channel_user->getNickname()] = channel_user;
+	m_users[Jupiter::ReferenceString{channel_user->getNickname()}] = channel_user;
 	return channel_user;
 }
 
@@ -1505,7 +1501,7 @@ std::shared_ptr<Jupiter::IRC::Client::Channel::User> Jupiter::IRC::Client::Chann
 
 	++user->m_channel_count;
 
-	m_users[channel_user->getNickname()] = channel_user;
+	m_users[Jupiter::ReferenceString{channel_user->getNickname()}] = channel_user;
 	return channel_user;
 }
 
@@ -1595,15 +1591,15 @@ const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getPrefixes(
 	return m_prefixes;
 }
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getNickname() const {
+std::string_view Jupiter::IRC::Client::Channel::User::getNickname() const {
 	return m_user->getNickname();
 }
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getUsername() const {
+std::string_view Jupiter::IRC::Client::Channel::User::getUsername() const {
 	return m_user->getUsername();
 }
 
-const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::User::getHostname() const {
+std::string_view Jupiter::IRC::Client::Channel::User::getHostname() const {
 	return m_user->getHostname();
 }
 

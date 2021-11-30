@@ -39,7 +39,7 @@ namespace Jupiter
 		{
 		public:
 			QueryString() = delete;
-			inline QueryString(const Jupiter::ReadableString &query_string) : QueryString(query_string.ptr(), query_string.size()) {}
+			inline QueryString(const Jupiter::ReadableString &query_string) : QueryString(query_string.data(), query_string.size()) {}
 			inline QueryString(const char *ptr, size_t str_size);
 		};
 
@@ -52,7 +52,7 @@ namespace Jupiter
 		public:
 			HTMLFormResponse() = delete;
 			inline HTMLFormResponse(std::string_view query_string) : HTMLFormResponse(query_string.data(), query_string.size()) {}
-			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.ptr(), query_string.size()) {}
+			inline HTMLFormResponse(const Jupiter::ReadableString &query_string) : HTMLFormResponse(query_string.data(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
 			using TableType = std::unordered_map<std::string, std::string, Jupiter::str_hash<char>, std::equal_to<>>;
 #ifdef __cpp_lib_generic_unordered_lookup

@@ -218,21 +218,21 @@ namespace Jupiter
 				*
 				* @return String containing the user's nickname.
 				*/
-				const Jupiter::ReadableString &getNickname() const;
+				std::string_view getNickname() const;
 
 				/**
 				* @brief Fetches the user's username.
 				*
 				* @return String containing the user's username.
 				*/
-				const Jupiter::ReadableString &getUsername() const;
+				std::string_view getUsername() const;
 
 				/**
 				* @brief Fetches the user's hostname.
 				*
 				* @return String containing the user's hostname.
 				*/
-				const Jupiter::ReadableString &getHostname() const;
+				std::string_view getHostname() const;
 
 				/**
 				* @brief Returns the number of channels the user shares with the local client.
@@ -244,7 +244,7 @@ namespace Jupiter
 				/** Private members */
 			private:
 				unsigned int m_channel_count = 0;
-				Jupiter::StringS m_nickname;
+				std::string m_nickname;
 				Jupiter::StringS m_username;
 				Jupiter::StringS m_hostname;
 			};
@@ -284,21 +284,21 @@ namespace Jupiter
 					*
 					* @return String containing the user's nickname.
 					*/
-					const Jupiter::ReadableString &getNickname() const;
+					std::string_view getNickname() const;
 
 					/**
 					* @brief Fetches the user's username.
 					*
 					* @return String containing the user's username.
 					*/
-					const Jupiter::ReadableString &getUsername() const;
+					std::string_view getUsername() const;
 
 					/**
 					* @brief Fetches the user's hostname.
 					*
 					* @return String containing the user's hostname.
 					*/
-					const Jupiter::ReadableString &getHostname() const;
+					std::string_view getHostname() const;
 
 					/**
 					* @brief Returns the number of channels the user shares with the local client.

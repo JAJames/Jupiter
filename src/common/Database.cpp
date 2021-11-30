@@ -128,7 +128,7 @@ bool Jupiter::Database::append(Jupiter::DataBuffer &data)
 bool Jupiter::Database::append(Jupiter::ReadableString &file, Jupiter::DataBuffer &data)
 {
 	char *str = new char[file.size() + 1];
-	memcpy(str, file.ptr(), file.size() * sizeof(char));
+	memcpy(str, file.data(), file.size() * sizeof(char));
 	str[file.size()] = '\0';
 	bool r = Jupiter::Database::append(str, data);
 	delete[] str;
@@ -161,7 +161,7 @@ bool Jupiter::Database::append(FILE *file, Jupiter::DataBuffer &data)
 bool Jupiter::Database::create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header)
 {
 	char *str = new char[file.size() + 1];
-	memcpy(str, file.ptr(), file.size() * sizeof(char));
+	memcpy(str, file.data(), file.size() * sizeof(char));
 	str[file.size()] = '\0';
 	bool r = Jupiter::Database::create_database(str, header);
 	delete[] str;

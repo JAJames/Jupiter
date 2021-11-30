@@ -41,11 +41,6 @@ template<typename T> Jupiter::String_Type<T>::String_Type(Jupiter::String_Type<T
 	source.str = nullptr;
 }
 
-template<typename T> const T &Jupiter::String_Type<T>::get(size_t index) const
-{
-	return Jupiter::String_Type<T>::str[index];
-}
-
 template<typename T> size_t Jupiter::String_Type<T>::size() const
 {
 	return Jupiter::String_Type<T>::length;
@@ -56,7 +51,7 @@ template<typename T> size_t Jupiter::String_Type<T>::capacity() const
 	return this->size();
 }
 
-template<typename T> const T *Jupiter::String_Type<T>::ptr() const
+template<typename T> const T *Jupiter::String_Type<T>::data() const
 {
 	return Jupiter::String_Type<T>::str;
 }
@@ -179,32 +174,32 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 	size_t index = 0;
 	while (index + 1 != Jupiter::String_Type<char>::length)
 	{
-		if (this->get(index) == '\\')
+		if (operator[](index) == '\\')
 		{
-			switch (this->get(++index))
+			switch (operator[](++index))
 			{
 			case '0':
 			case '1':
 			case '2':
 			case '3':
-				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 1)))
+				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(operator[](index + 1)))
 				{
-					if (index + 2 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 2)))
-						this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 6 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 2))));
+					if (index + 2 != Jupiter::String_Type<char>::length && Jupiter_isOctal(operator[](index + 2)))
+						this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getOctal(operator[](index))) << 6 | static_cast<uint8_t>(Jupiter_getOctal(operator[](index + 1))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(operator[](index + 2))));
 					else
-						this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))));
+						this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(operator[](index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(operator[](index + 1))));
 				}
 				else
-					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))));
+					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(operator[](index))));
 				break;
 			case '4':
 			case '5':
 			case '6':
 			case '7':
-				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(this->get(index + 1)))
-					this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(this->get(index + 1))));
+				if (index + 1 != Jupiter::String_Type<char>::length && Jupiter_isOctal(operator[](index + 1)))
+					this->replace(index - 1, 3, static_cast<uint8_t>(Jupiter_getOctal(operator[](index))) << 3 | static_cast<uint8_t>(Jupiter_getOctal(operator[](index + 1))));
 				else
-					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(this->get(index))));
+					this->replace(index - 1, 2, static_cast<uint8_t>(Jupiter_getOctal(operator[](index))));
 				break;
 			case 'a':
 				this->replace(index - 1, 2, '\a');
@@ -241,20 +236,20 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 				break;
 			case 'x':
 				if (Jupiter::String_Type<char>::length >= index + 2
-					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)))
-					this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2))));
+					&& Jupiter_isHex(operator[](index + 1)) && Jupiter_isHex(operator[](index + 2)))
+					this->replace(index - 1, 4, static_cast<uint8_t>(Jupiter_getHex(operator[](index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 2))));
 				break;
 			case 'U':
 				if (Jupiter::String_Type<char>::length >= index + 8
-					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)) && Jupiter_isHex(this->get(index + 3)) && Jupiter_isHex(this->get(index + 4)) && Jupiter_isHex(this->get(index + 5)) && Jupiter_isHex(this->get(index + 6)) && Jupiter_isHex(this->get(index + 7)) && Jupiter_isHex(this->get(index + 8)))
+					&& Jupiter_isHex(operator[](index + 1)) && Jupiter_isHex(operator[](index + 2)) && Jupiter_isHex(operator[](index + 3)) && Jupiter_isHex(operator[](index + 4)) && Jupiter_isHex(operator[](index + 5)) && Jupiter_isHex(operator[](index + 6)) && Jupiter_isHex(operator[](index + 7)) && Jupiter_isHex(operator[](index + 8)))
 				{
-					uint32_t codepoint = static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2)));
+					uint32_t codepoint = static_cast<uint8_t>(Jupiter_getHex(operator[](index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 2)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 4)));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(operator[](index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 4)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 5))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 6)));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(operator[](index + 5))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 6)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 7))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 8)));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(operator[](index + 7))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 8)));
 					if (codepoint <= 0x007F)
 						this->replace(index - 1, 10, static_cast<uint8_t>(codepoint));
 					else if (codepoint <= 0x07FF)
@@ -288,11 +283,11 @@ template<> inline void Jupiter::String_Type<char>::processEscapeSequences()
 				break;
 			case 'u':
 				if (Jupiter::String_Type<char>::length >= index + 4
-					&& Jupiter_isHex(this->get(index + 1)) && Jupiter_isHex(this->get(index + 2)) && Jupiter_isHex(this->get(index + 3)) && Jupiter_isHex(this->get(index + 4)))
+					&& Jupiter_isHex(operator[](index + 1)) && Jupiter_isHex(operator[](index + 2)) && Jupiter_isHex(operator[](index + 3)) && Jupiter_isHex(operator[](index + 4)))
 				{
-					uint16_t codepoint = static_cast<uint8_t>(Jupiter_getHex(this->get(index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 2)));
+					uint16_t codepoint = static_cast<uint8_t>(Jupiter_getHex(operator[](index + 1))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 2)));
 					codepoint <<= 8;
-					codepoint |= static_cast<uint8_t>(Jupiter_getHex(this->get(index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(this->get(index + 4)));
+					codepoint |= static_cast<uint8_t>(Jupiter_getHex(operator[](index + 3))) << 4 | static_cast<uint8_t>(Jupiter_getHex(operator[](index + 4)));
 					if (codepoint <= 0x007F)
 						this->replace(index - 1, 6, static_cast<uint8_t>(codepoint));
 					else if (codepoint <= 0x07FF)
@@ -377,7 +372,7 @@ template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const T *
 
 template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const Jupiter::Readable_String<T> &in)
 {
-	return this->set(index, in.ptr(), in.size());
+	return this->set(index, in.data(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::set(size_t index, const std::basic_string<T> &in)
@@ -402,7 +397,7 @@ template<typename T> size_t Jupiter::String_Type<T>::set(const T *in, size_t inS
 
 template<typename T> size_t Jupiter::String_Type<T>::set(const Jupiter::Readable_String<T> &in)
 {
-	return this->set(in.ptr(), in.size());
+	return this->set(in.data(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::set(const std::basic_string<T> &in)
@@ -431,7 +426,7 @@ template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const 
 
 	this->setBufferSize(Jupiter::String_Type<T>::length + 1);
 	for (size_t i = Jupiter::String_Type<T>::length; i != index; i--)
-		Jupiter::String_Type<T>::str[i] = this->get(i-1);
+		Jupiter::String_Type<T>::str[i] = operator[](i-1);
 
 	Jupiter::String_Type<T>::str[index] = value;
 	return ++Jupiter::String_Type<T>::length;
@@ -451,7 +446,7 @@ template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const 
 	this->setBufferSize(Jupiter::String_Type<T>::length + value.size());
 	size_t i;
 	for (i = Jupiter::String_Type<T>::length + value.size() - 1; i != index + value.size() - 1; i--)
-		Jupiter::String_Type<T>::str[i] = this->get(i - value.size());
+		Jupiter::String_Type<T>::str[i] = operator[](i - value.size());
 
 	while (i != index)
 	{
@@ -554,7 +549,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, const Jupiter::Readable_String<T> &value) {
-	return this->replace(index, targetSize, value.ptr(), value.size());
+	return this->replace(index, targetSize, value.data(), value.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, std::basic_string_view<T> value) {
@@ -565,7 +560,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T &target, co
 {
 	for (size_t i = 0; i != Jupiter::String_Type<T>::length; i++)
 	{
-		if (this->get(i) == target)
+		if (operator[](i) == target)
 			Jupiter::String_Type<T>::str[i] = value;
 	}
 	return Jupiter::String_Type<T>::length;
@@ -584,7 +579,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 			while (j <= Jupiter::String_Type<T>::length - targetSize)
 			{
 				k = 0;
-				while (this->get(j + k) == target[k])
+				while (operator[](j + k) == target[k])
 				{
 					if (++k == targetSize) // match found
 					{
@@ -610,7 +605,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const T &value)
 {
-	return this->replace(target.ptr(), target.size(), value);
+	return this->replace(target.data(), target.size(), value);
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, size_t targetSize, const T *value, size_t valueSize)
@@ -634,7 +629,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 				while (i <= Jupiter::String_Type<T>::length - targetSize)
 				{
 					j = 0;
-					while (this->get(i + j) == target[j])
+					while (operator[](i + j) == target[j])
 					{
 						if (++j == targetSize)
 						{
@@ -685,7 +680,7 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 				while (j <= Jupiter::String_Type<T>::length - targetSize)
 				{
 					k = 0;
-					while (this->get(j + k) == target[k])
+					while (operator[](j + k) == target[k])
 					{
 						if (++k == targetSize) // match found
 						{
@@ -713,17 +708,17 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, si
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const T *target, size_t targetSize, const Jupiter::Readable_String<T> &value)
 {
-	return this->replace(target, targetSize, value.ptr(), value.size());
+	return this->replace(target, targetSize, value.data(), value.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const T *value, size_t valueSize)
 {
-	return this->replace(target.ptr(), target.size(), value, valueSize);
+	return this->replace(target.data(), target.size(), value, valueSize);
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const Jupiter::Readable_String<T> &value)
 {
-	return this->replace(target.ptr(), target.size(), value.ptr(), value.size());
+	return this->replace(target.data(), target.size(), value.data(), value.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::replace(std::basic_string_view<T> target, std::basic_string_view<T> value)
@@ -743,7 +738,7 @@ template<typename T> size_t Jupiter::String_Type<T>::concat(const T *in, size_t 
 
 template<typename T> size_t Jupiter::String_Type<T>::concat(const Jupiter::Readable_String<T> &in)
 {
-	return this->concat(in.ptr(), in.size());
+	return this->concat(in.data(), in.size());
 }
 
 template<typename T> size_t Jupiter::String_Type<T>::concat(const std::basic_string<T> &in)

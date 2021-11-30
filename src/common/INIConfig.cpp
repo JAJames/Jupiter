@@ -214,7 +214,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 		end = itr + buffer.size();
 
 		// Reset line
-		line = std::string_view(buffer.ptr(), 0);
+		line = std::string_view(buffer.data(), 0);
 
 		// Parse buffer for lines
 		while (itr != end)
@@ -223,7 +223,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 			if (*itr == '\n' || *itr == '\r')
 			{
 				// Process line
-				line = std::string_view(buffer.ptr(), itr - buffer.ptr());
+				line = std::string_view(buffer.data(), itr - buffer.data());
 				if (!line.empty())
 					process_line();
 
@@ -242,7 +242,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 					if (*itr != '\n' && *itr != '\r')
 					{
 						// Shift buffer and break
-						buffer.shiftRight(itr - buffer.ptr());
+						buffer.shiftRight(itr - buffer.data());
 						break;
 					}
 				}
@@ -253,7 +253,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 	}
 
 	// Process data remaining in buffer as a line
-	line = std::string_view(buffer.ptr(), buffer.size());
+	line = std::string_view(buffer.data(), buffer.size());
 	if (!line.empty())
 		process_line();
 

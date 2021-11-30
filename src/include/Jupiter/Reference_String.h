@@ -53,89 +53,11 @@ namespace Jupiter
 		*
 		* @return Pointer to the underlying string of elements.
 		*/
-		const T *ptr() const override;
-
-		/**
-		* @brief Truncates the string by a specified number of elements.
-		*
-		* @param n Number of elements to remove from the tail.
-		* @return New size of the String.
-		*/
-		virtual size_t truncate(size_t n);
-
-		/**
-		* @brief Erases the string (sets the string's length to 0)
-		*/
-		void erase();
-
-		/**
-		* @brief Shifts the string pointer to the left.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted to the left.
-		*/
-		size_t shiftLeft(size_t length);
-
-		/**
-		* @brief Shifts the string pointer to the right.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted.
-		*/
-		size_t shiftRight(size_t length);
-
-		/**
-		* @brief Sets the reference to point to an input string.
-		*
-		* @param in String containing the data to be referenced.
-		* @return New size of the String.
-		*/
-		size_t set(const Jupiter::Readable_String<T> &in);
-		size_t set(const std::basic_string<T> &in);
-		size_t set(const T *in, size_t len);
-		size_t set(const T *in);
-
-		/**
-		* @brief Creates a partial copy of the string.
-		*
-		* @param pos Position in the string to start copying from.
-		* @return String containing a partial copy of the original string.
-		*/
-		Reference_String<T> substring(size_t pos) const;
-
-		/**
-		* @brief Creates a partial copy of the string.
-		*
-		* @param pos Position in the string to start copying from.
-		* @param length Number of characters to copy.
-		* @return String containing a partial copy of the original string.
-		*/
-		Reference_String<T> substring(size_t pos, size_t length) const;
-
-		/**
-		* @brief Creates a partial copy of the string.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
-		static Reference_String<T> substring(const T *in, size_t pos);
-
-		/**
-		* @brief Creates a partial copy of the string.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @param length Number of characters to copy.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
-		static Reference_String<T> substring(const T *in, size_t pos, size_t length);
+		const T* data() const override;
 
 		/** Mutative operators */
-		inline Reference_String<T>& operator-=(size_t right) { this->truncate(right); return *this; };
-		inline Reference_String<T>& operator=(const Readable_String<T> &right) { std::basic_string_view<T>::operator=({right.ptr(), right.size()}); return *this; };
+		inline Reference_String<T>& operator=(const Readable_String<T> &right) { std::basic_string_view<T>::operator=({
+				right.data(), right.size()}); return *this; };
 		inline Reference_String<T>& operator=(const Reference_String<T> &right) = default;
 		inline Reference_String<T>& operator=(const std::basic_string<T> &right) { std::basic_string_view<T>::operator=(right); return *this; };
 		inline Reference_String<T>& operator=(const std::basic_string_view<T> &right) { std::basic_string_view<T>::operator=(right); return *this; };

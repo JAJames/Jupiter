@@ -69,11 +69,13 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(Jupiter::String_St
 {
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::String_Strict<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.ptr(), in.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::String_Strict<T> &in) : Jupiter::String_Strict<T>::String_Strict(
+	in.data(), in.size())
 {
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(in.ptr(), in.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &in) : Jupiter::String_Strict<T>::String_Strict(
+	in.data(), in.size())
 {
 }
 
@@ -112,7 +114,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 
 	if (lhs.isNotEmpty())
 	{
-		itr = lhs.ptr();
+		itr = lhs.data();
 		end = itr + lhs.size();
 		*Jupiter::String_Type<T>::str = *itr;
 		while (++itr != end)
@@ -126,7 +128,8 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 }
 
-template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Strict<T>(lhs, rhs.ptr(), rhs.size())
+template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Strict<T>(lhs,
+	rhs.data(), rhs.size())
 {
 }
 
@@ -145,7 +148,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 
 	if (lhs.isNotEmpty())
 	{
-		itr = lhs.ptr();
+		itr = lhs.data();
 		end = itr + lhs.size();
 		*Jupiter::String_Type<T>::str = *itr;
 		while (++itr != end)
@@ -383,7 +386,8 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Strin
 		Jupiter::String_Type<T>::str[Jupiter::String_Type<T>::length] = in.get(Jupiter::String_Type<T>::length);
 }
 
-template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &in) : Jupiter::String_Loose<T>::String_Loose(in.ptr(), in.size())
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &in) : Jupiter::String_Loose<T>::String_Loose(
+	in.data(), in.size())
 {
 }
 
@@ -433,7 +437,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 
 	if (lhs.isNotEmpty())
 	{
-		itr = lhs.ptr();
+		itr = lhs.data();
 		end = itr + lhs.size();
 		*Jupiter::String_Type<T>::str = *itr;
 		while (++itr != end)
@@ -447,7 +451,8 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
 }
 
-template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Loose<T>(lhs, rhs.ptr(), rhs.size())
+template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs) : String_Loose<T>(lhs,
+	rhs.data(), rhs.size())
 {
 }
 
@@ -466,7 +471,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 
 	if (lhs.isNotEmpty())
 	{
-		itr = lhs.ptr();
+		itr = lhs.data();
 		end = itr + lhs.size();
 		*Jupiter::String_Type<T>::str = *itr;
 		while (++itr != end)

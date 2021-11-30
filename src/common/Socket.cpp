@@ -502,7 +502,7 @@ int Jupiter::Socket::send(const char *data, size_t datalen) {
 }
 
 int Jupiter::Socket::send(const Jupiter::ReadableString &str) {
-	return this->send(str.ptr(), str.size());
+	return this->send(str.data(), str.size());
 }
 
 int Jupiter::Socket::send(std::string_view str) {
