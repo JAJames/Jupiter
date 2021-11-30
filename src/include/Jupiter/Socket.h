@@ -76,18 +76,7 @@ namespace Jupiter
 		* @param port String containing the target port.
 		* @return Pointer to a NULL-terminated linked list of addrinfo on success, nullptr otherwise.
 		*/
-		static addrinfo *getAddrInfo(const char *hostname, const char *port);
-
-		/**
-		* @brief Resolves and stores address information in an addrinfo struct.
-		* Unlike the function getAddrInfo, this function stores the returned addrinfo
-		* as static, meaning that any subsequent calls will overwrite the previous call.
-		*
-		* @param host String containing the hostname of the target.
-		* @param port String containing the target port.
-		* @return Pointer to a NULL-terminated linked list of addrinfo on success, nullptr otherwise.
-		*/
-		static addrinfo *getStaticAddrInfo(const char *hostname, const char *port);
+		static addrinfo* getAddrInfo(const char *hostname, const char *port);
 
 		/**
 		* @brief Frees the resources associated with an addrinfo struct.
@@ -112,7 +101,7 @@ namespace Jupiter
 		* @param addr Address info containing IP address.
 		* @return String containing the text representation of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveAddress(const addrinfo *addr);
+		static std::string resolveAddress(const addrinfo *addr);
 
 		/**
 		* @brief Returns the text representation of an addrinfo's stored address.
@@ -121,7 +110,7 @@ namespace Jupiter
 		* @param result Which result to return.
 		* @return String containing the text representation of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveAddress(addrinfo *addr, unsigned int result);
+		static std::string resolveAddress(addrinfo *addr, unsigned int result);
 
 		/**
 		* @brief Resolves a hostname to an IP address.
@@ -130,7 +119,7 @@ namespace Jupiter
 		* @param result Which resolution result to return.
 		* @return String containing the text representation of the resolved address on success, nullptr otherwise.
 		*/
-		static char *resolveAddress(const char *hostname, unsigned int result);
+		static std::string resolveAddress(const char *hostname, unsigned int result);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -139,8 +128,7 @@ namespace Jupiter
 		* @param addr Address info containing IP address.
 		* @return String containing the hostname of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveHostname(addrinfo *addr);
-		static char *resolveHostname_alloc(addrinfo *addr);
+		static std::string resolveHostname(addrinfo *addr);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -149,8 +137,7 @@ namespace Jupiter
 		* @param result Which result to return.
 		* @return String containing the hostname of the stored address on success, nullptr otherwise.
 		*/
-		static char *resolveHostname(addrinfo *addr, unsigned int result);
-		static char *resolveHostname_alloc(addrinfo *addr, unsigned int result);
+		static std::string resolveHostname(addrinfo *addr, unsigned int result);
 
 		/**
 		* @brief Resolves an address to a hostname. (Reverse DNS)
@@ -159,8 +146,7 @@ namespace Jupiter
 		* @param result Which resolution result to return.
 		* @return String containing the hostname of the resolved address on success, nullptr otherwise.
 		*/
-		static char *resolveHostname(const char *hostname, unsigned int result);
-		static char *resolveHostname_alloc(const char *hostname, unsigned int result);
+		static std::string resolveHostname(const char *hostname, unsigned int result);
 
 		/**
 		* @brief Reinterprets an IPv4 address as a 32-bit integer in network byte order.
@@ -415,7 +401,7 @@ namespace Jupiter
 		* @return Number of bytes written to buffer on success, SOCKET_ERROR (-1) otherwise.
 		* Note: Any returned value less than or equal to 0 should be treated as an error.
 		*/
-		virtual int recvFrom(addrinfo *info);
+		virtual int recvFrom(addrinfo* info);
 
 		int receive(); /** @see recv() */
 
@@ -544,11 +530,23 @@ namespace Jupiter
 		/**
 		* @brief An extended verison of the string class, which allows for low-level length and string modification.
 		*/
-		class Buffer : public Jupiter::StringL
+		class Buffer
 		{
 		public:
+			Buffer();
+			~Buffer();
 			void set_length(size_t in_length);
-			char *get_str() const;
+			size_t capacity() const;
+			void reserve(size_t new_capacity);
+			void clear();
+			std::string_view view() const;
+			void* data() const;
+			char* chr_data() const;
+
+		private:
+			void* m_buffer;
+			size_t m_buffer_capacity;
+			size_t m_buffer_size;
 		};
 
 		/**
@@ -575,7 +573,7 @@ namespace Jupiter
 	/** Private members */
 	private:
 		struct Data;
-		Data *data_;
+		Data *m_data;
 	};
 
 }

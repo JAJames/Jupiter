@@ -377,14 +377,12 @@ size_t Jupiter::IRC::Client::messageChannels(std::string_view message)
 	return m_channels.size();
 }
 
-int Jupiter::IRC::Client::process_line(std::string_view in_line) {
-	Jupiter::ReferenceString line{in_line}; // TODO: remove this
-	if (!line.empty())
-	{
+int Jupiter::IRC::Client::process_line(std::string_view line) {
+	if (!line.empty()) {
 		Jupiter::IRC::Client::writeToLogs(line);
 		if (m_output != nullptr) {
 			// TODO: use ostream instead
-			fwrite(in_line.data(), sizeof(char), in_line.size(), m_output);
+			fwrite(line.data(), sizeof(char), line.size(), m_output);
 			fputs("\r\n", m_output);
 		}
 
@@ -1116,8 +1114,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 	return 0;
 }
 
-bool Jupiter::IRC::Client::connect()
-{
+bool Jupiter::IRC::Client::connect() {
 	std::string_view clientAddress = Jupiter::IRC::Client::readConfigValue("ClientAddress"_jrs);
 	if (m_socket->connect(m_server_hostname.c_str(), m_server_port, clientAddress.empty() ? nullptr : static_cast<std::string>(clientAddress).c_str(), (unsigned short)Jupiter::IRC::Client::readConfigLong("ClientPort"_jrs)) == false)
 		return false;
@@ -1181,15 +1178,12 @@ void Jupiter::IRC::Client::reconnect()
 	}
 }
 
-int Jupiter::IRC::Client::think()
-{
-	auto handle_error = [this](int error_code)
-	{
+int Jupiter::IRC::Client::think() {
+	auto handle_error = [this](int error_code) {
 		if (this->m_dead == true)
 			return error_code;
 
-		if (this->m_max_reconnect_attempts < 0 || this->m_reconnect_attempts < this->m_max_reconnect_attempts)
-		{
+		if (this->m_max_reconnect_attempts < 0 || this->m_reconnect_attempts < this->m_max_reconnect_attempts) {
 			if (!this->m_reconnect_delay || this->m_reconnect_time < time(0))
 				this->reconnect();
 
@@ -1203,8 +1197,7 @@ int Jupiter::IRC::Client::think()
 		return handle_error(-1);
 
 	int tmp = m_socket->recv();
-	if (tmp > 0)
-	{
+	if (tmp > 0) {
 		// Process incoming data
 		using namespace std::literals;
 		auto tokens = jessilib::split_view(m_socket->getBuffer(), "\r\n"sv);

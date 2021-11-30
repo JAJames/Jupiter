@@ -40,37 +40,10 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Enumerator translating to various SSL/TLS protocols.
-		* Used in getMethod() and setMethod().
-		*/
-		enum EncryptionMethod
-		{
-			//SSL3 = 1,	/** SSL 3.0 - Unrecommended */
-			TLS1 = 2,	/** TLS 1.0 - Unrecommended */
-			TLS1_1 = 3,	/** TLS 1.1 */
-			TLS1_2 = 4,	/** TLS 1.2 */
-			DTLS1 = 5,	/** DTLS 1.0 */
-			ANY = 126,	/** Attempt to use any of the above encryption methods (generally the most secure available between both client and server) */
-			END = 127	/** END OF ENUM */
-		};
-
-		/**
 		* @brief Returns the name of the cipher currently in use.
 		* @return Name of cipher currently in use, or "NONE" if none is in use.
 		*/
 		const char *getCipherName() const;
-
-		/**
-		* @brief Returns the encryption method that the socket attempts to use.
-		* This is ANY by default.
-		* @return Encrpytion method that the socket attempts to use.
-		*/
-		EncryptionMethod getMethod() const;
-
-		/**
-		* @brief Sets the encryption method to be used when connecting.
-		*/
-		void setMethod(EncryptionMethod method);
 
 		/**
 		* @brief Loads a certificate and key for use.
@@ -207,7 +180,7 @@ namespace Jupiter
 	/** Private members */
 	private:
 		struct SSLData;
-		SSLData *SSLdata_;
+		SSLData *m_ssl_data;
 	};
 
 }
