@@ -281,63 +281,63 @@ void Jupiter::Plugin::OnReconnectAttempt(Jupiter::IRC::Client *, bool) {
 	return;
 }
 
-void Jupiter::Plugin::OnRaw(Jupiter::IRC::Client *, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnRaw(Jupiter::IRC::Client *, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnNumeric(Jupiter::IRC::Client *, long int, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnNumeric(Jupiter::IRC::Client *, long int, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnError(Jupiter::IRC::Client *, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnError(Jupiter::IRC::Client *, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnChat(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnChat(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnNotice(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnNotice(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnServerNotice(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnServerNotice(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnCTCP(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnCTCP(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnAction(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnAction(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnInvite(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnInvite(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnJoin(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnJoin(Jupiter::IRC::Client *, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnPart(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnPart(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnNick(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnNick(Jupiter::IRC::Client *, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnKick(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnKick(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnQuit(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnQuit(Jupiter::IRC::Client *, std::string_view, std::string_view) {
 	return;
 }
 
-void Jupiter::Plugin::OnMode(Jupiter::IRC::Client *, const Jupiter::ReadableString &, const Jupiter::ReadableString &, const Jupiter::ReadableString &) {
+void Jupiter::Plugin::OnMode(Jupiter::IRC::Client *, std::string_view, std::string_view, std::string_view) {
 	return;
 }
 

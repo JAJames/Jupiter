@@ -253,14 +253,15 @@ namespace Jupiter
 
 /** Template function implementations */
 
-template<typename T> inline T Jupiter::Config::get(std::string_view in_key, T in_default_value) const
-{
+template<typename T>
+inline T Jupiter::Config::get(std::string_view in_key, T in_default_value) const {
 	auto result = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
 
-	if (result == m_table.end())
+	if (result == m_table.end()) {
 		return in_default_value;
+	}
 
-	return static_cast<T>(Jupiter::ReferenceString{result->second});
+	return from_string<T>(result->second);
 }
 
 /** Re-enable warnings */

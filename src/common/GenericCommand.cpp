@@ -17,12 +17,14 @@
  */
 
 #include "GenericCommand.h"
+#include "jessilib/word_split.hpp"
 #include "Plugin.h"
 
 using namespace Jupiter::literals;
+using namespace std::literals;
 
-constexpr const char GENERIC_COMMAND_WORD_DELIMITER = ' ';
-constexpr const char *GENERIC_COMMAND_WORD_DELIMITER_CS = " ";
+// Is there a reason we're not using WHITESPACE_SV?
+constexpr std::string_view GENERIC_COMMAND_WORD_DELIMITER_SV = " "sv;
 
 Jupiter::GenericCommandNamespace o_generic_commands;
 Jupiter::GenericCommandNamespace &Jupiter::g_generic_commands = o_generic_commands;
@@ -52,17 +54,14 @@ bool Jupiter::GenericCommand::isNamespace() const {
 }
 
 void Jupiter::GenericCommand::setNamespace(const Jupiter::ReadableString &in_namespace) {
-	if (in_namespace.wordCount(GENERIC_COMMAND_WORD_DELIMITER_CS) == 0) {
-		return; // We're already here
-	}
-
 	if (Jupiter::GenericCommand::m_parent == nullptr) {
 		return; // We have no parent to start from
 	}
 
 	Jupiter::GenericCommand *command = Jupiter::GenericCommand::m_parent->getCommand(in_namespace);
-	if (command != nullptr && command->isNamespace())
-		Jupiter::GenericCommand::setNamespace(*static_cast<Jupiter::GenericCommandNamespace *>(command));
+	if (command != nullptr && command != this && command->isNamespace()) {
+		Jupiter::GenericCommand::setNamespace(*static_cast<Jupiter::GenericCommandNamespace*>(command));
+	}
 }
 
 void Jupiter::GenericCommand::setNamespace(Jupiter::GenericCommandNamespace &in_namespace) {
@@ -86,6 +85,11 @@ Jupiter::GenericCommand::ResponseLine::ResponseLine(const Jupiter::ReadableStrin
 	type{ in_type } {
 }
 
+Jupiter::GenericCommand::ResponseLine::ResponseLine(std::string in_response, GenericCommand::DisplayType in_type)
+	: response{ std::move(in_response) },
+	type{ in_type } {
+}
+
 Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommand::ResponseLine::set(const Jupiter::ReadableString &in_response, GenericCommand::DisplayType in_type) {
 	response = in_response;
 	type = in_type;
@@ -100,23 +104,26 @@ Jupiter::GenericCommandNamespace::~GenericCommandNamespace() {
 Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger(const Jupiter::ReadableString &in_input) {
 	GenericCommand* command;
 	Jupiter::ReferenceString input(in_input);
+	auto split_input = jessilib::word_split_once_view(input, GENERIC_COMMAND_WORD_DELIMITER_SV);
 
-	if (input.wordCount(GENERIC_COMMAND_WORD_DELIMITER_CS) == 0) { // No parameters; list commands
+	if (split_input.second.empty()) { // No parameters; list commands
 		return new Jupiter::GenericCommand::ResponseLine(m_help,Jupiter::GenericCommand::DisplayType::PrivateSuccess);
 	}
 
-	command = Jupiter::GenericCommandNamespace::getCommand(input.getWord(0, GENERIC_COMMAND_WORD_DELIMITER_CS));
+	command = Jupiter::GenericCommandNamespace::getCommand(split_input.first);
 	if (command != nullptr) {
-		return command->trigger(input.gotoWord(1, GENERIC_COMMAND_WORD_DELIMITER_CS));
+		return command->trigger(Jupiter::ReferenceString{split_input.second});
 	}
 
-	return new Jupiter::GenericCommand::ResponseLine(Jupiter::ReferenceString::empty, Jupiter::GenericCommand::DisplayType::PrivateError);
+	return new Jupiter::GenericCommand::ResponseLine(""_jrs, Jupiter::GenericCommand::DisplayType::PrivateError);
 }
 
 const Jupiter::ReadableString &Jupiter::GenericCommandNamespace::getHelp(const Jupiter::ReadableString &parameters) {
 	static Jupiter::ReferenceString not_found = "Error: Command not found"_jrs;
+	Jupiter::ReferenceString input(parameters);
 
-	if (parameters.wordCount(GENERIC_COMMAND_WORD_DELIMITER_CS) == 0) // No parameters; list commands
+	auto input_split = jessilib::word_split_once_view(input, GENERIC_COMMAND_WORD_DELIMITER_SV);
+	if (input_split.second.empty()) // No parameters; list commands
 	{
 		if (Jupiter::GenericCommandNamespace::m_should_update_help)
 			Jupiter::GenericCommandNamespace::updateHelp();
@@ -124,13 +131,12 @@ const Jupiter::ReadableString &Jupiter::GenericCommandNamespace::getHelp(const J
 		return Jupiter::GenericCommandNamespace::m_help;
 	}
 
-	Jupiter::ReferenceString input(parameters);
 	GenericCommand *command;
 
 	// Search for command
-	command = Jupiter::GenericCommandNamespace::getCommand(input.getWord(0, GENERIC_COMMAND_WORD_DELIMITER_CS));
+	command = Jupiter::GenericCommandNamespace::getCommand(input_split.first);
 	if (command != nullptr) {
-		return command->getHelp(input.gotoWord(1, GENERIC_COMMAND_WORD_DELIMITER_CS));
+		return command->getHelp(Jupiter::ReferenceString{input_split.second});
 	}
 
 	// Command not found
@@ -169,7 +175,7 @@ std::vector<Jupiter::GenericCommand*> Jupiter::GenericCommandNamespace::getComma
 	return result;
 }
 
-Jupiter::GenericCommand *Jupiter::GenericCommandNamespace::getCommand(const Jupiter::ReadableString &in_command) const {
+Jupiter::GenericCommand *Jupiter::GenericCommandNamespace::getCommand(std::string_view in_command) const {
 	/** This is broken into 2 loops in order to insure that exact matches are ALWAYS prioritized over inexact matches */
 
 	// Search commands
@@ -212,7 +218,7 @@ void Jupiter::GenericCommandNamespace::removeCommand(Jupiter::GenericCommand &in
 	}
 }
 
-void Jupiter::GenericCommandNamespace::removeCommand(const Jupiter::ReadableString &in_command)
+void Jupiter::GenericCommandNamespace::removeCommand(std::string_view in_command)
 {
 	for (auto itr = m_commands.begin(); itr != m_commands.end(); ++itr) {
 		if ((*itr)->matches(in_command)) {

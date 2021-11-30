@@ -438,6 +438,7 @@ namespace Jupiter
 		* Note: Any returned value less than or equal to 0 should be treated as an error.
 		*/
 		int send(const Jupiter::ReadableString &str);
+		int send(std::string_view str);
 
 		/**
 		* @brief Sends a null-terminated string of data across the socket.

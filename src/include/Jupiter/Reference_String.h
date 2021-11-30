@@ -42,14 +42,6 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Fetches an element from the string.
-		*
-		* @param index Index of the element to return.
-		* @return The element located at the specified index.
-		*/
-		const T &get(size_t index) const override;
-
-		/**
 		* @brief Returns the number of elements in the String.
 		*
 		* @return Number of elements in the string.
@@ -141,64 +133,6 @@ namespace Jupiter
 		static Reference_String<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static Reference_String<T> substring(const T *in, size_t pos, size_t length);
 
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		Reference_String<T> getWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		*
-		* @param in C-Style string to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> getWord(const T *in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		Reference_String<T> gotoWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param in C-Style string to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static Reference_String<T> gotoWord(const T *in, size_t pos, const T *whitespace);
-
 		/** Mutative operators */
 		inline Reference_String<T>& operator-=(size_t right) { this->truncate(right); return *this; };
 		inline Reference_String<T>& operator=(const Readable_String<T> &right) { std::basic_string_view<T>::operator=({right.ptr(), right.size()}); return *this; };
@@ -239,11 +173,10 @@ namespace Jupiter
 		// Bring in constructors from basic_string_view
 		using std::basic_string_view<T>::basic_string_view;
 
-		static const Jupiter::Reference_String<T> empty; /** Empty instantiation of Reference_String */
-
 		/** Methods to force disambiguation between bases until this class is removed entirely */
 		using std::basic_string_view<T>::find;
 		using std::basic_string_view<T>::operator[];
+		using std::basic_string_view<T>::empty;
 	};
 
 	/** Generic Reference String Type */

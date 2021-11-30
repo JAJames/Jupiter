@@ -73,7 +73,7 @@ namespace Jupiter
 		* @param parameters Optional string containing any data to be passed to the help command.
 		* @return Brief description of command and syntax.
 		*/
-		virtual const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters = Jupiter::ReferenceString::empty) = 0;
+		virtual const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters = Jupiter::ReferenceString{}) = 0;
 
 		/**
 		* @brief Default constructor for command class.

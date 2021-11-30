@@ -18,6 +18,7 @@
 
 #include <sys/stat.h>
 #include <string>
+#include "jessilib/word_split.hpp"
 #include "File.h"
 #include "String.hpp"
 
@@ -41,7 +42,7 @@ const size_t defaultBufferSize = 8192;
 
 struct JUPITER_API Jupiter::File::Data { // TODO: remove pimpl
 	std::string fileName;
-	std::vector<Jupiter::StringS> lines;
+	std::vector<std::string> lines;
 
 	Data();
 	Data(const Data &data);
@@ -52,6 +53,8 @@ struct JUPITER_API Jupiter::File::Data { // TODO: remove pimpl
 #if defined _MSC_VER
 #pragma warning(pop)
 #endif
+
+using namespace std::literals;
 
 Jupiter::File::Data::Data() {
 }
@@ -88,7 +91,7 @@ size_t Jupiter::File::getLineCount() const {
 	return m_data->lines.size();
 }
 
-const Jupiter::ReadableString &Jupiter::File::getLine(size_t line) const {
+const std::string& Jupiter::File::getLine(size_t line) const {
 	return m_data->lines[line];
 }
 
@@ -96,12 +99,14 @@ const std::string &Jupiter::File::getFileName() const {
 	return m_data->fileName;
 }
 
-bool Jupiter::File::addData(const Jupiter::ReadableString &data) {
-	unsigned int word_count = data.wordCount(ENDL);
-	if (word_count == 0) return false;
+bool Jupiter::File::addData(std::string_view data) {
+	auto lines = jessilib::word_split_view(data, "\r\n"sv);
+	if (lines.empty()) {
+		return false;
+	}
 
-	for (unsigned int i = 0; i < word_count; i++) {
-		m_data->lines.emplace_back(std::move(Jupiter::StringS::getWord(data, i, ENDL)));
+	for (const auto& line : lines) {
+		m_data->lines.emplace_back(line);
 	}
 	return true;
 }
@@ -121,15 +126,14 @@ bool Jupiter::File::load(const char *file) {
 	return result;
 }
 
-bool Jupiter::File::load(const Jupiter::ReadableString &file) {
-	std::string fileName = static_cast<std::string>(file);
-	FILE *filePtr = fopen(fileName.c_str(), "rb");
+bool Jupiter::File::load(std::string file) {
+	FILE *filePtr = fopen(file.c_str(), "rb");
 	if (filePtr == nullptr) {
 		return false;
 	}
 
 	if (m_data->fileName.empty()) {
-		m_data->fileName = fileName;
+		m_data->fileName = std::move(file);
 	}
 
 	bool r = load(filePtr);
@@ -225,7 +229,7 @@ bool Jupiter::File::reload() {
 
 	std::string fileName(std::move(m_data->fileName));
 	unload();
-	return load(fileName.c_str());
+	return load(fileName);
 }
 
 bool Jupiter::File::reload(const char *file) {
@@ -233,9 +237,9 @@ bool Jupiter::File::reload(const char *file) {
 	return load(file);
 }
 
-bool Jupiter::File::reload(const Jupiter::ReadableString &file) {
+bool Jupiter::File::reload(std::string file) {
 	unload();
-	return load(file);
+	return load(std::move(file));
 }
 
 bool Jupiter::File::reload(FILE *file) {
@@ -253,19 +257,23 @@ bool Jupiter::File::sync() {
 
 bool Jupiter::File::sync(const char *file) {
 	FILE *filePtr = fopen(file, "wb");
-	if (filePtr == nullptr) return false;
+	if (filePtr == nullptr) {
+		return false;
+	}
+
 	sync(filePtr); // Always returns true.
 	fclose(filePtr);
 	return true;
 }
 
-bool Jupiter::File::sync(const Jupiter::ReadableString &file) {
-	return sync(static_cast<std::string>(file).c_str());
+bool Jupiter::File::sync(const std::string& file) {
+	return sync(file.c_str());
 }
 
 bool Jupiter::File::sync(FILE *file) {
 	for (const auto& line : m_data->lines) {
-		line.println(file);
+		fwrite(line.data(), sizeof(char), line.size(), file);
+		fputs("\r\n", file);
 	}
 
 	return true;

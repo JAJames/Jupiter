@@ -93,26 +93,26 @@ Jupiter::HTTP::Server::Directory::~Directory() {
 // .hook("dir/subdir/", content)
 
 void Jupiter::HTTP::Server::Directory::hook(std::string_view in_name, std::unique_ptr<Content> in_content) {
-	Jupiter::ReferenceString in_name_ref = in_name;
-	in_name_ref.shiftRight(in_name_ref.span('/'));
+	std::string_view in_name_ref = in_name;
+	size_t in_name_start = in_name_ref.find_first_not_of('/');
 
-	if (in_name_ref.isEmpty()) { // Hook content
+	if (in_name_start == std::string_view::npos) { // Hook content
 		content.push_back(std::move(in_content));
 		return;
 	}
+	in_name_ref.remove_prefix(in_name_start);
 
-	size_t index = in_name_ref.find('/');
+	size_t in_name_end = in_name_ref.find('/');
 	std::string_view dir_name;
-	if (index == Jupiter::INVALID_INDEX) {
+	if (in_name_end == std::string_view::npos) {
 		dir_name = in_name_ref;
 	}
 	else {
-		dir_name = in_name_ref.substring(size_t{ 0 }, index);
+		dir_name = in_name_ref.substr(size_t{ 0 }, in_name_end);
 	}
 
-	in_name_ref.shiftRight(dir_name.size());
+	in_name_ref.remove_prefix(dir_name.size());
 	unsigned int dir_name_checksum = calc_checksum(dir_name);
-	index = directories.size();
 	for (auto& directory : directories) {
 		if (directory->name_checksum == dir_name_checksum && directory->name == dir_name) {
 			directory->hook(in_name_ref, std::move(in_content));
@@ -124,14 +124,16 @@ void Jupiter::HTTP::Server::Directory::hook(std::string_view in_name, std::uniqu
 	Directory* directory = directories.emplace_back(std::make_unique<Directory>(static_cast<std::string>(dir_name))).get();
 
 directory_add_loop: // TODO: for the love of god, why why why
-	in_name_ref.shiftRight(in_name_ref.span('/'));
-	if (in_name_ref.isNotEmpty()) {
+	in_name_start = in_name_ref.find_first_not_of('/');
+	if (in_name_start != std::string_view::npos) {
+		in_name_ref.remove_prefix(in_name_start);
+
 		// add directory
-		index = in_name_ref.find('/');
+		size_t index = in_name_ref.find('/');
 		if (index != Jupiter::INVALID_INDEX) {
-			directory->directories.push_back(std::make_unique<Directory>(static_cast<std::string>(in_name_ref.substring(size_t{ 0 }, index))));
+			directory->directories.push_back(std::make_unique<Directory>(static_cast<std::string>(in_name_ref.substr(size_t{ 0 }, index))));
 			directory = directory->directories[directories.size() - 1].get();
-			in_name_ref.shiftRight(index + 1);
+			in_name_ref.remove_prefix(index + 1);
 			goto directory_add_loop;
 		}
 		directory->directories.push_back(std::make_unique<Directory>(static_cast<std::string>(in_name_ref)));
@@ -143,12 +145,11 @@ directory_add_loop: // TODO: for the love of god, why why why
 }
 
 bool Jupiter::HTTP::Server::Directory::remove(std::string_view path, std::string_view content_name) {
-	Jupiter::ReferenceString in_name_ref = path;
-	in_name_ref.shiftRight(in_name_ref.span('/'));
-	unsigned int checksum;
+	std::string_view in_name_ref = path;
+	size_t in_name_start = in_name_ref.find_first_not_of('/');
 
-	if (in_name_ref.isEmpty()) { // Remove content
-		checksum = calc_checksum(content_name);
+	if (in_name_start == std::string_view::npos) { // Remove content
+		unsigned int checksum = calc_checksum(content_name);
 		for (auto itr = content.begin(); itr != content.end(); ++itr) {
 			auto& content_node = *itr;
 			if (content_node->name_checksum == checksum && content_node->name == content_name) {
@@ -159,17 +160,18 @@ bool Jupiter::HTTP::Server::Directory::remove(std::string_view path, std::string
 
 		return false;
 	}
+	in_name_ref.remove_prefix(in_name_start);
 
 	// Call remove() on next directory in path
 	size_t index = in_name_ref.find('/');
 	std::string_view dir_name;
-	if (index == Jupiter::INVALID_INDEX)
+	if (index == std::string_view::npos)
 		dir_name = in_name_ref;
 	else
-		dir_name = in_name_ref.substring(size_t{ 0 }, index);
+		dir_name = in_name_ref.substr(size_t{ 0 }, index);
 
-	in_name_ref.shiftRight(dir_name.size());
-	checksum = calc_checksum(dir_name);
+	in_name_ref.remove_prefix(dir_name.size());
+	unsigned int checksum = calc_checksum(dir_name);
 	for (auto& directory : directories) {
 		if (directory->name_checksum == checksum && directory->name == dir_name) {
 			return directory->remove(in_name_ref, content_name);
@@ -300,7 +302,6 @@ Jupiter::HTTP::Server::Data::~Data() {
 // Data functions
 
 void Jupiter::HTTP::Server::Data::hook(std::string_view hostname, std::string_view in_path, std::unique_ptr<Content> in_content) {
-	Jupiter::ReferenceString path = in_path;
 	Jupiter::ReferenceString dir_name;
 	Jupiter::HTTP::Server::Host* host = find_host(hostname);
 
@@ -310,12 +311,13 @@ void Jupiter::HTTP::Server::Data::hook(std::string_view hostname, std::string_vi
 		// OPTIMIZE: create directory tree and return.
 	}
 
-	path.shiftRight(path.span('/'));
-	if (path.isEmpty()) {
+	size_t in_path_start = in_path.find_first_not_of('/');
+	if (in_path_start == std::string_view::npos) {
 		host->content.push_back(std::move(in_content));
 	}
 	else {
-		host->hook(path, std::move(in_content));
+		in_path.remove_prefix(in_path_start);
+		host->hook(in_path, std::move(in_content));
 	}
 }
 
@@ -824,5 +826,5 @@ int Jupiter::HTTP::Server::think() {
 	return 0;
 }
 
-const Jupiter::ReadableString &Jupiter::HTTP::Server::global_namespace = Jupiter::ReferenceString::empty;
+const Jupiter::ReadableString &Jupiter::HTTP::Server::global_namespace = ""_jrs;
 const Jupiter::ReadableString &Jupiter::HTTP::Server::server_string = "Jupiter"_jrs;

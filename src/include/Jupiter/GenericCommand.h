@@ -57,7 +57,7 @@ namespace Jupiter
 		/** Data entry returned by trigger() */
 		struct JUPITER_API ResponseLine
 		{
-			Jupiter::StringS response;
+			std::string response;
 			GenericCommand::DisplayType type;
 			ResponseLine *next = nullptr;
 
@@ -71,6 +71,7 @@ namespace Jupiter
 			ResponseLine *set(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
 			ResponseLine() = default;
 			ResponseLine(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
+			ResponseLine(std::string response, GenericCommand::DisplayType type);
 		};
 
 		/**
@@ -140,11 +141,11 @@ namespace Jupiter
 		void setUsing(bool in_value);
 
 		std::vector<GenericCommand*> getCommands() const; // differs from m_commands in that it checks if it's using a namespace
-		GenericCommand *getCommand(const Jupiter::ReadableString &in_command) const;
+		GenericCommand *getCommand(std::string_view in_command) const;
 
 		void addCommand(GenericCommand &in_command);
 		void removeCommand(GenericCommand &in_command);
-		void removeCommand(const Jupiter::ReadableString &in_command);
+		void removeCommand(std::string_view in_command);
 
 		void updateHelp();
 

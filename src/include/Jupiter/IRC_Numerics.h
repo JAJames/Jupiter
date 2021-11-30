@@ -38,7 +38,6 @@ namespace Jupiter
 			constexpr NumericType YOURHOST = 2; /** RFC2812: Post-registration. Your host is this server and I am running some daemon */
 			constexpr NumericType CREATED = 3; /** RFC2812: Post-registration. This was was created at some point in time */
 			constexpr NumericType MYINFO = 4; /** RFC2812: Post-registration. <server_name> <version> <user_modes> <chan_modes> */
-			constexpr NumericType BOUNCEOLD = 5; /** RFC2812/DEPRECATED: 005 is rarely used as a bounce indicator, but was defined in RFC2812. */
 			constexpr NumericType ISUPPORT = 5; /** Used to indicate what a server supports. Does not appear in any RFC, but was drafted in 2004. */
 			constexpr NumericType SNOMASK = 8; /** Server notice mask */
 			constexpr NumericType STATMEMTOT = 9; /** I have no idea what this does. */

@@ -115,54 +115,6 @@ namespace Jupiter
 		static typename Jupiter::template String_Strict<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t length);
 		static typename Jupiter::template String_Strict<T> substring(const T *in, size_t pos, size_t length);
 
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		String_Strict<T> getWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Strict<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		*
-		* @param in C-Style string to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Strict<T> getWord(const T *in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		String_Strict<T> gotoWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Strict<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
 		/** Default Constructor */
 		String_Strict();
 
@@ -181,7 +133,7 @@ namespace Jupiter
 		String_Strict(const String_Strict<T> &in);
 		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
-		//String_Strict(const std::basic_string_view<T> &in) : String_Strict<T>(in.data(), in.size()){};
+		explicit String_Strict(const std::basic_string_view<T> &in) : String_Strict<T>(in.data(), in.size()){};
 		String_Strict(const T *in, size_t len);
 		String_Strict(const T *in);
 		String_Strict(const Jupiter::DataBuffer &in);
@@ -206,18 +158,14 @@ namespace Jupiter
 		inline String_Strict<T> &operator=(const std::basic_string<T> &right) { this->set(right); return *this; };
 		inline String_Strict<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Strict<T> &operator=(const T right) { this->set(right); return *this; };
-
-		static const Jupiter::String_Strict<T> empty; /** Empty instantiation of String_Strict */
 	};
 
-#if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
 	/** String_Strict<T> Addition Operators */
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const std::basic_string<T> &rhs);
 	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const T *rhs);
-#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
 	/**
 	* @brief Provides a "loose" String implementation that's more optimized for repeated concatenations.
@@ -307,56 +255,6 @@ namespace Jupiter
 		static typename Jupiter::template String_Loose<T> substring(const T *in, size_t pos, size_t length);
 
 		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		String_Loose<T> getWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		* Useful when the input string's type isn't known.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Loose<T> getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of an input string, based on a set of tokens.
-		* Useful when the input string's type isn't known.
-		*
-		* @param in C-Style string to get a partial copy of.
-		* @param pos Position of word in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Loose<T> getWord(const T *in, size_t pos, const T *whitespace);
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		String_Loose<T> gotoWord(size_t pos, const T *whitespace) const;
-
-		/**
-		* @brief Creates a partial copy of the string, based on a set of tokens.
-		*
-		* @param in String to get a partial copy of.
-		* @param pos Position in the string to start copying from.
-		* @param whitespace A string of tokens used to deliminate words.
-		* @return String containing a partial copy of the original string.
-		*/
-		static String_Loose<T> gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace);
-
-		/**
 		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
 		* Note: This does nothing if len is less than the string's current length.
 		*
@@ -416,22 +314,11 @@ namespace Jupiter
 		inline String_Loose<T> &operator=(const T *right) { this->set(right); return *this; };
 		inline String_Loose<T> &operator=(const T right) { this->set(right); return *this; };
 
-		static const Jupiter::String_Loose<T> empty; /** Empty instantiation of String_Loose */
 		static const size_t start_size = 8; /** Starting size for loose Strings. */
 
 	protected:
 		size_t strSize; /** Size of underlying string buffer */
 	};
-
-#if !defined JUPITER_STRING_STRICT_OPERATOR_PLUS
-#if !defined DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
-	/** String_Loose<T> Addition Operator */
-	template<typename T> static inline Jupiter::String_Loose<T> operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs);
-	template<typename T> static inline Jupiter::String_Loose<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
-	template<typename T> static inline Jupiter::String_Loose<T> operator+(const Jupiter::Readable_String<T> &lhs, const std::basic_string<T> &rhs);
-	template<typename T> static inline Jupiter::String_Loose<T> operator+(const Jupiter::Readable_String<T> &lhs, const T *rhs);
-#endif // DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
-#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
 
 	/** Definition of a Strict String. */
 	typedef String_Strict<char> StringS;

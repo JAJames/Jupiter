@@ -346,15 +346,17 @@ in_addr6 Jupiter::Socket::pton6(const char *str) {
 
 Jupiter::StringS Jupiter::Socket::ntop4(uint32_t ip) {
 	static char buf[16];
-	if (inet_ntop(AF_INET, &ip, buf, sizeof(buf)) == nullptr)
-		return Jupiter::StringS::empty;
+	if (inet_ntop(AF_INET, &ip, buf, sizeof(buf)) == nullptr) {
+		return {};
+	}
 	return Jupiter::String(buf);
 }
 
 Jupiter::StringS Jupiter::Socket::ntop6(in_addr6 ip) {
 	static char buf[46];
-	if (inet_ntop(AF_INET6, &ip, buf, sizeof(buf)) == nullptr)
-		return Jupiter::StringS::empty;
+	if (inet_ntop(AF_INET6, &ip, buf, sizeof(buf)) == nullptr) {
+		return {};
+	}
 	return Jupiter::String(buf);
 }
 
@@ -365,7 +367,7 @@ Jupiter::StringS Jupiter::Socket::ntop(void *ip, size_t size) {
 	case 16:
 		return ntop6(*reinterpret_cast<in_addr6 *>(ip));
 	default:
-		return Jupiter::StringS::empty;
+		return {};
 	}
 }
 
@@ -501,6 +503,10 @@ int Jupiter::Socket::send(const char *data, size_t datalen) {
 
 int Jupiter::Socket::send(const Jupiter::ReadableString &str) {
 	return this->send(str.ptr(), str.size());
+}
+
+int Jupiter::Socket::send(std::string_view str) {
+	return this->send(str.data(), str.size());
 }
 
 int Jupiter::Socket::send(const char *msg) {

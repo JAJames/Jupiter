@@ -283,31 +283,6 @@ template<typename T> typename Jupiter::String_Strict<T> Jupiter::String_Strict<T
 	return Jupiter::String_Type<T>::template substring<Jupiter::template String_Strict>(in, pos, len);
 }
 
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(size_t pos, const T *whitespace) const
-{
-	return Jupiter::String_Strict<T>::getWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Strict>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::getWord(const T *in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Strict>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(size_t pos, const T *whitespace) const
-{
-	return Jupiter::String_Strict<T>::gotoWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::template String_Strict>(in, pos, whitespace);
-}
-
 // Operators
 
 template<typename T> inline Jupiter::String_Strict<T> Jupiter::String_Strict<T>::operator+(const T &rhs) const
@@ -335,7 +310,6 @@ template<typename T> inline Jupiter::String_Strict<T> Jupiter::String_Strict<T>:
 	return Jupiter::operator+(*this, rhs);
 }
 
-#if defined JUPITER_STRING_STRICT_OPERATOR_PLUS
 template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs)
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
@@ -355,9 +329,6 @@ template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
 }
-#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
-
-template<typename T> const Jupiter::String_Strict<T> Jupiter::String_Strict<T>::empty = Jupiter::String_Strict<T>();
 
 // Jupiter::DataBuffer specialization
 
@@ -697,31 +668,6 @@ template<typename T> typename Jupiter::template String_Loose<T> Jupiter::String_
 	return Jupiter::String_Type<T>::template substring<Jupiter::template String_Loose>(in, pos, len);
 }
 
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(size_t pos, const T *whitespace) const
-{
-	return Jupiter::String_Loose<T>::getWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Loose>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::getWord(const T *in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::template String_Loose>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(size_t pos, const T *whitespace) const
-{
-	return Jupiter::String_Loose<T>::gotoWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::String_Loose<T> Jupiter::String_Loose<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace)
-{
-	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::template String_Loose>(in, pos, whitespace);
-}
-
 // Operators
 
 template<typename T> inline Jupiter::String_Loose<T> Jupiter::String_Loose<T>::operator+(const T &rhs) const
@@ -748,32 +694,6 @@ template<typename T> inline Jupiter::String_Loose<T> Jupiter::String_Loose<T>::o
 {
 	return Jupiter::operator+(*this, rhs);
 }
-
-#if !defined JUPITER_STRING_STRICT_OPERATOR_PLUS
-#if !defined DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
-template<typename T> static inline Jupiter::String_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs)
-{
-	return Jupiter::String_Loose<T>(lhs, rhs);
-}
-
-template<typename T> static inline Jupiter::String_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
-{
-	return Jupiter::String_Loose<T>(lhs, rhs);
-}
-
-template<typename T> static inline Jupiter::String_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const std::basic_string<T> &rhs)
-{
-	return Jupiter::String_Loose<T>(lhs, rhs);
-}
-
-template<typename T> static inline Jupiter::String_Loose<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const T *rhs)
-{
-	return Jupiter::String_Loose<T>(lhs, rhs);
-}
-#endif // DISABLE_DEFAULT_JUPITER_STRING_OPERATOR_PLUS
-#endif // JUPITER_STRING_STRICT_OPERATOR_PLUS
-
-template<typename T> const Jupiter::String_Loose<T> Jupiter::String_Loose<T>::empty = Jupiter::String_Loose<T>();
 
 // Jupiter::DataBuffer specialization
 

@@ -51,10 +51,6 @@ template<typename T> Jupiter::Reference_String<T>::Reference_String(const Jupite
 	: Reference_String(in.ptr(), in.size()) {
 }
 
-template<typename T> const T &Jupiter::Reference_String<T>::get(size_t index) const {
-	return operator[](index);
-}
-
 template<typename T> size_t Jupiter::Reference_String<T>::size() const {
 	return std::basic_string_view<T>::size();
 }
@@ -141,32 +137,6 @@ template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::
 template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::substring(const T *in, size_t pos, size_t len) {
 	return Jupiter::Reference_String<T>(in + pos, len);
 }
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getWord(size_t pos, const T *whitespace) const {
-	return Jupiter::Reference_String<T>::getWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace) {
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::Reference_String>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::getWord(const T *in, size_t pos, const T *whitespace) {
-	return Jupiter::Readable_String<T>::template getWord<Jupiter::Reference_String>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoWord(size_t pos, const T *whitespace) const {
-	return Jupiter::Reference_String<T>::gotoWord(*this, pos, whitespace);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoWord(const Jupiter::Readable_String<T> &in, size_t pos, const T *whitespace) {
-	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::Reference_String>(in, pos, whitespace);
-}
-
-template<typename T> Jupiter::Reference_String<T> Jupiter::Reference_String<T>::gotoWord(const T *in, size_t pos, const T *whitespace) {
-	return Jupiter::Readable_String<T>::template gotoWord<Jupiter::Reference_String>(in, pos, whitespace);
-}
-
-template<typename T> const Jupiter::Reference_String<T> Jupiter::Reference_String<T>::empty = Jupiter::Reference_String<T>();
 
 // Jupiter::DataBuffer specialization
 

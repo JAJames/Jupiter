@@ -48,14 +48,14 @@ namespace Jupiter
 		* @param line Index of the line to fetch.
 		* @return Line of text at the specified index.
 		*/
-		const Jupiter::ReadableString &getLine(size_t line) const;
+		const std::string& getLine(size_t line) const;
 
 		/**
 		* @brief Returns the name of the first raw file originally loaded.
 		*
 		* @return String containing the name of the first file loaded into this file.
 		*/
-		const std::string &getFileName() const;
+		const std::string& getFileName() const;
 
 		/**
 		* @brief Adds data to a file, which may consist of one or more lines.
@@ -63,7 +63,7 @@ namespace Jupiter
 		* @param data Data to add to the file.
 		* @param True if data was added to the file, false otherwise.
 		*/
-		bool addData(const Jupiter::ReadableString &data);
+		bool addData(std::string_view data);
 
 		/**
 		* @brief Loads a file from the drive into this file.
@@ -72,7 +72,7 @@ namespace Jupiter
 		* @return True if a file was successfully loaded from the drive, false otherwise.
 		*/
 		bool load(const char *file);
-		bool load(const Jupiter::ReadableString &file);
+		bool load(std::string file);
 
 		/**
 		* @brief Loads a file from the drive into this file.
@@ -101,7 +101,7 @@ namespace Jupiter
 		* @return True if a file was successfully loaded from the drive, false otherwise.
 		*/
 		bool reload(const char *file);
-		bool reload(const Jupiter::ReadableString &file);
+		bool reload(std::string file);
 
 		/**
 		* @brief Unloads all of a file's contents, and attempts to load from a specified file stream.
@@ -125,7 +125,7 @@ namespace Jupiter
 		* @return True if the file was successfully written to the drive, false otherwise.
 		*/
 		bool sync(const char *file);
-		bool sync(const Jupiter::ReadableString &file);
+		bool sync(const std::string& file);
 
 		/**
 		* @brief Syncs data from the file to the drive.
@@ -133,7 +133,7 @@ namespace Jupiter
 		* @param file C FILE stream to output to.
 		* @return True if the file was successfully written to the drive, false otherwise.
 		*/
-		bool sync(FILE *file);
+		bool sync(FILE *file); // Why are we working with FILE instead of istream?
 
 		/**
 		* @brief Default constructor for File class.

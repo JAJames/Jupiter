@@ -442,11 +442,11 @@ template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const 
 	if (index >= Jupiter::String_Type<T>::length)
 		return this->concat(value);
 
-	if (value.isEmpty())
+	if (value.empty())
 		return Jupiter::String_Type<T>::length;
 
 	if (value.size() == 1)
-		return this->insert(index, value.get(0));
+		return this->insert(index, value[0]);
 
 	this->setBufferSize(Jupiter::String_Type<T>::length + value.size());
 	size_t i;
@@ -455,10 +455,10 @@ template<typename T> size_t Jupiter::String_Type<T>::insert(size_t index, const 
 
 	while (i != index)
 	{
-		Jupiter::String_Type<T>::str[i] = value.get(i - index);
+		Jupiter::String_Type<T>::str[i] = value[i - index];
 		i--;
 	}
-	Jupiter::String_Type<T>::str[index] = value.get(0);
+	Jupiter::String_Type<T>::str[index] = value[0];
 
 	return Jupiter::String_Type<T>::length += value.size();
 }
@@ -774,7 +774,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 {
 	if (pos >= in.size()) return R<T>();
 	R<T> r = R<T>(in.size() - pos);
-	for (r.length = 0; pos + r.length != in.size(); r.length++) r.str[r.length] = in.get(pos + r.length);
+	for (r.length = 0; pos + r.length != in.size(); r.length++) r.str[r.length] = in[pos + r.length];
 	return r;
 }
 
@@ -782,7 +782,7 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 {
 	if (pos + len >= in.size()) return R<T>::substring(in, pos);
 	R<T> r = R<T>(len);
-	for (r.length = 0; r.length != len; r.length++) r.str[r.length] = in.get(pos + r.length);
+	for (r.length = 0; r.length != len; r.length++) r.str[r.length] = in[pos + r.length];
 	return r;
 }
 
