@@ -133,7 +133,6 @@ namespace Jupiter
 		String_Strict(const String_Strict<T> &in);
 		String_Strict(const Readable_String<T> &in);
 		String_Strict(const std::basic_string<T> &in);
-		explicit String_Strict(const std::basic_string_view<T> &in) : String_Strict<T>(in.data(), in.size()){};
 		String_Strict(const T *in, size_t len);
 		String_Strict(const T *in);
 		String_Strict(const Jupiter::DataBuffer &in);
@@ -161,11 +160,12 @@ namespace Jupiter
 	};
 
 	/** String_Strict<T> Addition Operators */
-	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
-	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs);
-	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs);
-	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const std::basic_string<T> &rhs);
-	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::Readable_String<T> &lhs, const T *rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const Jupiter::String_Type<T> &rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const T &rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const Jupiter::String_Type<T> &rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const std::basic_string<T> &rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const std::basic_string_view<T> &rhs);
+	template<typename T> static inline Jupiter::String_Strict<T> operator+(const Jupiter::String_Type<T> &lhs, const T *rhs);
 
 	/**
 	* @brief Provides a "loose" String implementation that's more optimized for repeated concatenations.
@@ -324,25 +324,15 @@ namespace Jupiter
 	typedef String_Strict<char> StringS;
 
 	/** Definition of a Loose String. */
-	typedef String_Loose<char> StringL;
+	typedef String_Strict<char> StringL;
 
 	/** Definition of a String. */
-	typedef StringL String;
+	typedef StringS String;
 
 	namespace literals {
 		/** String_Strict literals */
 		inline Jupiter::StringS operator""_jss(const char *str, size_t len) { return Jupiter::StringS(str, len); }
 	}
-
-	// Carried over from Hash_Table.h for compatibility
-	struct default_hash_function {
-		size_t operator()(const Jupiter::ReadableString& in) const {
-			if constexpr (sizeof(size_t) >= sizeof(uint64_t))
-				return static_cast<size_t>(Jupiter::fnv1a<char>(in));
-
-			return static_cast<size_t>(Jupiter::fnv1a_32<char>(in));
-		}
-	};
 
 	template<typename CharT>
 	struct str_hash {
@@ -357,7 +347,14 @@ namespace Jupiter
 		auto operator()(const std::basic_string<CharT>& in_key) const noexcept {
 			return std::hash<std::basic_string<CharT>>()(in_key);
 		}
+
+		// DEPRECATED:
+		auto operator()(const String_Type<CharT>& in_key) const noexcept {
+			return operator()(static_cast<std::basic_string_view<CharT>>(in_key));
+		}
 	};
+
+	using default_hash_function = str_hash<char>;
 }
 
 /** Re-enable warning */

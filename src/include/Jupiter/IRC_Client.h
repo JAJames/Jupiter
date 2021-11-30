@@ -312,7 +312,7 @@ namespace Jupiter
 				/** Private members */
 				private:
 					std::shared_ptr<Jupiter::IRC::Client::User> m_user;
-					Jupiter::StringS m_prefixes;
+					std::string m_prefixes;
 				};
 
 				using UserTableType = std::unordered_map<Jupiter::StringS, std::shared_ptr<Channel::User>, default_hash_function>;

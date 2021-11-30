@@ -121,11 +121,9 @@ template<typename T> bool Jupiter::Shift_String_Type<T>::setBufferSizeNoCopy(siz
 
 // Jupiter::DataBuffer specialization
 
-template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Shift_String_Type>
-{
-	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::Shift_String_Type<Y> *data)
-	{
-		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Shift_String_Type> {
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::Shift_String_Type<Y> *data) {
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type>::push<Y>(buffer, data);
 	};
 };
 

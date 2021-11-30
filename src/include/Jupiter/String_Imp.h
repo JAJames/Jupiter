@@ -313,22 +313,27 @@ template<typename T> inline Jupiter::String_Strict<T> Jupiter::String_Strict<T>:
 	return Jupiter::operator+(*this, rhs);
 }
 
-template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const T &rhs)
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::String_Type<T> &lhs, const T &rhs)
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
 }
 
-template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const Jupiter::Readable_String<T> &rhs)
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::String_Type<T> &lhs, const Jupiter::String_Type<T> &rhs)
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
 }
 
-template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const std::basic_string<T> &rhs)
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::String_Type<T> &lhs, const std::basic_string<T> &rhs)
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
 }
 
-template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::Readable_String<T> &lhs, const T *rhs)
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::String_Type<T> &lhs, const std::basic_string_view<T> &rhs)
+{
+	return Jupiter::String_Strict<T>(lhs, rhs);
+}
+
+template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(const Jupiter::String_Type<T> &lhs, const T *rhs)
 {
 	return Jupiter::String_Strict<T>(lhs, rhs);
 }
@@ -337,9 +342,8 @@ template<typename T> static inline Jupiter::String_Strict<T> Jupiter::operator+(
 
 template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Strict>
 {
-	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Strict<Y> *data)
-	{
-		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Strict<Y> *data) {
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Strict>::push<Y>(buffer, data);
 	};
 
 	template<typename Y> static Jupiter::String_Strict<Y> interpret(uint8_t *&head)
@@ -706,7 +710,7 @@ template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Strin
 {
 	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Loose<Y> *data)
 	{
-		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type>::push<Y>(buffer, data);
 	};
 
 	template<typename Y> static Jupiter::String_Loose<Y> interpret(uint8_t *&head)

@@ -548,10 +548,6 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_
 	return Jupiter::String_Type<T>::length;
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, const Jupiter::Readable_String<T> &value) {
-	return this->replace(index, targetSize, value.data(), value.size());
-}
-
 template<typename T> size_t Jupiter::String_Type<T>::replace(size_t index, size_t targetSize, std::basic_string_view<T> value) {
 	return this->replace(index, targetSize, value.data(), value.size());
 }
@@ -716,11 +712,6 @@ template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Read
 	return this->replace(target.data(), target.size(), value, valueSize);
 }
 
-template<typename T> size_t Jupiter::String_Type<T>::replace(const Jupiter::Readable_String<T> &target, const Jupiter::Readable_String<T> &value)
-{
-	return this->replace(target.data(), target.size(), value.data(), value.size());
-}
-
 template<typename T> size_t Jupiter::String_Type<T>::replace(std::basic_string_view<T> target, std::basic_string_view<T> value)
 {
 	return this->replace(target.data(), target.size(), value.data(), value.size());
@@ -801,11 +792,11 @@ template<typename T> template<template<typename> class R> R<T> Jupiter::String_T
 
 // Jupiter::DataBuffer specialization
 
-template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type>
-{
-	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Type<Y> *data)
-	{
-		_Jupiter_DataBuffer_partial_specialization_impl<Jupiter::Readable_String>::push<Y>(buffer, data);
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl<Jupiter::String_Type> {
+	template<typename Y> static void push(Jupiter::DataBuffer *buffer, const Jupiter::String_Type<Y> *data) {
+		buffer->secure(sizeof(size_t) + data->size() * sizeof(Y));
+		buffer->push<size_t>(data->size());
+		buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(Y));
 	};
 };
 

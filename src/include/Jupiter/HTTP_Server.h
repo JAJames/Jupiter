@@ -45,7 +45,7 @@ namespace Jupiter
 			virtual int think();
 
 		public: // Server
-			typedef Jupiter::ReadableString *HTTPFunction(std::string_view query_string);
+			typedef std::string* HTTPFunction(std::string_view query_string);
 			static const Jupiter::ReadableString &global_namespace;
 			static const Jupiter::ReadableString &server_string;
 
@@ -59,7 +59,7 @@ namespace Jupiter
 				const Jupiter::ReadableString *type = nullptr; // Pointer to a constant (or otherwise managed) string
 				const Jupiter::ReadableString *charset = nullptr; // Pointer to a constant (or otherwise managed) string
 
-				virtual Jupiter::ReadableString *execute(std::string_view query_string);
+				virtual std::string* execute(std::string_view query_string);
 
 				Content(std::string in_name, Jupiter::HTTP::Server::HTTPFunction in_function);
 			};
@@ -76,7 +76,7 @@ namespace Jupiter
 				virtual bool remove(std::string_view path, std::string_view name);
 				virtual bool has(std::string_view name);
 				virtual Jupiter::HTTP::Server::Content* find(std::string_view name);
-				virtual Jupiter::ReadableString* execute(std::string_view name, std::string_view query_string);
+				virtual std::string* execute(std::string_view name, std::string_view query_string);
 
 				Directory(const Directory&) = delete;
 				Directory& operator=(const Directory&) = delete;
@@ -97,8 +97,8 @@ namespace Jupiter
 			bool has(std::string_view host, std::string_view name);
 			Content *find(std::string_view name);
 			Content *find(std::string_view host, std::string_view name);
-			Jupiter::ReadableString *execute(std::string_view name, std::string_view query_string);
-			Jupiter::ReadableString *execute(std::string_view host, std::string_view name, std::string_view query_string);
+			std::string* execute(std::string_view name, std::string_view query_string);
+			std::string* execute(std::string_view host, std::string_view name, std::string_view query_string);
 
 			bool bind(std::string_view hostname, uint16_t port = 80);
 			bool tls_bind(std::string_view hostname, uint16_t port = 443);

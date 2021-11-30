@@ -445,7 +445,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						case Error::UNKNOWNCOMMAND: // 421
 						{
 							Jupiter::ReferenceString command = getLineToken(2);
-							if (command.equalsi("STARTTLS")) { // Server doesn't support STARTTLS
+							if (jessilib::equalsi(command, "STARTTLS"sv)) { // Server doesn't support STARTTLS
 								Client::startCAP();
 							}
 						}
@@ -492,7 +492,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						switch (numeric)
 						{
 						case 0:
-							if (getLineToken(1).equalsi("CAP"))
+							if (jessilib::equalsi(getLineToken(1), "CAP"sv))
 							{
 								Jupiter::ReferenceString w4 = getLineToken(3);
 								if (w4 == "LS"sv)
@@ -577,7 +577,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 								m_nickname = configNick;
 								m_nickname += "1";
 								
-								m_socket->send("NICK "_jrs + m_nickname + ENDL);
+								m_socket->send("NICK "s + m_nickname + ENDL);
 							}
 							else if (jessilib::equalsi(m_nickname, configNick)) // The config nick failed
 							{
@@ -591,7 +591,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 								else
 									m_nickname = altNick;
 
-								m_socket->send("NICK "_jrs + m_nickname + ENDL);
+								m_socket->send("NICK "s + m_nickname + ENDL);
 							}
 							// Note: Add a series of contains() functions to String_Type.
 							else
@@ -604,7 +604,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 										m_nickname = configNick;
 										m_nickname += std::to_string(n + 1);
 
-										m_socket->send("NICK "_jrs + m_nickname + ENDL);
+										m_socket->send("NICK "s + m_nickname + ENDL);
 									}
 									else
 									{
@@ -612,7 +612,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 										// This can be somewhat edgy -- this will only trigger if someone rehashes AND the new nickname is shorter.
 										// However, it won't be fatal even if the new nickname's length is >= the old.
 										m_nickname = configNick;
-										m_socket->send("NICK "_jrs + m_nickname + ENDL);
+										m_socket->send("NICK "s + m_nickname + ENDL);
 									}
 								}
 								else
@@ -817,7 +817,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							if (!newnick.empty() && newnick[0] == ':') {
 								newnick.remove_prefix(1);
 							}
-							if (nick.equalsi(m_nickname)) {
+							if (jessilib::equalsi(nick, m_nickname)) {
 								m_nickname = newnick;
 							}
 							auto user = Client::findUser(nick);
@@ -884,7 +884,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 												plugin->OnPart(this, channel_name, nick, reason);
 											}
 
-											if (nick.equalsi(m_nickname))
+											if (jessilib::equalsi(nick, m_nickname))
 												Client::delChannel(channel_name);
 
 											if (user->getChannelCount() == 0)
@@ -1092,7 +1092,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						Jupiter::StringS auth_str = m_nickname + '\0' + m_sasl_account + '\0' + m_sasl_password;
 
 						char *enc = Jupiter::base64encode(auth_str.data(), auth_str.size());
-						m_socket->send("AUTHENTICATE "_jrs + enc + ENDL);
+						m_socket->send("AUTHENTICATE "s + enc + ENDL);
 						delete[] enc;
 					}
 					m_socket->send("CAP END" ENDL);
@@ -1519,8 +1519,12 @@ void Jupiter::IRC::Client::Channel::addUserPrefix(std::string_view in_nickname, 
 void Jupiter::IRC::Client::Channel::delUserPrefix(std::string_view in_nickname, char prefix) {
 	auto user = getUser(in_nickname);
 
-	if (user != nullptr)
-		user->m_prefixes.remove(prefix);
+	if (user != nullptr) {
+		size_t prefix_pos = user->m_prefixes.find(prefix);
+		if (prefix_pos != std::string::npos) {
+			user->m_prefixes.erase(prefix_pos, 1);
+		}
+	}
 }
 
 const Jupiter::ReadableString &Jupiter::IRC::Client::Channel::getName() const {

@@ -437,7 +437,6 @@ namespace Jupiter
 		* @return Number of bytes sent on success, SOCKET_ERROR (-1) otherwise.
 		* Note: Any returned value less than or equal to 0 should be treated as an error.
 		*/
-		int send(const Jupiter::ReadableString &str);
 		int send(std::string_view str);
 
 		/**

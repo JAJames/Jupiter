@@ -75,7 +75,7 @@ Jupiter::HTTP::Server::Content::Content(std::string in_name, Jupiter::HTTP::Serv
 	Jupiter::HTTP::Server::Content::name_checksum = calc_checksum(name); // switch to calcChecksumi to make case-insensitive
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Content::execute(std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::Content::execute(std::string_view query_string) {
 	return Jupiter::HTTP::Server::Content::function(query_string);
 }
 
@@ -216,7 +216,7 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Directory::find(std::stri
 	return nullptr; // No such directory
 }
 
-Jupiter::ReadableString* Jupiter::HTTP::Server::Directory::execute(std::string_view in_name, std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::Directory::execute(std::string_view in_name, std::string_view query_string) {
 	Jupiter::HTTP::Server::Content *content_ptr = find(in_name);
 	if (content_ptr == nullptr)
 		return nullptr;
@@ -273,8 +273,8 @@ struct Jupiter::HTTP::Server::Data {
 	Jupiter::HTTP::Server::Host *find_host(std::string_view name);
 	Content* find(std::string_view name);
 	Content* find(std::string_view hostname, std::string_view name);
-	Jupiter::ReadableString *execute(std::string_view name, std::string_view query_string);
-	Jupiter::ReadableString *execute(std::string_view hostname, std::string_view name, std::string_view query_string);
+	std::string* execute(std::string_view name, std::string_view query_string);
+	std::string* execute(std::string_view hostname, std::string_view name, std::string_view query_string);
 
 	int process_request(HTTPSession &session);
 
@@ -391,7 +391,7 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Data::find(std::string_vi
 	return host->find(name);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(std::string_view name, std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::Data::execute(std::string_view name, std::string_view query_string) {
 	Jupiter::HTTP::Server::Content *content = find(name);
 	if (content == nullptr)
 		return nullptr;
@@ -399,7 +399,7 @@ Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(std::string_view n
 	return content->execute(query_string);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::Data::execute(std::string_view hostname, std::string_view name, std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::Data::execute(std::string_view hostname, std::string_view name, std::string_view query_string) {
 	Jupiter::HTTP::Server::Content *content = find(hostname, name);
 	if (content == nullptr)
 		return nullptr;
@@ -442,7 +442,8 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 
 		if (!line.empty()) // end of http request
 		{
-			Jupiter::String result(256);
+			std::string result;
+			result.reserve(256);
 			switch (command)
 			{
 			case HTTPCommand::GET:
@@ -451,7 +452,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 				{
 					// 200 (success)
 					// TODO: remove referencestring warpper
-					Jupiter::ReadableString *content_result = content->execute(Jupiter::ReferenceString{query_string});
+					std::string* content_result = content->execute(Jupiter::ReferenceString{query_string});
 
 					switch (session.version)
 					{
@@ -703,11 +704,11 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::find(std::string_view hos
 	return m_data->find(host, name);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::execute(std::string_view name, std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::execute(std::string_view name, std::string_view query_string) {
 	return m_data->execute(name, query_string);
 }
 
-Jupiter::ReadableString *Jupiter::HTTP::Server::execute(std::string_view host, std::string_view name, std::string_view query_string) {
+std::string* Jupiter::HTTP::Server::execute(std::string_view host, std::string_view name, std::string_view query_string) {
 	return m_data->execute(host, name, query_string);
 }
 
