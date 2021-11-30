@@ -379,7 +379,7 @@ size_t Jupiter::IRC::Client::messageChannels(const Jupiter::ReadableString &mess
 
 int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 	Jupiter::ReferenceString line{in_line}; // TODO: remove this
-	if (line.isNotEmpty())
+	if (!line.empty())
 	{
 		Jupiter::IRC::Client::writeToLogs(line);
 		if (m_output != nullptr) {
@@ -390,7 +390,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 
 		auto first_split = jessilib::split_once_view(line, " "sv);
 		Jupiter::ReferenceString w1 = first_split.first;
-		if (w1.isNotEmpty())
+		if (!w1.empty())
 		{
 			int numeric = asInt(first_split.second);
 			if (w1[0] == ':') { //Messages
@@ -802,7 +802,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 								}
 								else {
 									auto sender = getSender(line);
-									if (sender.isNotEmpty()) {
+									if (!sender.empty()) {
 										this->OnServerNotice(channel_name, sender, message);
 										for (auto& plugin: Jupiter::plugins) {
 											plugin->OnServerNotice(this, channel_name, sender, message);
@@ -864,7 +864,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 						}
 						else if (jessilib::equalsi(command_token, "PART"sv)) {
 							auto nick = getSender(line);
-							if (nick.isNotEmpty()) {
+							if (!nick.empty()) {
 								std::string_view channel_name = getLineToken(2);
 								if (!channel_name.empty()) {
 									Channel* channel = getChannel(channel_name);
@@ -898,7 +898,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							std::string_view channel_name = getLineToken(2);
 							if (!channel_name.empty()) {
 								Jupiter::ReferenceString kicker = getSender(line);
-								if (kicker.isNotEmpty()) {
+								if (!kicker.empty()) {
 									std::string_view kicked_nickname = getLineToken(3);
 									if (!kicked_nickname.empty()) {
 										Channel* channel = getChannel(channel_name);
@@ -966,7 +966,7 @@ int Jupiter::IRC::Client::process_line(std::string_view in_line) {
 							if (!channel_name.empty()) {
 								if (m_chan_types.find(channel_name[0]) != std::string::npos) {
 									auto nick = getSender(line);
-									if (nick.isNotEmpty()) {
+									if (!nick.empty()) {
 										std::string_view mode_line = line.substr(std::min(line.find(' ', 2), line.size()));
 										if (!mode_line.empty()) {
 											mode_line.remove_prefix(1);

@@ -68,13 +68,6 @@ namespace Jupiter
 		bool empty() const { return size() == 0; }; // KEEP
 
 		/**
-		* @brief Checks if the String is not empty.
-		*
-		* @return True if the String is not empty, false otherwise.
-		*/
-		virtual bool isNotEmpty() const { return !empty(); };  // REMOVE
-
-		/**
 		* @brief Returns the index of the first element in the string with the specified value.
 		*
 		* @param value Value of the element to search for.

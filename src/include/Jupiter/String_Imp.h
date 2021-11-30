@@ -112,7 +112,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 	const T *itr;
 	const T *end;
 
-	if (lhs.isNotEmpty())
+	if (!lhs.empty())
 	{
 		itr = lhs.data();
 		end = itr + lhs.size();
@@ -146,7 +146,7 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 	const T *itr;
 	const T *end;
 
-	if (lhs.isNotEmpty())
+	if (!lhs.empty())
 	{
 		itr = lhs.data();
 		end = itr + lhs.size();
@@ -435,7 +435,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 	const T *itr;
 	const T *end;
 
-	if (lhs.isNotEmpty())
+	if (!lhs.empty())
 	{
 		itr = lhs.data();
 		end = itr + lhs.size();
@@ -469,7 +469,7 @@ template<typename T> Jupiter::String_Loose<T>::String_Loose(const Jupiter::Reada
 	const T *itr;
 	const T *end;
 
-	if (lhs.isNotEmpty())
+	if (!lhs.empty())
 	{
 		itr = lhs.data();
 		end = itr + lhs.size();

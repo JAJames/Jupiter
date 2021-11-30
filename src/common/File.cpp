@@ -150,7 +150,7 @@ bool Jupiter::File::load(FILE *file) {
 		chr = fgetc(file);
 
 		if (chr == EOF) {
-			if (buffer.isNotEmpty()) {
+			if (!buffer.empty()) {
 				m_data->lines.emplace_back(buffer);
 				return true;
 			}
