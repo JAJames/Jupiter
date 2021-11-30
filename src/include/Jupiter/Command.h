@@ -24,8 +24,16 @@
  * @brief Provides an extendable command system.
  */
 
+#include <vector>
+#include <string>
+#include <string_view>
 #include "Jupiter.h"
-#include "Reference_String.h"
+
+/** DLL Linkage Nagging */
+#if defined _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4251)
+#endif
 
 namespace Jupiter
 {
@@ -73,29 +81,33 @@ namespace Jupiter
 		* @param parameters Optional string containing any data to be passed to the help command.
 		* @return Brief description of command and syntax.
 		*/
-		virtual const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters = Jupiter::ReferenceString{}) = 0;
+		virtual std::string_view getHelp(std::string_view parameters = {}) = 0;
 
 		/**
 		* @brief Default constructor for command class.
 		*/
-		Command();
+		Command() = default;
 
 		/**
 		* @brief Copy constructor for command class.
 		*/
-		Command(const Command &command);
+		Command(const Command &command) = default;
 
 		/**
 		* @brief destructor for command class.
 		*/
-		virtual ~Command();
+		virtual ~Command() = default;
 
 		/** Private members */
 	private:
-		struct Data;
-		Data *m_data;
+		std::vector<std::string> m_triggers;
 	};
 
 }
+
+/** Re-enable warnings */
+#if defined _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 #endif // _COMMAND_H_HEADER

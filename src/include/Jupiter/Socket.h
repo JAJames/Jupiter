@@ -355,14 +355,14 @@ namespace Jupiter
 		* @param size The size of the buffer to be made.
 		* @return The newly created buffer.
 		*/
-		const Jupiter::ReadableString &setBufferSize(size_t size);
+		std::string_view setBufferSize(size_t size);
 
 		/**
 		* @brief Copies any new socket data to the buffer and returns it.
 		*
 		* @return Socket buffer if new data is successfully received, an empty buffer otherwise.
 		*/
-		const Jupiter::ReadableString &getData();
+		std::string_view getData();
 
 		/**
 		* @brief Returns the local hostname of the local machine.

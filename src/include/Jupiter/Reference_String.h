@@ -34,7 +34,7 @@ namespace Jupiter {
 
 	namespace literals {
 		/** DEPRECATED: Reference_String literals */
-		inline Jupiter::ReferenceString operator"" _jrs(const char *str, size_t len) { return Jupiter::ReferenceString(str, len); }
+		inline constexpr std::string_view operator"" _jrs(const char *str, size_t len) { return { str, len }; }
 	}
 }
 

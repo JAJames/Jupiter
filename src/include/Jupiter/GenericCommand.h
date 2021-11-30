@@ -68,9 +68,9 @@ namespace Jupiter
 			* @param in_type Value to set type to.
 			* @return This.
 			*/
-			ResponseLine *set(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
+			ResponseLine *set(std::string_view response, GenericCommand::DisplayType type);
 			ResponseLine() = default;
-			ResponseLine(const Jupiter::ReadableString &response, GenericCommand::DisplayType type);
+			ResponseLine(std::string_view response, GenericCommand::DisplayType type);
 			ResponseLine(std::string response, GenericCommand::DisplayType type);
 		};
 
@@ -79,7 +79,7 @@ namespace Jupiter
 		*
 		* @param input Parameters passed to the command by the user.
 		*/
-		virtual ResponseLine *trigger(const Jupiter::ReadableString &input) = 0;
+		virtual ResponseLine *trigger(std::string_view input) = 0;
 
 		/**
 		* @brief Checks if this command is a namespace
@@ -94,7 +94,7 @@ namespace Jupiter
 		*
 		* @param in_namespace Name of the namespace to move the command into
 		*/
-		void setNamespace(const Jupiter::ReadableString &in_namespace);
+		void setNamespace(std::string_view in_namespace);
 
 		/**
 		* @brief Places this command in a namespace
@@ -130,8 +130,8 @@ namespace Jupiter
 	class JUPITER_API GenericCommandNamespace : public Jupiter::GenericCommand
 	{
 	public: // Jupiter::Command
-		ResponseLine *trigger(const Jupiter::ReadableString &input) override;
-		const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters) override;
+		ResponseLine *trigger(std::string_view input) override;
+		std::string_view getHelp(std::string_view parameters) override;
 
 	public: // Jupiter::GenericCommand
 		bool isNamespace() const override;
@@ -170,8 +170,8 @@ namespace Jupiter
 #define BASE_GENERIC_COMMAND(CLASS) \
 	public: \
 	CLASS(); \
-	Jupiter::GenericCommand::ResponseLine *trigger(const Jupiter::ReadableString &parameters) override; \
-	const Jupiter::ReadableString &getHelp(const Jupiter::ReadableString &parameters) override; \
+	Jupiter::GenericCommand::ResponseLine *trigger(std::string_view parameters) override; \
+	std::string_view getHelp(std::string_view parameters) override; \
 	static CLASS &instance;
 
 /** Expands to become the entire declaration for a generic command. In most cases, this will be sufficient. */

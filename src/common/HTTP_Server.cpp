@@ -452,7 +452,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 				{
 					// 200 (success)
 					// TODO: remove referencestring warpper
-					std::string* content_result = content->execute(Jupiter::ReferenceString{query_string});
+					std::string* content_result = content->execute(query_string);
 
 					switch (session.version)
 					{
@@ -481,21 +481,22 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 						result += "Connection: close"_jrs ENDL;
 
 					result += "Content-Type: "_jrs;
-					if (content->type == nullptr)
+					if (content->type.empty()) {
 						result += Jupiter::HTTP::Content::Type::Text::PLAIN;
-					else
-						result += *content->type;
-					if (content->charset != nullptr)
-					{
+					}
+					else {
+						result += content->type;
+					}
+
+					if (!content->charset.empty()) {
 						result += "; charset="_jrs;
-						result += *content->charset;
+						result += content->charset;
 					}
 					result += ENDL;
 
-					if (content->language != nullptr)
-					{
+					if (!content->language.empty()) {
 						result += "Content-Language: "_jrs;
-						result += *content->language;
+						result += content->language;
 						result += ENDL;
 					}
 
@@ -827,5 +828,5 @@ int Jupiter::HTTP::Server::think() {
 	return 0;
 }
 
-const Jupiter::ReadableString &Jupiter::HTTP::Server::global_namespace = ""_jrs;
-const Jupiter::ReadableString &Jupiter::HTTP::Server::server_string = "Jupiter"_jrs;
+std::string_view Jupiter::HTTP::Server::global_namespace = ""_jrs;
+std::string_view Jupiter::HTTP::Server::server_string = "Jupiter"_jrs;

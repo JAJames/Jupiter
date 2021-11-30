@@ -39,7 +39,7 @@ namespace Jupiter
 		{
 		public:
 			QueryString() = delete;
-			inline QueryString(const Jupiter::ReadableString &query_string) : QueryString(query_string.data(), query_string.size()) {}
+			inline QueryString(std::string_view query_string) : QueryString(query_string.data(), query_string.size()) {}
 			inline QueryString(const char *ptr, size_t str_size);
 		};
 
@@ -212,7 +212,7 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 		else if (*ptr == '&') // End of key/value, start of key
 		{
 			if (!key.empty()) { // A key was already set; end of value
-				Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start);
+				Jupiter::HTTP::HTMLFormResponse::table[key] = std::string_view(token_start, buf - token_start);
 			}
 
 			key = std::string_view{};
@@ -239,13 +239,13 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 	{
 		key = std::string_view(token_start, ++buf - token_start);
 		*buf = *++ptr;
-		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(ptr, 1);
+		Jupiter::HTTP::HTMLFormResponse::table[key] = std::string_view(ptr, 1);
 	}
 	else
 		*++buf = *++ptr;
 
 	if (!key.empty()) // A key was already set; end of value
-		Jupiter::HTTP::HTMLFormResponse::table[key] = Jupiter::ReferenceString(token_start, buf - token_start + 1);
+		Jupiter::HTTP::HTMLFormResponse::table[key] = std::string_view(token_start, buf - token_start + 1);
 
 	Jupiter::StringType::length = buf + 1 - str;
 }

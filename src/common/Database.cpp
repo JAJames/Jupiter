@@ -36,7 +36,7 @@ void Jupiter::Database::create_header(FILE *)
 {
 }
 
-bool Jupiter::Database::process_file(const Jupiter::ReadableString &file)
+bool Jupiter::Database::process_file(std::string_view file)
 {
 	Jupiter::Database::data_->file_name = static_cast<std::string>(file);
 	return Jupiter::Database::Data::process_file(this);
@@ -125,17 +125,11 @@ bool Jupiter::Database::append(Jupiter::DataBuffer &data)
 	return Jupiter::Database::append(Jupiter::Database::data_->file_name, data);
 }
 
-bool Jupiter::Database::append(Jupiter::ReadableString &file, Jupiter::DataBuffer &data)
-{
-	char *str = new char[file.size() + 1];
-	memcpy(str, file.data(), file.size() * sizeof(char));
-	str[file.size()] = '\0';
-	bool r = Jupiter::Database::append(str, data);
-	delete[] str;
-	return r;
+bool Jupiter::Database::append(std::string_view file, Jupiter::DataBuffer &data) {
+	return append(static_cast<std::string>(file), data);
 }
 
-bool Jupiter::Database::append(std::string &file, Jupiter::DataBuffer &data)
+bool Jupiter::Database::append(const std::string& file, Jupiter::DataBuffer &data)
 {
 	return Jupiter::Database::append(file.c_str(), data);
 }
@@ -158,7 +152,7 @@ bool Jupiter::Database::append(FILE *file, Jupiter::DataBuffer &data)
 	return true;
 }
 
-bool Jupiter::Database::create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header)
+bool Jupiter::Database::create_database(std::string_view file, const Jupiter::DataBuffer *header)
 {
 	char *str = new char[file.size() + 1];
 	memcpy(str, file.data(), file.size() * sizeof(char));

@@ -476,12 +476,12 @@ size_t Jupiter::Socket::getBufferSize() const {
 	return Jupiter::Socket::data_->buffer.capacity();
 }
 
-const Jupiter::ReadableString &Jupiter::Socket::setBufferSize(size_t size) {
+std::string_view Jupiter::Socket::setBufferSize(size_t size) {
 	Jupiter::Socket::data_->buffer.setBufferSize(size);
 	return Jupiter::Socket::data_->buffer;
 }
 
-const Jupiter::ReadableString &Jupiter::Socket::getData() {
+std::string_view Jupiter::Socket::getData() {
 	if (this->recv() <= 0)
 		Jupiter::Socket::data_->buffer.erase();
 	return Jupiter::Socket::data_->buffer;

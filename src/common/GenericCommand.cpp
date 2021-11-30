@@ -53,7 +53,7 @@ bool Jupiter::GenericCommand::isNamespace() const {
 	return false;
 }
 
-void Jupiter::GenericCommand::setNamespace(const Jupiter::ReadableString &in_namespace) {
+void Jupiter::GenericCommand::setNamespace(std::string_view in_namespace) {
 	if (Jupiter::GenericCommand::m_parent == nullptr) {
 		return; // We have no parent to start from
 	}
@@ -80,7 +80,7 @@ Jupiter::GenericCommandNamespace *Jupiter::GenericCommand::getNamespace() const 
 
 /** GenericCommand::ResponseLine */
 
-Jupiter::GenericCommand::ResponseLine::ResponseLine(const Jupiter::ReadableString &in_response, GenericCommand::DisplayType in_type)
+Jupiter::GenericCommand::ResponseLine::ResponseLine(std::string_view in_response, GenericCommand::DisplayType in_type)
 	: response{ in_response },
 	type{ in_type } {
 }
@@ -90,7 +90,7 @@ Jupiter::GenericCommand::ResponseLine::ResponseLine(std::string in_response, Gen
 	type{ in_type } {
 }
 
-Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommand::ResponseLine::set(const Jupiter::ReadableString &in_response, GenericCommand::DisplayType in_type) {
+Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommand::ResponseLine::set(std::string_view in_response, GenericCommand::DisplayType in_type) {
 	response = in_response;
 	type = in_type;
 	return this;
@@ -101,7 +101,7 @@ Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommand::ResponseLine::se
 Jupiter::GenericCommandNamespace::~GenericCommandNamespace() {
 }
 
-Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger(const Jupiter::ReadableString &in_input) {
+Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger(std::string_view in_input) {
 	GenericCommand* command;
 	Jupiter::ReferenceString input(in_input);
 	auto split_input = jessilib::word_split_once_view(input, GENERIC_COMMAND_WORD_DELIMITER_SV);
@@ -112,13 +112,13 @@ Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger
 
 	command = Jupiter::GenericCommandNamespace::getCommand(split_input.first);
 	if (command != nullptr) {
-		return command->trigger(Jupiter::ReferenceString{split_input.second});
+		return command->trigger(split_input.second);
 	}
 
 	return new Jupiter::GenericCommand::ResponseLine(""_jrs, Jupiter::GenericCommand::DisplayType::PrivateError);
 }
 
-const Jupiter::ReadableString &Jupiter::GenericCommandNamespace::getHelp(const Jupiter::ReadableString &parameters) {
+std::string_view Jupiter::GenericCommandNamespace::getHelp(std::string_view parameters) {
 	static Jupiter::ReferenceString not_found = "Error: Command not found"_jrs;
 	Jupiter::ReferenceString input(parameters);
 
@@ -136,7 +136,7 @@ const Jupiter::ReadableString &Jupiter::GenericCommandNamespace::getHelp(const J
 	// Search for command
 	command = Jupiter::GenericCommandNamespace::getCommand(input_split.first);
 	if (command != nullptr) {
-		return command->getHelp(Jupiter::ReferenceString{input_split.second});
+		return command->getHelp(input_split.second);
 	}
 
 	// Command not found

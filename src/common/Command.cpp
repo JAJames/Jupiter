@@ -19,42 +19,23 @@
 #include <cstring>
 #include "jessilib/unicode.hpp"
 #include "Command.h"
-#include "String.hpp"
-
-struct Jupiter::Command::Data { // TODO: remove pimpl
-	std::vector<std::string> triggers;
-};
-
-Jupiter::Command::Command() {
-	m_data = new Data();
-}
-
-Jupiter::Command::Command(const Command &command) {
-	m_data = new Data();
-	//for (size_t i = 0; i != m_data->triggers.size(); i++) // triggers.size() would always be 0? this code does nothing?
-	//	m_data->triggers.add(new Jupiter::StringS(*command.m_data->triggers.get(i)));
-}
-
-Jupiter::Command::~Command() {
-	delete m_data;
-}
 
 // Command Functions
 
 void Jupiter::Command::addTrigger(std::string_view trigger) {
-	m_data->triggers.emplace_back(trigger);
+	m_triggers.emplace_back(trigger);
 }
 
 std::string_view Jupiter::Command::getTrigger(size_t index) const {
-	return m_data->triggers[index];
+	return m_triggers[index];
 }
 
 size_t Jupiter::Command::getTriggerCount() const {
-	return m_data->triggers.size();
+	return m_triggers.size();
 }
 
 bool Jupiter::Command::matches(std::string_view in_trigger) const {
-	for (const auto& trigger : m_data->triggers) {
+	for (const auto& trigger : m_triggers) {
 		if (jessilib::equalsi(trigger, in_trigger)) {
 			return true;
 		}

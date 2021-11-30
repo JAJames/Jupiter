@@ -66,7 +66,7 @@ namespace Jupiter
 		* @param file File being processed
 		* @return True on success, false otherwise
 		*/
-		bool process_file(const Jupiter::ReadableString &file);
+		bool process_file(std::string_view file);
 		bool process_file(const std::string &file);
 		bool process_file(const char *file);
 		bool process_file(FILE *file);
@@ -99,8 +99,8 @@ namespace Jupiter
 		* @param data DataBuffer to append
 		* @return True on success, false otherwise.
 		*/
-		static bool append(Jupiter::ReadableString &file, Jupiter::DataBuffer &data);
-		static bool append(std::string &file, Jupiter::DataBuffer &data);
+		static bool append(std::string_view file, Jupiter::DataBuffer &data);
+		static bool append(const std::string& file, Jupiter::DataBuffer &data);
 		static bool append(const char *file, Jupiter::DataBuffer &data);
 		static bool append(FILE *file, Jupiter::DataBuffer &data);
 
@@ -111,7 +111,7 @@ namespace Jupiter
 		* @param flie Name of the Database to generate
 		* @param header DataBuffer containing the header to write to the file
 		*/
-		static bool create_database(const Jupiter::ReadableString &file, const Jupiter::DataBuffer *header = nullptr);
+		static bool create_database(std::string_view file, const Jupiter::DataBuffer *header = nullptr);
 		static bool create_database(const std::string &file, const Jupiter::DataBuffer *header = nullptr);
 		static bool create_database(const char *file, const Jupiter::DataBuffer *header = nullptr);
 

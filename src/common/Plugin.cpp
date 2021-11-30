@@ -73,7 +73,7 @@ const char module_file_extension[]{ ".dll" };
 const char module_file_extension[]{ ".so" };
 #endif // _WIN32
 
-const Jupiter::ReferenceString config_file_extension = ".ini"_jrs;
+constexpr std::string_view config_file_extension = ".ini"sv;
 
 std::string plugins_directory = "Plugins"s + directory_character;
 std::string plugin_configs_directory = "Configs"s + directory_character;
@@ -102,7 +102,7 @@ bool Jupiter::Plugin::shouldRemove() const {
 	return _shouldRemove;
 }
 
-const Jupiter::ReadableString &Jupiter::Plugin::getName() const {
+std::string_view Jupiter::Plugin::getName() const {
 	return name;
 }
 
@@ -119,7 +119,7 @@ void Jupiter::Plugin::OnPostInitialize() {
 
 // Static Functions
 
-void Jupiter::Plugin::setDirectory(const Jupiter::ReadableString &dir) {
+void Jupiter::Plugin::setDirectory(std::string_view dir) {
 	plugins_directory = dir;
 	if (!plugins_directory.empty() && plugins_directory.back() != directory_character) {
 		plugins_directory += directory_character;
@@ -130,7 +130,7 @@ const std::string& Jupiter::Plugin::getDirectory() {
 	return plugins_directory;
 }
 
-void Jupiter::Plugin::setConfigDirectory(const Jupiter::ReadableString &dir) {
+void Jupiter::Plugin::setConfigDirectory(std::string_view dir) {
 	plugin_configs_directory = dir;
 	if (!plugin_configs_directory.empty() && plugin_configs_directory.back() != directory_character) {
 		plugin_configs_directory += directory_character;
@@ -180,7 +180,7 @@ Jupiter::Plugin *Jupiter::Plugin::load(const std::string_view& pluginName) {
 		}
 
 		// Initialize the plugin
-		weak_plugin->name = Jupiter::ReferenceString{pluginName};
+		weak_plugin->name = pluginName;
 		std::string config_path = plugin_configs_directory;
 		config_path += pluginName;
 		config_path += config_file_extension;

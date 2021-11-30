@@ -88,7 +88,7 @@ namespace Jupiter
 		*
 		* @return String containing the name of the plugin.
 		*/
-		const Jupiter::ReadableString &getName() const;
+		std::string_view getName() const;
 
 		/**
 		* @brief Returns the plugin's configuration file.
@@ -296,7 +296,7 @@ namespace Jupiter
 		*
 		* @param dir Directory to look for plugins in.
 		*/
-		static void setDirectory(const Jupiter::ReadableString &dir);
+		static void setDirectory(std::string_view dir);
 
 		/**
 		* @brief Returns the current plugin directory.
@@ -310,7 +310,7 @@ namespace Jupiter
 		*
 		* @param dir Directory to look for configuration files in.
 		*/
-		static void setConfigDirectory(const Jupiter::ReadableString &dir);
+		static void setConfigDirectory(std::string_view dir);
 
 		/**
 		* @brief Returns the current plugin configuration directory

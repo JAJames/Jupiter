@@ -277,7 +277,7 @@ namespace Jupiter
 					*
 					* @return String containing the user's channel prefixes.
 					*/
-					const Jupiter::ReadableString &getPrefixes() const;
+					std::string_view getPrefixes() const;
 
 					/**
 					* @brief Fetches the user's nickname.
@@ -322,7 +322,7 @@ namespace Jupiter
 				*
 				* @return String containing the name of the channel.
 				*/
-				const Jupiter::ReadableString &getName() const;
+				std::string_view getName() const;
 
 				/**
 				* @brief Searches for a user based on their nickname.
@@ -417,7 +417,7 @@ namespace Jupiter
 				* @param channelName String containing the name of a channel.
 				* @param iFace Server in which this channel is located.
 				*/
-				Channel(const Jupiter::ReadableString &in_name, Client *in_parent);
+				Channel(std::string_view in_name, Client *in_parent);
 
 			/** Private members */
 			private:
@@ -509,7 +509,7 @@ namespace Jupiter
 			*
 			* @return String containing the server's name.
 			*/
-			const Jupiter::ReadableString &getServerName() const;
+			std::string_view getServerName() const;
 
 			/**
 			* @brief Returns the server's hostname.
@@ -693,7 +693,7 @@ namespace Jupiter
 			* @param message String containing the message to send.
 			* @return Number of messages sent.
 			*/
-			size_t messageChannels(const Jupiter::ReadableString &in_message);
+			size_t messageChannels(std::string_view in_message);
 
 			/**
 			* @brief Returns if the client will automatically reconnect upon failure.
@@ -715,7 +715,7 @@ namespace Jupiter
 			*
 			* @param rawMessage String containing the data to send.
 			*/
-			void send(const Jupiter::ReadableString &in_message);
+			void send(std::string_view in_message);
 
 			/**
 			* @brief Processes an input line of IRC protocol data.
@@ -732,7 +732,7 @@ namespace Jupiter
 			* @param in_default_value Optional parameter specifying the default value to return if none is found.
 			* @return String containing the key value if it exists, in_default_value otherwise.
 			*/
-			std::string_view readConfigValue(const Jupiter::ReadableString &key, std::string_view in_default_value = std::string_view{}) const;
+			std::string_view readConfigValue(std::string_view key, std::string_view in_default_value = std::string_view{}) const;
 
 			/**
 			* @brief Returns a key's value as a boolean.
@@ -741,7 +741,7 @@ namespace Jupiter
 			* @param key String containing the key name.
 			* @return Boolean value of the key value if it exists, in_default_value otherwise.
 			*/
-			bool readConfigBool(const Jupiter::ReadableString &key, bool in_default_value = false) const;
+			bool readConfigBool(std::string_view key, bool in_default_value = false) const;
 
 			/**
 			* @brief Returns a key's value as an integer.
@@ -750,7 +750,7 @@ namespace Jupiter
 			* @param key String containing the key name.
 			* @return Integer value of the key value if it exists, in_default_value otherwise.
 			*/
-			int readConfigInt(const Jupiter::ReadableString &key, int in_default_value = 0) const;
+			int readConfigInt(std::string_view key, int in_default_value = 0) const;
 
 			/**
 			* @brief Returns a key's value as a long integer.
@@ -759,7 +759,7 @@ namespace Jupiter
 			* @param key String containing the key name.
 			* @return Long integer value of the key value if it exists, in_default_value otherwise.
 			*/
-			long readConfigLong(const Jupiter::ReadableString &key, long in_default_value = 0) const;
+			long readConfigLong(std::string_view key, long in_default_value = 0) const;
 
 			/**
 			* @brief Returns a key's value as a double.
@@ -768,14 +768,14 @@ namespace Jupiter
 			* @param key String containing the key name.
 			* @return Double value of the key value if it exists, in_default_value otherwise.
 			*/
-			double readConfigDouble(const Jupiter::ReadableString &key, double in_default_value = 0) const;
+			double readConfigDouble(std::string_view key, double in_default_value = 0) const;
 
 			/**
 			* @brief Writes to the server's log file.
 			*
 			* @param message String containing the text to write to the file.
 			*/
-			void writeToLogs(const Jupiter::ReadableString &in_message);
+			void writeToLogs(std::string_view in_message);
 
 			/**
 			* @brief Connects the client to its server.
@@ -797,7 +797,7 @@ namespace Jupiter
 			*
 			* @param message String containing the QUIT message to send prior to disconnecting.
 			*/
-			void disconnect(const Jupiter::ReadableString &in_message, bool in_stay_dead = false);
+			void disconnect(std::string_view in_message, bool in_stay_dead = false);
 
 			/**
 			* @brief Calls disconnect() if the client has not already, then calls connect().
@@ -845,7 +845,7 @@ namespace Jupiter
 			Jupiter::Config *m_secondary_section;
 			std::string m_log_file_name;
 			std::string m_last_line;
-			Jupiter::StringS m_server_name;
+			std::string m_server_name;
 			std::string m_nickname;
 			std::string m_realname;
 
@@ -877,7 +877,7 @@ namespace Jupiter
 
 			bool startCAP();
 			bool registerClient();
-			std::shared_ptr<User> findUser(const Jupiter::ReadableString &in_nickname) const;
+			std::shared_ptr<User> findUser(std::string_view in_nickname) const;
 			std::shared_ptr<User> findUserOrAdd(std::string_view in_nickname);
 		}; // Jupiter::IRC::Client class
 

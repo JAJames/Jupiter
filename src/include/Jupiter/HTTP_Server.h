@@ -46,8 +46,8 @@ namespace Jupiter
 
 		public: // Server
 			typedef std::string* HTTPFunction(std::string_view query_string);
-			static const Jupiter::ReadableString &global_namespace;
-			static const Jupiter::ReadableString &server_string;
+			static std::string_view global_namespace;
+			static std::string_view server_string;
 
 			struct JUPITER_API Content
 			{
@@ -55,9 +55,9 @@ namespace Jupiter
 				Jupiter::HTTP::Server::HTTPFunction *function; // function to generate content data
 				std::string name; // name of the content
 				unsigned int name_checksum; // name.calcChecksum()
-				const Jupiter::ReadableString *language = nullptr; // Pointer to a constant (or otherwise managed) string
-				const Jupiter::ReadableString *type = nullptr; // Pointer to a constant (or otherwise managed) string
-				const Jupiter::ReadableString *charset = nullptr; // Pointer to a constant (or otherwise managed) string
+				std::string_view language; // Pointer to a constant (or otherwise managed) string
+				std::string_view type; // Pointer to a constant (or otherwise managed) string
+				std::string_view charset; // Pointer to a constant (or otherwise managed) string
 
 				virtual std::string* execute(std::string_view query_string);
 
