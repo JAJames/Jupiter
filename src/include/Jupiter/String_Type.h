@@ -121,22 +121,7 @@ namespace Jupiter
 		/**
 		* @brief Removes all elements from the string.
 		*/
-		virtual void erase();
-
-		/**
-		* @brief Processes escape sequences in a string.
-		* Source reference: http://en.cppreference.com/w/cpp/language/escape
-		*/
-		virtual void processEscapeSequences();
-
-		/**
-		* @brief Captures an input string of elements and uses it as the internal string.
-		* Note: Do NOT externally delete[] or free() 'in'.
-		*
-		* @param in Pointer to the start of the string to capture
-		* @param in_length Number of elements in the string
-		*/
-		virtual void capture(T *in, size_t in_length) = 0;
+		virtual void clear();
 
 		/**
 		* @brief Sets the value of an element at the specified index.
@@ -222,8 +207,8 @@ namespace Jupiter
 		* @param pos Position to start copying from.
 		* @return Partial copy of the input string.
 		*/
-		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos);
-		template<template<typename> class R> static R<T> substring(const T *in, size_t pos);
+		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos); // REPLACE
+		template<template<typename> class R> static R<T> substring(const T *in, size_t pos); // REPLACE
 
 		/**
 		* @brief Copies a part of an input string and returns it in an output type.
@@ -235,26 +220,8 @@ namespace Jupiter
 		* @param len Number of elements to copy.
 		* @return Partial copy of the input string.
 		*/
-		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len);
-		template<template<typename> class R> static R<T> substring(const T *in, size_t pos, size_t len);
-
-		/**
-		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSize(size_t len) = 0;
-
-		/**
-		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
-		* Note: This does nothing if len is less than the string's current length.
-		*
-		* @param len Minimum number of elements the string buffer must be able to hold.
-		* @return True if a new buffer was allocated, false otherwise.
-		*/
-		virtual bool setBufferSizeNoCopy(size_t len) = 0;
+		template<template<typename> class R> static R<T> substring(const Jupiter::Readable_String<T> &in, size_t pos, size_t len); // REPLACE
+		template<template<typename> class R> static R<T> substring(const T *in, size_t pos, size_t len); // REPLACE
 
 		/** Mutative operators */
 		inline String_Type<T> &operator+=(const String_Type<T> &right) { this->concat(right); return *this; };
@@ -330,9 +297,27 @@ namespace Jupiter
 		inline bool operator>=(const std::basic_string<T> &right)const{ return !operator<(right); }
 		inline bool operator>=(const T right)const{ return !operator<(right); }
 
-	protected:
+	protected: // Things which cannot be removed right now
 		T *str{}; /** Pointer for the underlying string of elements */
 		size_t length{}; /** Number of representable elements in the string */
+
+		/**
+		* @brief Sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSize(size_t len) = 0;
+
+		/**
+		* @brief Empties the string, and sets the internal buffer to be at least large enough to old a specified number of elements.
+		* Note: This does nothing if len is less than the string's current length.
+		*
+		* @param len Minimum number of elements the string buffer must be able to hold.
+		* @return True if a new buffer was allocated, false otherwise.
+		*/
+		virtual bool setBufferSizeNoCopy(size_t len) = 0;
 	};
 
 	namespace literals {

@@ -29,6 +29,7 @@
 #include <cstdio> // FILE
 #include <string> // std::basic_string<T> type
 #include <iostream> // std::endl
+#include <cstdarg>
 #include "InvalidIndex.h"
 #include "DataBuffer.h"
 #include "Functions.h"
@@ -157,6 +158,32 @@ namespace Jupiter {
 	inline long double from_string<long double>(std::string_view in_string) {
 		return asDouble(in_string);
 	}
+}
+
+inline std::string string_printf(const char* format, ...) {
+	std::string result;
+	va_list args;
+	va_start(args, format);
+
+	va_list args_copy;
+	va_copy(args_copy, args);
+	int min_length = std::vsnprintf(nullptr, 0, format, args_copy);
+	va_end(args_copy);
+
+	if (min_length > 0) {
+		result.resize(min_length);
+		min_length = vsnprintf(result.data(), result.size() + 1, format, args);
+		if (min_length <= 0) {
+			result.clear();
+		}
+
+		if (result.size() != min_length) {
+			throw std::runtime_error("result.size() != min_length");
+		}
+	}
+
+	va_end(args);
+	return result;
 }
 
 #endif // _READABLE_STRING_H_HEADER

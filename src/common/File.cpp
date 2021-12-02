@@ -163,7 +163,7 @@ bool Jupiter::File::load(FILE *file) {
 		new_line_r:
 
 			m_data->lines.emplace_back(buffer);
-			buffer.erase();
+			buffer.clear();
 
 			// check for optional trailing \n
 
@@ -190,7 +190,7 @@ bool Jupiter::File::load(FILE *file) {
 		new_line_n:
 
 			m_data->lines.emplace_back(buffer);
-			buffer.erase();
+			buffer.clear();
 
 			// check for optional trailing \r
 

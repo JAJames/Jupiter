@@ -235,7 +235,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 					if (itr == end)
 					{
 						// No data remains to be parsed in buffer; erase buffer and break
-						buffer.erase();
+						buffer.clear();
 						break;
 					}
 

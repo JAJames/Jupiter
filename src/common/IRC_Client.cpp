@@ -188,7 +188,7 @@ void Jupiter::IRC::Client::setPrimaryConfigSection(Jupiter::Config *in_primary_s
 	if (m_primary_section != nullptr)
 		m_primary_section_name = m_primary_section->getName();
 	else
-		m_primary_section_name.erase();
+		m_primary_section_name.clear();
 }
 
 void Jupiter::IRC::Client::setSecondaryConfigSection(Jupiter::Config *in_secondary_section) {
