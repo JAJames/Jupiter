@@ -473,7 +473,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 
 					result += "Server: "_jrs JUPITER_VERSION ENDL;
 
-					result += Jupiter::StringS::Format("Content-Length: %u" ENDL, content_result->size());
+					result += string_printf("Content-Length: %u" ENDL, content_result->size());
 
 					if (session.keep_alive)
 						result += "Connection: keep-alive"_jrs ENDL;

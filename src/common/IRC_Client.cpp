@@ -329,33 +329,33 @@ void Jupiter::IRC::Client::setAutoReconnect(int val) {
 }
 
 void Jupiter::IRC::Client::joinChannel(std::string_view in_channel) {
-	m_socket->send(Jupiter::StringS::Format("JOIN %.*s" ENDL, in_channel.size(), in_channel.data()));
+	m_socket->send(string_printf("JOIN %.*s" ENDL, in_channel.size(), in_channel.data()));
 }
 
 void Jupiter::IRC::Client::joinChannel(std::string_view in_channel, std::string_view in_password) {
-	m_socket->send(Jupiter::StringS::Format("JOIN %.*s %.*s" ENDL, in_channel.size(), in_channel.data(), in_password.size(), in_password.data()));
+	m_socket->send(string_printf("JOIN %.*s %.*s" ENDL, in_channel.size(), in_channel.data(), in_password.size(), in_password.data()));
 }
 
 void Jupiter::IRC::Client::partChannel(std::string_view in_channel) {
-	m_socket->send(Jupiter::StringS::Format("PART %.*s" ENDL, in_channel.size(), in_channel.data()));
+	m_socket->send(string_printf("PART %.*s" ENDL, in_channel.size(), in_channel.data()));
 
 	Jupiter::ReferenceString channel_name = in_channel;
 	m_channels[channel_name].setType(-2);
 }
 
 void Jupiter::IRC::Client::partChannel(std::string_view in_channel, std::string_view in_message) {
-	m_socket->send(Jupiter::StringS::Format("PART %.*s :%.*s" ENDL, in_channel.size(), in_channel.data(), in_message.size(), in_message.data()));
+	m_socket->send(string_printf("PART %.*s :%.*s" ENDL, in_channel.size(), in_channel.data(), in_message.size(), in_message.data()));
 
 	Jupiter::ReferenceString channel_name = in_channel;
 	m_channels[channel_name].setType(-2);
 }
 
 void Jupiter::IRC::Client::sendMessage(std::string_view dest, std::string_view message) {
-	m_socket->send(Jupiter::StringS::Format("PRIVMSG %.*s :%.*s" ENDL, dest.size(), dest.data(), message.size(), message.data()));
+	m_socket->send(string_printf("PRIVMSG %.*s :%.*s" ENDL, dest.size(), dest.data(), message.size(), message.data()));
 }
 
 void Jupiter::IRC::Client::sendNotice(std::string_view dest, std::string_view message) {
-	m_socket->send(Jupiter::StringS::Format("NOTICE %.*s :%.*s" ENDL, dest.size(), dest.data(), message.size(), message.data()));
+	m_socket->send(string_printf("NOTICE %.*s :%.*s" ENDL, dest.size(), dest.data(), message.size(), message.data()));
 }
 
 size_t Jupiter::IRC::Client::messageChannels(int type, std::string_view message) {
@@ -670,20 +670,20 @@ int Jupiter::IRC::Client::process_line(std::string_view line) {
 						break;
 						case Reply::LUSERCLIENT: // 251
 						{
-							Jupiter::StringL key = "RawData.";
-							size_t offset;
+							std::string key = "RawData.";
+							size_t offset = key.size();
 
 							unsigned int i = 1;
 							Jupiter::ReferenceString value;
 							auto config_loop_condition = [&]
 							{
-								offset = key.aformat("%u", i);
+								key += std::to_string(i);
 								value = Jupiter::IRC::Client::readConfigValue(key);
 								return !value.empty();
 							};
 							while (config_loop_condition())
 							{
-								key.truncate(offset);
+								key.erase(offset);
 								Jupiter::IRC::Client::send(value);
 								i++;
 							}
@@ -1066,7 +1066,7 @@ int Jupiter::IRC::Client::process_line(std::string_view line) {
 			{
 				if (w1 == "PING"sv)
 				{
-					m_socket->send(Jupiter::StringS::Format("PONG %.*s" ENDL, first_split.second.size(), first_split.second.data()));
+					m_socket->send(string_printf("PONG %.*s" ENDL, first_split.second.size(), first_split.second.data()));
 				}
 				else if (w1 == "NICK"sv)
 				{
@@ -1163,7 +1163,7 @@ void Jupiter::IRC::Client::disconnect(bool stayDead)
 
 void Jupiter::IRC::Client::disconnect(std::string_view message, bool stayDead)
 {
-	m_socket->send(Jupiter::StringS::Format("QUIT :%.*s" ENDL, message.size(), message.data()));
+	m_socket->send(string_printf("QUIT :%.*s" ENDL, message.size(), message.data()));
 	Jupiter::IRC::Client::disconnect(stayDead);
 }
 
@@ -1405,16 +1405,14 @@ bool Jupiter::IRC::Client::startCAP() {
 bool Jupiter::IRC::Client::registerClient() {
 	bool result = true;
 	const char *localHostname = Jupiter::Socket::getLocalHostname();
-	Jupiter::StringS messageToSend;
-
-	messageToSend.format("USER %.*s %s %.*s :%.*s" ENDL, m_nickname.size(), m_nickname.data(), localHostname, m_server_hostname.size(), m_server_hostname.c_str(), m_realname.size(), m_realname.data());
+	std::string message = string_printf("USER %.*s %s %.*s :%.*s" ENDL, m_nickname.size(), m_nickname.data(), localHostname, m_server_hostname.size(), m_server_hostname.c_str(), m_realname.size(), m_realname.data());
 	
-	if (m_socket->send(messageToSend) <= 0)
+	if (m_socket->send(message) <= 0)
 		result = false;
 
-	messageToSend.format("NICK %.*s" ENDL, m_nickname.size(), m_nickname.data());
+	message = string_printf("NICK %.*s" ENDL, m_nickname.size(), m_nickname.data());
 
-	if (m_socket->send(messageToSend) <= 0)
+	if (m_socket->send(message) <= 0)
 		result = false;
 
 	m_connection_status = 3;

@@ -71,30 +71,6 @@ namespace Jupiter
 		const T *data() const;
 
 		/**
-		* @brief Sets the String's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param ... Inputs to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		size_t format(const std::basic_string<T> &format, ...);
-		size_t format(const T *format, ...);
-		virtual size_t vformat(const T *format, va_list args) = 0;
-
-		/**
-		* @brief Appends to a String's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param ... Inputs to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		size_t aformat(const std::basic_string<T> &format, ...);
-		size_t aformat(const T *format, ...);
-		virtual size_t avformat(const T *format, va_list args) = 0;
-
-		/**
 		* @brief Truncates the string by a specified number of elements.
 		*
 		* @param n Number of elements to remove from the tail.

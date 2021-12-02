@@ -56,52 +56,6 @@ template<typename T> const T *Jupiter::String_Type<T>::data() const
 	return Jupiter::String_Type<T>::str;
 }
 
-// format forwards
-
-template<typename T> size_t Jupiter::String_Type<T>::format(const std::basic_string<T> &format, ...)
-{
-	const char *ptr = format.c_str();
-	size_t r;
-	va_list args;
-	va_start(args, ptr);
-	r = this->vformat(ptr, args);
-	va_end(args);
-	return r;
-}
-
-template<typename T> size_t Jupiter::String_Type<T>::format(const T *format, ...)
-{
-	size_t r;
-	va_list args;
-	va_start(args, format);
-	r = this->vformat(format, args);
-	va_end(args);
-	return r;
-}
-
-// aformat forwards
-
-template<typename T> size_t Jupiter::String_Type<T>::aformat(const std::basic_string<T> &format, ...)
-{
-	const char *ptr = format.c_str();
-	size_t r;
-	va_list args;
-	va_start(args, ptr);
-	r = this->avformat(ptr, args);
-	va_end(args);
-	return r;
-}
-
-template<typename T> size_t Jupiter::String_Type<T>::aformat(const T *format, ...)
-{
-	size_t r;
-	va_list args;
-	va_start(args, format);
-	r = this->avformat(format, args);
-	va_end(args);
-	return r;
-}
-
 // truncate base
 
 template<typename T> size_t Jupiter::String_Type<T>::truncate(size_t n)

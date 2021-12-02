@@ -26,29 +26,6 @@
 
 #include "String.hpp"
 
-#if !defined va_copy
-
-#if defined __INTEL_COMPILER
-#pragma message("Warning: va_copy not properly defined. Assuming common implementation.")
-#define va_copy(dst, src) ((void)((dst) = (src)))
-#else
-#error "va_copy not defined."
-#endif // __INTEL_COMPILER
-
-#endif // va_copy
-
-#if !defined JUPITER_VSCPRINTF
-
-#if defined _WIN32
-#define JUPITER_VSCPRINTF(format, format_args) _vscprintf(format, format_args)
-#define JUPITER_VSCWPRINTF(format, format_args) _vscwprintf(format, format_args)
-#else // _WIN32
-#define JUPITER_VSCPRINTF(format, format_args) vsnprintf(nullptr, 0, format, format_args)
-#define JUPITER_VSCWPRINTF(format, format_args) vswprintf(nullptr, 0, format, format_args)
-#endif // _WIN32
-
-#endif // JUPITER_VSCPRINTF
-
 /**
 * IMPLEMENTATION:
 *	String_Strict
@@ -168,92 +145,6 @@ template<typename T> Jupiter::String_Strict<T>::String_Strict(const Jupiter::Rea
 
 	Jupiter::String_Type<T>::length = Jupiter::String_Type<T>::str - Jupiter::Shift_String_Type<T>::base;
 	Jupiter::String_Type<T>::str = Jupiter::Shift_String_Type<T>::base;
-}
-
-// vformat()
-
-template<> size_t inline Jupiter::String_Strict<char>::vformat(const char *format, va_list args)
-{
-	int minLen;
-	va_list sargs;
-	va_copy(sargs, args);
-	minLen = JUPITER_VSCPRINTF(format, sargs);
-	va_end(sargs);
-	if (minLen < 0) return 0; // We simply can not work with this.
-
-	this->setBufferSizeNoCopy(minLen + 1); // vsnprintf REQUIRES space for an additional null character.
-	minLen = vsnprintf(Jupiter::String_Type<char>::str, minLen + 1, format, args);
-	if (minLen < 0) return 0;
-	return Jupiter::String_Type<char>::length = minLen;
-}
-
-template<> size_t inline Jupiter::String_Strict<wchar_t>::vformat(const wchar_t *format, va_list args)
-{
-	int minLen;
-	va_list sargs;
-	va_copy(sargs, args);
-	minLen = JUPITER_VSCWPRINTF(format, sargs);
-	va_end(sargs);
-	if (minLen < 0) return 0; // We simply can not work with this.
-
-	this->setBufferSizeNoCopy(minLen + 1); // vsnprintf REQUIRES space for an additional null character.
-	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str, minLen + 1, format, args);
-	if (minLen < 0) return 0;
-	return Jupiter::String_Type<wchar_t>::length = minLen;
-}
-
-template<typename T> size_t Jupiter::String_Strict<T>::vformat(const T *format, va_list args)
-{
-	return 0;
-}
-
-// avformat()
-
-template<> size_t inline Jupiter::String_Strict<char>::avformat(const char *format, va_list args)
-{
-	int minLen;
-	va_list sargs;
-	va_copy(sargs, args);
-	minLen = JUPITER_VSCPRINTF(format, sargs);
-	va_end(sargs);
-	if (minLen < 0) return 0; // We simply can not work with this.
-
-	this->setBufferSize(Jupiter::String_Type<char>::length + minLen + 1); // vsnprintf REQUIRES space for an additional null character.
-	minLen = vsnprintf(Jupiter::String_Type<char>::str + Jupiter::String_Type<char>::length, minLen + 1, format, args);
-	if (minLen <= 0) return 0;
-	Jupiter::String_Type<char>::length += minLen;
-	return minLen;
-}
-
-template<> size_t inline Jupiter::String_Strict<wchar_t>::avformat(const wchar_t *format, va_list args)
-{
-	int minLen;
-	va_list sargs;
-	va_copy(sargs, args);
-	minLen = JUPITER_VSCWPRINTF(format, sargs);
-	va_end(sargs);
-	if (minLen < 0) return 0; // We simply can not work with this.
-	this->setBufferSize(minLen + Jupiter::String_Type<wchar_t>::length + 1); // vsnprintf REQUIRES space for an additional null character.
-
-	minLen = vswprintf(Jupiter::String_Type<wchar_t>::str + Jupiter::String_Type<wchar_t>::length, minLen + 1, format, args);
-	if (minLen <= 0) return 0;
-	Jupiter::String_Type<wchar_t>::length += minLen;
-	return minLen;
-}
-
-template<typename T> size_t Jupiter::String_Strict<T>::avformat(const T *format, va_list args)
-{
-	return 0;
-}
-
-template<typename T> Jupiter::String_Strict<T> Jupiter::String_Strict<T>::Format(const T *format, ...)
-{
-	String_Strict<T> r;
-	va_list args;
-	va_start(args, format);
-	r.vformat(format, args);
-	va_end(args);
-	return r;
 }
 
 template<typename T> typename Jupiter::String_Strict<T> Jupiter::String_Strict<T>::substring(size_t pos) const

@@ -48,36 +48,6 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Sets the String's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param args Inputs to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		size_t vformat(const T *format, va_list args);
-
-		/**
-		* @brief Appends to a String's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param args Inputs to match the format specifiers.
-		* @return Number of characters written.
-		*/
-		size_t avformat(const T *format, va_list args);
-
-		/**
-		* @brief Sets the String's contents based on the format string and input variables.
-		* Note: Format specifiers similar to printf. Returns 0 for any type other than char and wchar_t.
-		*
-		* @param format Format that the string is compared against.
-		* @param ... Inputs to match the format specifiers.
-		* @return String containing the new format.
-		*/
-		static String_Strict Format(const T *format, ...);
-
-		/**
 		* @brief Creates a partial copy of the string.
 		*
 		* @param pos Position in the string to start copying from.
