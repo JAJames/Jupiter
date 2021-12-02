@@ -65,6 +65,10 @@ size_t Jupiter::Socket::Buffer::capacity() const {
 	return m_buffer_capacity;
 }
 
+size_t Jupiter::Socket::Buffer::size() const {
+	return m_buffer_size;
+}
+
 void Jupiter::Socket::Buffer::reserve(size_t new_capacity) {
 	if (capacity() == new_capacity // Skip when already this size
 		|| new_capacity == 0 // Don't allow empty buffers, results in 0 from recv

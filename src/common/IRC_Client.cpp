@@ -789,7 +789,7 @@ int Jupiter::IRC::Client::process_line(std::string_view line) {
 						else if (jessilib::equalsi(command_token, "NOTICE"sv)) {
 							std::string_view channel_name = getLineToken(2);
 							if (!channel_name.empty()) {
-								size_t pos = line.find('!', 0);
+								size_t pos = line.find('!');
 								auto message = jessilib::split_once_view(line, ':').second;
 								if (pos < line.find(' ')) {
 									auto nick = line.substr(1, pos);
@@ -964,11 +964,8 @@ int Jupiter::IRC::Client::process_line(std::string_view line) {
 							if (!channel_name.empty()) {
 								if (m_chan_types.find(channel_name[0]) != std::string::npos) {
 									auto nick = getSender(line);
-									if (!nick.empty()) {
-										std::string_view mode_line = line.substr(std::min(line.find(' ', 2), line.size()));
-										if (!mode_line.empty()) {
-											mode_line.remove_prefix(1);
-										}
+									if (!nick.empty() && line_split.size() >= 4) {
+										std::string_view mode_line = line.substr(line_split[3].data() - line.data());
 
 										auto split_mode_line = jessilib::word_split_once_view(mode_line, ' ');
 										std::string_view modes = split_mode_line.first;

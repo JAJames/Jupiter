@@ -46,22 +46,6 @@ namespace Jupiter
 	public:
 
 		/**
-		* @brief Shifts the string pointer to the left.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted to the left.
-		*/
-		size_t shiftLeft(size_t length);
-
-		/**
-		* @brief Shifts the string pointer to the right.
-		*
-		* @param length Number of elements to shift
-		* @return Number of elements shifted.
-		*/
-		size_t shiftRight(size_t length);
-
-		/**
 		* @brief Removes the first instance of an element from the string.
 		*
 		* @param value Value of the element to remove.

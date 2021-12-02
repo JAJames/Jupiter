@@ -217,25 +217,6 @@ namespace Jupiter
 		/** Subscript operator */
 		Config &operator[](std::string_view in_key);
 
-		/** Used for low-level string operations */
-		class Buffer : public Jupiter::StringL
-		{
-		public:
-			/**
-			* @brief Sets the length of the string
-			*
-			* @param in_length Length of the string
-			*/
-			void set_length(size_t in_length);
-
-			/**
-			* @brief Returns a pointer to the underlying string
-			*
-			* @return Pointer to an array of characters
-			*/
-			char *get_str() const;
-		};
-
 	protected:
 		virtual bool read_internal(const char *in_filename);
 		virtual bool write_internal(const char *in_filename);

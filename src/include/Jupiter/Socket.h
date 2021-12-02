@@ -518,6 +518,28 @@ namespace Jupiter
 		*/
 		virtual ~Socket();
 
+		/**
+		* @brief An extremely basic data buffer
+		*/
+		class Buffer {
+		public:
+			Buffer();
+			~Buffer();
+			void set_length(size_t in_length);
+			[[nodiscard]] size_t capacity() const;
+			[[nodiscard]] size_t size() const;
+			void reserve(size_t new_capacity);
+			void clear();
+			[[nodiscard]] std::string_view view() const;
+			[[nodiscard]] void* data() const;
+			[[nodiscard]] char* chr_data() const;
+
+		private:
+			void* m_buffer;
+			size_t m_buffer_capacity;
+			size_t m_buffer_size;
+		};
+
 	/** Protected functions and members*/
 	protected:
 
@@ -526,28 +548,6 @@ namespace Jupiter
 #else
 		typedef int SocketType;
 #endif
-
-		/**
-		* @brief An extended verison of the string class, which allows for low-level length and string modification.
-		*/
-		class Buffer
-		{
-		public:
-			Buffer();
-			~Buffer();
-			void set_length(size_t in_length);
-			size_t capacity() const;
-			void reserve(size_t new_capacity);
-			void clear();
-			std::string_view view() const;
-			void* data() const;
-			char* chr_data() const;
-
-		private:
-			void* m_buffer;
-			size_t m_buffer_capacity;
-			size_t m_buffer_size;
-		};
 
 		/**
 		* @brief Fetches the buffer where data is stored

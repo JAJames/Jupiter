@@ -29,8 +29,7 @@ Jupiter::Config& Jupiter::Config::operator=(const Config& in_config) {
 	return *this;
 }
 
-std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view in_default_value) const
-{
+std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view in_default_value) const {
 	auto value = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
 	if (value != m_table.end()) {
 		return value->second;
@@ -39,8 +38,7 @@ std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view 
 	return in_default_value;
 }
 
-Jupiter::Config *Jupiter::Config::getSection(std::string_view in_key) const
-{
+Jupiter::Config *Jupiter::Config::getSection(std::string_view in_key) const {
 	if (m_sections != nullptr) {
 		auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
 		if (section != m_sections->end()) {
@@ -51,8 +49,7 @@ Jupiter::Config *Jupiter::Config::getSection(std::string_view in_key) const
 	return nullptr;
 }
 
-Jupiter::Config &Jupiter::Config::getSectionReference(std::string_view in_key)
-{
+Jupiter::Config &Jupiter::Config::getSectionReference(std::string_view in_key) {
 	if (m_sections == nullptr) {
 		m_sections = std::make_unique<SectionHashTable>();
 	}
@@ -117,35 +114,29 @@ bool Jupiter::Config::read(std::string_view in_filename) {
 	return this->read_internal(m_name.c_str());
 }
 
-bool Jupiter::Config::write()
-{
+bool Jupiter::Config::write() {
 	return this->write(m_name.c_str());
 }
 
-bool Jupiter::Config::write(const char *in_filename)
-{
+bool Jupiter::Config::write(const char *in_filename) {
 	return this->write_internal(in_filename);
 }
 
-bool Jupiter::Config::write(std::string_view in_filename)
-{
+bool Jupiter::Config::write(std::string_view in_filename) {
 	return this->write(static_cast<std::string>(in_filename).c_str());
 }
 
-bool Jupiter::Config::reload()
-{
+bool Jupiter::Config::reload() {
 	this->erase();
 	return this->read_internal(m_name.c_str());
 }
 
-bool Jupiter::Config::reload(const char *in_filename)
-{
+bool Jupiter::Config::reload(const char *in_filename) {
 	this->erase();
 	return this->read(in_filename);
 }
 
-bool Jupiter::Config::reload(std::string_view in_filename)
-{
+bool Jupiter::Config::reload(std::string_view in_filename) {
 	this->erase();
 	return this->read(in_filename);
 }
@@ -159,29 +150,16 @@ const Jupiter::Config::SectionHashTable &Jupiter::Config::getSections() const {
 }
 
 /** Operators */
-Jupiter::Config &Jupiter::Config::operator[](std::string_view in_key)
-{
+Jupiter::Config &Jupiter::Config::operator[](std::string_view in_key) {
 	return this->getSectionReference(in_key);
 }
 
 /** Private functions */
 
-bool Jupiter::Config::read_internal(const char *)
-{
+bool Jupiter::Config::read_internal(const char *) {
 	return false;
 }
 
-bool Jupiter::Config::write_internal(const char *)
-{
+bool Jupiter::Config::write_internal(const char *) {
 	return false;
-}
-
-void Jupiter::Config::Buffer::set_length(size_t in_length)
-{
-	this->length = in_length;
-}
-
-char *Jupiter::Config::Buffer::get_str() const
-{
-	return this->str;
 }

@@ -163,10 +163,11 @@ namespace Jupiter {
 inline std::string vstring_printf(const char* format, va_list args) {
 	std::string result;
 
+	// Calculate size needed for formatted string
 	va_list args_copy;
 	va_copy(args_copy, args);
 	int min_length = std::vsnprintf(nullptr, 0, format, args_copy);
-		va_end(args_copy);
+	va_end(args_copy);
 
 	if (min_length > 0) {
 		result.resize(min_length);

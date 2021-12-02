@@ -82,13 +82,10 @@ bool Jupiter::INIConfig::write_internal(const char *in_filename)
 }
 
 bool Jupiter::INIConfig::read_internal(const char *in_filename) {
-	std::string_view line;
 	std::stack<Jupiter::Config *> section_stack;
-
 	section_stack.push(this);
 
-	auto process_line = [&line, &section_stack]()
-	{
+	auto process_line = [&section_stack](std::string_view line) {
 		const char *itr = line.data();
 		const char *end = itr + line.size(); // guaranteed to be greater than itr
 
@@ -189,9 +186,9 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 
 	constexpr size_t READ_CHUNK_SIZE = 1024;
 	size_t read_count = READ_CHUNK_SIZE;
-	Buffer buffer;
-	char *itr;
-	char *end;
+	char* line_head;
+	char* read_head;
+	char* read_end;
 
 	// Open file
 	FILE *file = fopen(in_filename, "rb");
@@ -199,63 +196,57 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 	if (file == nullptr)
 		return false;
 
-	buffer.setBufferSize(READ_CHUNK_SIZE * 2);
-
 	// Parse file contents
-	while (read_count == READ_CHUNK_SIZE)
-	{
-		// Ensure the buffer has at least READ_CHUNK_SIZE space remaining
-		buffer.setBufferSize(buffer.size() + READ_CHUNK_SIZE);
-
+	char buffer[READ_CHUNK_SIZE];
+	std::string line;
+	do {
 		// Read data from file to end of buffer
-		itr = buffer.get_str();
-		read_count = fread(itr + buffer.size(), sizeof(char), READ_CHUNK_SIZE, file);
-		buffer.set_length(buffer.size() + read_count);
-		end = itr + buffer.size();
-
-		// Reset line
-		line = std::string_view(buffer.data(), 0);
+		read_head = buffer;
+		read_count = fread(buffer, sizeof(char), READ_CHUNK_SIZE, file);
+		read_end = read_head + read_count;
+		line_head = nullptr;
 
 		// Parse buffer for lines
-		while (itr != end)
-		{
+		while (read_head != read_end) {
 			// Check if the line is over
-			if (*itr == '\n' || *itr == '\r')
-			{
-				// Process line
-				line = std::string_view(buffer.data(), itr - buffer.data());
-				if (!line.empty())
-					process_line();
+			if (*read_head == '\n' || *read_head == '\r') {
+				if (line_head == nullptr) {
+					// There's not any pending data; process a view from the line_head to here
+					process_line({ buffer, static_cast<size_t>(read_head - buffer) });
+				}
+				else {
+					// There's pending data; join these together and process it
+					line.append(line_head, read_head);
+					process_line(line);
+					line.clear();
+				}
 
 				// Keep iterating until next non-newline character
-				while (true)
-				{
-					++itr;
-
-					if (itr == end)
-					{
-						// No data remains to be parsed in buffer; erase buffer and break
-						buffer.clear();
-						break;
-					}
-
-					if (*itr != '\n' && *itr != '\r')
-					{
+				for (++read_head; read_head != read_end; ++read_head) {
+					if (*read_head != '\n' && *read_head != '\r') {
 						// Shift buffer and break
-						buffer.shiftRight(itr - buffer.data());
+						line_head = read_head;
 						break;
 					}
 				}
 			}
-			else
-				++itr;
+			else {
+				++read_head;
+			}
 		}
-	}
+
+		// We've processed the read buffer; push any pending line data to the line buffer
+		if (line_head == nullptr) {
+			// No newlines in the entire buffer; should be rare
+			line_head = buffer;
+		}
+		line.append(line_head, read_head);
+	} while (read_count == READ_CHUNK_SIZE);
 
 	// Process data remaining in buffer as a line
-	line = std::string_view(buffer.data(), buffer.size());
-	if (!line.empty())
-		process_line();
+	if (!line.empty()) {
+		process_line(line);
+	}
 
 	// File has been successfully read, or an error occurred.
 	fclose(file);
