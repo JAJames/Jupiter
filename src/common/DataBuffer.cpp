@@ -19,7 +19,6 @@
 #include <cstdlib>
 #include <cstring>
 #include "DataBuffer.h"
-#include "Reference_String.h"
 
 Jupiter::DataBuffer::DataBuffer() {
 	Jupiter::DataBuffer::base = nullptr;

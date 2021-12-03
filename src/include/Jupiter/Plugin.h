@@ -24,10 +24,10 @@
  * @brief Provides a hot-swapable plugin system.
  */
 
+#include <vector>
 #include "Thinker.h"
 #include "Rehash.h"
 #include "INIConfig.h"
-#include "String.hpp"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -88,7 +88,7 @@ namespace Jupiter
 		*
 		* @return String containing the name of the plugin.
 		*/
-		std::string_view getName() const;
+		const std::string& getName() const;
 
 		/**
 		* @brief Returns the plugin's configuration file.
@@ -353,7 +353,7 @@ namespace Jupiter
 
 	protected:
 		bool _shouldRemove = false;
-		Jupiter::StringS name;
+		std::string name;
 		Jupiter::INIConfig config;
 	};
 

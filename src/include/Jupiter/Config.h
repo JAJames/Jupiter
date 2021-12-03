@@ -28,8 +28,7 @@
 #include <memory>
 #include "Jupiter.h"
 #include "Hash.h"
-#include "Reference_String.h"
-#include "String.hpp"
+#include "Readable_String.h" // from_string
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -48,14 +47,7 @@ namespace Jupiter
 		/** Hash_Table type for sections */
 		using SectionHashTable = std::unordered_map<std::string, Config, str_hash<char>, std::equal_to<>>;
 		using ValuesHashTable = std::unordered_map<std::string, std::string, str_hash<char>, std::equal_to<>>;
-
-#ifdef __cpp_lib_generic_unordered_lookup
-		using KeyType = std::string_view;
-#define JUPITER_WRAP_CONFIG_KEY(in_key) in_key
-#else // We can't use std::string_view for InKeyType until GCC 11 & clang 12, and I still want to support GCC 9
-		using KeyType = std::string;
-#define JUPITER_WRAP_CONFIG_KEY(in_key) static_cast<KeyType>(in_key)
-#endif // __cpp_lib_generic_unordered_lookup
+		using InKeyType = InMapKeyType;
 
 		Config() = default;
 		Config(const Config& in_config);
@@ -236,7 +228,7 @@ namespace Jupiter
 
 template<typename T>
 inline T Jupiter::Config::get(std::string_view in_key, T in_default_value) const {
-	auto result = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	auto result = m_table.find(JUPITER_WRAP_MAP_KEY(in_key));
 
 	if (result == m_table.end()) {
 		return in_default_value;

@@ -25,7 +25,6 @@
  */
 
 #include "Jupiter.h"
-#include "Readable_String.h"
 #include <cstdio>
 
 namespace Jupiter

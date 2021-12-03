@@ -2,10 +2,6 @@
 Primarily developed in C++, Jupiter is an open-source multi-purpose library initially intended for the purpose of creating IRC bots, but is by no means restricted to IRC bots.
 Jupiter has been used to expedite the production of numerous projects ranging from ZIP code verifiers, to game administration systems, to game leaderboards and web APIs.
 
-## Strings
-Jupiter contains a number of deprecated string classes, which are deprecated in favor of std::string_view and std::string.
-These will be removed in the future, with any useful string utilities being replaced by equivalents in jessilib.
-
 ## Sockets
 Jupiter includes a Socket wrapper, allowing for simple interaction with sockets, while eliminating all of the platform-dependant code.
 Jupiter sockets are also IP agnostic, allowing for compatibility with IPv4, IPv6, and whatever the future may hold.

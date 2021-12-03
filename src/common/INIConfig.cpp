@@ -131,7 +131,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 			while (depth > section_stack.size())
 				section_stack.push(std::addressof(section_stack.top()->getSectionReference({})));
 
-			section_stack.push(&section_stack.top()->getSectionReference(static_cast<KeyType>(line)));
+			section_stack.push(&section_stack.top()->getSectionReference(line));
 		}
 		else
 		{
@@ -180,7 +180,7 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 				line = std::string_view{};
 
 			// Add entry to current table on stack
-			section_stack.top()->set(KeyType{key}, static_cast<std::string>(line));
+			section_stack.top()->set(std::string{key}, static_cast<std::string>(line));
 		}
 	};
 

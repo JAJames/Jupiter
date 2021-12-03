@@ -21,7 +21,6 @@
 
 #include <unordered_map>
 #include <charconv>
-#include "String.hpp"
 
 /**
  * @file HTTP_QueryString.h
@@ -33,21 +32,10 @@ namespace Jupiter
 	namespace HTTP
 	{
 		/**
-		* @brief Provides parsing for HTTP Query Strings.
-		*/
-		class QueryString : public Jupiter::StringS
-		{
-		public:
-			QueryString() = delete;
-			inline QueryString(std::string_view query_string) : QueryString(query_string.data(), query_string.size()) {}
-			inline QueryString(const char *ptr, size_t str_size);
-		};
-
-		/**
 		* @brief Provides parsing for HTML form responses.
 		* Note: This is essentially the same thing as QueryString, except key/value pairs are pared into 'table'.
 		*/
-		class HTMLFormResponse : public Jupiter::StringS
+		class HTMLFormResponse
 		{
 		public:
 			HTMLFormResponse() = delete;
@@ -101,87 +89,23 @@ namespace Jupiter
 			}
 
 			TableType table;
+			std::string m_parsed;
 		};
 	}
 }
 
 /** Implementation */
-inline Jupiter::HTTP::QueryString::QueryString(const char *ptr, size_t str_size) : Jupiter::StringS(str_size)
-{
-	if (str_size < 3) // not enough room for "%XX", therefore no escaped characters to parse
-	{
-		Jupiter::StringType::length = str_size;
-		switch (str_size)
-		{
-		case 2:
-			str[1] = ptr[1];
-		case 1:
-			*str = *ptr;
-		case 0:
-			// nothing to copy
-			return;
-		}
+
+inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t str_size) {
+	std::string_view in_view{ ptr, str_size };
+	if (str_size < 3) { // not enough room for "%XX", therefore no escaped characters to parse
+		m_parsed = in_view;
+		return;
 	}
+	m_parsed.resize(in_view.size());
 
 	const char *end = ptr + str_size - 2;
-	char *buf = str;
-	int val;
-
-	while (ptr != end)
-	{
-		if (*ptr == '%')
-		{
-			if ((val = Jupiter_getHex(*++ptr)) != -1)
-			{
-				*buf = static_cast<uint8_t>(val) << 4;
-				if ((val = Jupiter_getHex(*++ptr)) != -1)
-					*buf |= val;
-
-				++buf, ++ptr;
-				if (ptr > end)
-				{
-					if (ptr == end + 1) // copy 1 remaining character
-					{
-						*buf = *ptr;
-						++buf;
-					}
-					Jupiter::StringType::length = buf - Jupiter::StringType::str;
-					return;
-				}
-			}
-		}
-		else // Copy character
-		{
-			*buf = *ptr;
-			++buf, ++ptr;
-		}
-	}
-
-	// copy last 2 characters
-	*buf = *ptr;
-	*++buf = *++ptr;
-	Jupiter::StringType::length = buf + 1 - str;
-}
-
-inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t str_size) : Jupiter::StringS(str_size)
-{
-	if (str_size < 3) // not enough room for "%XX", therefore no escaped characters to parse
-	{
-		Jupiter::StringType::length = str_size;
-		switch (str_size)
-		{
-		case 2:
-			str[1] = ptr[1];
-		case 1:
-			*str = *ptr;
-		case 0:
-			// nothing to copy
-			return;
-		}
-	}
-
-	const char *end = ptr + str_size - 2;
-	char *buf = str;
+	char* buf = m_parsed.data();
 	const char *token_start = buf;
 	int val;
 	std::string key;
@@ -204,7 +128,7 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 						*buf = *ptr;
 						++buf;
 					}
-					Jupiter::StringType::length = buf - Jupiter::StringType::str;
+					m_parsed.erase(buf - m_parsed.data());
 					return;
 				}
 			}
@@ -247,7 +171,7 @@ inline Jupiter::HTTP::HTMLFormResponse::HTMLFormResponse(const char *ptr, size_t
 	if (!key.empty()) // A key was already set; end of value
 		Jupiter::HTTP::HTMLFormResponse::table[key] = std::string_view(token_start, buf - token_start + 1);
 
-	Jupiter::StringType::length = buf + 1 - str;
+	m_parsed.erase(buf + 1 - m_parsed.data()); // TODO: double check where this +1 came from? actually just replace this
 }
 
 #endif // _HTTP_QUERYSTRING_H_HEADER

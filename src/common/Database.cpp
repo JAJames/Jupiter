@@ -17,7 +17,7 @@
  */
 
 #include "Database.h"
-#include <cstring>
+#include "DataBuffer.h"
 
 struct Jupiter::Database::Data
 {

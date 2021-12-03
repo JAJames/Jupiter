@@ -25,6 +25,7 @@
  * Note: Modification of this file is not supported in any way.
  */
 
+#include <cstring>
 #include <vector>
 #include <array>
 #include <string>
@@ -40,9 +41,6 @@ template<typename T> T Jupiter::DataBuffer::interpret_data(uint8_t *&head)
 	head += sizeof(T);
 	return r;
 }
-
-template<template<typename, typename> class T, typename X, typename Y> static T<X, Y> interpret_data(uint8_t *&head);
-template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> static T<X, Y, Z> interpret_data(uint8_t *&head);
 
 // Basic peek
 
@@ -201,11 +199,6 @@ template<template<typename> class T, typename Y> void Jupiter::DataBuffer::push(
 	Jupiter::DataBuffer::push<T, Y>(&data);
 }
 
-template<template<typename> class T, typename Y> T<Y> Jupiter::DataBuffer::interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl<T>::template interpret<Y>(head);
-}
-
 // PUSH SPECIALIZATION: std::array
 
 template<template<typename, size_t> class T> struct _Jupiter_DataBuffer_partial_specialization_impl_std_array
@@ -288,42 +281,27 @@ template<template<typename, typename> class T, typename X, typename Y> T<X, Y> J
 	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::template interpret<X, Y>(head);
 }
 
-template<template<typename, typename> class T, typename X, typename Y> static T<X, Y> interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_vector<T>::template interpret<X, Y>(head);
-}
-
 // SPECIALIZATION: std::string
 
 template<template<typename, typename, typename> class T> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string
 {
 };
 
-template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std::basic_string>
-{
-	template<typename X, typename Y, typename Z> static void push(Jupiter::DataBuffer *buffer, const std::basic_string<X, Y, Z> *data)
-	{
-		buffer->push(data->size());
-		if (std::is_fundamental<typename std::basic_string<X, Y, Z>::value_type>::value)
-			buffer->push(reinterpret_cast<const uint8_t *>(data->data()), data->size() * sizeof(X));
-		else
-		{
-			auto itr = data->begin();
-			auto end = data->end();
-			while (itr != end)
-				buffer->push<typename std::basic_string<X, Y, Z>::value_type>(*itr++);
-		}
+template<> struct _Jupiter_DataBuffer_partial_specialization_impl_std_string<std::basic_string> {
+	template<typename X, typename Y, typename Z> static void push(Jupiter::DataBuffer *buffer, const std::basic_string<X, Y, Z> *data) {
+		buffer->secure(sizeof(size_t) + data->size() * sizeof(Y));
+		buffer->push<size_t>(data->size());
+		buffer->push(reinterpret_cast<const uint8_t*>(data->data()), data->size() * sizeof(X));
 	};
 
-	template<typename X, typename Y, typename Z> static std::basic_string<X, Y, Z> interpret(uint8_t *&head)
-	{
-		size_t size_ = *reinterpret_cast<size_t *>(head);
+	template<typename X, typename Y, typename Z> static std::basic_string<X, Y, Z> interpret(uint8_t*& head) {
+		size_t read_length = *reinterpret_cast<size_t *>(head);
 		head += sizeof(size_t);
-		std::basic_string<X, Y, Z> r;
-		r.reserve(size_);
-		while (size_-- != 0)
-			r.push_back(Jupiter::DataBuffer::interpret_data<typename std::basic_string<X, Y, Z>::value_type>(head));
-		return r;
+		std::basic_string<X, Y, Z> result;
+		result.resize(read_length);
+		std::memcpy(result.data(), head, read_length);
+		head += read_length;
+		return result;
 	}
 };
 
@@ -342,9 +320,9 @@ template<template<typename, typename, typename> class T, typename X, typename Y,
 	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::template interpret<X, Y, Z>(head);
 }
 
-template<template<typename, typename, typename> class T, typename X, typename Y, typename Z> static T<X, Y, Z> interpret_data(uint8_t *&head)
-{
-	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<T>::template interpret<X, Y, Z>(head);
+template<>
+inline std::string Jupiter::DataBuffer::interpret_data<std::string>(uint8_t *&head) {
+	return _Jupiter_DataBuffer_partial_specialization_impl_std_string<std::basic_string>::template interpret<char, std::string::traits_type, std::string::allocator_type>(head);
 }
 
 #endif // _DATABUFFER_IMP_H_HEADER

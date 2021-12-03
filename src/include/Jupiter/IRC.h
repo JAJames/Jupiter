@@ -24,8 +24,6 @@
  * @brief Defines IRC protocol constants.
  */
 
-#include "Jupiter.h"
-
 /** Special Character Definitions */
 
 #define IRCCTCP "\001" /** IRC CTCP character contained in a string literal */

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2017 Jessica James.
+ * Copyright (C) 2014-2021 Jessica James.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,27 +21,17 @@
 
 /**
  * @file Readable_String.h
- * @brief Defines several basic accessive and comparative virtual functions for strings.
+ * @brief Defines various legacy string utilities which should be removed
  */
 
-#include <cwchar> // wchar_t
-#include <cwctype> // towupper
-#include <cstdio> // FILE
 #include <string> // std::basic_string<T> type
-#include <iostream> // std::endl
-#include <cstdarg>
-#include "InvalidIndex.h"
-#include "DataBuffer.h"
-#include "Functions.h"
+#include <string_view> // std::basic_string_view<T> type
+#include <cstdarg> // arg helpers needed by string_printf
+#include "Functions.h" // string -> bool/number converters
 
 namespace Jupiter {
-	/** DEPRECATED: Generic Readable String Type */
-	template<typename CharT>
-	using Readable_String = std::basic_string_view<CharT>;
-	using ReadableString = std::string_view;
-
 	// these methods will be written in a similar fashion in jessilib, to retain behavior / ease of use
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	bool asBool(std::basic_string_view<CharT> in_string) {
 		using namespace std::literals;
 
@@ -59,31 +49,32 @@ namespace Jupiter {
 		return true;
 	}
 
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	int asInt(std::basic_string_view<CharT> in_string, int base = 0) {
 		return Jupiter_strtoi_s(in_string.data(), in_string.size(), base);
 	}
 
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	long long asLongLong(std::basic_string_view<CharT> in_string, int base = 0) {
 		return Jupiter_strtoll_s(in_string.data(), in_string.size(), base);
 	}
 
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	unsigned int asUnsignedInt(std::basic_string_view<CharT> in_string, int base = 0) {
 		return Jupiter_strtoui_s(in_string.data(), in_string.size(), base);
 	}
 
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	unsigned long long asUnsignedLongLong(std::basic_string_view<CharT> in_string, int base = 0) {
 		return Jupiter_strtoull_s(in_string.data(), in_string.size(), base);
 	}
 
-	template<typename CharT>
+	template<typename CharT> /** DEPRECATED */
 	double asDouble(std::basic_string_view<CharT> in_string) {
 		return Jupiter_strtod_s(in_string.data(), in_string.size());
 	}
 
+	/** DEPRECATED (similar function w/ identical semantics to be implemented) */
 	template<typename OutT>
 	OutT from_string(std::string_view in_string) {
 		return static_cast<OutT>(in_string);
@@ -158,8 +149,10 @@ namespace Jupiter {
 	inline long double from_string<long double>(std::string_view in_string) {
 		return asDouble(in_string);
 	}
-}
 
+} // namespace Jupiter
+
+/** DEPRECATED */
 inline std::string vstring_printf(const char* format, va_list args) {
 	std::string result;
 
@@ -177,13 +170,15 @@ inline std::string vstring_printf(const char* format, va_list args) {
 		}
 
 		if (result.size() != min_length) {
-			throw std::runtime_error("result.size() != min_length");
+			// This should never happen; if it does, it's probably indicative of a race condition
+			result.erase(min_length);
 		}
 	}
 
 	return result;
 }
 
+/** DEPRECATED */
 inline std::string string_printf(const char* format, ...) {
 	va_list args;
 	va_start(args, format);

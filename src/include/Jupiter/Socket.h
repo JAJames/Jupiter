@@ -25,9 +25,9 @@
  */
 
 #include <cstring>
+#include <string>
+#include <string_view>
 #include "Jupiter.h"
-#include "Readable_String.h"
-#include "String.hpp"
 
 struct addrinfo;
 
@@ -170,7 +170,7 @@ namespace Jupiter
 		* @param ip IP to format
 		* @return String containing the address's string presentation.
 		*/
-		static Jupiter::StringS ntop4(uint32_t ip);
+		static std::string ntop4(uint32_t ip);
 
 		/**
 		* @brief Formats an IPv6 address in its string presentation format.
@@ -178,7 +178,7 @@ namespace Jupiter
 		* @param ip IP to format
 		* @return String containing the address's string presentation.
 		*/
-		static Jupiter::StringS ntop6(in_addr6 ip);
+		static std::string ntop6(in_addr6 ip);
 
 		/**
 		* @brief Formats an IPvX address in its string presentation format.
@@ -188,7 +188,7 @@ namespace Jupiter
 		* @param size Size of the input type
 		* @return String containing the address's string presentation.
 		*/
-		static Jupiter::StringS ntop(void *ip, size_t size);
+		static std::string ntop(void *ip, size_t size);
 
 		/**
 		* @brief Interface to provide simple connection establishing.

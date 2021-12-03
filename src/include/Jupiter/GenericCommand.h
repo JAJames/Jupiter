@@ -26,7 +26,6 @@
 
 #include <memory>
 #include "Command.h"
-#include "String.hpp"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -157,7 +156,7 @@ namespace Jupiter
 
 	private:
 		bool m_should_update_help = true;
-		Jupiter::StringS m_help;
+		std::string m_help;
 	};
 
 	/** Generic command list */

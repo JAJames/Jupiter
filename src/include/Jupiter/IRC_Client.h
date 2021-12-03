@@ -30,7 +30,6 @@
 #include "Jupiter.h"
 #include "Thinker.h"
 #include "IRC.h"
-#include "Reference_String.h"
 #include "Config.h"
 #include "Socket.h"
 
@@ -218,21 +217,21 @@ namespace Jupiter
 				*
 				* @return String containing the user's nickname.
 				*/
-				std::string_view getNickname() const;
+				const std::string& getNickname() const;
 
 				/**
 				* @brief Fetches the user's username.
 				*
 				* @return String containing the user's username.
 				*/
-				std::string_view getUsername() const;
+				const std::string& getUsername() const;
 
 				/**
 				* @brief Fetches the user's hostname.
 				*
 				* @return String containing the user's hostname.
 				*/
-				std::string_view getHostname() const;
+				const std::string& getHostname() const;
 
 				/**
 				* @brief Returns the number of channels the user shares with the local client.
@@ -245,8 +244,8 @@ namespace Jupiter
 			private:
 				unsigned int m_channel_count = 0;
 				std::string m_nickname;
-				Jupiter::StringS m_username;
-				Jupiter::StringS m_hostname;
+				std::string m_username;
+				std::string m_hostname;
 			};
 
 			/**
@@ -277,28 +276,28 @@ namespace Jupiter
 					*
 					* @return String containing the user's channel prefixes.
 					*/
-					std::string_view getPrefixes() const;
+					const std::string& getPrefixes() const;
 
 					/**
 					* @brief Fetches the user's nickname.
 					*
 					* @return String containing the user's nickname.
 					*/
-					std::string_view getNickname() const;
+					const std::string& getNickname() const;
 
 					/**
 					* @brief Fetches the user's username.
 					*
 					* @return String containing the user's username.
 					*/
-					std::string_view getUsername() const;
+					const std::string& getUsername() const;
 
 					/**
 					* @brief Fetches the user's hostname.
 					*
 					* @return String containing the user's hostname.
 					*/
-					std::string_view getHostname() const;
+					const std::string& getHostname() const;
 
 					/**
 					* @brief Returns the number of channels the user shares with the local client.
@@ -315,7 +314,7 @@ namespace Jupiter
 					std::string m_prefixes;
 				};
 
-				using UserTableType = std::unordered_map<Jupiter::StringS, std::shared_ptr<Channel::User>, default_hash_function>;
+				using UserTableType = std::unordered_map<std::string, std::shared_ptr<Channel::User>, default_hash_function, std::equal_to<>>;
 
 				/**
 				* @brief Returns the name of the channel.
@@ -421,7 +420,7 @@ namespace Jupiter
 
 			/** Private members */
 			private:
-				Jupiter::StringS m_name;
+				std::string m_name;
 				Client *m_parent;
 				int m_type;
 				UserTableType m_users;
@@ -429,8 +428,8 @@ namespace Jupiter
 				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class
 
-			using ChannelTableType = std::unordered_map<Jupiter::StringS, Client::Channel, default_hash_function>;
-			using UserTableType = std::unordered_map<Jupiter::StringS, std::shared_ptr<Client::User>, default_hash_function>;
+			using ChannelTableType = std::unordered_map<std::string, Client::Channel, default_hash_function, std::equal_to<>>;
+			using UserTableType = std::unordered_map<std::string, std::shared_ptr<Client::User>, default_hash_function, std::equal_to<>>;
 
 			/**
 			* @brief Returns the name of the primary config section this client reads from.
@@ -840,7 +839,7 @@ namespace Jupiter
 			std::string m_sasl_password;
 
 			int m_connection_status;
-			Jupiter::StringS m_primary_section_name;
+			std::string m_primary_section_name;
 			Jupiter::Config *m_primary_section;
 			Jupiter::Config *m_secondary_section;
 			std::string m_log_file_name;

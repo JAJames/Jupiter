@@ -24,8 +24,6 @@
  * @brief Defines constants related to HTTP
  */
 
-#include "Reference_String.h"
-
 namespace Jupiter
 {
 	namespace HTTP
@@ -137,14 +135,13 @@ namespace Jupiter
 			* @brief Content-Language values
 			* TODO: Implement all ISO 639-1 translations
 			*/
-			namespace Language
-			{
-				static STRING_LITERAL_AS_NAMED_REFERENCE(ENGLISH, "en");
-				static STRING_LITERAL_AS_NAMED_REFERENCE(FRENCH, "fr");
-				static STRING_LITERAL_AS_NAMED_REFERENCE(GERMAN, "gr");
-				static STRING_LITERAL_AS_NAMED_REFERENCE(RUSSIAN, "ru");
-				static STRING_LITERAL_AS_NAMED_REFERENCE(JAPANESE, "ja");
-				static STRING_LITERAL_AS_NAMED_REFERENCE(CHINESE, "zh");
+			namespace Language {
+				static constexpr std::string_view ENGLISH = "en";
+				static constexpr std::string_view FRENCH = "fr";
+				static constexpr std::string_view GERMAN = "gr";
+				static constexpr std::string_view RUSSIAN = "ru";
+				static constexpr std::string_view JAPANESE = "ja";
+				static constexpr std::string_view CHINESE = "zh";
 			}
 
 			/**
@@ -157,16 +154,16 @@ namespace Jupiter
 				{
 					namespace Charset
 					{
-						static STRING_LITERAL_AS_NAMED_REFERENCE(ASCII, "ascii");
-						static STRING_LITERAL_AS_NAMED_REFERENCE(UTF8, "utf-8");
+						static constexpr std::string_view ASCII = "ascii";
+						static constexpr std::string_view UTF8 = "utf-8";
 					}
 
-					static STRING_LITERAL_AS_NAMED_REFERENCE(HTML, "text/html");
-					static STRING_LITERAL_AS_NAMED_REFERENCE(PLAIN, "text/plain");
+					static constexpr std::string_view HTML = "text/html";
+					static constexpr std::string_view PLAIN = "text/plain";
 				}
 				namespace Application
 				{
-					static STRING_LITERAL_AS_NAMED_REFERENCE(OCTET_STREAM, "application/octet-stream");
+					static constexpr std::string_view OCTET_STREAM = "application/octet-stream";
 				}
 			}
 		}

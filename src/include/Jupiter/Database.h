@@ -24,10 +24,14 @@
  * @brief Defines a database file structure.
  */
 
-#include "String.hpp"
+#include <cstdio>
+#include <string>
+#include <string_view>
+#include "Jupiter.h"
 
 namespace Jupiter
 {
+	class DataBuffer;
 
 	/**
 	* @brief Provides an implementation for database files.

@@ -29,9 +29,7 @@
 #include "Plugin.h"
 #include <memory>
 #include "Functions.h"
-#include "String.hpp"
 
-using namespace Jupiter::literals;
 using namespace std::literals;
 
 #if defined _WIN32
@@ -102,7 +100,7 @@ bool Jupiter::Plugin::shouldRemove() const {
 	return _shouldRemove;
 }
 
-std::string_view Jupiter::Plugin::getName() const {
+const std::string& Jupiter::Plugin::getName() const {
 	return name;
 }
 

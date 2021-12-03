@@ -21,16 +21,14 @@
 #include <numeric>
 #include "jessilib/split.hpp"
 #include "jessilib/unicode.hpp"
-#include "String.hpp"
-#include "Reference_String.h"
 #include "TCPSocket.h"
 #include "HTTP.h"
 #include "HTTP_Server.h"
 
-using namespace Jupiter::literals;
 using namespace std::literals;
 
 static const std::string_view HTTP_REQUEST_ENDING = "\r\n\r\n"sv;
+#define HTTP_ENDL "\r\n"
 
 template<typename ResultT = unsigned int, typename InT>
 ResultT calc_checksum(const InT& in_container) {
@@ -130,7 +128,7 @@ directory_add_loop: // TODO: for the love of god, why why why
 
 		// add directory
 		size_t index = in_name_ref.find('/');
-		if (index != Jupiter::INVALID_INDEX) {
+		if (index != std::string_view::npos) {
 			directory->directories.push_back(std::make_unique<Directory>(static_cast<std::string>(in_name_ref.substr(size_t{ 0 }, index))));
 			directory = directory->directories[directories.size() - 1].get();
 			in_name_ref.remove_prefix(index + 1);
@@ -191,7 +189,7 @@ Jupiter::HTTP::Server::Content *Jupiter::HTTP::Server::Directory::find(std::stri
 	}
 
 	size_t index = in_name_ref.find('/');
-	if (index == Jupiter::INVALID_INDEX) { // Search content
+	if (index == std::string_view::npos) { // Search content
 		unsigned int content_name_checksum = calc_checksum(in_name_ref);
 		index = content.size();
 		for (auto& content_item : content) {
@@ -291,7 +289,7 @@ struct Jupiter::HTTP::Server::Data {
 
 Jupiter::HTTP::Server::Data::Data() {
 	// hosts[0] is always the "global" namespace.
-	m_hosts.push_back(std::make_unique<Host>(static_cast<std::string>(Jupiter::HTTP::Server::global_namespace)));
+	m_hosts.push_back(std::make_unique<Host>(""s));
 }
 
 // Data destructor
@@ -302,7 +300,6 @@ Jupiter::HTTP::Server::Data::~Data() {
 // Data functions
 
 void Jupiter::HTTP::Server::Data::hook(std::string_view hostname, std::string_view in_path, std::unique_ptr<Content> in_content) {
-	Jupiter::ReferenceString dir_name;
 	Jupiter::HTTP::Server::Host* host = find_host(hostname);
 
 	if (host == nullptr) {
@@ -458,29 +455,30 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 					{
 					default:
 					case HTTPVersion::HTTP_1_0:
-						result = "HTTP/1.0 200 OK"_jrs ENDL;
+						result = "HTTP/1.0 200 OK"sv HTTP_ENDL;
 						break;
 					case HTTPVersion::HTTP_1_1:
-						result = "HTTP/1.1 200 OK"_jrs ENDL;
+						result = "HTTP/1.1 200 OK"sv HTTP_ENDL;
 						break;
 					}
 
-					result += "Date: "_jrs;
+					result += "Date: "sv;
 					char *time_header = html_time();
 					result += time_header;
 					delete[] time_header;
-					result += ENDL;
+					result += HTTP_ENDL;
 
-					result += "Server: "_jrs JUPITER_VERSION ENDL;
-
-					result += string_printf("Content-Length: %u" ENDL, content_result->size());
+					result += "Server: "sv JUPITER_VERSION HTTP_ENDL;
+					result += "Content-Length: "sv;
+					result += std::to_string(content_result->size()); // TODO: to_chars?
+					result += HTTP_ENDL;
 
 					if (session.keep_alive)
-						result += "Connection: keep-alive"_jrs ENDL;
+						result += "Connection: keep-alive"sv HTTP_ENDL;
 					else
-						result += "Connection: close"_jrs ENDL;
+						result += "Connection: close"sv HTTP_ENDL;
 
-					result += "Content-Type: "_jrs;
+					result += "Content-Type: "sv;
 					if (content->type.empty()) {
 						result += Jupiter::HTTP::Content::Type::Text::PLAIN;
 					}
@@ -489,18 +487,18 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 					}
 
 					if (!content->charset.empty()) {
-						result += "; charset="_jrs;
+						result += "; charset="sv;
 						result += content->charset;
 					}
-					result += ENDL;
+					result += HTTP_ENDL;
 
 					if (!content->language.empty()) {
-						result += "Content-Language: "_jrs;
+						result += "Content-Language: "sv;
 						result += content->language;
-						result += ENDL;
+						result += HTTP_ENDL;
 					}
 
-					result += ENDL;
+					result += HTTP_ENDL;
 					if (command == HTTPCommand::GET)
 						result += *content_result;
 
@@ -517,28 +515,28 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 					{
 					default:
 					case HTTPVersion::HTTP_1_0:
-						result = "HTTP/1.0 404 Not Found"_jrs ENDL;
+						result = "HTTP/1.0 404 Not Found"sv HTTP_ENDL;
 						break;
 					case HTTPVersion::HTTP_1_1:
-						result = "HTTP/1.1 404 Not Found"_jrs ENDL;
+						result = "HTTP/1.1 404 Not Found"sv HTTP_ENDL;
 						break;
 					}
 
 					char *time_header = html_time();
-					result += "Date: "_jrs ENDL;
+					result += "Date: "sv HTTP_ENDL;
 					result += time_header;
 					delete[] time_header;
 
-					result += "Server: "_jrs JUPITER_VERSION ENDL;
+					result += "Server: "sv JUPITER_VERSION HTTP_ENDL;
 
-					result += "Content-Length: 0"_jrs ENDL;
+					result += "Content-Length: 0"sv HTTP_ENDL;
 
 					if (session.keep_alive)
-						result += "Connection: keep-alive"_jrs ENDL;
+						result += "Connection: keep-alive"sv HTTP_ENDL;
 					else
-						result += "Connection: close"_jrs ENDL;
+						result += "Connection: close"sv HTTP_ENDL;
 
-					result += ENDL ENDL;
+					result += HTTP_ENDL HTTP_ENDL;
 					session.sock.send(result);
 				}
 				break;
@@ -558,7 +556,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 				session.request = session.request.substr(get_line_offset(index));
 			}
 
-			if (session.request.find(HTTP_REQUEST_ENDING) != Jupiter::INVALID_INDEX) { // there's another full request already received
+			if (session.request.find(HTTP_REQUEST_ENDING) != std::string::npos) { // there's another full request already received
 				return process_request(session);
 			}
 			break;
@@ -587,7 +585,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 				auto second_split = jessilib::split_once_view(first_split.second, ' ');
 				query_string = second_split.first;
 				span = query_string.find('?'); // repurposing 'span'
-				if (span == Jupiter::INVALID_INDEX) {
+				if (span == std::string_view::npos) {
 					if (session.host == nullptr) {
 						content = find(query_string);
 					}
@@ -622,7 +620,7 @@ int Jupiter::HTTP::Server::Data::process_request(HTTPSession &session) {
 				auto second_split = jessilib::split_once_view(first_split.second, ' ');
 				query_string = second_split.first;
 				span = query_string.find('?'); // repurposing 'span'
-				if (span == Jupiter::INVALID_INDEX) {
+				if (span == std::string_view::npos) {
 					if (session.host == nullptr) {
 						content = find(query_string);
 					}
@@ -753,7 +751,7 @@ int Jupiter::HTTP::Server::think() {
 			std::string_view sock_buffer = session->sock.getBuffer();
 			if (session->request.size() + sock_buffer.size() <= m_data->max_request_size) { // accept
 				session->request += sock_buffer;
-				if (session->request.find(HTTP_REQUEST_ENDING) != Jupiter::INVALID_INDEX) { // completed request
+				if (session->request.find(HTTP_REQUEST_ENDING) != std::string::npos) { // completed request
 					session->last_active = std::chrono::steady_clock::now();
 					m_data->process_request(*session);
 					if (session->keep_alive == false) { // remove completed session
@@ -794,7 +792,7 @@ int Jupiter::HTTP::Server::think() {
 				std::string_view sock_buffer = session->sock.getBuffer();
 				if (sock_buffer.size() < m_data->max_request_size) { // accept
 					session->request = session->sock.getBuffer();
-					if (sock_buffer.find(HTTP_REQUEST_ENDING) != Jupiter::INVALID_INDEX) { // completed request
+					if (sock_buffer.find(HTTP_REQUEST_ENDING) != std::string_view::npos) { // completed request
 						m_data->process_request(*session);
 						if (session->keep_alive) { // session will live for 30 seconds.
 							m_data->m_sessions.push_back(std::move(session));
@@ -806,7 +804,7 @@ int Jupiter::HTTP::Server::think() {
 					}
 				}
 				else if (sock_buffer.size() == m_data->max_request_size) {
-					if (sock_buffer.find(HTTP_REQUEST_ENDING) == Jupiter::INVALID_INDEX) { // reject (too large)
+					if (sock_buffer.find(HTTP_REQUEST_ENDING) == std::string_view::npos) { // reject (too large)
 						continue;
 					}
 
@@ -827,6 +825,3 @@ int Jupiter::HTTP::Server::think() {
 	}
 	return 0;
 }
-
-std::string_view Jupiter::HTTP::Server::global_namespace = ""_jrs;
-std::string_view Jupiter::HTTP::Server::server_string = "Jupiter"_jrs;

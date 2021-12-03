@@ -30,7 +30,7 @@ Jupiter::Config& Jupiter::Config::operator=(const Config& in_config) {
 }
 
 std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view in_default_value) const {
-	auto value = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	auto value = m_table.find(JUPITER_WRAP_MAP_KEY(in_key));
 	if (value != m_table.end()) {
 		return value->second;
 	}
@@ -40,7 +40,7 @@ std::string_view Jupiter::Config::get(std::string_view in_key, std::string_view 
 
 Jupiter::Config *Jupiter::Config::getSection(std::string_view in_key) const {
 	if (m_sections != nullptr) {
-		auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
+		auto section = m_sections->find(JUPITER_WRAP_MAP_KEY(in_key));
 		if (section != m_sections->end()) {
 			return &section->second;
 		}
@@ -54,7 +54,7 @@ Jupiter::Config &Jupiter::Config::getSectionReference(std::string_view in_key) {
 		m_sections = std::make_unique<SectionHashTable>();
 	}
 
-	auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	auto section = m_sections->find(JUPITER_WRAP_MAP_KEY(in_key));
 	if (section == m_sections->end()) {
 		// for some reason msvc doesn't like emplace
 		section = m_sections->try_emplace(static_cast<std::string>(in_key)).first;
@@ -72,7 +72,7 @@ bool Jupiter::Config::set(std::string_view in_key, std::string in_value) {
 }
 
 bool Jupiter::Config::remove(std::string_view in_key) {
-	auto value = m_table.find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	auto value = m_table.find(JUPITER_WRAP_MAP_KEY(in_key));
 	if (value == m_table.end()) {
 		return false;
 	}
@@ -86,7 +86,7 @@ bool Jupiter::Config::removeSection(std::string_view in_key) {
 		return false;
 	}
 
-	auto section = m_sections->find(JUPITER_WRAP_CONFIG_KEY(in_key));
+	auto section = m_sections->find(JUPITER_WRAP_MAP_KEY(in_key));
 	if (section == m_sections->end()) {
 		return false;
 	}

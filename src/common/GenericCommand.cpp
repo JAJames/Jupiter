@@ -20,7 +20,6 @@
 #include "jessilib/word_split.hpp"
 #include "Plugin.h"
 
-using namespace Jupiter::literals;
 using namespace std::literals;
 
 // Is there a reason we're not using WHITESPACE_SV?
@@ -103,8 +102,7 @@ Jupiter::GenericCommandNamespace::~GenericCommandNamespace() {
 
 Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger(std::string_view in_input) {
 	GenericCommand* command;
-	Jupiter::ReferenceString input(in_input);
-	auto split_input = jessilib::word_split_once_view(input, GENERIC_COMMAND_WORD_DELIMITER_SV);
+	auto split_input = jessilib::word_split_once_view(in_input, GENERIC_COMMAND_WORD_DELIMITER_SV);
 
 	if (split_input.second.empty()) { // No parameters; list commands
 		return new Jupiter::GenericCommand::ResponseLine(m_help,Jupiter::GenericCommand::DisplayType::PrivateSuccess);
@@ -115,14 +113,11 @@ Jupiter::GenericCommand::ResponseLine* Jupiter::GenericCommandNamespace::trigger
 		return command->trigger(split_input.second);
 	}
 
-	return new Jupiter::GenericCommand::ResponseLine(""_jrs, Jupiter::GenericCommand::DisplayType::PrivateError);
+	return new Jupiter::GenericCommand::ResponseLine(""sv, Jupiter::GenericCommand::DisplayType::PrivateError);
 }
 
 std::string_view Jupiter::GenericCommandNamespace::getHelp(std::string_view parameters) {
-	static Jupiter::ReferenceString not_found = "Error: Command not found"_jrs;
-	Jupiter::ReferenceString input(parameters);
-
-	auto input_split = jessilib::word_split_once_view(input, GENERIC_COMMAND_WORD_DELIMITER_SV);
+	auto input_split = jessilib::word_split_once_view(parameters, GENERIC_COMMAND_WORD_DELIMITER_SV);
 	if (input_split.second.empty()) // No parameters; list commands
 	{
 		if (Jupiter::GenericCommandNamespace::m_should_update_help)
@@ -140,7 +135,7 @@ std::string_view Jupiter::GenericCommandNamespace::getHelp(std::string_view para
 	}
 
 	// Command not found
-	return not_found;
+	return "Error: Command not found"sv;
 }
 
 bool Jupiter::GenericCommandNamespace::isNamespace() const {

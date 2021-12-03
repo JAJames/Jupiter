@@ -20,7 +20,6 @@
 #include <string>
 #include "jessilib/word_split.hpp"
 #include "File.h"
-#include "String.hpp"
 
 #if defined _WIN32
 #define stat64 _stat64
@@ -142,10 +141,9 @@ bool Jupiter::File::load(std::string file) {
 }
 
 bool Jupiter::File::load(FILE *file) {
-	Jupiter::String buffer(defaultBufferSize);
+	std::string buffer;
 
 	int chr;
-
 	while (true) {
 		chr = fgetc(file);
 

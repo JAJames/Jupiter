@@ -27,7 +27,6 @@
 #include <memory>
 #include "Jupiter.h"
 #include "Thinker.h"
-#include "Readable_String.h"
 
 /** DLL Linkage Nagging */
 #if defined _MSC_VER
@@ -46,8 +45,7 @@ namespace Jupiter
 
 		public: // Server
 			typedef std::string* HTTPFunction(std::string_view query_string);
-			static std::string_view global_namespace;
-			static std::string_view server_string;
+			static constexpr std::string_view server_string{ "Jupiter" };
 
 			struct JUPITER_API Content
 			{
