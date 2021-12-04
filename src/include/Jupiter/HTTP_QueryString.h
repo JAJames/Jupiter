@@ -41,7 +41,7 @@ namespace Jupiter
 			HTMLFormResponse() = delete;
 			inline HTMLFormResponse(std::string_view query_string) : HTMLFormResponse(query_string.data(), query_string.size()) {}
 			inline HTMLFormResponse(const char *ptr, size_t str_size);
-			using TableType = std::unordered_map<std::string, std::string, Jupiter::str_hash<char>, std::equal_to<>>;
+			using TableType = std::unordered_map<std::string, std::string, jessilib::text_hash, jessilib::text_equal>;
 #ifdef __cpp_lib_generic_unordered_lookup
 			using InKeyType = std::string_view;
 #else // We can't use std::string_view for InKeyType until GCC 11 & clang 12, and I still want to support GCC 9

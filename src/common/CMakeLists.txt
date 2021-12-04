@@ -10,7 +10,6 @@ set(SOURCE_FILES
         File.cpp
         Functions.c
         GenericCommand.cpp
-        Hash.cpp
         HTTP_Server.cpp
         INIConfig.cpp
         IRC_Client.cpp

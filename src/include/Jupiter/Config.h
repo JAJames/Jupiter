@@ -26,8 +26,8 @@
 
 #include <unordered_map>
 #include <memory>
+#include "jessilib/unicode.hpp"
 #include "Jupiter.h"
-#include "Hash.h"
 #include "Readable_String.h" // from_string
 
 /** DLL Linkage Nagging */
@@ -38,6 +38,14 @@
 
 namespace Jupiter
 {
+#ifdef __cpp_lib_generic_unordered_lookup
+	using InMapKeyType = std::string_view;
+#define JUPITER_WRAP_MAP_KEY(in_key) in_key
+#else // We can't use std::string_view for InKeyType until GCC 11 & clang 12, and I still want to support GCC 9
+	using InMapKeyType = std::string;
+#define JUPITER_WRAP_MAP_KEY(in_key) static_cast<Jupiter::InMapKeyType>(in_key)
+#endif // __cpp_lib_generic_unordered_lookup
+
 	/**
 	* @brief Base class for all Config type files
 	*/
@@ -45,8 +53,8 @@ namespace Jupiter
 	{
 	public:
 		/** Hash_Table type for sections */
-		using SectionHashTable = std::unordered_map<std::string, Config, str_hash<char>, std::equal_to<>>;
-		using ValuesHashTable = std::unordered_map<std::string, std::string, str_hash<char>, std::equal_to<>>;
+		using SectionHashTable = std::unordered_map<std::string, Config, jessilib::text_hashi, jessilib::text_equali>;
+		using ValuesHashTable = std::unordered_map<std::string, std::string, jessilib::text_hashi, jessilib::text_equali>;
 		using InKeyType = InMapKeyType;
 
 		Config() = default;

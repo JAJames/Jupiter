@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
+#include "jessilib/unicode.hpp"
 #include "Jupiter.h"
 #include "Thinker.h"
 #include "IRC.h"
@@ -314,7 +315,7 @@ namespace Jupiter
 					std::string m_prefixes;
 				};
 
-				using UserTableType = std::unordered_map<std::string, std::shared_ptr<Channel::User>, default_hash_function, std::equal_to<>>;
+				using UserTableType = std::unordered_map<std::string, std::shared_ptr<Channel::User>, jessilib::text_hashi, jessilib::text_equali>;
 
 				/**
 				* @brief Returns the name of the channel.
@@ -428,8 +429,8 @@ namespace Jupiter
 				bool m_adding_names;
 			}; // Jupiter::IRC::Client::Channel class
 
-			using ChannelTableType = std::unordered_map<std::string, Client::Channel, default_hash_function, std::equal_to<>>;
-			using UserTableType = std::unordered_map<std::string, std::shared_ptr<Client::User>, default_hash_function, std::equal_to<>>;
+			using ChannelTableType = std::unordered_map<std::string, Client::Channel, jessilib::text_hashi, jessilib::text_equali>;
+			using UserTableType = std::unordered_map<std::string, std::shared_ptr<Client::User>, jessilib::text_hashi, jessilib::text_equali>;
 
 			/**
 			* @brief Returns the name of the primary config section this client reads from.
