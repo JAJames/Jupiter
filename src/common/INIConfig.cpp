@@ -211,14 +211,14 @@ bool Jupiter::INIConfig::read_internal(const char *in_filename) {
 			// Check if the line is over
 			if (*read_head == '\n' || *read_head == '\r') {
 				if (line_head == nullptr) {
-					// There's not any pending data; process a view from the line_head to here
-					process_line({ buffer, static_cast<size_t>(read_head - buffer) });
-				}
-				else {
-					// There's pending data; join these together and process it
-					line.append(line_head, read_head);
+					// There's no line_head; append what we have read to line and process that
+					line.append(buffer, read_head);
 					process_line(line);
 					line.clear();
+				}
+				else {
+					// There's not any pending data; process a view from the line_head to here
+					process_line({ line_head, static_cast<size_t>(read_head - line_head) });
 				}
 
 				// Keep iterating until next non-newline character
