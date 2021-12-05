@@ -26,7 +26,7 @@
 
 #include <unordered_map>
 #include <memory>
-#include "jessilib/unicode.hpp"
+#include "jessilib/unicode_compare.hpp"
 #include "Jupiter.h"
 #include "Readable_String.h" // from_string
 
