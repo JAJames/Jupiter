@@ -117,12 +117,22 @@ namespace Jupiter {
 
 	template<>
 	inline long from_string<long>(std::string_view in_string) {
-		return asInt(in_string);
+		if constexpr (sizeof(long) == sizeof(int)) {
+			return asInt(in_string);
+		}
+		else {
+			return static_cast<long>(asLongLong(in_string));
+		}
 	}
 
 	template<>
 	inline unsigned long from_string<unsigned long>(std::string_view in_string) {
-		return asUnsignedInt(in_string);
+		if constexpr (sizeof(long) == sizeof(int)) {
+			return asUnsignedInt(in_string);
+		}
+		else {
+			return static_cast<unsigned long>(asUnsignedLongLong(in_string));
+		}
 	}
 
 	template<>
